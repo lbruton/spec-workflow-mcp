@@ -277,7 +277,7 @@ export function createSecurityHeadersMiddleware(port?: number) {
   return async (request: FastifyRequest, reply: FastifyReply) => {
     // Add security headers
     reply.header('X-Content-Type-Options', 'nosniff'); // Prevent MIME type sniffing
-    reply.header('X-Frame-Options', 'DENY'); // Prevent clickjacking
+    reply.header('X-Frame-Options', 'SAMEORIGIN'); // Allow same-origin framing
     reply.header('X-XSS-Protection', '1; mode=block'); // Enable XSS protection
     reply.header('Referrer-Policy', 'strict-origin-when-cross-origin'); // Prevent referrer leakage
 
@@ -286,7 +286,7 @@ export function createSecurityHeadersMiddleware(port?: number) {
     // connect-src allows WebSocket connections to the dashboard on the actual port
     reply.header(
       'Content-Security-Policy',
-      `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data:; connect-src ${connectSrc};`
+      `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data:; connect-src ${connectSrc}; frame-src https://192.168.1.81:3011 http://127.0.0.1:9777;`
     );
   };
 }

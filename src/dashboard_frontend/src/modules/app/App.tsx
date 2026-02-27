@@ -14,6 +14,7 @@ import { LogsPage } from '../pages/LogsPage';
 import { ApprovalsPage } from '../pages/ApprovalsPage';
 import { SpecViewerPage } from '../pages/SpecViewerPage';
 import { SettingsPage } from '../pages/SettingsPage';
+import { DevOpsHubPage } from '../pages/DevOpsHubPage';
 import { NotificationProvider } from '../notifications/NotificationProvider';
 import { VolumeControl } from '../notifications/VolumeControl';
 import { useApi } from '../api/api';
@@ -90,16 +91,6 @@ function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
               <button onClick={toggleTheme} className="btn-secondary" title={t('theme.toggle')}>
                 {theme === 'dark' ? t('theme.dark') : t('theme.light')}
               </button>
-
-              <a
-                href="https://buymeacoffee.com/pimzino"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-3 py-1.5 bg-yellow-400 hover:bg-yellow-500 text-yellow-900 text-sm font-medium rounded-md transition-colors"
-                title={t('support.project')}
-              >
-                {t('support.me')}
-              </a>
             </div>
 
             {/* Mobile/Tablet Settings Menu Button */}
@@ -162,18 +153,6 @@ function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
                   </button>
                 </div>
 
-                <div className="pt-2">
-                  <a
-                    href="https://buymeacoffee.com/pimzino"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full inline-flex items-center justify-center px-4 py-3 bg-yellow-400 hover:bg-yellow-500 text-yellow-900 text-sm font-medium rounded-md transition-colors"
-                    title={t('support.project')}
-                  >
-                    {t('support.me')}
-                  </a>
-                </div>
-
                 {info?.version && (
                   <div className="pt-2 border-t border-[var(--border-default)]">
                     <div className="text-center">
@@ -203,7 +182,38 @@ function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
         version={info?.version || ''}
         projectId={currentProject?.projectId}
       />
+
+      {/* API Dashboard Modal removed — using route-based page instead */}
     </>
+  );
+}
+
+function IframePage({ title, src, sandbox }: { title: string; src: string; sandbox?: string }) {
+  return (
+    <div className="-mx-6 -my-6 flex flex-col" style={{ height: 'calc(100vh - 57px)' }}>
+      <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border-default)] bg-[var(--surface-inset)]">
+        <div className="flex items-center gap-2">
+          <svg className="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <span className="text-sm font-semibold text-[var(--text-primary)]">{title}</span>
+        </div>
+        <a
+          href={src}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs text-sky-400 hover:text-sky-300 transition-colors"
+        >
+          Open in new tab ↗
+        </a>
+      </div>
+      <iframe
+        src={src}
+        className="flex-1 w-full border-0"
+        title={title}
+        sandbox={sandbox || 'allow-scripts allow-same-origin allow-forms allow-popups'}
+      />
+    </div>
   );
 }
 
@@ -264,6 +274,10 @@ function AppInner() {
                 <Route path="/logs" element={<LogsPage />} />
                 <Route path="/approvals" element={<ApprovalsPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/devops" element={<DevOpsHubPage />} />
+                <Route path="/devops/api-dashboard" element={<IframePage title="API Dashboard — Home Poller" src="https://192.168.1.81:3011" />} />
+                <Route path="/devops/wiki" element={<IframePage title="StakTrakr Wiki" src="http://127.0.0.1:9777" />} />
+                <Route path="/api-dashboard" element={<Navigate to="/devops/api-dashboard" replace />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             ) : (

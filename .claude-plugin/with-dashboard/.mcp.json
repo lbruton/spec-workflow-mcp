@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "spec-workflow": {
-      "command": "npx",
-      "args": ["-y", "@pimzino/spec-workflow-mcp@latest", "."]
+      "command": "node",
+      "args": ["/Users/lbruton/.claude/plugins/marketplaces/spec-workflow-mcp-marketplace/dist/index.js", "."]
     }
   }
 }

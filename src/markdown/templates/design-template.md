@@ -1,5 +1,11 @@
 # Design Document
 
+## References
+
+- **Linear Issue:** [PROJ-XXX](https://linear.app/team/issue/PROJ-XXX)
+- **GitHub PR:** [#NNN](https://github.com/owner/repo/pull/NNN)
+- **Spec Path:** `.spec-workflow/specs/{spec-name}/`
+
 ## Overview
 
 [High-level description of the feature and its place in the overall system]

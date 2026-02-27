@@ -1,6 +1,6 @@
 {
-  "name": "@pimzino/spec-workflow-mcp",
-  "version": "2.2.3",
+  "name": "@lbruton/spec-workflow-mcp",
+  "version": "2.2.4-lbruton.1",
   "description": "MCP server for spec-driven development workflow with real-time web dashboard",
   "main": "dist/index.js",
   "type": "module",

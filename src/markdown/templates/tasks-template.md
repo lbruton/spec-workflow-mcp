@@ -1,5 +1,11 @@
 # Tasks Document
 
+## References
+
+- **Linear Issue:** [PROJ-XXX](https://linear.app/team/issue/PROJ-XXX)
+- **GitHub PR:** [#NNN](https://github.com/owner/repo/pull/NNN)
+- **Spec Path:** `.spec-workflow/specs/{spec-name}/`
+
 - [ ] 1. Create core interfaces in src/types/feature.ts
   - File: src/types/feature.ts
   - Define TypeScript interfaces for feature data structures
