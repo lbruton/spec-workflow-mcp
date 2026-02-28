@@ -2,6 +2,8 @@
 
 Note: I forked this repo to customize it for my own development workflows.  If you are interested in this MCP and Plugin, please see below and please give all credit to the original author, and feel free to borrow any of my "improvements" :)
 
+ORIGINAL: https://github.com/Pimzino/spec-workflow-mcp
+
 
 # Spec Workflow MCP
 
