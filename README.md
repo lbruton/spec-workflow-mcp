@@ -1,3 +1,8 @@
+# CUSTOM FORK
+
+Note: I forked this repo to customize it for my own development workflows.  If you are interested in this MCP and Plugin, please see below and please give all credit to the original author, and feel free to borrow any of my "improvements" :)
+
+
 # Spec Workflow MCP
 
 [![npm version](https://img.shields.io/npm/v/@pimzino/spec-workflow-mcp)](https://www.npmjs.com/package/@pimzino/spec-workflow-mcp)
