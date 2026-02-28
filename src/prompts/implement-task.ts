@@ -96,13 +96,25 @@ ${context.dashboardUrl ? `- Dashboard: ${context.dashboardUrl}` : ''}
    - Document any existing related implementations before proceeding
    - If you find existing code that does what the task asks, leverage it instead of recreating
 
-5. **Implement the Task:**
-   - Follow the _Prompt guidance exactly
-   - Use the files mentioned in _Leverage fields
-   - Create or modify the files specified in the task
-   - Write clean, well-commented code
-   - Follow existing patterns in the codebase
-   - Test your implementation thoroughly
+5. **Implement the Task (dispatch subagent):**
+   - Dispatch a fresh subagent (Agent tool) with the full task text, _Prompt guidance, and _Leverage file paths
+   - Template: .spec-workflow/templates/implementer-prompt-template.md
+   - The subagent implements, tests, commits, and self-reviews
+   - Main context stays clean for orchestration — never write implementation code here
+
+5.5. **Spec Compliance Review (dispatch reviewer subagent):**
+   - After the implementer reports back, dispatch a reviewer subagent
+   - Reviewer reads actual code and compares to task requirements line by line
+   - Template: .spec-workflow/templates/spec-reviewer-template.md
+   - If issues found: implementer fixes them, then dispatch reviewer again
+   - Do NOT proceed to step 5.6 until spec review passes ✅
+
+5.6. **Code Quality Review (dispatch reviewer subagent):**
+   - Only dispatch AFTER spec compliance passes in step 5.5
+   - Reviewer checks: architecture, error handling, testing, production readiness
+   - Template: .spec-workflow/templates/code-quality-reviewer-template.md
+   - Issues categorized: Critical (must fix) / Important (should fix) / Minor
+   - Fix Critical and Important issues, re-review until approved ✅
 
 6. **Log Implementation (MANDATORY - must complete BEFORE marking task done):**
    - ⚠️ **STOP: Do NOT mark the task [x] until this step succeeds.**
@@ -166,6 +178,10 @@ ${context.dashboardUrl ? `- Dashboard: ${context.dashboardUrl}` : ''}
 - Filter by spec, task ID, or search by summary
 - View detailed statistics including files changed and lines modified
 - Or search directly using grep on markdown files in .spec-workflow/specs/{specName}/Implementation Logs/
+
+**Context Budget:** This session supports ~15-20 task dispatches with reviews (~125k tokens).
+After completing 10+ tasks, consider using a handoff to relay to a fresh session.
+Save handoff context: spec name, completed tasks, in-progress state, next task ID.
 
 Please proceed with implementing ${taskId ? `task ${taskId}` : 'the next task'} following this workflow.`
       }

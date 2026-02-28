@@ -98,8 +98,12 @@ flowchart TD
     P3_Clean -->|success| P4_Ready[Spec complete.<br/>Ready to implement?]
     P4_Ready -->|Yes| P4_Status[spec-status]
     P4_Status --> P4_Task[Edit tasks.md:<br/>Change [ ] to [-]<br/>for in-progress]
-    P4_Task --> P4_Code[Implement code]
-    P4_Code --> P4_Log[log-implementation<br/>Record implementation<br/>details]
+    P4_Task --> P4_Code[Dispatch subagent:<br/>Implement code]
+    P4_Code --> P4_SpecReview{Spec compliance<br/>review?}
+    P4_SpecReview -->|pass| P4_QualityReview{Code quality<br/>review?}
+    P4_SpecReview -->|fail| P4_Code
+    P4_QualityReview -->|pass| P4_Log[log-implementation<br/>Record implementation<br/>details]
+    P4_QualityReview -->|fail| P4_Code
     P4_Log --> P4_Complete[Edit tasks.md:<br/>Change [-] to [x]<br/>for completed]
     P4_Complete --> P4_More{More tasks?}
     P4_More -->|Yes| P4_Task
@@ -110,6 +114,8 @@ flowchart TD
     style P1_Check fill:#ffe6e6
     style P2_Check fill:#ffe6e6
     style P3_Check fill:#ffe6e6
+    style P4_SpecReview fill:#ffe6e6
+    style P4_QualityReview fill:#ffe6e6
     style CheckSteering fill:#fff4e6
     style P4_More fill:#fff4e6
     style P4_Log fill:#e3f2fd
@@ -189,7 +195,9 @@ flowchart TD
    - Success: specific completion criteria
    - Instructions related to setting the task in progress in tasks.md, logging the implementation with log-implementation tool after completion, and then marking it as complete when the task is complete.
    - Start the prompt with "Implement the task for spec {spec-name}, first run spec-workflow-guide to get the workflow guide then implement the task:"
-6. Create \`tasks.md\` at \`.spec-workflow/specs/{spec-name}/tasks.md\`
+6. (Optional) Add a **Recommended Agent** field to each task: Claude, Codex, Gemini, or Human
+7. Include a **File Touch Map** at the top of tasks.md listing all files the spec will CREATE, MODIFY, or TEST with brief scope notes
+8. Create \`tasks.md\` at \`.spec-workflow/specs/{spec-name}/tasks.md\`
 7. Request approval using approvals tool with action:'request'
 8. Poll status using approvals with action:'status' until approved/needs-revision
 9. If needs-revision: update document using comments, create NEW approval, do NOT proceed
@@ -251,6 +259,58 @@ flowchart TD
      - Prevents implementation details from being lost in chat history
    - **Only after log-implementation succeeds**: Edit tasks.md: Change \`[-]\` to \`[x]\`
 4. Continue until all tasks show \`[x]\`
+
+#### Execution Strategy
+
+Choose ONE approach per session:
+
+**Same-Session Subagents (default)** — Dispatch a fresh Agent (subagent) per task. The main conversation context stays clean for orchestration — tracking progress, dispatching agents, reviewing results, making architectural decisions. All coding, file editing, testing, and codebase searching happens inside subagents.
+
+Never write implementation code in the main context — dispatch a subagent instead.
+
+**Parallel Session** — If the plan has 10+ tasks, split into session-sized batches. Each session handles ~3-4 batches of 3 tasks. Use a handoff mechanism between sessions to relay context (spec name, completed tasks, next task).
+
+**Implementer template**: See \`.spec-workflow/templates/implementer-prompt-template.md\` for the subagent dispatch template. Paste the full task text into the subagent prompt — don't make the subagent read the plan file.
+
+#### Two-Stage Review (after each task, BEFORE marking [x])
+
+After the implementer subagent reports back, run two review stages before logging and marking complete:
+
+**Stage 1 — Spec Compliance Review:**
+Dispatch a reviewer subagent to verify the implementer built what was requested — nothing more, nothing less.
+- Compare actual code to task requirements line by line
+- Check for missing requirements, extra/unneeded work, misunderstandings
+- ✅ Pass = proceed to Stage 2
+- ❌ Fail = implementer fixes issues → dispatch reviewer again
+- Template: \`.spec-workflow/templates/spec-reviewer-template.md\`
+
+**Stage 2 — Code Quality Review:**
+Only dispatch AFTER Stage 1 passes. Verify the code is well-built and production-ready.
+- Check: architecture, error handling, testing, security, performance
+- Categorize issues: Critical (must fix) / Important (should fix) / Minor (nice to have)
+- ✅ Approved = proceed to log-implementation → mark [x]
+- Issues found = implementer fixes → dispatch reviewer again
+- Template: \`.spec-workflow/templates/code-quality-reviewer-template.md\`
+
+**Review loop:** If either reviewer finds issues, the implementer subagent fixes them, then the reviewer re-reviews. Repeat until approved. Never skip re-review — "it should be fine now" is not verification.
+
+#### Context Budget
+
+- Session budget: ~125k tokens (~15-20 task dispatches with reviews)
+- After 10+ agent dispatches or 70% context usage: suggest handoff to a fresh session
+- Save handoff context: spec name, completed task list, in-progress state, next task ID
+- NEVER wait for auto-compaction — it loses context silently
+
+#### Main Context vs Subagent Responsibilities
+
+| Main Context (orchestrator) | Subagents (workers) |
+|----------------------------|---------------------|
+| Read plan, extract tasks | Write code, edit files |
+| Dispatch agents with context | Run tests, verify output |
+| Review agent summaries | Read large files |
+| Make architectural decisions | Debug and fix issues |
+| Track progress (task list) | Search codebase |
+| Approve/reject agent work | Generate new files |
 
 ## Workflow Rules
 

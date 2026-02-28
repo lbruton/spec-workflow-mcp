@@ -277,6 +277,7 @@ function AppInner() {
                 <Route path="/devops" element={<DevOpsHubPage />} />
                 <Route path="/devops/api-dashboard" element={<IframePage title="API Dashboard — Home Poller" src="https://192.168.1.81:3011" />} />
                 <Route path="/devops/wiki" element={<IframePage title="StakTrakr Wiki" src="http://127.0.0.1:9777" />} />
+                <Route path="/devops/hkf-wiki" element={<IframePage title="HelloKittyFriends Wiki" src="http://127.0.0.1:9778" />} />
                 <Route path="/api-dashboard" element={<Navigate to="/devops/api-dashboard" replace />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>

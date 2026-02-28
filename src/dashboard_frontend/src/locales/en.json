@@ -13,7 +13,8 @@
     "devopsTools": "DevOps Tools",
     "devopsHub": "Hub",
     "apiDashboard": "API Dashboard",
-    "staktrakrWiki": "StakTrakr Wiki"
+    "staktrakrWiki": "StakTrakr Wiki",
+    "helloKittyFriendsWiki": "HKF Wiki"
   },
   "connectionStatus": {
     "connected": "Connected",

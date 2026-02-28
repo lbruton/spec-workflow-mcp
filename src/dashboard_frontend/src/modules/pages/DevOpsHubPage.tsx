@@ -17,115 +17,237 @@ interface HubSection {
   cards: HubCard[];
 }
 
-const sections: HubSection[] = [
-  {
-    title: 'Live Sites',
-    cards: [
-      {
-        title: 'Production',
-        desc: 'staktrakr.com — live site served via Cloudflare Pages from main branch.',
-        url: 'https://www.staktrakr.com',
-        icon: '\u{1F31F}',
-        color: 'green',
-      },
-      {
-        title: 'Dev Preview',
-        desc: 'dev branch preview — latest merged work before it ships to production.',
-        url: 'https://dev.stacktrackr.pages.dev',
-        icon: '\u{1F527}',
-        color: 'yellow',
-      },
-      {
-        title: 'API Health',
-        desc: 'Market prices, spot prices, and Goldback feed status.',
-        url: 'https://api.staktrakr.com/data/api/manifest.json',
-        icon: '\u{2764}\u{FE0F}',
-        color: 'blue',
-      },
-    ],
-  },
-  {
-    title: 'Dashboards',
-    cards: [
-      {
-        title: 'API Dashboard',
-        desc: 'System stats, service status, scrape runs, and live log tail for both pollers.',
-        url: 'https://192.168.1.81:3011',
-        icon: '\u{1F3E0}',
-        color: 'blue',
-        internalRoute: '/devops/api-dashboard',
-      },
-      {
-        title: 'Grafana Drilldown',
-        desc: 'Home poller Prometheus metrics — scrape stats, uptime, network, and poller health.',
-        url: 'http://192.168.1.81:3000/a/grafana-metricsdrilldown-app/drilldown',
-        icon: '\u{1F4C8}',
-        color: 'green',
-      },
-      {
-        title: 'StakTrakr Wiki',
-        desc: 'Infrastructure runbooks, frontend patterns, and pipeline docs via Docsify.',
-        url: 'http://127.0.0.1:9777',
-        icon: '\u{1F4D6}',
-        color: 'yellow',
-        internalRoute: '/devops/wiki',
-      },
-      {
-        title: 'Playwright Dashboard',
-        desc: 'Smoke test videos, screenshots, and run results from browserless Docker.',
-        url: 'file:///Volumes/DATA/GitHub/StakTrakr/devops/playwright-dash/index.html',
-        icon: '\u{1F3AD}',
-        color: 'green',
-      },
-      {
-        title: 'Claude Code Insights',
-        desc: 'Weekly usage analysis — sessions, friction patterns, tool usage, and workflow recommendations.',
-        url: 'file:///Users/lbruton/.claude/usage-data/report.html',
-        icon: '\u{1F4CA}',
-        color: 'yellow',
-      },
-      {
-        title: 'JSDoc Reference',
-        desc: 'Auto-generated API docs for all StakTrakr JavaScript modules.',
-        url: 'file:///Volumes/DATA/GitHub/StakTrakr/devops/docs/index.html',
-        icon: '\u{1F4DA}',
-        color: 'blue',
-      },
-    ],
-  },
-  {
-    title: 'Local Services',
-    cards: [
-      {
-        title: 'Infisical',
-        desc: 'Self-hosted secrets manager on Proxmox. API keys, tokens, and environment variables.',
-        url: 'http://192.168.1.47:8080',
-        icon: '\u{1F510}',
-        color: 'red',
-      },
-      {
-        title: 'Playwright Live',
-        desc: 'Live server with auto-refresh during test runs. Run npm run dash to start.',
-        url: 'http://localhost:8766',
-        icon: '\u{1F3AD}',
-        color: 'green',
-      },
-      {
-        title: 'Browserless Debugger',
-        desc: 'Self-hosted Chromium DevTools — inspect live Playwright sessions.',
-        url: 'http://localhost:3000/debugger/?token=local_dev_token',
-        icon: '\u{1F310}',
-        color: 'purple',
-      },
-      {
-        title: 'Local App Server',
-        desc: 'StakTrakr served locally for smoke tests. Run npx http-server . -p 8765 from project root.',
-        url: 'http://localhost:8765',
-        icon: '\u{26A1}',
-        color: 'green',
-      },
-    ],
-  },
+// ── Per-project hub card configuration ──────────────────────────────
+// The key must match the projectName returned by the MCP server.
+const projectHubSections: Record<string, HubSection[]> = {
+  StakTrakr: [
+    {
+      title: 'Live Sites',
+      cards: [
+        {
+          title: 'Production',
+          desc: 'staktrakr.com — live site served via Cloudflare Pages from main branch.',
+          url: 'https://www.staktrakr.com',
+          icon: '\u{1F31F}',
+          color: 'green',
+        },
+        {
+          title: 'Dev Preview',
+          desc: 'dev branch preview — latest merged work before it ships to production.',
+          url: 'https://dev.stacktrackr.pages.dev',
+          icon: '\u{1F527}',
+          color: 'yellow',
+        },
+        {
+          title: 'API Health',
+          desc: 'Market prices, spot prices, and Goldback feed status.',
+          url: 'https://api.staktrakr.com/data/api/manifest.json',
+          icon: '\u{2764}\u{FE0F}',
+          color: 'blue',
+        },
+      ],
+    },
+    {
+      title: 'Dashboards',
+      cards: [
+        {
+          title: 'API Dashboard',
+          desc: 'System stats, service status, scrape runs, and live log tail for both pollers.',
+          url: 'https://192.168.1.81:3011',
+          icon: '\u{1F3E0}',
+          color: 'blue',
+          internalRoute: '/devops/api-dashboard',
+        },
+        {
+          title: 'Grafana Drilldown',
+          desc: 'Home poller Prometheus metrics — scrape stats, uptime, network, and poller health.',
+          url: 'http://192.168.1.81:3000/a/grafana-metricsdrilldown-app/drilldown',
+          icon: '\u{1F4C8}',
+          color: 'green',
+        },
+        {
+          title: 'StakTrakr Wiki',
+          desc: 'Infrastructure runbooks, frontend patterns, and pipeline docs via Docsify.',
+          url: 'http://127.0.0.1:9777',
+          icon: '\u{1F4D6}',
+          color: 'yellow',
+          internalRoute: '/devops/wiki',
+        },
+        {
+          title: 'Playwright Dashboard',
+          desc: 'Smoke test videos, screenshots, and run results from browserless Docker.',
+          url: 'file:///Volumes/DATA/GitHub/StakTrakr/devops/playwright-dash/index.html',
+          icon: '\u{1F3AD}',
+          color: 'green',
+        },
+        {
+          title: 'Claude Code Insights',
+          desc: 'Weekly usage analysis — sessions, friction patterns, tool usage, and workflow recommendations.',
+          url: 'file:///Users/lbruton/.claude/usage-data/report.html',
+          icon: '\u{1F4CA}',
+          color: 'yellow',
+        },
+        {
+          title: 'JSDoc Reference',
+          desc: 'Auto-generated API docs for all StakTrakr JavaScript modules.',
+          url: 'file:///Volumes/DATA/GitHub/StakTrakr/devops/docs/index.html',
+          icon: '\u{1F4DA}',
+          color: 'blue',
+        },
+      ],
+    },
+    {
+      title: 'Local Services',
+      cards: [
+        {
+          title: 'Infisical',
+          desc: 'Self-hosted secrets manager on Proxmox. API keys, tokens, and environment variables.',
+          url: 'http://192.168.1.47:8080',
+          icon: '\u{1F510}',
+          color: 'red',
+        },
+        {
+          title: 'Playwright Live',
+          desc: 'Live server with auto-refresh during test runs. Run npm run dash to start.',
+          url: 'http://localhost:8766',
+          icon: '\u{1F3AD}',
+          color: 'green',
+        },
+        {
+          title: 'Browserless Debugger',
+          desc: 'Self-hosted Chromium DevTools — inspect live Playwright sessions.',
+          url: 'http://localhost:3000/debugger/?token=local_dev_token',
+          icon: '\u{1F310}',
+          color: 'purple',
+        },
+        {
+          title: 'Local App Server',
+          desc: 'StakTrakr served locally for smoke tests. Run npx http-server . -p 8765 from project root.',
+          url: 'http://localhost:8765',
+          icon: '\u{26A1}',
+          color: 'green',
+        },
+      ],
+    },
+    {
+      title: 'External Tools',
+      cards: [
+        {
+          title: 'mem0',
+          desc: 'Cloud episodic memory — session insights, handoffs, and project knowledge.',
+          url: 'https://app.mem0.ai/dashboard',
+          icon: '\u{1F9E0}',
+          color: 'purple',
+        },
+        {
+          title: 'Fly.io Dashboard',
+          desc: 'Backend app management — deployments, logs, scaling, and billing.',
+          url: 'https://fly.io/dashboard',
+          icon: '\u{1F680}',
+          color: 'blue',
+        },
+        {
+          title: 'Fly Metrics',
+          desc: 'Grafana metrics for the staktrakr Fly.io app — CPU, memory, requests.',
+          url: 'https://fly-metrics.net/d/fly-app/fly-app?orgId=1494924&var-app=staktrakr',
+          icon: '\u{1F4C8}',
+          color: 'yellow',
+        },
+        {
+          title: 'Linear',
+          desc: 'Issue tracking for StakTrakr — backlog, in-progress, and sprint board.',
+          url: 'https://linear.app',
+          icon: '\u{1F4CB}',
+          color: 'blue',
+        },
+        {
+          title: 'Codacy',
+          desc: 'Static analysis and code quality gate for PRs.',
+          url: 'https://app.codacy.com',
+          icon: '\u{1F50D}',
+          color: 'yellow',
+        },
+        {
+          title: 'Browserbase',
+          desc: 'Cloud Stagehand session recordings for the StakTrakr org. Paid — use sparingly.',
+          url: 'https://www.browserbase.com/orgs/staktrakr/39c91942-2925-4b85-ac2c-61d35127a10a/overview',
+          icon: '\u{2601}\u{FE0F}',
+          color: 'green',
+        },
+      ],
+    },
+  ],
+  HelloKittyFriends: [
+    {
+      title: 'App',
+      cards: [
+        {
+          title: 'My Melody Chat',
+          desc: 'Local Docker instance — My Melody companion chat app (HTTP).',
+          url: 'http://localhost:3030',
+          icon: '\u{1F430}',
+          color: 'purple',
+        },
+        {
+          title: 'My Melody Chat (HTTPS)',
+          desc: 'Local Docker instance — HTTPS endpoint for PWA install testing.',
+          url: 'https://localhost:3031',
+          icon: '\u{1F512}',
+          color: 'green',
+        },
+      ],
+    },
+    {
+      title: 'Documentation',
+      cards: [
+        {
+          title: 'HelloKittyFriends Wiki',
+          desc: 'Technical docs — architecture, API reference, Gemini, mem0, character guide via Docsify.',
+          url: 'http://127.0.0.1:9778',
+          icon: '\u{1F4D6}',
+          color: 'yellow',
+          internalRoute: '/devops/hkf-wiki',
+        },
+      ],
+    },
+    {
+      title: 'External Tools',
+      cards: [
+        {
+          title: 'mem0',
+          desc: 'Cloud episodic memory — dual-track (user + agent) persistent memory.',
+          url: 'https://app.mem0.ai/dashboard',
+          icon: '\u{1F9E0}',
+          color: 'purple',
+        },
+        {
+          title: 'Linear',
+          desc: 'Issue tracking for HelloKittyFriends — backlog, features, and bugs.',
+          url: 'https://linear.app',
+          icon: '\u{1F4CB}',
+          color: 'blue',
+        },
+        {
+          title: 'Codacy',
+          desc: 'Static analysis and code quality gate for PRs.',
+          url: 'https://app.codacy.com',
+          icon: '\u{1F50D}',
+          color: 'yellow',
+        },
+        {
+          title: 'Infisical',
+          desc: 'Self-hosted secrets manager — API keys for Gemini, mem0, and Brave.',
+          url: 'http://192.168.1.47:8080',
+          icon: '\u{1F510}',
+          color: 'red',
+        },
+      ],
+    },
+  ],
+};
+
+// Fallback sections when no project-specific config exists
+const defaultSections: HubSection[] = [
   {
     title: 'External Tools',
     cards: [
@@ -137,22 +259,8 @@ const sections: HubSection[] = [
         color: 'purple',
       },
       {
-        title: 'Fly.io Dashboard',
-        desc: 'Backend app management — deployments, logs, scaling, and billing.',
-        url: 'https://fly.io/dashboard',
-        icon: '\u{1F680}',
-        color: 'blue',
-      },
-      {
-        title: 'Fly Metrics',
-        desc: 'Grafana metrics for the staktrakr Fly.io app — CPU, memory, requests.',
-        url: 'https://fly-metrics.net/d/fly-app/fly-app?orgId=1494924&var-app=staktrakr',
-        icon: '\u{1F4C8}',
-        color: 'yellow',
-      },
-      {
         title: 'Linear',
-        desc: 'Issue tracking for StakTrakr — backlog, in-progress, and sprint board.',
+        desc: 'Issue tracking — backlog, in-progress, and sprint board.',
         url: 'https://linear.app',
         icon: '\u{1F4CB}',
         color: 'blue',
@@ -165,11 +273,11 @@ const sections: HubSection[] = [
         color: 'yellow',
       },
       {
-        title: 'Browserbase',
-        desc: 'Cloud Stagehand session recordings for the StakTrakr org. Paid — use sparingly.',
-        url: 'https://www.browserbase.com/orgs/staktrakr/39c91942-2925-4b85-ac2c-61d35127a10a/overview',
-        icon: '\u{2601}\u{FE0F}',
-        color: 'green',
+        title: 'Infisical',
+        desc: 'Self-hosted secrets manager on Proxmox.',
+        url: 'http://192.168.1.47:8080',
+        icon: '\u{1F510}',
+        color: 'red',
       },
     ],
   },
@@ -295,6 +403,7 @@ export function DevOpsHubPage() {
   };
 
   const projectName = currentProject?.projectName || 'Project';
+  const sections = (currentProject?.projectName && projectHubSections[currentProject.projectName]) || defaultSections;
 
   return (
     <div className="-mx-6 -my-6">
@@ -319,7 +428,7 @@ export function DevOpsHubPage() {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
               {section.cards.map((card) => {
-                const isApiHealth = card.title === 'API Health';
+                const isApiHealth = card.title === 'API Health' && currentProject?.projectName === 'StakTrakr';
                 return (
                   <button
                     key={card.title}

@@ -57,7 +57,10 @@ export class WorkspaceInitializer {
       'tasks-template',
       'product-template',
       'tech-template',
-      'structure-template'
+      'structure-template',
+      'spec-reviewer-template',
+      'code-quality-reviewer-template',
+      'implementer-prompt-template'
     ];
     
     for (const template of templates) {
