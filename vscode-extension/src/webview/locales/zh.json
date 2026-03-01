@@ -173,7 +173,12 @@
       "frontend": "前端：",
       "backend": "后端：",
       "dataFlow": "数据流：",
-      "exported": "（已导出）"
+      "exported": "（已导出）",
+      "tests": "Tests",
+      "testResults": "{{passed}}/{{total}} passed, {{failed}} failed",
+      "duration": "Duration:",
+      "coverage": "Coverage:",
+      "userStories": "User Stories:"
     }
   },
   "common": {

@@ -178,7 +178,12 @@
       "frontend": "الواجهة الأمامية:",
       "backend": "الواجهة الخلفية:",
       "dataFlow": "تدفق البيانات:",
-      "exported": "(مُصدّر)"
+      "exported": "(مُصدّر)",
+      "tests": "Tests",
+      "testResults": "{{passed}}/{{total}} passed, {{failed}} failed",
+      "duration": "Duration:",
+      "coverage": "Coverage:",
+      "userStories": "User Stories:"
     }
   },
   "common": {

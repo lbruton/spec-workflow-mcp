@@ -61,5 +61,18 @@ export interface ImplementationLogEntry {
       backendEndpoint: string;
       dataFlow: string;
     }>;
+    tests?: Array<{
+      name: string;
+      type: string;
+      framework: string;
+      location: string;
+      status: string;
+      passed: number;
+      failed: number;
+      total: number;
+      duration?: string;
+      coveragePercent?: number;
+      userStories?: string[];
+    }>;
   };
 }

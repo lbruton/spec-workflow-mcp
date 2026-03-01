@@ -178,7 +178,12 @@
       "frontend": "프론트엔드:",
       "backend": "백엔드:",
       "dataFlow": "데이터 흐름:",
-      "exported": "(내보내짐)"
+      "exported": "(내보내짐)",
+      "tests": "Tests",
+      "testResults": "{{passed}}/{{total}} passed, {{failed}} failed",
+      "duration": "Duration:",
+      "coverage": "Coverage:",
+      "userStories": "User Stories:"
     }
   },
   "common": {

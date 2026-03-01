@@ -242,7 +242,12 @@ flowchart TD
    - **Read the _Prompt field** for guidance on role, approach, and success criteria
    - Follow _Leverage fields to use existing code/utilities
    - Implement the code according to the task description
-   - Test your implementation
+   - **Test your implementation — tests MUST be run, not just written**:
+     - Run all tests relevant to this task (unit, integration, E2E as appropriate)
+     - Record actual execution results (pass/fail counts, framework, duration)
+     - If tests fail, fix them before proceeding — do NOT log failing tests as "passed"
+     - If no automated tests exist for this task, at minimum verify the feature manually and log as framework: "manual"
+     - A task logged with 0 total tests is a red flag — every task should have some form of validation
    - **MANDATORY: Log implementation BEFORE marking task complete** using log-implementation tool:
      - ⚠️ Do NOT change [-] to [x] until log-implementation returns success
      - A task without an implementation log is NOT complete — this is the most commonly skipped step
@@ -254,7 +259,8 @@ flowchart TD
        - functions: All utility functions created (name, signature, location)
        - classes: All classes created (name, methods, location)
        - integrations: Frontend-backend connections with data flow description
-     - Example: "Created API GET /api/todos/:id endpoint and TodoDetail React component with WebSocket real-time updates"
+       - tests: All tests run (name, type, framework, location, status, pass/fail counts, linked userStories from spec requirements)
+     - Example: "Created API GET /api/todos/:id endpoint and TodoDetail React component with WebSocket real-time updates. E2E tests: 12/12 passed covering user stories 1.1, 1.2, 2.1"
      - This creates a searchable knowledge base for future AI agents to discover existing code
      - Prevents implementation details from being lost in chat history
    - **Only after log-implementation succeeds**: Edit tasks.md: Change \`[-]\` to \`[x]\`

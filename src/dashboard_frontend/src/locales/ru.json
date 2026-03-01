@@ -498,6 +498,7 @@
       "functions": "Функции",
       "classes": "Классы",
       "integrations": "Интеграции",
+      "tests": "Tests",
       "details": {
         "request": "Запрос:",
         "response": "Ответ:",
@@ -508,7 +509,11 @@
         "methods": "Методы:",
         "component": "Компонент:",
         "endpoint": "Endpoint:",
-        "flow": "Поток:"
+        "flow": "Поток:",
+        "testResults": "{{passed}}/{{total}} passed, {{failed}} failed",
+        "duration": "Duration:",
+        "coverage": "Coverage:",
+        "userStories": "User Stories:"
       }
     },
     "empty": {

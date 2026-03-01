@@ -489,6 +489,7 @@
       "functions": "함수",
       "classes": "클래스",
       "integrations": "통합",
+      "tests": "Tests",
       "details": {
         "request": "요청:",
         "response": "응답:",
@@ -499,7 +500,11 @@
         "methods": "메서드:",
         "component": "구성 요소:",
         "endpoint": "엔드포인트:",
-        "flow": "흐름:"
+        "flow": "흐름:",
+        "testResults": "{{passed}}/{{total}} passed, {{failed}} failed",
+        "duration": "Duration:",
+        "coverage": "Coverage:",
+        "userStories": "User Stories:"
       }
     },
     "empty": {

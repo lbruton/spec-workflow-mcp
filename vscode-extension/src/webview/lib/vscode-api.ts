@@ -231,12 +231,27 @@ export interface Integration {
   dataFlow: string;
 }
 
+export interface TestInfo {
+  name: string;
+  type: string;
+  framework: string;
+  location: string;
+  status: string;
+  passed: number;
+  failed: number;
+  total: number;
+  duration?: string;
+  coveragePercent?: number;
+  userStories?: string[];
+}
+
 export interface LogArtifacts {
   apiEndpoints?: ApiEndpoint[];
   components?: ComponentInfo[];
   functions?: FunctionInfo[];
   classes?: ClassInfo[];
   integrations?: Integration[];
+  tests?: TestInfo[];
 }
 
 export interface ImplementationLogEntry {

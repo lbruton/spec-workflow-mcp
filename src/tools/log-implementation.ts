@@ -123,6 +123,36 @@ Example:
 }
 \`\`\`
 
+### tests (array of test objects)
+When tests are written and run, document execution results. Tests MUST be run before logging — do not log tests you only wrote but never executed.
+- name: Test suite or file name (e.g., "E2E: User authentication flow")
+- type: Test type (unit, integration, e2e, smoke, acceptance)
+- framework: Test framework used (playwright, vitest, jest, cypress, manual)
+- location: File path (e.g., "tests/e2e/auth-flow.spec.ts")
+- status: Execution result (passed, failed, skipped) — must reflect actual test run
+- passed: Number of passing tests
+- failed: Number of failing tests
+- total: Total test count
+- duration: Execution time (optional, e.g., "4.2s")
+- coveragePercent: Code coverage percentage (optional)
+- userStories: Array of requirement IDs this test validates (e.g., ["1.1", "1.2", "2.1"])
+
+Example:
+\`\`\`
+{
+  "name": "E2E: Todo CRUD operations",
+  "type": "e2e",
+  "framework": "playwright",
+  "location": "tests/e2e/todo-crud.spec.ts",
+  "status": "passed",
+  "passed": 12,
+  "failed": 0,
+  "total": 12,
+  "duration": "8.3s",
+  "userStories": ["1.1", "1.2", "2.1"]
+}
+\`\`\`
+
 # GOOD EXAMPLE (Include ALL relevant artifacts)
 
 Task: "Implemented logs dashboard with real-time updates"
@@ -168,11 +198,25 @@ Task: "Implemented logs dashboard with real-time updates"
         "backendEndpoint": "GET /api/specs/:name/implementation-log",
         "dataFlow": "Component mount → API fetch → Display logs → WebSocket subscription → Real-time updates on new entries"
       }
+    ],
+    "tests": [
+      {
+        "name": "E2E: Implementation logs dashboard",
+        "type": "e2e",
+        "framework": "playwright",
+        "location": "tests/e2e/logs-dashboard.spec.ts",
+        "status": "passed",
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "duration": "12.4s",
+        "userStories": ["2.1", "2.3"]
+      }
     ]
   },
   "filesModified": ["src/dashboard/server.ts"],
-  "filesCreated": ["src/modules/pages/LogsPage.tsx"],
-  "statistics": { "linesAdded": 650, "linesRemoved": 15, "filesChanged": 2 }
+  "filesCreated": ["src/modules/pages/LogsPage.tsx", "tests/e2e/logs-dashboard.spec.ts"],
+  "statistics": { "linesAdded": 750, "linesRemoved": 15, "filesChanged": 3 }
 }
 \`\`\`
 
@@ -202,7 +246,7 @@ Task: "Implemented logs dashboard with real-time updates"
 # Instructions
 
 1. After completing a task, review what you implemented
-2. Identify all artifacts (APIs, components, functions, classes, integrations)
+2. Identify all artifacts (APIs, components, functions, classes, integrations, tests)
 3. Document each with full details and locations
 4. Include ALL the information - be thorough!
 5. Future agents depend on this data quality`,
@@ -278,6 +322,11 @@ Task: "Implemented logs dashboard with real-time updates"
             type: 'array',
             description: 'Frontend-backend integration patterns',
             items: { type: 'object' }
+          },
+          tests: {
+            type: 'array',
+            description: 'Tests written and run for this task (must include execution results)',
+            items: { type: 'object' }
           }
         }
       }
@@ -322,9 +371,9 @@ export async function logImplementationHandler(
         message: 'Artifacts field is REQUIRED. See tool description for detailed artifact format and examples.',
         nextSteps: [
           'Review the log-implementation tool description for artifact structure',
-          'Document all API endpoints, components, functions, classes, and integrations',
+          'Document all API endpoints, components, functions, classes, integrations, and tests',
           'Provide structured artifact data before calling this tool',
-          'Ensure artifacts contains at least one of: apiEndpoints, components, functions, classes, or integrations'
+          'Ensure artifacts contains at least one of: apiEndpoints, components, functions, classes, integrations, or tests'
         ]
       };
     }

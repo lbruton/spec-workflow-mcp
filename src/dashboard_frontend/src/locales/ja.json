@@ -489,6 +489,7 @@
       "functions": "関数",
       "classes": "クラス",
       "integrations": "統合",
+      "tests": "Tests",
       "details": {
         "request": "リクエスト:",
         "response": "レスポンス:",
@@ -499,7 +500,11 @@
         "methods": "メソッド:",
         "component": "コンポーネント:",
         "endpoint": "エンドポイント:",
-        "flow": "フロー:"
+        "flow": "フロー:",
+        "testResults": "{{passed}}/{{total}} passed, {{failed}} failed",
+        "duration": "Duration:",
+        "coverage": "Coverage:",
+        "userStories": "User Stories:"
       }
     },
     "empty": {

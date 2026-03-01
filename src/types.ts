@@ -162,6 +162,19 @@ export interface ImplementationLogEntry {
       backendEndpoint: string;  // Which API endpoint
       dataFlow: string;         // How data flows
     }>;
+    tests?: Array<{
+      name: string;              // Test suite or file name
+      type: string;              // unit | integration | e2e | smoke | acceptance
+      framework: string;         // playwright | vitest | jest | cypress | manual
+      location: string;          // File path
+      status: string;            // passed | failed | skipped
+      passed: number;            // Passing test count
+      failed: number;            // Failing test count
+      total: number;             // Total test count
+      duration?: string;         // Execution time (e.g., "4.2s")
+      coveragePercent?: number;  // Code coverage percentage
+      userStories?: string[];    // Linked requirement IDs from spec
+    }>;
   };
 }
 

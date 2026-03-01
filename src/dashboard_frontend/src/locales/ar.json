@@ -489,6 +489,7 @@
       "functions": "الدوال",
       "classes": "الفئات",
       "integrations": "التكاملات",
+      "tests": "Tests",
       "details": {
         "request": "الطلب:",
         "response": "الرد:",
@@ -499,7 +500,11 @@
         "methods": "الطرق:",
         "component": "المكون:",
         "endpoint": "نقطة النهاية:",
-        "flow": "التدفق:"
+        "flow": "التدفق:",
+        "testResults": "{{passed}}/{{total}} passed, {{failed}} failed",
+        "duration": "Duration:",
+        "coverage": "Coverage:",
+        "userStories": "User Stories:"
       }
     },
     "empty": {

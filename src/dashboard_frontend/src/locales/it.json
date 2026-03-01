@@ -489,6 +489,7 @@
       "functions": "Funzioni",
       "classes": "Classi",
       "integrations": "Integrazioni",
+      "tests": "Tests",
       "details": {
         "request": "Richiesta:",
         "response": "Risposta:",
@@ -499,7 +500,11 @@
         "methods": "Metodi:",
         "component": "Componente:",
         "endpoint": "Endpoint:",
-        "flow": "Flusso:"
+        "flow": "Flusso:",
+        "testResults": "{{passed}}/{{total}} passed, {{failed}} failed",
+        "duration": "Duration:",
+        "coverage": "Coverage:",
+        "userStories": "User Stories:"
       }
     },
     "empty": {

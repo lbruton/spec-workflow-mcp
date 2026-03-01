@@ -489,6 +489,7 @@
       "functions": "函数",
       "classes": "类",
       "integrations": "集成",
+      "tests": "Tests",
       "details": {
         "request": "请求:",
         "response": "响应:",
@@ -499,7 +500,11 @@
         "methods": "方法:",
         "component": "组件:",
         "endpoint": "端点:",
-        "flow": "流程:"
+        "flow": "流程:",
+        "testResults": "{{passed}}/{{total}} passed, {{failed}} failed",
+        "duration": "Duration:",
+        "coverage": "Coverage:",
+        "userStories": "User Stories:"
       }
     },
     "empty": {

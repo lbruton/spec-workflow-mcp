@@ -59,8 +59,10 @@ Review your work with fresh eyes:
 - Did I follow existing patterns in the codebase?
 
 **Testing:**
-- Do tests actually verify behavior?
-- Are tests comprehensive?
+- Do tests actually verify behavior (not just mocks)?
+- Are tests comprehensive (unit, integration, E2E as appropriate)?
+- Were all tests RUN and did they PASS? (status must be captured in log-implementation)
+- Do tests cover the user stories from the spec requirements?
 
 If you find issues during self-review, fix them now.
 
@@ -74,8 +76,9 @@ Call the log-implementation MCP tool with:
 - **statistics**: { linesAdded, linesRemoved }
 - **artifacts**: ALL that apply:
   - apiEndpoints, functions, components, classes, integrations
+  - **tests**: name, type, framework, location, status, pass/fail counts, userStories (linked requirement IDs)
 
-Do not skip this step. Future agents search logs to avoid duplicating work.
+Do not skip this step. Future agents search logs to avoid duplicating work. Tests MUST be run before logging — do not log tests you only wrote but never executed.
 
 ## Report Format
 

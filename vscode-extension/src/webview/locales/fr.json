@@ -198,7 +198,12 @@
       "frontend": "Frontend:",
       "backend": "Backend:",
       "dataFlow": "Flux de Données:",
-      "exported": "(exporté)"
+      "exported": "(exporté)",
+      "tests": "Tests",
+      "testResults": "{{passed}}/{{total}} passed, {{failed}} failed",
+      "duration": "Duration:",
+      "coverage": "Coverage:",
+      "userStories": "User Stories:"
     }
   },
   "language": {

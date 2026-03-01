@@ -11,6 +11,7 @@ import {
   CodeBracketSquareIcon,
   CircleStackIcon,
   LinkIcon,
+  BeakerIcon,
   ChevronRightIcon,
   ChevronDownIcon
 } from '@heroicons/react/24/solid';
@@ -24,7 +25,8 @@ function hasAnyArtifacts(artifacts: ImplementationLogEntry['artifacts']): boolea
     (artifacts.components && artifacts.components.length > 0) ||
     (artifacts.functions && artifacts.functions.length > 0) ||
     (artifacts.classes && artifacts.classes.length > 0) ||
-    (artifacts.integrations && artifacts.integrations.length > 0)
+    (artifacts.integrations && artifacts.integrations.length > 0) ||
+    (artifacts.tests && artifacts.tests.length > 0)
   );
 }
 
@@ -35,7 +37,8 @@ function getTotalArtifactCount(artifacts: ImplementationLogEntry['artifacts']): 
     (artifacts.components?.length || 0) +
     (artifacts.functions?.length || 0) +
     (artifacts.classes?.length || 0) +
-    (artifacts.integrations?.length || 0)
+    (artifacts.integrations?.length || 0) +
+    (artifacts.tests?.length || 0)
   );
 }
 
@@ -50,7 +53,7 @@ function ArtifactSection({
   title: string;
   icon: React.ComponentType<{ className: string }>;
   items: any[];
-  type: 'api' | 'component' | 'function' | 'class' | 'integration';
+  type: 'api' | 'component' | 'function' | 'class' | 'integration' | 'test';
   color: string;
 }) {
   const { t } = useTranslation();
@@ -63,7 +66,8 @@ function ArtifactSection({
     component: 'bg-purple-50 dark:bg-purple-900/20',
     function: 'bg-green-50 dark:bg-green-900/20',
     class: 'bg-orange-50 dark:bg-orange-900/20',
-    integration: 'bg-indigo-50 dark:bg-indigo-900/20'
+    integration: 'bg-indigo-50 dark:bg-indigo-900/20',
+    test: 'bg-teal-50 dark:bg-teal-900/20'
   }[type];
 
   const textColor = {
@@ -71,7 +75,8 @@ function ArtifactSection({
     component: 'text-purple-700 dark:text-purple-300',
     function: 'text-green-700 dark:text-green-300',
     class: 'text-orange-700 dark:text-orange-300',
-    integration: 'text-indigo-700 dark:text-indigo-300'
+    integration: 'text-indigo-700 dark:text-indigo-300',
+    test: 'text-teal-700 dark:text-teal-300'
   }[type];
 
   return (
@@ -201,6 +206,46 @@ function ArtifactSection({
                   </div>
                   <div className="text-xs text-[var(--text-muted)] bg-[var(--surface-inset)] p-1 rounded-lg">
                     {t('logsPage.artifacts.details.flow')} {item.dataFlow}
+                  </div>
+                </div>
+              )}
+
+              {type === 'test' && (
+                <div className="space-y-1">
+                  <div className="font-mono text-xs font-bold text-teal-600 dark:text-teal-400">
+                    {item.name}
+                  </div>
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className={`px-1.5 py-0.5 rounded font-medium ${
+                      item.status === 'passed' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                      item.status === 'failed' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
+                      'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+                    }`}>
+                      {item.status}
+                    </span>
+                    <span className="text-[var(--text-muted)]">{item.type}</span>
+                    <span className="text-[var(--text-faint)]">{item.framework}</span>
+                  </div>
+                  <div className="text-xs text-[var(--text-muted)]">
+                    {t('logsPage.artifacts.details.testResults', { passed: item.passed, failed: item.failed, total: item.total })}
+                  </div>
+                  {item.duration && (
+                    <div className="text-xs text-[var(--text-faint)]">
+                      {t('logsPage.artifacts.details.duration')} {item.duration}
+                    </div>
+                  )}
+                  {item.coveragePercent !== undefined && (
+                    <div className="text-xs text-[var(--text-faint)]">
+                      {t('logsPage.artifacts.details.coverage')} {item.coveragePercent}%
+                    </div>
+                  )}
+                  {item.userStories && item.userStories.length > 0 && (
+                    <div className="text-xs text-[var(--text-faint)]">
+                      {t('logsPage.artifacts.details.userStories')} {item.userStories.join(', ')}
+                    </div>
+                  )}
+                  <div className="text-xs bg-[var(--surface-inset)] px-2 py-1 rounded-lg font-mono w-fit">
+                    {item.location}
                   </div>
                 </div>
               )}
@@ -451,6 +496,16 @@ function LogEntryCard({ entry }: LogEntryProps) {
                     items={entry.artifacts.integrations}
                     type="integration"
                     color="indigo"
+                  />
+                )}
+
+                {entry.artifacts.tests && entry.artifacts.tests.length > 0 && (
+                  <ArtifactSection
+                    title={t('logsPage.artifacts.tests')}
+                    icon={BeakerIcon}
+                    items={entry.artifacts.tests}
+                    type="test"
+                    color="teal"
                   />
                 )}
               </div>

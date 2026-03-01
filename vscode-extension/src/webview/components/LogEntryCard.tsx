@@ -128,6 +128,10 @@ export function LogEntryCard({ entry }: LogEntryCardProps) {
                   type="integrations"
                   artifacts={entry.artifacts.integrations || []}
                 />
+                <ArtifactSection
+                  type="tests"
+                  artifacts={entry.artifacts.tests || []}
+                />
               </div>
             )}
           </div>

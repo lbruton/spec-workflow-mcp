@@ -93,6 +93,12 @@ export class ImplementationLogManager {
         // Handle N/A as empty string
         if (value === 'N/A' || value === 'n/a') return '';
 
+        // Convert numeric fields for test artifacts
+        if (['passed', 'failed', 'total', 'coveragePercent'].includes(key)) {
+          const numValue = parseFloat(value);
+          if (!isNaN(numValue)) return numValue;
+        }
+
         return value;
       };
 
@@ -169,6 +175,8 @@ export class ImplementationLogManager {
             currentArtifactType = 'classes';
           } else if (sectionName.includes('integration')) {
             currentArtifactType = 'integrations';
+          } else if (sectionName.includes('test')) {
+            currentArtifactType = 'tests';
           }
         }
         // Parse artifact item headers (#### for individual items)
@@ -213,7 +221,7 @@ export class ImplementationLogManager {
             const mappedKey = mapPropertyName(kv.key);
 
             // Handle arrays (exports, methods)
-            if (mappedKey === 'exports' || mappedKey === 'methods') {
+            if (mappedKey === 'exports' || mappedKey === 'methods' || mappedKey === 'userStories') {
               const items = kv.value.split(',').map(s => s.trim()).filter(s => s.length > 0);
               currentItem[mappedKey] = items;
             } else {
@@ -424,6 +432,25 @@ export class ImplementationLogManager {
       });
     }
 
+    // Tests
+    if (entry.artifacts.tests && entry.artifacts.tests.length > 0) {
+      markdown += `### Tests\n\n`;
+      entry.artifacts.tests.forEach(test => {
+        markdown += `#### ${test.name}\n`;
+        markdown += `- **Type:** ${test.type}\n`;
+        markdown += `- **Framework:** ${test.framework}\n`;
+        markdown += `- **Location:** ${test.location}\n`;
+        markdown += `- **Status:** ${test.status}\n`;
+        markdown += `- **Passed:** ${test.passed}\n`;
+        markdown += `- **Failed:** ${test.failed}\n`;
+        markdown += `- **Total:** ${test.total}\n`;
+        if (test.duration) markdown += `- **Duration:** ${test.duration}\n`;
+        if (test.coveragePercent !== undefined) markdown += `- **Coverage Percent:** ${test.coveragePercent}\n`;
+        if (test.userStories && test.userStories.length > 0) markdown += `- **User Stories:** ${test.userStories.join(', ')}\n`;
+        markdown += `\n`;
+      });
+    }
+
     return markdown;
   }
 
@@ -550,6 +577,18 @@ export class ImplementationLogManager {
             intg.frontendComponent?.toLowerCase().includes(keyword) ||
             intg.backendEndpoint?.toLowerCase().includes(keyword) ||
             intg.dataFlow?.toLowerCase().includes(keyword)
+          )) {
+            return true;
+          }
+
+          // Search tests
+          if (e.artifacts.tests?.some(test =>
+            test.name?.toLowerCase().includes(keyword) ||
+            test.type?.toLowerCase().includes(keyword) ||
+            test.framework?.toLowerCase().includes(keyword) ||
+            test.location?.toLowerCase().includes(keyword) ||
+            test.status?.toLowerCase().includes(keyword) ||
+            (test.userStories?.some(us => us.toLowerCase().includes(keyword)))
           )) {
             return true;
           }

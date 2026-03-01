@@ -33,6 +33,8 @@ git diff {BASE_SHA}..{HEAD_SHA}
 - Edge cases covered?
 - Integration tests where needed?
 - All tests passing?
+- Test execution results logged in implementation artifacts? (name, status, pass/fail counts)
+- Tests linked to user stories from spec requirements?
 
 **Requirements:**
 - All plan requirements met?

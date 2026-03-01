@@ -6,6 +6,7 @@ import {
   CodeBracketSquareIcon,
   CircleStackIcon,
   LinkIcon,
+  BeakerIcon,
   ChevronDownIcon,
   ChevronRightIcon,
 } from '@heroicons/react/24/solid';
@@ -15,10 +16,11 @@ import type {
   FunctionInfo,
   ClassInfo,
   Integration,
+  TestInfo,
 } from '../lib/vscode-api';
 
 interface ArtifactSectionProps {
-  type: 'apiEndpoints' | 'components' | 'functions' | 'classes' | 'integrations';
+  type: 'apiEndpoints' | 'components' | 'functions' | 'classes' | 'integrations' | 'tests';
   artifacts: any[];
   className?: string;
 }
@@ -29,6 +31,7 @@ const iconMap = {
   functions: CodeBracketSquareIcon,
   classes: CircleStackIcon,
   integrations: LinkIcon,
+  tests: BeakerIcon,
 };
 
 const colorMap = {
@@ -37,6 +40,7 @@ const colorMap = {
   functions: 'text-green-500',
   classes: 'text-orange-500',
   integrations: 'text-indigo-500',
+  tests: 'text-teal-500',
 };
 
 export function ArtifactSection({
@@ -57,6 +61,7 @@ export function ArtifactSection({
     functions: t('logs.artifacts.functions'),
     classes: t('logs.artifacts.classes'),
     integrations: t('logs.artifacts.integrations'),
+    tests: t('logs.artifacts.tests'),
   };
 
   const Icon = iconMap[type];
@@ -91,6 +96,7 @@ export function ArtifactSection({
           {type === 'functions' && renderFunctions(artifacts as FunctionInfo[], t)}
           {type === 'classes' && renderClasses(artifacts as ClassInfo[], t)}
           {type === 'integrations' && renderIntegrations(artifacts as Integration[], t)}
+          {type === 'tests' && renderTests(artifacts as TestInfo[], t)}
         </div>
       )}
     </div>
@@ -178,6 +184,36 @@ function renderIntegrations(integrations: Integration[], t: any) {
       </div>
       <div className="text-xs text-muted-foreground">{t('logs.artifacts.backend')} {intg.backendEndpoint}</div>
       <div className="text-xs text-muted-foreground">{t('logs.artifacts.dataFlow')} {intg.dataFlow}</div>
+    </div>
+  ));
+}
+
+function renderTests(tests: TestInfo[], t: any) {
+  return tests.map((test, idx) => (
+    <div key={idx} className="text-sm">
+      <div className="font-semibold">
+        {test.name}
+        <span className={`ml-2 text-xs px-1.5 py-0.5 rounded font-medium ${
+          test.status === 'passed' ? 'bg-green-100 text-green-700' :
+          test.status === 'failed' ? 'bg-red-100 text-red-700' :
+          'bg-yellow-100 text-yellow-700'
+        }`}>
+          {test.status}
+        </span>
+      </div>
+      <div className="text-xs text-muted-foreground mt-1">
+        {test.type} ({test.framework}) — {t('logs.artifacts.testResults', { passed: test.passed, failed: test.failed, total: test.total })}
+      </div>
+      {test.duration && (
+        <div className="text-xs text-muted-foreground">{t('logs.artifacts.duration')} {test.duration}</div>
+      )}
+      {test.coveragePercent !== undefined && (
+        <div className="text-xs text-muted-foreground">{t('logs.artifacts.coverage')} {test.coveragePercent}%</div>
+      )}
+      {test.userStories && test.userStories.length > 0 && (
+        <div className="text-xs text-muted-foreground">{t('logs.artifacts.userStories')} {test.userStories.join(', ')}</div>
+      )}
+      <div className="text-xs text-gray-500 mt-1 font-mono">{test.location}</div>
     </div>
   ));
 }
