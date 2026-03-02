@@ -67,8 +67,8 @@ const projectHubSections: Record<string, HubSection[]> = {
         },
         {
           title: 'StakTrakr Wiki',
-          desc: 'Infrastructure runbooks, frontend patterns, and pipeline docs via Docsify.',
-          url: 'http://127.0.0.1:9777',
+          desc: 'Infrastructure runbooks, frontend patterns, and pipeline docs — in-repo Docsify wiki on Cloudflare Pages.',
+          url: 'https://beta.staktrakr.com/wiki/',
           icon: '\u{1F4D6}',
           color: 'yellow',
           internalRoute: '/devops/wiki',

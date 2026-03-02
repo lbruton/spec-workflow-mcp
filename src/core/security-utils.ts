@@ -286,7 +286,7 @@ export function createSecurityHeadersMiddleware(port?: number) {
     // connect-src allows WebSocket connections to the dashboard on the actual port
     reply.header(
       'Content-Security-Policy',
-      `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data:; connect-src ${connectSrc}; frame-src https://192.168.1.81:3011 http://127.0.0.1:9777 http://127.0.0.1:9778;`
+      `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data:; connect-src ${connectSrc}; frame-src https://192.168.1.81:3011 https://beta.staktrakr.com http://127.0.0.1:9778;`
     );
   };
 }
