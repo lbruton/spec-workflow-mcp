@@ -109,23 +109,14 @@ export class MultiProjectDashboardServer {
     console.error(`   - Allowed Origins: ${this.securityConfig.allowedOrigins.join(', ')}`);
     console.error('');
 
-    // Fetch package version once at startup
+    // Read version from local package.json
     try {
-      const response = await fetch('https://registry.npmjs.org/@pimzino/spec-workflow-mcp/latest');
-      if (response.ok) {
-        const packageInfo = await response.json() as { version?: string };
-        this.packageVersion = packageInfo.version || 'unknown';
-      }
+      const packageJsonPath = join(__dirname, '..', '..', 'package.json');
+      const packageJsonContent = await readFile(packageJsonPath, 'utf-8');
+      const packageJson = JSON.parse(packageJsonContent) as { version?: string };
+      this.packageVersion = packageJson.version || 'unknown';
     } catch {
-      // Fallback to local package.json version if npm request fails
-      try {
-        const packageJsonPath = join(__dirname, '..', '..', 'package.json');
-        const packageJsonContent = await readFile(packageJsonPath, 'utf-8');
-        const packageJson = JSON.parse(packageJsonContent) as { version?: string };
-        this.packageVersion = packageJson.version || 'unknown';
-      } catch {
-        // Keep default 'unknown' if both npm and local package.json fail
-      }
+      // Keep default 'unknown' if package.json is unreadable
     }
 
     // Initialize security components
