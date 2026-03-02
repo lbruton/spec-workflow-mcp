@@ -109,7 +109,7 @@ flowchart TD
     P4_More -->|Yes| P4_Task
     P4_More -->|No| P5_Start[Phase 5:<br/>Wiki + E2E]
     P5_Start --> P5_Wiki[/wiki-update:<br/>Update wiki pages]
-    P5_Wiki --> P5_E2E[/smoke-test or /bb-test:<br/>Run E2E tests]
+    P5_Wiki --> P5_E2E[/bb-test:<br/>Browserbase/Stagehand E2E<br/>against PR preview URL]
     P5_E2E --> P5_Check{Tests pass?}
     P5_Check -->|fail| P5_Fix[File Linear bug<br/>fix in new patch]
     P5_Check -->|pass| P5_Linear[Close Linear issues<br/>Move to Done]
@@ -335,16 +335,26 @@ Only dispatch AFTER Stage 1 passes. Verify the code is well-built and production
 
 **Tools**:
 - Skill \`wiki-update\`: Detects affected wiki pages via YAML frontmatter \`sourceFiles\` and rewrites them from current source
-- Skill \`smoke-test\`: Playwright E2E smoke tests via local self-hosted browserless Docker (free, always available)
-- Skill \`bb-test\`: Browserbase cloud E2E tests (paid — **requires explicit user approval before running**)
+- Skill \`bb-test\`: Browserbase/Stagehand cloud E2E tests — **primary E2E tool for all specs**
 - \`mcp__claude_ai_Linear__save_issue\`: Close linked Linear issues
+
+**⚠️ Do NOT use browserless or /smoke-test for spec E2E** — browserless is unreliable. All E2E testing uses Browserbase/Stagehand.
 
 **Process**:
 1. Run \`/wiki-update\` — auto-detects wiki pages whose YAML frontmatter \`sourceFiles\` match changed files and rewrites them from current source. Do not manually edit wiki pages.
-2. Run \`/smoke-test\` — Playwright E2E smoke tests against the preview deployment (self-hosted browserless, free). For Browserbase cloud tests use \`/bb-test\` but **only with explicit user approval** (paid service).
-3. If E2E tests fail: file a Linear bug issue and fix in a new patch — do not block spec closure for failures unrelated to this spec's changes.
-4. Close all linked Linear issues (move state to "Done").
-5. **The spec is NOT complete until wiki is updated AND E2E tests have been run.**
+2. **Get the PR preview URL** before running E2E — do not test against staktrakr.pages.dev (main):
+   \`\`\`bash
+   # Get Cloudflare Pages preview URL from the draft PR
+   gh pr checks <PR_NUMBER> --json name,state,targetUrl \\
+     | python3 -c "import sys,json; checks=json.load(sys.stdin); [print(c['targetUrl']) for c in checks if 'pages.dev' in c.get('targetUrl','')]"
+   # Or: gh pr view <PR_NUMBER> --json statusCheckRollup \\
+   #   --jq '[.statusCheckRollup[] | select(.targetUrl | test("pages.dev"))] | .[0].targetUrl'
+   \`\`\`
+   Wait for the Cloudflare Pages check to complete (green) before proceeding.
+3. Run \`/bb-test\` with the preview URL — Browserbase/Stagehand against the PR preview deployment. Session has a **10-minute hard timeout**: if any individual test step has not returned a result within 10 minutes, skip it, log a warning, and move on. Do not block spec closure on a timed-out step.
+4. If E2E tests fail: file a Linear bug issue and fix in a new patch — do not block spec closure for failures unrelated to this spec's changes.
+5. Close all linked Linear issues (move state to "Done").
+6. **The spec is NOT complete until wiki is updated AND E2E tests have been run.**
 
 ## Workflow Rules
 
@@ -354,6 +364,7 @@ Only dispatch AFTER Stage 1 passes. Verify the code is well-built and production
 - Get explicit user approval between phases (using approvals tool with action:'request')
 - Complete phases in sequence (no skipping)
 - Phase 5 (wiki + E2E) is mandatory — do not declare spec complete until wiki is updated and E2E tests have been run
+- Phase 5 E2E always uses Browserbase/Stagehand (/bb-test) against the PR preview URL — never browserless/smoke-test
 - One spec at a time
 - Use kebab-case for spec names
 - Approval requests: provide filePath only, never content

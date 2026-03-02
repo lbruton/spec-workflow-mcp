@@ -129,12 +129,11 @@
   - _Prompt: Role: Integration Engineer with expertise in system integration and testing strategies | Task: Plan comprehensive integration approach following requirement 6.0, leveraging integration utilities from src/utils/integrationUtils.ts and test helpers | Restrictions: Must consider all system components, ensure proper test coverage, maintain integration test reliability | Success: Integration plan is comprehensive and feasible, all system components work together correctly, integration points are well-tested_
 
 - [ ] 6.1 Write end-to-end tests
-  - Set up E2E testing framework
-  - Write user journey tests
-  - Add test automation
-  - _Leverage: tests/helpers/testUtils.ts, tests/fixtures/data.ts_
+  - Write user journey tests using Browserbase/Stagehand natural-language automation
+  - Test against the PR preview URL (get from Cloudflare Pages check on the draft PR)
+  - _Leverage: /bb-test skill, mcp__browserbase__* tools, PR preview URL from gh pr checks_
   - _Requirements: All_
-  - _Prompt: Role: QA Automation Engineer with expertise in E2E testing and test frameworks like Cypress or Playwright | Task: Implement comprehensive end-to-end tests covering all requirements, setting up testing framework and user journey tests using test utilities and fixtures | Restrictions: Must test real user workflows, ensure tests are maintainable and reliable, do not test implementation details | Success: E2E tests cover all critical user journeys, tests run reliably in CI/CD pipeline, user experience is validated from end-to-end_
+  - _Prompt: Role: QA Automation Engineer with expertise in Browserbase/Stagehand natural-language browser automation | Task: Implement end-to-end tests for all critical user journeys using Browserbase Stagehand tools (browserbase_session_create, stagehand_navigate, stagehand_act, stagehand_extract, browserbase_screenshot). Test against the PR preview URL — get it with: gh pr checks <PR_NUMBER> --json name,state,targetUrl | python3 -c "import sys,json; checks=json.load(sys.stdin); [print(c['targetUrl']) for c in checks if 'pages.dev' in c.get('targetUrl','')]". Do NOT use Playwright or browserless — they are unavailable. Each test step has a 10-minute timeout: if a step stalls, skip it and log a warning. | Restrictions: Use stagehand_act for all interactions, stagehand_extract for all assertions, no javascript_tool. Test real user workflows end-to-end. | Success: All critical user journeys tested against PR preview URL, session recording available in Browserbase dashboard, results logged via log-implementation_
 
 - [ ] 6.2 Final integration and cleanup
   - Integrate all components
