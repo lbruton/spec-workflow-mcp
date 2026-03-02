@@ -11,7 +11,8 @@ interface PageNavigationSidebarProps {
 }
 
 interface NavigationItem {
-  path: string;
+  path?: string;
+  href?: string;
   labelKey: string;
   icon: React.ReactNode;
   end?: boolean;
@@ -57,6 +58,15 @@ const projectDevOpsConfig: Record<string, NavigationSection> = {
           </svg>
         ),
       },
+      {
+        href: 'https://github.com/lbruton/StakTrakr/pulls',
+        labelKey: 'nav.githubPullRequests',
+        icon: (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h.01M8 11h.01M8 15h.01M8 19h.01M16 7a2 2 0 100-4 2 2 0 000 4zm0 14a2 2 0 100-4 2 2 0 000 4zM8 7a2 2 0 100-4 2 2 0 000 4zm0 10a2 2 0 100-4 2 2 0 000 4zm8-3a2 2 0 00-2 2m0-6a2 2 0 00-2-2m-6 6a2 2 0 01-2-2m0-6a2 2 0 012-2" />
+          </svg>
+        ),
+      },
     ],
   },
   HelloKittyFriends: {
@@ -78,6 +88,15 @@ const projectDevOpsConfig: Record<string, NavigationSection> = {
         icon: (
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+        ),
+      },
+      {
+        href: 'https://github.com/lbruton/HelloKittyFriends/pulls',
+        labelKey: 'nav.githubPullRequests',
+        icon: (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h.01M8 11h.01M8 15h.01M8 19h.01M16 7a2 2 0 100-4 2 2 0 000 4zm0 14a2 2 0 100-4 2 2 0 000 4zM8 7a2 2 0 100-4 2 2 0 000 4zm0 10a2 2 0 100-4 2 2 0 000 4zm8-3a2 2 0 00-2 2m0-6a2 2 0 00-2-2m-6 6a2 2 0 01-2-2m0-6a2 2 0 012-2" />
           </svg>
         ),
       },
@@ -283,33 +302,53 @@ export function PageNavigationSidebar({
                   )}
                 </div>
               )}
-              {section.items.map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  end={item.end}
-                  onClick={() => {
-                    if (window.innerWidth < 1024) {
-                      onClose();
-                    }
-                  }}
-                  className={({ isActive }) => `
-                    flex items-center gap-3 py-2 px-3 rounded-md transition-colors
-                    ${
-                      isActive
-                        ? 'bg-[color-mix(in_srgb,var(--interactive-primary)_10%,transparent)] text-[var(--interactive-primary)]'
-                        : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]'
-                    }
-                    ${isCollapsed ? 'lg:justify-center' : ''}
-                  `}
-                  title={isCollapsed ? t(item.labelKey) : undefined}
-                >
-                  <div className="flex-shrink-0">{item.icon}</div>
-                  {(!isCollapsed || window.innerWidth < 1024) && (
-                    <span className="text-sm font-medium">{t(item.labelKey)}</span>
-                  )}
-                </NavLink>
-              ))}
+              {section.items.map((item) =>
+                item.href ? (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`
+                      flex items-center gap-3 py-2 px-3 rounded-md transition-colors
+                      text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]
+                      ${isCollapsed ? 'lg:justify-center' : ''}
+                    `}
+                    title={isCollapsed ? t(item.labelKey) : undefined}
+                  >
+                    <div className="flex-shrink-0">{item.icon}</div>
+                    {(!isCollapsed || window.innerWidth < 1024) && (
+                      <span className="text-sm font-medium">{t(item.labelKey)}</span>
+                    )}
+                  </a>
+                ) : (
+                  <NavLink
+                    key={item.path}
+                    to={item.path!}
+                    end={item.end}
+                    onClick={() => {
+                      if (window.innerWidth < 1024) {
+                        onClose();
+                      }
+                    }}
+                    className={({ isActive }) => `
+                      flex items-center gap-3 py-2 px-3 rounded-md transition-colors
+                      ${
+                        isActive
+                          ? 'bg-[color-mix(in_srgb,var(--interactive-primary)_10%,transparent)] text-[var(--interactive-primary)]'
+                          : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]'
+                      }
+                      ${isCollapsed ? 'lg:justify-center' : ''}
+                    `}
+                    title={isCollapsed ? t(item.labelKey) : undefined}
+                  >
+                    <div className="flex-shrink-0">{item.icon}</div>
+                    {(!isCollapsed || window.innerWidth < 1024) && (
+                      <span className="text-sm font-medium">{t(item.labelKey)}</span>
+                    )}
+                  </NavLink>
+                )
+              )}
             </React.Fragment>
           ))}
         </nav>

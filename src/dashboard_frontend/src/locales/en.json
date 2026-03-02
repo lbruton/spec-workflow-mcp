@@ -14,7 +14,8 @@
     "devopsHub": "Hub",
     "apiDashboard": "API Dashboard",
     "staktrakrWiki": "StakTrakr Wiki",
-    "helloKittyFriendsWiki": "HKF Wiki"
+    "helloKittyFriendsWiki": "HKF Wiki",
+    "githubPullRequests": "Pull Requests"
   },
   "connectionStatus": {
     "connected": "Connected",

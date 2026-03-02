@@ -22,7 +22,11 @@ import { LanguageSelector } from '../../components/LanguageSelector';
 import { I18nErrorBoundary } from '../../components/I18nErrorBoundary';
 import { ProjectDropdown } from '../components/ProjectDropdown';
 import { PageNavigationSidebar } from '../components/PageNavigationSidebar';
-import { ChangelogModal } from '../modals/ChangelogModal';
+
+const projectGithubPRs: Record<string, string> = {
+  StakTrakr: 'https://github.com/lbruton/StakTrakr/pulls',
+  HelloKittyFriends: 'https://github.com/lbruton/HelloKittyFriends/pulls',
+};
 
 function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
   const { t } = useTranslation();
@@ -31,8 +35,6 @@ function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
   const { currentProject } = useProjects();
   const { info } = useApi();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [showChangelog, setShowChangelog] = useState(false);
-
   // Update the browser tab title when project info is loaded
   useEffect(() => {
     if (info?.projectName) {
@@ -64,19 +66,24 @@ function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
               </svg>
             </button>
 
+            {/* GitHub Pull Requests link */}
+            {currentProject && projectGithubPRs[currentProject.projectName] && (
+              <a
+                href={projectGithubPRs[currentProject.projectName]}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden lg:flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] transition-colors"
+                title="Open Pull Requests on GitHub"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h.01M8 11h.01M8 15h.01M8 19h.01M16 7a2 2 0 100-4 2 2 0 000 4zm0 14a2 2 0 100-4 2 2 0 000 4zM8 7a2 2 0 100-4 2 2 0 000 4zm0 10a2 2 0 100-4 2 2 0 000 4zm8-3a2 2 0 00-2 2m0-6a2 2 0 00-2-2m-6 6a2 2 0 01-2-2m0-6a2 2 0 012-2" />
+                </svg>
+                Pull Requests
+              </a>
+            )}
+
             {/* Project Dropdown */}
             <ProjectDropdown />
-
-            {/* Version Badge */}
-            {info?.version && (
-              <button
-                onClick={() => setShowChangelog(true)}
-                className="hidden lg:inline text-xs px-2 py-1 bg-[var(--surface-inset)] text-[var(--text-muted)] rounded-full hover:bg-[var(--surface-hover)] transition-colors cursor-pointer"
-                title={t('changelog.viewChangelog', 'View changelog')}
-              >
-                v{info.version}
-              </button>
-            )}
           </div>
 
           <div className="flex items-center gap-3">
@@ -153,20 +160,20 @@ function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
                   </button>
                 </div>
 
-                {info?.version && (
+                {currentProject && projectGithubPRs[currentProject.projectName] && (
                   <div className="pt-2 border-t border-[var(--border-default)]">
-                    <div className="text-center">
-                      <button
-                        onClick={() => {
-                          setShowChangelog(true);
-                          setMobileMenuOpen(false);
-                        }}
-                        className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors cursor-pointer"
-                        title={t('changelog.viewChangelog', 'View changelog')}
-                      >
-                        Spec-Workflow-MCP v{info.version}
-                      </button>
-                    </div>
+                    <a
+                      href={projectGithubPRs[currentProject.projectName]}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={closeMobileMenu}
+                      className="flex items-center gap-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h.01M8 11h.01M8 15h.01M8 19h.01M16 7a2 2 0 100-4 2 2 0 000 4zm0 14a2 2 0 100-4 2 2 0 000 4zM8 7a2 2 0 100-4 2 2 0 000 4zm0 10a2 2 0 100-4 2 2 0 000 4zm8-3a2 2 0 00-2 2m0-6a2 2 0 00-2-2m-6 6a2 2 0 01-2-2m0-6a2 2 0 012-2" />
+                      </svg>
+                      Pull Requests
+                    </a>
                   </div>
                 )}
               </div>
@@ -174,14 +181,6 @@ function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
           </div>
         </div>
       )}
-
-      {/* Changelog Modal */}
-      <ChangelogModal
-        isOpen={showChangelog}
-        onClose={() => setShowChangelog(false)}
-        version={info?.version || ''}
-        projectId={currentProject?.projectId}
-      />
 
       {/* API Dashboard Modal removed — using route-based page instead */}
     </>
