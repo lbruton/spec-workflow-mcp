@@ -66,12 +66,10 @@ function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
               </svg>
             </button>
 
-            {/* GitHub Pull Requests link */}
+            {/* GitHub Pull Requests popup */}
             {currentProject && projectGithubPRs[currentProject.projectName] && (
-              <a
-                href={projectGithubPRs[currentProject.projectName]}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => window.open(projectGithubPRs[currentProject.projectName], '_blank', 'toolbar=no,location=no,menubar=no,status=no,scrollbars=yes,resizable=yes,width=1400,height=900')}
                 className="hidden lg:flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] transition-colors"
                 title="Open Pull Requests on GitHub"
               >
@@ -79,7 +77,7 @@ function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h.01M8 11h.01M8 15h.01M8 19h.01M16 7a2 2 0 100-4 2 2 0 000 4zm0 14a2 2 0 100-4 2 2 0 000 4zM8 7a2 2 0 100-4 2 2 0 000 4zm0 10a2 2 0 100-4 2 2 0 000 4zm8-3a2 2 0 00-2 2m0-6a2 2 0 00-2-2m-6 6a2 2 0 01-2-2m0-6a2 2 0 012-2" />
                 </svg>
                 Pull Requests
-              </a>
+              </button>
             )}
 
             {/* Project Dropdown */}
@@ -162,18 +160,18 @@ function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
 
                 {currentProject && projectGithubPRs[currentProject.projectName] && (
                   <div className="pt-2 border-t border-[var(--border-default)]">
-                    <a
-                      href={projectGithubPRs[currentProject.projectName]}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={closeMobileMenu}
+                    <button
+                      onClick={() => {
+                        closeMobileMenu();
+                        window.open(projectGithubPRs[currentProject.projectName], '_blank', 'toolbar=no,location=no,menubar=no,status=no,scrollbars=yes,resizable=yes,width=1400,height=900');
+                      }}
                       className="flex items-center gap-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h.01M8 11h.01M8 15h.01M8 19h.01M16 7a2 2 0 100-4 2 2 0 000 4zm0 14a2 2 0 100-4 2 2 0 000 4zM8 7a2 2 0 100-4 2 2 0 000 4zm0 10a2 2 0 100-4 2 2 0 000 4zm8-3a2 2 0 00-2 2m0-6a2 2 0 00-2-2m-6 6a2 2 0 01-2-2m0-6a2 2 0 012-2" />
                       </svg>
                       Pull Requests
-                    </a>
+                    </button>
                   </div>
                 )}
               </div>

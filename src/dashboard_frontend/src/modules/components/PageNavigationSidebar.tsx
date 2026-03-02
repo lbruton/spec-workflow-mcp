@@ -304,13 +304,11 @@ export function PageNavigationSidebar({
               )}
               {section.items.map((item) =>
                 item.href ? (
-                  <a
+                  <button
                     key={item.href}
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    onClick={() => window.open(item.href, '_blank', 'toolbar=no,location=no,menubar=no,status=no,scrollbars=yes,resizable=yes,width=1400,height=900')}
                     className={`
-                      flex items-center gap-3 py-2 px-3 rounded-md transition-colors
+                      w-full flex items-center gap-3 py-2 px-3 rounded-md transition-colors
                       text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]
                       ${isCollapsed ? 'lg:justify-center' : ''}
                     `}
@@ -320,7 +318,7 @@ export function PageNavigationSidebar({
                     {(!isCollapsed || window.innerWidth < 1024) && (
                       <span className="text-sm font-medium">{t(item.labelKey)}</span>
                     )}
-                  </a>
+                  </button>
                 ) : (
                   <NavLink
                     key={item.path}
