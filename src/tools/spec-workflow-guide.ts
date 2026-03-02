@@ -107,10 +107,18 @@ flowchart TD
     P4_Log --> P4_Complete[Edit tasks.md:<br/>Change [-] to [x]<br/>for completed]
     P4_Complete --> P4_More{More tasks?}
     P4_More -->|Yes| P4_Task
-    P4_More -->|No| End([Implementation Complete])
+    P4_More -->|No| P5_Start[Phase 5:<br/>Wiki + E2E]
+    P5_Start --> P5_Wiki[/wiki-update:<br/>Update wiki pages]
+    P5_Wiki --> P5_E2E[/smoke-test or /bb-test:<br/>Run E2E tests]
+    P5_E2E --> P5_Check{Tests pass?}
+    P5_Check -->|fail| P5_Fix[File Linear bug<br/>fix in new patch]
+    P5_Check -->|pass| P5_Linear[Close Linear issues<br/>Move to Done]
+    P5_Linear --> Done([Spec Complete])
 
     style Start fill:#e1f5e1
-    style End fill:#e1f5e1
+    style Done fill:#e1f5e1
+    style P5_Start fill:#e3f2fd
+    style P5_Check fill:#fff4e6
     style P1_Check fill:#ffe6e6
     style P2_Check fill:#ffe6e6
     style P3_Check fill:#ffe6e6
@@ -318,6 +326,26 @@ Only dispatch AFTER Stage 1 passes. Verify the code is well-built and production
 | Track progress (task list) | Search codebase |
 | Approve/reject agent work | Generate new files |
 
+### Phase 5: Post-Implementation (Wiki + E2E)
+**Purpose**: Update documentation and verify the feature end-to-end before closing the spec.
+
+**File Operations**:
+- Read spec files and tasks.md to identify affected source files
+- Wiki pages updated in-place via \`/wiki-update\` skill
+
+**Tools**:
+- Skill \`wiki-update\`: Detects affected wiki pages via YAML frontmatter \`sourceFiles\` and rewrites them from current source
+- Skill \`smoke-test\`: Playwright E2E smoke tests via local self-hosted browserless Docker (free, always available)
+- Skill \`bb-test\`: Browserbase cloud E2E tests (paid — **requires explicit user approval before running**)
+- \`mcp__claude_ai_Linear__save_issue\`: Close linked Linear issues
+
+**Process**:
+1. Run \`/wiki-update\` — auto-detects wiki pages whose YAML frontmatter \`sourceFiles\` match changed files and rewrites them from current source. Do not manually edit wiki pages.
+2. Run \`/smoke-test\` — Playwright E2E smoke tests against the preview deployment (self-hosted browserless, free). For Browserbase cloud tests use \`/bb-test\` but **only with explicit user approval** (paid service).
+3. If E2E tests fail: file a Linear bug issue and fix in a new patch — do not block spec closure for failures unrelated to this spec's changes.
+4. Close all linked Linear issues (move state to "Done").
+5. **The spec is NOT complete until wiki is updated AND E2E tests have been run.**
+
 ## Workflow Rules
 
 - Create documents directly at specified file paths
@@ -325,6 +353,7 @@ Only dispatch AFTER Stage 1 passes. Verify the code is well-built and production
 - Follow exact template structures
 - Get explicit user approval between phases (using approvals tool with action:'request')
 - Complete phases in sequence (no skipping)
+- Phase 5 (wiki + E2E) is mandatory — do not declare spec complete until wiki is updated and E2E tests have been run
 - One spec at a time
 - Use kebab-case for spec names
 - Approval requests: provide filePath only, never content
