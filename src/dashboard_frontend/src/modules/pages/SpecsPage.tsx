@@ -4,6 +4,7 @@ import { MDXEditorWrapper } from '../mdx-editor';
 import { ConfirmationModal } from '../modals/ConfirmationModal';
 import { SortDropdown } from '../components/SortDropdown';
 import { useTranslation } from 'react-i18next';
+import { useNotifications } from '../notifications/NotificationProvider';
 import { formatDate } from '../../lib/dateUtils';
 
 function SpecModal({ spec, isOpen, onClose, isArchived }: { spec: any; isOpen: boolean; onClose: () => void; isArchived?: boolean }) {
@@ -271,31 +272,17 @@ function SpecModal({ spec, isOpen, onClose, isArchived }: { spec: any; isOpen: b
   );
 }
 
-function SpecCard({ spec, onOpenModal, isArchived }: { spec: any; onOpenModal: (spec: any) => void; isArchived: boolean }) {
-  const { archiveSpec, unarchiveSpec } = useApi();
+function SpecCard({ spec, onOpenModal, isArchived, onArchiveToggle }: { spec: any; onOpenModal: (spec: any) => void; isArchived: boolean; onArchiveToggle: (spec: any) => void }) {
   const { t } = useTranslation();
-  const [isArchiving, setIsArchiving] = useState(false);
   const progress = spec.taskProgress?.total
     ? Math.round((spec.taskProgress.completed / spec.taskProgress.total) * 100)
     : 0;
 
-  const handleArchiveToggle = async (e: React.MouseEvent) => {
+  const handleArchiveClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsArchiving(true);
-    
-    try {
-      if (isArchived) {
-        await unarchiveSpec(spec.name);
-      } else {
-        await archiveSpec(spec.name);
-      }
-    } catch (error) {
-      console.error('Failed to toggle archive status:', error);
-    } finally {
-      setIsArchiving(false);
-    }
+    onArchiveToggle(spec);
   };
-  
+
   return (
     <div
       className={`bg-[var(--surface-panel)] border border-[var(--border-default)] rounded-lg cursor-pointer hover:bg-[var(--surface-hover)] transition-all ${
@@ -336,23 +323,15 @@ function SpecCard({ spec, onOpenModal, isArchived }: { spec: any; onOpenModal: (
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={handleArchiveToggle}
-              disabled={isArchiving}
+              onClick={handleArchiveClick}
               className={`p-2 rounded-lg transition-colors ${
-                isArchiving 
-                  ? 'text-gray-400 cursor-not-allowed'
-                  : isArchived
-                    ? 'text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-900/20'
-                    : 'text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:text-orange-400 dark:hover:text-orange-300 dark:hover:bg-orange-900/20'
+                isArchived
+                  ? 'text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-900/20'
+                  : 'text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:text-orange-400 dark:hover:text-orange-300 dark:hover:bg-orange-900/20'
               }`}
-              title={isArchiving ? 'Processing...' : isArchived ? 'Unarchive spec' : 'Archive spec'}
+              title={isArchived ? t('specsPage.unarchive.confirmButton') : t('specsPage.archive.confirmButton')}
             >
-              {isArchiving ? (
-                <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-              ) : isArchived ? (
+              {isArchived ? (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
                 </svg>
@@ -388,31 +367,16 @@ function SpecCard({ spec, onOpenModal, isArchived }: { spec: any; onOpenModal: (
   );
 }
 
-function SpecTableRow({ spec, onOpenModal, isArchived }: { spec: any; onOpenModal: (spec: any) => void; isArchived: boolean }) {
-  const { archiveSpec, unarchiveSpec } = useApi();
+function SpecTableRow({ spec, onOpenModal, isArchived, onArchiveToggle }: { spec: any; onOpenModal: (spec: any) => void; isArchived: boolean; onArchiveToggle: (spec: any) => void }) {
   const { t } = useTranslation();
-  const [isArchiving, setIsArchiving] = useState(false);
   const progress = spec.taskProgress?.total
     ? Math.round((spec.taskProgress.completed / spec.taskProgress.total) * 100)
     : 0;
 
-  const handleArchiveToggle = async (e: React.MouseEvent) => {
+  const handleArchiveClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsArchiving(true);
-
-    try {
-      if (isArchived) {
-        await unarchiveSpec(spec.name);
-      } else {
-        await archiveSpec(spec.name);
-      }
-    } catch (error) {
-      console.error('Failed to toggle archive status:', error);
-    } finally {
-      setIsArchiving(false);
-    }
+    onArchiveToggle(spec);
   };
-
 
   return (
     <tr
@@ -466,23 +430,15 @@ function SpecTableRow({ spec, onOpenModal, isArchived }: { spec: any; onOpenModa
       <td className="px-4 py-4">
         <div className="flex items-center gap-2">
           <button
-            onClick={handleArchiveToggle}
-            disabled={isArchiving}
+            onClick={handleArchiveClick}
             className={`p-2 rounded-lg transition-colors ${
-              isArchiving
-                ? 'text-gray-400 cursor-not-allowed'
-                : isArchived
-                  ? 'text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-900/20'
-                  : 'text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:text-orange-400 dark:hover:text-orange-300 dark:hover:bg-orange-900/20'
+              isArchived
+                ? 'text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-900/20'
+                : 'text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:text-orange-400 dark:hover:text-orange-300 dark:hover:bg-orange-900/20'
             }`}
-            title={isArchiving ? 'Processing...' : isArchived ? 'Unarchive spec' : 'Archive spec'}
+            title={isArchived ? t('specsPage.unarchive.confirmButton') : t('specsPage.archive.confirmButton')}
           >
-            {isArchiving ? (
-              <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-            ) : isArchived ? (
+            {isArchived ? (
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
               </svg>
@@ -503,15 +459,38 @@ function SpecTableRow({ spec, onOpenModal, isArchived }: { spec: any; onOpenModa
 }
 
 function Content() {
-  const { specs, archivedSpecs, reloadAll } = useApi();
+  const { specs, archivedSpecs, reloadAll, archiveSpec, unarchiveSpec } = useApi();
+  const { showNotification } = useNotifications();
   const [query, setQuery] = useState('');
   const [selectedSpec, setSelectedSpec] = useState<any | null>(null);
   const [activeTab, setActiveTab] = useState<'active' | 'archived'>('active');
   const [sortBy, setSortBy] = useState('default');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [archiveTarget, setArchiveTarget] = useState<any | null>(null);
   const { t } = useTranslation();
 
   useEffect(() => { reloadAll(); }, [reloadAll]);
+
+  const handleArchiveToggle = useCallback((spec: any) => {
+    setArchiveTarget(spec);
+  }, []);
+
+  const confirmArchiveToggle = useCallback(async () => {
+    if (!archiveTarget) return;
+    const isArchived = activeTab === 'archived';
+    const displayName = archiveTarget.displayName;
+    const action = isArchived ? unarchiveSpec : archiveSpec;
+    const successKey = isArchived ? 'specsPage.unarchive.successMessage' : 'specsPage.archive.successMessage';
+    const errorKey = isArchived ? 'specsPage.unarchive.errorMessage' : 'specsPage.archive.errorMessage';
+
+    const result = await action(archiveTarget.name);
+    if (result.ok) {
+      showNotification(t(successKey, { name: displayName }), 'success');
+      await reloadAll();
+    } else {
+      throw new Error(t(errorKey, { name: displayName }));
+    }
+  }, [archiveTarget, activeTab, archiveSpec, unarchiveSpec, reloadAll, showNotification, t]);
 
   const currentSpecs = activeTab === 'active' ? specs : archivedSpecs;
 
@@ -697,6 +676,7 @@ function Content() {
                   spec={spec}
                   onOpenModal={setSelectedSpec}
                   isArchived={activeTab === 'archived'}
+                  onArchiveToggle={handleArchiveToggle}
                 />
               ))}
             </tbody>
@@ -711,6 +691,7 @@ function Content() {
               spec={spec}
               onOpenModal={setSelectedSpec}
               isArchived={activeTab === 'archived'}
+              onArchiveToggle={handleArchiveToggle}
             />
           ))}
         </div>
@@ -731,11 +712,30 @@ function Content() {
         )}
       </div>
 
-      <SpecModal 
-        spec={selectedSpec} 
-        isOpen={!!selectedSpec} 
-        onClose={() => setSelectedSpec(null)} 
+      <SpecModal
+        spec={selectedSpec}
+        isOpen={!!selectedSpec}
+        onClose={() => setSelectedSpec(null)}
         isArchived={activeTab === 'archived'}
+      />
+
+      <ConfirmationModal
+        isOpen={!!archiveTarget}
+        onClose={() => setArchiveTarget(null)}
+        onConfirm={confirmArchiveToggle}
+        title={activeTab === 'archived'
+          ? t('specsPage.unarchive.confirmTitle')
+          : t('specsPage.archive.confirmTitle')
+        }
+        message={activeTab === 'archived'
+          ? t('specsPage.unarchive.confirmMessage', { name: archiveTarget?.displayName })
+          : t('specsPage.archive.confirmMessage', { name: archiveTarget?.displayName })
+        }
+        confirmText={activeTab === 'archived'
+          ? t('specsPage.unarchive.confirmButton')
+          : t('specsPage.archive.confirmButton')
+        }
+        variant={activeTab === 'archived' ? 'default' : 'danger'}
       />
     </div>
   );

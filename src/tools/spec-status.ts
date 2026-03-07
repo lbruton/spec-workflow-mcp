@@ -2,6 +2,8 @@ import { Tool } from '@modelcontextprotocol/sdk/types.js';
 import { ToolContext, ToolResponse } from '../types.js';
 import { PathUtils } from '../core/path-utils.js';
 import { SpecParser } from '../core/parser.js';
+import { ImplementationLogManager } from '../dashboard/implementation-log-manager.js';
+import { parseTasksFromMarkdown } from '../core/task-parser.js';
 
 export const specStatusTool: Tool = {
   name: 'spec-status',
@@ -54,7 +56,7 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
         message: `Specification '${specName}' not found`,
         nextSteps: [
           'Check spec name',
-          'Use spec-list for available specs',
+          'Use spec-list tool to search available specs',
           'Create spec with create-spec-doc'
         ]
       };
@@ -77,8 +79,8 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
       currentPhase = 'implementation';
       overallStatus = 'implementing';
     } else if (spec.taskProgress && spec.taskProgress.total > 0 && spec.taskProgress.completed === spec.taskProgress.total) {
-      currentPhase = 'completed';
-      overallStatus = 'completed';
+      currentPhase = 'post-implementation';
+      overallStatus = 'post-implementation';
     } else {
       currentPhase = 'implementation';
       overallStatus = 'ready-for-implementation';
@@ -105,6 +107,17 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
         name: 'Implementation',
         status: spec.phases.implementation.exists ? 'in-progress' : 'not-started',
         progress: spec.taskProgress
+      },
+      {
+        name: 'Post-Implementation',
+        status: currentPhase === 'post-implementation' ? 'action-required' : 'not-started',
+        checklist: currentPhase === 'post-implementation' ? [
+          'Wiki updated (/wiki-update)',
+          'E2E tests run (/bb-test)',
+          'Linear issues closed (move to Done)',
+          'GitHub issues closed (gh issue close)',
+          'Spec archived'
+        ] : undefined
       }
     ];
 
@@ -137,10 +150,45 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
           nextSteps.push('Begin implementation by marking first task [-]');
         }
         break;
-      case 'completed':
-        nextSteps.push('All tasks completed (marked [x])');
-        nextSteps.push('Run tests');
+      case 'post-implementation':
+        nextSteps.push('All tasks completed (marked [x]) — Phase 5 required before spec is done');
+        nextSteps.push('1. Run /wiki-update to update affected wiki pages');
+        nextSteps.push('2. Commit wiki changes to the branch BEFORE pushing');
+        nextSteps.push('3. Run /bb-test against PR preview URL for E2E verification');
+        nextSteps.push('4. CLOSE all linked Linear issues (move state to "Done" via mcp__plugin_linear_linear__save_issue)');
+        nextSteps.push('5. CLOSE the linked GitHub issue if one exists (gh issue close)');
+        nextSteps.push('6. Archive the spec after all issues are closed');
         break;
+    }
+
+    // Implementation log audit: check for completed tasks without logs
+    let unloggedTasks: string[] = [];
+    try {
+      const specPath = PathUtils.getSpecPath(translatedPath, specName);
+      const tasksFile = `${specPath}/tasks.md`;
+      const { promises: fs } = await import('fs');
+      const tasksContent = await fs.readFile(tasksFile, 'utf-8');
+      const parseResult = parseTasksFromMarkdown(tasksContent);
+      const completedTasks = parseResult.tasks
+        .filter(t => t.status === 'completed')
+        .map(t => t.id);
+
+      if (completedTasks.length > 0) {
+        const logManager = new ImplementationLogManager(specPath);
+        const allLogs = await logManager.getAllLogs();
+        const loggedTaskIds = new Set(allLogs.map(l => l.taskId));
+        unloggedTasks = completedTasks.filter(id => !loggedTaskIds.has(id));
+      }
+    } catch {
+      // If we can't read tasks or logs, skip the audit silently
+    }
+
+    // Add unlogged task warnings to nextSteps
+    if (unloggedTasks.length > 0) {
+      nextSteps.unshift(
+        `⚠️ UNLOGGED TASKS: ${unloggedTasks.length} task(s) marked [x] without implementation logs: ${unloggedTasks.join(', ')}`,
+        'Run log-implementation for each unlogged task BEFORE considering them complete'
+      );
     }
 
     return {
@@ -158,7 +206,8 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
           total: 0,
           completed: 0,
           pending: 0
-        }
+        },
+        unloggedTasks: unloggedTasks.length > 0 ? unloggedTasks : undefined
       },
       nextSteps,
       projectContext: {
