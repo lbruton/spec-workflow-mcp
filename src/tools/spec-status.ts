@@ -75,6 +75,9 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
     } else if (!spec.phases.tasks.exists) {
       currentPhase = 'tasks';
       overallStatus = 'tasks-needed';
+    } else if (!spec.phases.readinessReport.exists) {
+      currentPhase = 'readiness-gate';
+      overallStatus = 'readiness-gate-needed';
     } else if (spec.taskProgress && spec.taskProgress.pending > 0) {
       currentPhase = 'implementation';
       overallStatus = 'implementing';
@@ -102,6 +105,11 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
         name: 'Tasks',
         status: spec.phases.tasks.exists ? (spec.phases.tasks.approved ? 'approved' : 'created') : 'missing',
         lastModified: spec.phases.tasks.lastModified
+      },
+      {
+        name: 'Readiness Gate',
+        status: spec.phases.readinessReport.exists ? 'completed' : (spec.phases.tasks.exists ? 'pending' : 'not-started'),
+        lastModified: spec.phases.readinessReport.lastModified
       },
       {
         name: 'Implementation',
@@ -138,6 +146,13 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
         nextSteps.push('Read template: .spec-workflow/templates/tasks-template-v*.md');
         nextSteps.push('Create: .spec-workflow/specs/{name}/tasks.md');
         nextSteps.push('Request approval');
+        break;
+      case 'readiness-gate':
+        nextSteps.push('Phase 3.9: Implementation Readiness Gate required before implementation');
+        nextSteps.push('Cross-validate requirements.md + design.md + tasks.md for consistency');
+        nextSteps.push(`Create: .spec-workflow/specs/${specName}/readiness-report.md`);
+        nextSteps.push('Submit readiness-report.md for dashboard approval (NOT tasks.md)');
+        nextSteps.push('Dashboard options: Approve (PASS), Concerns (proceed with risks), Reject (fix and re-run)');
         break;
       case 'implementation':
         if (spec.taskProgress && spec.taskProgress.pending > 0) {

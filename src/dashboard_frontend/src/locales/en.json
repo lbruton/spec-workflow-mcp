@@ -238,7 +238,8 @@
     "documents": {
       "requirements": "Requirements",
       "design": "Design",
-      "tasks": "Tasks"
+      "tasks": "Tasks",
+      "readinessReport": "Readiness"
     },
     "table": {
       "name": "Name",

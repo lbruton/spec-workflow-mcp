@@ -70,6 +70,7 @@ export interface SpecData {
     requirements: PhaseStatus;
     design: PhaseStatus;
     tasks: PhaseStatus;
+    readinessReport: PhaseStatus;
     implementation: PhaseStatus;
   };
   taskProgress?: {

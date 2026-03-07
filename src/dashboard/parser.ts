@@ -77,6 +77,7 @@ export class SpecParser {
           requirements: { exists: false },
           design: { exists: false },
           tasks: { exists: false },
+          readinessReport: { exists: false },
           implementation: { exists: false }
         }
       };
@@ -90,6 +91,7 @@ export class SpecParser {
       const requirementsPath = join(specDir, 'requirements.md');
       const designPath = join(specDir, 'design.md');
       const tasksPath = join(specDir, 'tasks.md');
+      const readinessReportPath = join(specDir, 'readiness-report.md');
 
       // Check requirements
       try {
@@ -97,7 +99,7 @@ export class SpecParser {
         spec.phases.requirements.exists = true;
         const reqStats = await stat(requirementsPath);
         spec.phases.requirements.lastModified = reqStats.mtime.toISOString();
-        
+
         // Update overall last modified if this is newer
         if (reqStats.mtime > new Date(spec.lastModified)) {
           spec.lastModified = reqStats.mtime.toISOString();
@@ -110,7 +112,7 @@ export class SpecParser {
         spec.phases.design.exists = true;
         const designStats = await stat(designPath);
         spec.phases.design.lastModified = designStats.mtime.toISOString();
-        
+
         if (designStats.mtime > new Date(spec.lastModified)) {
           spec.lastModified = designStats.mtime.toISOString();
         }
@@ -122,7 +124,7 @@ export class SpecParser {
         spec.phases.tasks.exists = true;
         const tasksStats = await stat(tasksPath);
         spec.phases.tasks.lastModified = tasksStats.mtime.toISOString();
-        
+
         if (tasksStats.mtime > new Date(spec.lastModified)) {
           spec.lastModified = tasksStats.mtime.toISOString();
         }
@@ -135,6 +137,18 @@ export class SpecParser {
           completed: taskProgress.completed,
           pending: taskProgress.pending
         };
+      } catch {}
+
+      // Check readiness report
+      try {
+        await access(readinessReportPath);
+        spec.phases.readinessReport.exists = true;
+        const rrStats = await stat(readinessReportPath);
+        spec.phases.readinessReport.lastModified = rrStats.mtime.toISOString();
+
+        if (rrStats.mtime > new Date(spec.lastModified)) {
+          spec.lastModified = rrStats.mtime.toISOString();
+        }
       } catch {}
 
       // Implementation phase is always considered "exists" since it's ongoing manual work
@@ -160,6 +174,7 @@ export class SpecParser {
           requirements: { exists: false },
           design: { exists: false },
           tasks: { exists: false },
+          readinessReport: { exists: false },
           implementation: { exists: false }
         }
       };
@@ -173,6 +188,7 @@ export class SpecParser {
       const requirementsPath = join(specDir, 'requirements.md');
       const designPath = join(specDir, 'design.md');
       const tasksPath = join(specDir, 'tasks.md');
+      const readinessReportPath = join(specDir, 'readiness-report.md');
 
       // Check requirements
       try {
@@ -180,7 +196,7 @@ export class SpecParser {
         spec.phases.requirements.exists = true;
         const reqStats = await stat(requirementsPath);
         spec.phases.requirements.lastModified = reqStats.mtime.toISOString();
-        
+
         // Update overall last modified if this is newer
         if (reqStats.mtime > new Date(spec.lastModified)) {
           spec.lastModified = reqStats.mtime.toISOString();
@@ -193,7 +209,7 @@ export class SpecParser {
         spec.phases.design.exists = true;
         const designStats = await stat(designPath);
         spec.phases.design.lastModified = designStats.mtime.toISOString();
-        
+
         if (designStats.mtime > new Date(spec.lastModified)) {
           spec.lastModified = designStats.mtime.toISOString();
         }
@@ -205,7 +221,7 @@ export class SpecParser {
         spec.phases.tasks.exists = true;
         const tasksStats = await stat(tasksPath);
         spec.phases.tasks.lastModified = tasksStats.mtime.toISOString();
-        
+
         if (tasksStats.mtime > new Date(spec.lastModified)) {
           spec.lastModified = tasksStats.mtime.toISOString();
         }
@@ -218,6 +234,18 @@ export class SpecParser {
           completed: taskProgress.completed,
           pending: taskProgress.pending
         };
+      } catch {}
+
+      // Check readiness report
+      try {
+        await access(readinessReportPath);
+        spec.phases.readinessReport.exists = true;
+        const rrStats = await stat(readinessReportPath);
+        spec.phases.readinessReport.lastModified = rrStats.mtime.toISOString();
+
+        if (rrStats.mtime > new Date(spec.lastModified)) {
+          spec.lastModified = rrStats.mtime.toISOString();
+        }
       } catch {}
 
       // Implementation phase is always considered "exists" since it's ongoing manual work

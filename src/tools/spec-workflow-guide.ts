@@ -516,6 +516,7 @@ Only dispatch AFTER Stage 1 passes. Verify the code is well-built and production
 │       ├── requirements.md
 │       ├── design.md
 │       ├── tasks.md
+│       ├── readiness-report.md      # Phase 3.9 — NOT tasks.md
 │       └── Implementation Logs/     # Created automatically
 │           ├── task-1_timestamp_id.md
 │           ├── task-2_timestamp_id.md

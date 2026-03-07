@@ -6,15 +6,16 @@ import hljs from 'highlight.js/lib/common';
 import { useTranslation } from 'react-i18next';
 
 type ViewMode = 'rendered' | 'source';
+type SpecDocument = 'requirements' | 'design' | 'tasks' | 'readiness-report';
 
 function Content() {
   const { getAllSpecDocuments } = useApi();
   const { t } = useTranslation();
   const [params] = useSearchParams();
   const spec = params.get('name') || '';
-  const initialDoc = (params.get('doc') as 'requirements' | 'design' | 'tasks') || 'requirements';
+  const initialDoc = (params.get('doc') as SpecDocument) || 'requirements';
   const initialMode = (params.get('mode') as ViewMode) || 'rendered';
-  const [activeDoc, setActiveDoc] = useState<'requirements' | 'design' | 'tasks'>(initialDoc);
+  const [activeDoc, setActiveDoc] = useState<SpecDocument>(initialDoc);
   const [viewMode, setViewMode] = useState<ViewMode>(initialMode);
   const [documents, setDocuments] = useState<Record<string, { content: string; lastModified: string } | null>>({});
   const [loading, setLoading] = useState(false);
@@ -54,7 +55,9 @@ function Content() {
         <div className="flex items-center gap-3">
           {/* Document Type Tabs */}
           <div className="flex items-center bg-[var(--surface-sunken)] rounded-lg p-1">
-            {(['requirements', 'design', 'tasks'] as const).map((d) => (
+            {(['requirements', 'design', 'tasks', 'readiness-report'] as const)
+              .filter((d) => d !== 'readiness-report' || documents?.['readiness-report'])
+              .map((d) => (
               <button
                 key={d}
                 className={`px-3 py-1 text-sm rounded-md transition-colors capitalize ${
@@ -64,7 +67,7 @@ function Content() {
                 }`}
                 onClick={() => setActiveDoc(d)}
               >
-                {t(`specsPage.documents.${d}`)}
+                {d === 'readiness-report' ? t('specsPage.documents.readinessReport', 'Readiness') : t(`specsPage.documents.${d}`)}
               </button>
             ))}
           </div>

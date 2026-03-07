@@ -43,7 +43,8 @@ export class SpecParser {
       const requirements = await this.getPhaseStatus(specPath, 'requirements.md');
       const design = await this.getPhaseStatus(specPath, 'design.md');
       const tasks = await this.getPhaseStatus(specPath, 'tasks.md');
-      
+      const readinessReport = await this.getPhaseStatus(specPath, 'readiness-report.md');
+
       // Parse task progress using unified parser
       let taskProgress = undefined;
       if (tasks.exists) {
@@ -54,7 +55,7 @@ export class SpecParser {
           // Error reading tasks file
         }
       }
-      
+
       return {
         name,
         createdAt: stats.birthtime.toISOString(),
@@ -63,6 +64,7 @@ export class SpecParser {
           requirements,
           design,
           tasks,
+          readinessReport,
           implementation: {
             exists: taskProgress ? taskProgress.completed > 0 : false
           }

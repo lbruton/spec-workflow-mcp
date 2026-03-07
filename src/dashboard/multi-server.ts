@@ -477,7 +477,7 @@ export class MultiProjectDashboardServer {
       }
 
       const specDir = join(project.projectPath, '.spec-workflow', 'specs', name);
-      const documents = ['requirements', 'design', 'tasks'];
+      const documents = ['requirements', 'design', 'tasks', 'readiness-report'];
       const result: Record<string, { content: string; lastModified: string } | null> = {};
 
       for (const doc of documents) {
@@ -507,7 +507,7 @@ export class MultiProjectDashboardServer {
 
       // Use archive path instead of active specs path
       const specDir = join(project.projectPath, '.spec-workflow', 'archive', 'specs', name);
-      const documents = ['requirements', 'design', 'tasks'];
+      const documents = ['requirements', 'design', 'tasks', 'readiness-report'];
       const result: Record<string, { content: string; lastModified: string } | null> = {};
 
       for (const doc of documents) {
