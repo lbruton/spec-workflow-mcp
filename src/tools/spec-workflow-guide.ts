@@ -128,9 +128,8 @@ flowchart TD
     P4_Log --> P4_Complete[Edit tasks.md:<br/>Change [-] to [x]<br/>for completed]
     P4_Complete --> P4_More{More tasks?}
     P4_More -->|Yes| P4_Task
-    P4_More -->|No| P5_Start[Phase 5.1:<br/>Wiki + E2E]
-    P5_Start --> P5_Wiki[/wiki-update:<br/>Update wiki pages]
-    P5_Wiki --> P5_E2E[/bb-test:<br/>Browserbase/Stagehand E2E<br/>against PR preview URL]
+    P4_More -->|No| P5_Start[Phase 5.1:<br/>Automated E2E]
+    P5_Start --> P5_E2E[/bb-test:<br/>Browserbase/Stagehand E2E<br/>against PR preview URL]
     P5_E2E --> P5_Check{Tests pass?}
     P5_Check -->|fail| P5_Fix[Fix failing tests<br/>before QA]
     P5_Fix --> P5_E2E
@@ -139,8 +138,9 @@ flowchart TD
     P5_QA_Present --> P5_QA_Check{User reports<br/>issues?}
     P5_QA_Check -->|Yes| P5_QA_Fix[Fix issue<br/>commit + push<br/>wait for rebuild]
     P5_QA_Fix --> P5_QA_Present
-    P5_QA_Check -->|QA complete| P5_Final[Phase 5.3:<br/>PR Finalization]
-    P5_Final --> P5_Linear[Close Linear issues<br/>Move to Done]
+    P5_QA_Check -->|QA complete| P5_Final[Phase 5.3:<br/>Wiki + PR Finalization]
+    P5_Final --> P5_Wiki[/wiki-update:<br/>Update wiki pages<br/>on final post-QA code]
+    P5_Wiki --> P5_Linear[Close Linear issues<br/>Move to Done]
     P5_Linear --> P5_Ready[Mark PR<br/>ready for review]
     P5_Ready --> Done([Spec Complete:<br/>Hand off to /pr-resolve])
 
@@ -458,30 +458,28 @@ Only dispatch AFTER Stage 1 passes. Verify the code is well-built and production
 | Track progress (task list) | Search codebase |
 | Approve/reject agent work | Generate new files |
 
-### Phase 5: Post-Implementation (Wiki + E2E + QA + PR Finalization)
-**Purpose**: Update documentation, verify the feature, QA with the user, and finalize the PR.
+### Phase 5: Post-Implementation (E2E + QA + Wiki + PR Finalization)
+**Purpose**: Verify the feature, QA with the user, update documentation on final code, and finalize the PR.
 
 Phase 5 has three stages. The spec is NOT complete until all three are done.
 
-#### Phase 5.1: Wiki + Automated E2E
+#### Phase 5.1: Automated E2E
 
 **Tools**:
-- Skill \`wiki-update\`: Detects affected wiki pages via YAML frontmatter \`sourceFiles\` and rewrites them from current source
 - Skill \`bb-test\`: Browserbase/Stagehand cloud E2E tests — **primary E2E tool for all specs**
 
 **⚠️ Do NOT use browserless or /smoke-test for spec E2E** — browserless is unreliable. All E2E testing uses Browserbase/Stagehand.
 
 **Process**:
-1. Run \`/wiki-update\` — auto-detects wiki pages whose YAML frontmatter \`sourceFiles\` match changed files and rewrites them from current source. Do not manually edit wiki pages.
-2. **Get the PR preview URL** before running E2E — do not test against staktrakr.pages.dev (main):
+1. **Get the PR preview URL** before running E2E — do not test against staktrakr.pages.dev (main):
    \`\`\`bash
    # Get Cloudflare Pages preview URL from the draft PR
    gh pr checks <PR_NUMBER> --json name,state,targetUrl \\
      | python3 -c "import sys,json; checks=json.load(sys.stdin); [print(c['targetUrl']) for c in checks if 'pages.dev' in c.get('targetUrl','')]"
    \`\`\`
    Wait for the Cloudflare Pages check to complete (green) before proceeding.
-3. Run \`/bb-test\` with the preview URL — Browserbase/Stagehand against the PR preview deployment. Session has a **10-minute hard timeout**: if any individual test step has not returned a result within 10 minutes, skip it, log a warning, and move on.
-4. If E2E tests fail: fix the failures before proceeding to QA. Do not skip to 5.2 with known test failures.
+2. Run \`/bb-test\` with the preview URL — Browserbase/Stagehand against the PR preview deployment. Session has a **10-minute hard timeout**: if any individual test step has not returned a result within 10 minutes, skip it, log a warning, and move on.
+3. If E2E tests fail: fix the failures before proceeding to QA. Do not skip to 5.2 with known test failures.
 
 #### Phase 5.2: User QA Session
 
@@ -508,12 +506,18 @@ Phase 5 has three stages. The spec is NOT complete until all three are done.
 4. Repeat until the user signals QA is complete.
 5. Only then proceed to Phase 5.3.
 
-#### Phase 5.3: PR Finalization
+#### Phase 5.3: Wiki + PR Finalization
 
-**Purpose**: Close linked issues, mark PR ready for review, and hand off to the \`/pr-resolve\` workflow.
+**Purpose**: Update wiki on final post-QA code, close linked issues, mark PR ready for review, and hand off to the \`/pr-resolve\` workflow.
+
+**Tools**:
+- Skill \`wiki-update\`: Detects affected wiki pages via YAML frontmatter \`sourceFiles\` and rewrites them from current source
+
+**Why wiki runs here (after QA, not before):** QA fixes change code that wiki pages document. Running wiki before QA means wiki updates become stale as soon as you fix the first QA bug. Running wiki after QA means it captures the final state of the code.
 
 **Process**:
-1. **Close all linked issues:**
+1. Run \`/wiki-update\` — auto-detects wiki pages whose YAML frontmatter \`sourceFiles\` match changed files and rewrites them from current source. Do not manually edit wiki pages. Commit wiki changes to the branch.
+2. **Close all linked issues:**
    - **Linear**: Use \`mcp__plugin_linear_linear__save_issue\` to move each linked issue's state to "Done"
    - **GitHub**: Run \`gh issue close <number>\` for each linked GitHub issue
    - Verify closure: \`gh issue view <number> --json state\` should show "CLOSED"
@@ -531,7 +535,7 @@ Phase 5 has three stages. The spec is NOT complete until all three are done.
 - Follow exact template structures
 - Get explicit user approval between phases (using approvals tool with action:'request')
 - Complete phases in sequence (no skipping)
-- Phase 5 has three stages: 5.1 (wiki + E2E), 5.2 (user QA session), 5.3 (PR finalization) — all three are mandatory
+- Phase 5 has three stages: 5.1 (automated E2E), 5.2 (user QA session), 5.3 (wiki + PR finalization) — all three are mandatory. Wiki runs AFTER QA so it captures final post-QA code
 - Phase 5 E2E always uses Browserbase/Stagehand (/bb-test) against the PR preview URL — never browserless/smoke-test
 - CRITICAL: During Phase 5.2 (User QA), the agent MUST NOT suggest merging, declare the work done, or push back on findings. The user drives QA, the agent fixes. QA ends ONLY when the user says so
 - CRITICAL: The spec finish line is marking the PR ready for review (Phase 5.3), NOT passing automated tests. Automated tests passing = ready for QA, not ready to merge
