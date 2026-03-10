@@ -507,7 +507,7 @@ export function ApprovalsAnnotator({ content, comments, onCommentsChange, viewMo
           lineHeight: '1.625',
           whiteSpace: 'pre-wrap',
           wordBreak: 'break-word',
-          color: 'inherit'
+          color: 'var(--text-primary)'
         }}
         markStyle={{
           padding: '1px 2px',
