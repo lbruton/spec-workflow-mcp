@@ -26,6 +26,7 @@ import { PageNavigationSidebar } from '../components/PageNavigationSidebar';
 const projectGithubPRs: Record<string, string> = {
   StakTrakr: 'https://github.com/lbruton/StakTrakr/pulls',
   HelloKittyFriends: 'https://github.com/lbruton/HelloKittyFriends/pulls',
+  WhoseOnFirst: 'https://github.com/lbruton/WhoseOnFirst/pulls',
 };
 
 function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
@@ -272,7 +273,7 @@ function AppInner() {
                 <Route path="/approvals" element={<ApprovalsPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/devops" element={<DevOpsHubPage />} />
-                <Route path="/devops/api-dashboard" element={<IframePage title="API Dashboard — Home Poller" src="https://192.168.1.81:3011" />} />
+                <Route path="/devops/api-dashboard" element={<IframePage title="API Dashboard — Home Poller" src="https://polldash.lbruton.cc" />} />
                 <Route path="/devops/wiki" element={<IframePage title="StakTrakr Wiki" src="https://beta.staktrakr.com/wiki/" />} />
                 <Route path="/devops/hkf-wiki" element={<IframePage title="HelloKittyFriends Wiki" src="http://127.0.0.1:9778" />} />
                 <Route path="/api-dashboard" element={<Navigate to="/devops/api-dashboard" replace />} />

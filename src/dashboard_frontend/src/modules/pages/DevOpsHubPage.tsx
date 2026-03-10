@@ -34,7 +34,7 @@ const projectHubSections: Record<string, HubSection[]> = {
         {
           title: 'Dev Preview',
           desc: 'dev branch preview — latest merged work before it ships to production.',
-          url: 'https://dev.stacktrackr.pages.dev',
+          url: 'https://beta.staktrakr.com',
           icon: '\u{1F527}',
           color: 'yellow',
         },
@@ -53,7 +53,7 @@ const projectHubSections: Record<string, HubSection[]> = {
         {
           title: 'API Dashboard',
           desc: 'System stats, service status, scrape runs, and live log tail for both pollers.',
-          url: 'https://192.168.1.81:3011',
+          url: 'https://polldash.lbruton.cc',
           icon: '\u{1F3E0}',
           color: 'blue',
           internalRoute: '/devops/api-dashboard',
@@ -61,7 +61,7 @@ const projectHubSections: Record<string, HubSection[]> = {
         {
           title: 'Grafana Drilldown',
           desc: 'Home poller Prometheus metrics — scrape stats, uptime, network, and poller health.',
-          url: 'http://192.168.1.81:3000/a/grafana-metricsdrilldown-app/drilldown',
+          url: 'https://grafana.lbruton.cc/a/grafana-metricsdrilldown-app/drilldown',
           icon: '\u{1F4C8}',
           color: 'green',
         },
@@ -102,7 +102,7 @@ const projectHubSections: Record<string, HubSection[]> = {
         {
           title: 'Infisical',
           desc: 'Self-hosted secrets manager on Proxmox. API keys, tokens, and environment variables.',
-          url: 'http://192.168.1.47:8080',
+          url: 'https://infisical.lbruton.cc',
           icon: '\u{1F510}',
           color: 'red',
         },
@@ -237,7 +237,7 @@ const projectHubSections: Record<string, HubSection[]> = {
         {
           title: 'Infisical',
           desc: 'Self-hosted secrets manager — API keys for Gemini, mem0, and Brave.',
-          url: 'http://192.168.1.47:8080',
+          url: 'https://infisical.lbruton.cc',
           icon: '\u{1F510}',
           color: 'red',
         },

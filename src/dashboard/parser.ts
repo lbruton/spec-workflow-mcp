@@ -97,6 +97,7 @@ export class SpecParser {
       try {
         await access(requirementsPath);
         spec.phases.requirements.exists = true;
+        spec.phases.requirements.approved = await this.isPhaseApproved(name, 'requirements.md');
         const reqStats = await stat(requirementsPath);
         spec.phases.requirements.lastModified = reqStats.mtime.toISOString();
 
@@ -110,6 +111,7 @@ export class SpecParser {
       try {
         await access(designPath);
         spec.phases.design.exists = true;
+        spec.phases.design.approved = await this.isPhaseApproved(name, 'design.md');
         const designStats = await stat(designPath);
         spec.phases.design.lastModified = designStats.mtime.toISOString();
 
@@ -122,6 +124,7 @@ export class SpecParser {
       try {
         await access(tasksPath);
         spec.phases.tasks.exists = true;
+        spec.phases.tasks.approved = await this.isPhaseApproved(name, 'tasks.md');
         const tasksStats = await stat(tasksPath);
         spec.phases.tasks.lastModified = tasksStats.mtime.toISOString();
 
@@ -143,6 +146,7 @@ export class SpecParser {
       try {
         await access(readinessReportPath);
         spec.phases.readinessReport.exists = true;
+        spec.phases.readinessReport.approved = await this.isPhaseApproved(name, 'readiness-report.md');
         const rrStats = await stat(readinessReportPath);
         spec.phases.readinessReport.lastModified = rrStats.mtime.toISOString();
 
@@ -194,6 +198,7 @@ export class SpecParser {
       try {
         await access(requirementsPath);
         spec.phases.requirements.exists = true;
+        spec.phases.requirements.approved = await this.isPhaseApproved(name, 'requirements.md');
         const reqStats = await stat(requirementsPath);
         spec.phases.requirements.lastModified = reqStats.mtime.toISOString();
 
@@ -207,6 +212,7 @@ export class SpecParser {
       try {
         await access(designPath);
         spec.phases.design.exists = true;
+        spec.phases.design.approved = await this.isPhaseApproved(name, 'design.md');
         const designStats = await stat(designPath);
         spec.phases.design.lastModified = designStats.mtime.toISOString();
 
@@ -219,6 +225,7 @@ export class SpecParser {
       try {
         await access(tasksPath);
         spec.phases.tasks.exists = true;
+        spec.phases.tasks.approved = await this.isPhaseApproved(name, 'tasks.md');
         const tasksStats = await stat(tasksPath);
         spec.phases.tasks.lastModified = tasksStats.mtime.toISOString();
 
@@ -240,6 +247,7 @@ export class SpecParser {
       try {
         await access(readinessReportPath);
         spec.phases.readinessReport.exists = true;
+        spec.phases.readinessReport.approved = await this.isPhaseApproved(name, 'readiness-report.md');
         const rrStats = await stat(readinessReportPath);
         spec.phases.readinessReport.lastModified = rrStats.mtime.toISOString();
 
@@ -297,6 +305,25 @@ export class SpecParser {
     return status;
   }
 
+
+  private async isPhaseApproved(specName: string, filename: string): Promise<boolean> {
+    try {
+      const metaPath = join(
+        PathUtils.getApprovalsPath(this.projectPath),
+        specName,
+        '.snapshots',
+        filename,
+        'metadata.json'
+      );
+      const metaContent = await readFile(metaPath, 'utf-8');
+      const meta = JSON.parse(metaContent);
+      const snapshots: Array<{ trigger: string }> = meta.snapshots || [];
+      const latest = snapshots[snapshots.length - 1];
+      return latest?.trigger === 'approved';
+    } catch {
+      return false;
+    }
+  }
 
   private formatDisplayName(kebabCase: string): string {
     return kebabCase

@@ -31,7 +31,7 @@ export const VITE_DEV_PORT = 5173;
  * @returns Array of allowed origin URLs
  */
 export function generateAllowedOrigins(port: number): string[] {
-  const origins = [`http://localhost:${port}`, `http://127.0.0.1:${port}`];
+  const origins = [`http://localhost:${port}`, `http://127.0.0.1:${port}`, 'https://specdash.lbruton.cc'];
 
   // In non-production environments, also allow Vite dev server origin (port 5173)
   // The Vite proxy forwards requests but preserves the Origin header
@@ -267,7 +267,7 @@ export function createSecurityHeadersMiddleware(port?: number) {
   const actualPort = port || DEFAULT_DASHBOARD_PORT;
 
   // Build connect-src directive with WebSocket endpoints
-  let connectSrc = `'self' ws://localhost:${actualPort} ws://127.0.0.1:${actualPort}`;
+  let connectSrc = `'self' ws://localhost:${actualPort} ws://127.0.0.1:${actualPort} wss://specdash.lbruton.cc https://api.staktrakr.com`;
 
   // In non-production environments, also allow Vite dev server connections
   if (process.env.NODE_ENV !== 'production') {
@@ -286,7 +286,7 @@ export function createSecurityHeadersMiddleware(port?: number) {
     // connect-src allows WebSocket connections to the dashboard on the actual port
     reply.header(
       'Content-Security-Policy',
-      `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data:; connect-src ${connectSrc}; frame-src https://192.168.1.81:3011 https://beta.staktrakr.com http://127.0.0.1:9778;`
+      `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data:; connect-src ${connectSrc}; frame-src https://polldash.lbruton.cc https://beta.staktrakr.com http://127.0.0.1:9778;`
     );
   };
 }

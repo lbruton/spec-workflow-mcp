@@ -1,5 +1,5 @@
 import { readdir, readFile, stat } from 'fs/promises';
-import { join } from 'path';
+import { join, basename } from 'path';
 import { PathUtils } from './path-utils.js';
 import { SpecData, SteeringStatus, PhaseStatus } from '../types.js';
 import { parseTaskProgress } from './task-parser.js';
@@ -110,13 +110,15 @@ export class SpecParser {
 
   private async getPhaseStatus(basePath: string, filename: string): Promise<PhaseStatus> {
     const filePath = join(basePath, filename);
-    
+
     try {
       const stats = await stat(filePath);
       const content = await readFile(filePath, 'utf-8');
-      
+      const approved = await this.isPhaseApproved(basePath, filename);
+
       return {
         exists: true,
+        approved,
         lastModified: stats.mtime.toISOString(),
         content
       };
@@ -127,6 +129,25 @@ export class SpecParser {
     }
   }
 
+  private async isPhaseApproved(basePath: string, filename: string): Promise<boolean> {
+    try {
+      const specName = basename(basePath);
+      const metaPath = join(
+        PathUtils.getApprovalsPath(this.projectPath),
+        specName,
+        '.snapshots',
+        filename,
+        'metadata.json'
+      );
+      const metaContent = await readFile(metaPath, 'utf-8');
+      const meta = JSON.parse(metaContent);
+      const snapshots: Array<{ trigger: string }> = meta.snapshots || [];
+      const latest = snapshots[snapshots.length - 1];
+      return latest?.trigger === 'approved';
+    } catch {
+      return false;
+    }
+  }
 
   private async fileExists(filePath: string): Promise<boolean> {
     try {
