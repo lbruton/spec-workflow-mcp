@@ -307,14 +307,11 @@ export class ProjectRegistry {
         removedInstanceCount += deadCount;
         needsWrite = true;
 
-        if (liveInstances.length === 0) {
-          // No live instances, remove entire project
-          registry.delete(projectId);
-        } else {
-          // Keep project with only live instances
-          entry.instances = liveInstances;
-          registry.set(projectId, entry);
-        }
+        // Keep project record even when all instances die — project data (specs, steering)
+        // persists on disk and the dashboard should still be able to browse it offline.
+        // Only clear the dead instance entries; never delete the project itself.
+        entry.instances = liveInstances;
+        registry.set(projectId, entry);
       }
     }
 
