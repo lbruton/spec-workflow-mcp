@@ -1,0 +1,42 @@
+{
+	"nodes":[
+		{"id":"phase0-title","x":-100,"y":-900,"width":200,"height":50,"type":"text","text":"# Spec Flow Lifecycle"},
+
+		{"id":"phase0-chat","x":-220,"y":-820,"width":440,"height":340,"type":"text","text":"## Phase 0: Discovery\n### `/chat` or `/talk`\n\nCasual, freeform discussion to explore the idea.\n\n**Rules:**\n- No code changes\n- No Linear issue yet\n- No spec created\n\n**Activities:**\n- Dispatch subagents for research (Context7, web search, codebase analysis)\n- Take notes and offer suggestions\n- Explore feasibility and scope\n- Surface related past work (mem0 recall)\n\n**Exit trigger:** Enough context gathered to define a concrete task. Claude suggests creating a Linear issue."},
+
+		{"id":"gate-linear","x":-120,"y":-440,"width":240,"height":80,"type":"text","text":"### GATE: Create Linear Issue\nIssue ID becomes the anchor for all subsequent work"},
+
+		{"id":"phase1-brainstorm","x":-220,"y":-320,"width":440,"height":320,"type":"text","text":"## Phase 1: Brainstorm\n### `/brainstorm`\n\nStructured research and design exploration.\n\n**Activities:**\n- Dispatch code-oracle for impact analysis\n- Dispatch Explore agents for deep file-system research\n- Run Context7 for library/framework best practices\n- Q&A with user to resolve unknowns\n- Review existing patterns and conventions\n\n**Output:** Design Document Draft\n- Problem statement + user impact\n- Proposed approach with alternatives considered\n- Files affected + integration points\n- Open questions (must be zero before Phase 2)"},
+
+		{"id":"gate-questions","x":-120,"y":40,"width":240,"height":80,"type":"text","text":"### GATE: Zero Open Questions\nAll unknowns resolved via research or user Q&A"},
+
+		{"id":"phase2-spec","x":-220,"y":160,"width":440,"height":340,"type":"text","text":"## Phase 2: Design\n### `/spec` or `/design`\n\nFinalize the specification and submit for approval.\n\n**Activities:**\n- Review the draft from Phase 1\n- Fresh codebase pass (catch changes since draft)\n- Validate approach against current code state\n- Break work into discrete tasks with acceptance criteria\n- Write before/after code snippets where helpful\n\n**Output:** Final Design Document\n- Requirements (what + why)\n- Design (how + trade-offs)\n- Task breakdown (ordered, sized)\n\n**Submit:** `spec-workflow-guide` creates spec, dashboard approval required"},
+
+		{"id":"gate-approval","x":-120,"y":540,"width":240,"height":80,"type":"text","text":"### GATE: Dashboard Approval\nUser reviews and approves via web dashboard (port 5000)"},
+
+		{"id":"phase3-implement","x":-220,"y":660,"width":440,"height":320,"type":"text","text":"## Phase 3: Implementation\n### Spec Workflow Phase 4\n\n**Entry:** Ask user how to execute:\n- Single task (sequential in this session)\n- Parallel terminals (`/dispatch-terminals`)\n- Subagent dispatch (background agents)\n\n**Per task:**\n1. Create/enter worktree\n2. Implement with TDD (tests first)\n3. `log-implementation` with full artifacts\n4. Mark task `[x]` only AFTER logging\n\n**Hard gates:**\n- Version bump before PR (`/release patch`)\n- Wiki update before push (`/wiki-update`)\n- Cross-check: task count = log count"},
+
+		{"id":"phase4-ship","x":-220,"y":1020,"width":440,"height":280,"type":"text","text":"## Phase 4: Completion\n### Spec Workflow Phase 5\n\n**Checklist:**\n- [ ] All tasks logged and marked complete\n- [ ] Wiki pages updated for affected source files\n- [ ] PR created and pushed\n- [ ] `/pr-resolve` — address review threads + Codacy\n- [ ] E2E tests pass (`/bb-test` where applicable)\n- [ ] Linear issues closed\n- [ ] GitHub issues closed (if linked)\n- [ ] Vault updated if architecture changed (`/vault-update`)\n\n**Version-locked projects:** `/ship` for dev->main release"},
+
+		{"id":"phase5-retro","x":-220,"y":1340,"width":440,"height":160,"type":"text","text":"## Phase 5: Retrospective\n### `/retro`\n\nExtract prescriptive lessons from the work.\n- What went well / what to do differently\n- Save to mem0 as retro-learning memories\n- Update skills or CLAUDE.md if process gaps found"},
+
+		{"id":"sidebar-skipspec","x":320,"y":160,"width":300,"height":200,"type":"text","text":"### Fast Path (Bug Fixes)\n\nBugs with clear root cause may skip Phases 0-2:\n\n1. Linear issue (still required)\n2. `/systematic-debugging` for investigation\n3. Worktree + fix + test\n4. PR with implementation log\n\nNo spec, no approval gate."},
+
+		{"id":"sidebar-gsd","x":320,"y":400,"width":300,"height":160,"type":"text","text":"### Casual Path (`/gsd`)\n\nCSS tweaks, typos, config fixes:\n\n1. No Linear issue needed\n2. Casual worktree\n3. `chore:` PR, no version bump\n4. Merge and clean up"},
+
+		{"id":"sidebar-tools","x":-620,"y":-320,"width":300,"height":300,"type":"text","text":"### Research Tools Available\n\n**Code Intelligence (tier order):**\n1. CGC — structural analysis\n2. claude-context — semantic search\n3. Grep/Glob — literal search\n4. code-oracle — deep analysis agent\n5. Explore — file-system only (last resort)\n\n**External:**\n- Context7 — library docs\n- Brave Search — web research\n- Firecrawl — web scraping\n- mem0 — past decisions and context"}
+	],
+	"edges":[
+		{"id":"e1","fromNode":"phase0-chat","fromSide":"bottom","toNode":"gate-linear","toSide":"top"},
+		{"id":"e2","fromNode":"gate-linear","fromSide":"bottom","toNode":"phase1-brainstorm","toSide":"top"},
+		{"id":"e3","fromNode":"phase1-brainstorm","fromSide":"bottom","toNode":"gate-questions","toSide":"top"},
+		{"id":"e4","fromNode":"gate-questions","fromSide":"bottom","toNode":"phase2-spec","toSide":"top"},
+		{"id":"e5","fromNode":"phase2-spec","fromSide":"bottom","toNode":"gate-approval","toSide":"top"},
+		{"id":"e6","fromNode":"gate-approval","fromSide":"bottom","toNode":"phase3-implement","toSide":"top"},
+		{"id":"e7","fromNode":"phase3-implement","fromSide":"bottom","toNode":"phase4-ship","toSide":"top"},
+		{"id":"e8","fromNode":"phase4-ship","fromSide":"bottom","toNode":"phase5-retro","toSide":"top"},
+		{"id":"e9","fromNode":"sidebar-tools","fromSide":"right","toNode":"phase1-brainstorm","toSide":"left","label":"dispatched during"},
+		{"id":"e10","fromNode":"sidebar-skipspec","fromSide":"left","toNode":"phase3-implement","toSide":"right","label":"skip to"},
+		{"id":"e11","fromNode":"sidebar-gsd","fromSide":"left","toNode":"phase4-ship","toSide":"right","label":"skip to"}
+	]
+}
