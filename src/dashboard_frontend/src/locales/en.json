@@ -9,13 +9,7 @@
     "tasks": "Tasks",
     "approvals": "Approvals",
     "settings": "Settings",
-    "logs": "Implementation Logs",
-    "devopsTools": "DevOps Tools",
-    "devopsHub": "Hub",
-    "apiDashboard": "API Dashboard",
-    "staktrakrWiki": "StakTrakr Wiki",
-    "helloKittyFriendsWiki": "HKF Wiki",
-    "githubPullRequests": "Pull Requests"
+    "logs": "Implementation Logs"
   },
   "connectionStatus": {
     "connected": "Connected",
