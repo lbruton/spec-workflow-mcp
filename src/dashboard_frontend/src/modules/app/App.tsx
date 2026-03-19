@@ -14,7 +14,6 @@ import { LogsPage } from '../pages/LogsPage';
 import { ApprovalsPage } from '../pages/ApprovalsPage';
 import { SpecViewerPage } from '../pages/SpecViewerPage';
 import { SettingsPage } from '../pages/SettingsPage';
-import { DevOpsHubPage } from '../pages/DevOpsHubPage';
 import { NotificationProvider } from '../notifications/NotificationProvider';
 import { VolumeControl } from '../notifications/VolumeControl';
 import { useApi } from '../api/api';
@@ -23,17 +22,10 @@ import { I18nErrorBoundary } from '../../components/I18nErrorBoundary';
 import { ProjectDropdown } from '../components/ProjectDropdown';
 import { PageNavigationSidebar } from '../components/PageNavigationSidebar';
 
-const projectGithubPRs: Record<string, string> = {
-  StakTrakr: 'https://github.com/lbruton/StakTrakr/pulls',
-  HelloKittyFriends: 'https://github.com/lbruton/HelloKittyFriends/pulls',
-  WhoseOnFirst: 'https://github.com/lbruton/WhoseOnFirst/pulls',
-};
-
 function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
   const { t } = useTranslation();
   const { theme, toggleTheme } = useTheme();
   const { connected } = useWs();
-  const { currentProject } = useProjects();
   const { info } = useApi();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   // Update the browser tab title when project info is loaded
@@ -66,20 +58,6 @@ function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-
-            {/* GitHub Pull Requests popup */}
-            {currentProject && projectGithubPRs[currentProject.projectName] && (
-              <button
-                onClick={() => window.open(projectGithubPRs[currentProject.projectName], '_blank', 'toolbar=no,location=no,menubar=no,status=no,scrollbars=yes,resizable=yes,width=1400,height=900')}
-                className="hidden lg:flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] transition-colors"
-                title="Open Pull Requests on GitHub"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h.01M8 11h.01M8 15h.01M8 19h.01M16 7a2 2 0 100-4 2 2 0 000 4zm0 14a2 2 0 100-4 2 2 0 000 4zM8 7a2 2 0 100-4 2 2 0 000 4zm0 10a2 2 0 100-4 2 2 0 000 4zm8-3a2 2 0 00-2 2m0-6a2 2 0 00-2-2m-6 6a2 2 0 01-2-2m0-6a2 2 0 012-2" />
-                </svg>
-                Pull Requests
-              </button>
-            )}
 
             {/* Project Dropdown */}
             <ProjectDropdown />
@@ -159,59 +137,13 @@ function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
                   </button>
                 </div>
 
-                {currentProject && projectGithubPRs[currentProject.projectName] && (
-                  <div className="pt-2 border-t border-[var(--border-default)]">
-                    <button
-                      onClick={() => {
-                        closeMobileMenu();
-                        window.open(projectGithubPRs[currentProject.projectName], '_blank', 'toolbar=no,location=no,menubar=no,status=no,scrollbars=yes,resizable=yes,width=1400,height=900');
-                      }}
-                      className="flex items-center gap-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h.01M8 11h.01M8 15h.01M8 19h.01M16 7a2 2 0 100-4 2 2 0 000 4zm0 14a2 2 0 100-4 2 2 0 000 4zM8 7a2 2 0 100-4 2 2 0 000 4zm0 10a2 2 0 100-4 2 2 0 000 4zm8-3a2 2 0 00-2 2m0-6a2 2 0 00-2-2m-6 6a2 2 0 01-2-2m0-6a2 2 0 012-2" />
-                      </svg>
-                      Pull Requests
-                    </button>
-                  </div>
-                )}
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* API Dashboard Modal removed — using route-based page instead */}
     </>
-  );
-}
-
-function IframePage({ title, src, sandbox }: { title: string; src: string; sandbox?: string }) {
-  return (
-    <div className="-mx-6 -my-6 flex flex-col" style={{ height: 'calc(100vh - 57px)' }}>
-      <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border-default)] bg-[var(--surface-inset)]">
-        <div className="flex items-center gap-2">
-          <svg className="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-          </svg>
-          <span className="text-sm font-semibold text-[var(--text-primary)]">{title}</span>
-        </div>
-        <a
-          href={src}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs text-sky-400 hover:text-sky-300 transition-colors"
-        >
-          Open in new tab ↗
-        </a>
-      </div>
-      <iframe
-        src={src}
-        className="flex-1 w-full border-0"
-        title={title}
-        sandbox={sandbox || 'allow-scripts allow-same-origin allow-forms allow-popups'}
-      />
-    </div>
   );
 }
 
@@ -272,11 +204,6 @@ function AppInner() {
                 <Route path="/logs" element={<LogsPage />} />
                 <Route path="/approvals" element={<ApprovalsPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
-                <Route path="/devops" element={<DevOpsHubPage />} />
-                <Route path="/devops/api-dashboard" element={<IframePage title="API Dashboard — Home Poller" src="https://polldash.lbruton.cc" />} />
-                <Route path="/devops/wiki" element={<IframePage title="StakTrakr Wiki" src="https://beta.staktrakr.com/wiki/" />} />
-                <Route path="/devops/hkf-wiki" element={<IframePage title="HelloKittyFriends Wiki" src="http://127.0.0.1:9778" />} />
-                <Route path="/api-dashboard" element={<Navigate to="/devops/api-dashboard" replace />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             ) : (
@@ -289,7 +216,7 @@ function AppInner() {
                     Start MCP servers to see projects here.
                   </p>
                   <div className="text-sm text-[var(--text-muted)]">
-                    Run: <code className="px-2 py-1 bg-[var(--surface-inset)] rounded-md">npx @pimzino/spec-workflow-mcp /path/to/project</code>
+                    Run: <code className="px-2 py-1 bg-[var(--surface-inset)] rounded-md">npx @lbruton/spec-workflow-mcp /path/to/project</code>
                   </div>
                 </div>
               </div>

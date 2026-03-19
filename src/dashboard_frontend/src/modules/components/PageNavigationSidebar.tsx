@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavLink, useLocation } from 'react-router-dom';
-import { useProjects } from '../projects/ProjectProvider';
+import { NavLink } from 'react-router-dom';
 
 interface PageNavigationSidebarProps {
   isOpen: boolean;
@@ -22,89 +21,6 @@ interface NavigationSection {
   labelKey?: string;
   items: NavigationItem[];
 }
-
-// ── Per-project DevOps tool configuration ──────────────────────────────
-// Add entries here to give any registered project its own sidebar section.
-// The key must match the projectName returned by the MCP server.
-const projectDevOpsConfig: Record<string, NavigationSection> = {
-  StakTrakr: {
-    labelKey: 'nav.devopsTools',
-    items: [
-      {
-        path: '/devops',
-        labelKey: 'nav.devopsHub',
-        end: true,
-        icon: (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-          </svg>
-        ),
-      },
-      {
-        path: '/devops/api-dashboard',
-        labelKey: 'nav.apiDashboard',
-        icon: (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-          </svg>
-        ),
-      },
-      {
-        path: '/devops/wiki',
-        labelKey: 'nav.staktrakrWiki',
-        icon: (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-          </svg>
-        ),
-      },
-      {
-        href: 'https://github.com/lbruton/StakTrakr/pulls',
-        labelKey: 'nav.githubPullRequests',
-        icon: (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h.01M8 11h.01M8 15h.01M8 19h.01M16 7a2 2 0 100-4 2 2 0 000 4zm0 14a2 2 0 100-4 2 2 0 000 4zM8 7a2 2 0 100-4 2 2 0 000 4zm0 10a2 2 0 100-4 2 2 0 000 4zm8-3a2 2 0 00-2 2m0-6a2 2 0 00-2-2m-6 6a2 2 0 01-2-2m0-6a2 2 0 012-2" />
-          </svg>
-        ),
-      },
-    ],
-  },
-  HelloKittyFriends: {
-    labelKey: 'nav.devopsTools',
-    items: [
-      {
-        path: '/devops',
-        labelKey: 'nav.devopsHub',
-        end: true,
-        icon: (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-          </svg>
-        ),
-      },
-      {
-        path: '/devops/hkf-wiki',
-        labelKey: 'nav.helloKittyFriendsWiki',
-        icon: (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-          </svg>
-        ),
-      },
-      {
-        href: 'https://github.com/lbruton/HelloKittyFriends/pulls',
-        labelKey: 'nav.githubPullRequests',
-        icon: (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h.01M8 11h.01M8 15h.01M8 19h.01M16 7a2 2 0 100-4 2 2 0 000 4zm0 14a2 2 0 100-4 2 2 0 000 4zM8 7a2 2 0 100-4 2 2 0 000 4zm0 10a2 2 0 100-4 2 2 0 000 4zm8-3a2 2 0 00-2 2m0-6a2 2 0 00-2-2m-6 6a2 2 0 01-2-2m0-6a2 2 0 012-2" />
-          </svg>
-        ),
-      },
-    ],
-  },
-  // Future projects:
-  // HexTrackr: { labelKey: 'nav.devopsTools', items: [...] },
-};
 
 // ── Core navigation (always visible) ───────────────────────────────────
 const coreSection: NavigationSection = {
@@ -184,8 +100,6 @@ export function PageNavigationSidebar({
   onToggleCollapse,
 }: PageNavigationSidebarProps) {
   const { t } = useTranslation();
-  const location = useLocation();
-  const { currentProject } = useProjects();
 
   // Handle ESC key to close sidebar on mobile
   useEffect(() => {
@@ -203,15 +117,9 @@ export function PageNavigationSidebar({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Build sections: core + project-specific devops (if configured)
   const navigationSections = useMemo<NavigationSection[]>(() => {
-    const sections: NavigationSection[] = [coreSection];
-    if (currentProject) {
-      const devops = projectDevOpsConfig[currentProject.projectName];
-      if (devops) sections.push(devops);
-    }
-    return sections;
-  }, [currentProject]);
+    return [coreSection];
+  }, []);
 
   // Desktop: Collapsible sidebar
   // Mobile: Slide-in overlay
@@ -242,7 +150,7 @@ export function PageNavigationSidebar({
         <div className="hidden lg:flex items-center justify-between p-4 border-b border-[var(--border-default)]">
           {!isCollapsed && (
             <h2 className="text-lg font-semibold text-[var(--text-primary)]">
-              Spec Workflow MCP
+              SpecFlow
             </h2>
           )}
           <button
@@ -270,7 +178,7 @@ export function PageNavigationSidebar({
         {/* Header - Mobile close button */}
         <div className="lg:hidden flex items-center justify-between p-4 border-b border-[var(--border-default)]">
           <h2 className="text-lg font-semibold text-[var(--text-primary)]">
-            Spec Workflow MCP
+            SpecFlow
           </h2>
           <button
             onClick={onClose}

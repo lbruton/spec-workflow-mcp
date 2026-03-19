@@ -242,6 +242,7 @@ export function ApprovalsAnnotator({ content, comments, onCommentsChange, viewMo
   }>({ isOpen: false, selectedText: '', isEditing: false });
   const [generalCommentModalOpen, setGeneralCommentModalOpen] = useState(false);
   const [deleteModalState, setDeleteModalState] = useState<{ isOpen: boolean; commentIndex: number }>({ isOpen: false, commentIndex: -1 });
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const generateCommentId = () => `comment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -601,8 +602,13 @@ export function ApprovalsAnnotator({ content, comments, onCommentsChange, viewMo
 
   // Default layout (preview and annotate modes)
   return (
-    <div className="grid gap-4 lg:grid-cols-3 lg:gap-6 lg:min-h-[70vh]">
-      <div data-section="annotations" className="lg:col-span-2 lg:self-stretch flex flex-col">
+    <div className="relative lg:min-h-[70vh]">
+      {/* Main content — full width, with right margin when drawer is open on desktop */}
+      <div
+        data-section="annotations"
+        className="flex flex-col transition-[margin] duration-300 ease-in-out"
+        style={{ marginRight: drawerOpen ? '380px' : '0' }}
+      >
         <div className="bg-[var(--surface-panel)] border border-[var(--border-default)] rounded-lg overflow-hidden flex-1">
           {viewMode === 'preview' ? (
             <div className="p-4 sm:p-6">
@@ -635,13 +641,50 @@ export function ApprovalsAnnotator({ content, comments, onCommentsChange, viewMo
         </div>
       </div>
 
-      <div data-section="comments" className="bg-[var(--surface-panel)] border border-[var(--border-default)] rounded-lg flex flex-col min-h-[60vh] lg:min-h-0 lg:self-stretch lg:col-span-1">
-        <div className="p-3 sm:p-4 border-b border-[var(--border-default)] bg-[var(--surface-inset)] rounded-t-lg">
+      {/* Drawer toggle button — fixed to right edge on desktop, hidden on mobile */}
+      <button
+        onClick={() => setDrawerOpen(!drawerOpen)}
+        className="hidden lg:flex fixed right-0 top-1/2 -translate-y-1/2 z-30 items-center justify-center w-8 h-16 bg-[var(--surface-panel)] border border-r-0 border-[var(--border-default)] rounded-l-lg shadow-sm hover:bg-[var(--surface-hover)] transition-colors"
+        title={drawerOpen ? 'Hide comments' : `Show comments${comments.length > 0 ? ` (${comments.length})` : ''}`}
+      >
+        <div className="flex flex-col items-center gap-1">
+          <svg className={`w-4 h-4 text-[var(--text-secondary)] transition-transform ${drawerOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          {comments.length > 0 && !drawerOpen && (
+            <span className="text-[10px] font-semibold text-[var(--accent-primary)]">{comments.length}</span>
+          )}
+        </div>
+      </button>
+
+      {/* Comments drawer — slides in from right on desktop, stacks below on mobile */}
+      <div
+        data-section="comments"
+        className={`
+          lg:fixed lg:right-0 lg:top-0 lg:bottom-0 lg:w-[380px] lg:z-20
+          lg:transform lg:transition-transform lg:duration-300 lg:ease-in-out
+          ${drawerOpen ? 'lg:translate-x-0' : 'lg:translate-x-full'}
+          bg-[var(--surface-panel)] border border-[var(--border-default)] lg:border-r-0 rounded-lg lg:rounded-none lg:rounded-l-lg
+          flex flex-col min-h-[60vh] lg:min-h-0 lg:h-full
+          mt-4 lg:mt-0 lg:shadow-[-4px_0_12px_rgba(0,0,0,0.15)]
+        `}
+      >
+        <div className="p-3 sm:p-4 border-b border-[var(--border-default)] bg-[var(--surface-inset)] rounded-t-lg lg:rounded-tl-lg lg:rounded-tr-none">
           <h4 className="font-medium text-[var(--text-primary)] mb-2 sm:mb-3 flex items-center gap-3 text-sm sm:text-base">
             <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
             Comments & Feedback
+            {/* Close button for drawer — desktop only */}
+            <button
+              onClick={() => setDrawerOpen(false)}
+              className="hidden lg:block ml-auto p-1 rounded hover:bg-[var(--surface-hover)] text-[var(--text-muted)]"
+              title="Close comments panel"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </h4>
 
           {viewMode === 'preview' && (
