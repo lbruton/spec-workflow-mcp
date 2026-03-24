@@ -11,8 +11,8 @@ Forked MCP server plugin for spec-driven development with a real-time web dashbo
 | Upstream | [Pimzino/spec-workflow-mcp](https://github.com/Pimzino/spec-workflow-mcp) |
 | Origin | [lbruton/spec-workflow-mcp](https://github.com/lbruton/spec-workflow-mcp) |
 | Branch | `main` (direct commits OK) |
-| Symlinked from | `~/.claude/plugins/marketplaces/specflow-marketplace/` |
-| MCP cache entry | `~/.claude/plugins/cache/specflow-marketplace/specflow-with-dashboard/2.2.4-lbruton.2/.mcp.json` |
+| Symlinked from | `~/.claude/plugins/marketplaces/spec-workflow-mcp-marketplace/` |
+| MCP cache entry | `~/.claude/plugins/cache/spec-workflow-mcp-marketplace/specflow-with-dashboard/2.2.4-lbruton.2/.mcp.json` |
 | Dashboard port | 5051 |
 | Dashboard service | `com.spec-workflow.dashboard` (launchd) |
 | Issue prefix | `SWF` |
@@ -36,7 +36,7 @@ This repo is symlinked into the Claude Code plugin directory. Building here upda
 ```
 /Volumes/DATA/GitHub/spec-workflow-mcp/          <-- you are here (canonical source)
     symlinked as:
-~/.claude/plugins/marketplaces/specflow-marketplace/
+~/.claude/plugins/marketplaces/spec-workflow-mcp-marketplace/
     loaded by MCP via:
 ~/.claude/plugins/cache/.../dist/index.js
 ```
