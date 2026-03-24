@@ -162,7 +162,7 @@ Pimzino's upstream is a complete, production-ready spec-driven workflow. This fo
 | Area | Upstream Provides | This Fork Adds |
 |------|-------------------|----------------|
 | Lifecycle | 4-phase workflow with dashboard approvals | Pre-workflow discovery + post-workflow retros |
-| Knowledge | Steering docs for project context | DocVault (Obsidian) + mem0 for cross-session recall |
+| Knowledge | Steering docs for project context | Keeps steering docs + adds DocVault (Obsidian) and mem0 for cross-session recall |
 | Issue tracking | Spec-based task tracking | Vault-based markdown issues with prefixed IDs |
 | Versioning | Flexible (user-managed) | Version lock protocol per project type |
 | Quick work | Full workflow for all changes | `/gsd`, `/chat` bypass paths for small fixes |
