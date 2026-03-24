@@ -162,6 +162,8 @@ Pimzino's upstream is a complete, production-ready spec-driven workflow. This fo
 | Area | Upstream Provides | This Fork Adds |
 |------|-------------------|----------------|
 | Lifecycle | 4-phase workflow with dashboard approvals | Pre-workflow discovery + post-workflow retros |
+| Core workflow | Approval gates per phase | Additional validation gates and guard rails |
+| Dashboard UI | Real-time dashboard with spec/approval views | UI refinements, collapsible panels, branding, cleanup of project-specific content |
 | Knowledge | Steering docs for project context | Keeps steering docs + adds DocVault (Obsidian) and mem0 for cross-session recall |
 | Issue tracking | Spec-based task tracking | Vault-based markdown issues with prefixed IDs |
 | Versioning | Flexible (user-managed) | Version lock protocol per project type |
@@ -169,7 +171,7 @@ Pimzino's upstream is a complete, production-ready spec-driven workflow. This fo
 | PR pipeline | Implementation logging | Pre-PR verification + Codacy quality scans |
 | Infrastructure | Code-focused | Extensible to container, DNS, and deployment tooling |
 
-See [FORK-CHANGELOG.md](FORK-CHANGELOG.md) for a detailed list of changes.
+This fork is under active development -- more dashboard UI improvements and workflow enhancements are in progress. See [FORK-CHANGELOG.md](FORK-CHANGELOG.md) for a detailed list of changes.
 
 ## Development
 
