@@ -7,7 +7,7 @@ MCP server plugin for spec-driven development with a real-time web dashboard. Po
 | Field | Value |
 |-------|-------|
 | Package | `@lbruton/specflow` |
-| Version | `2.2.4-lbruton.2` |
+| Version | `3.0.1` |
 | Upstream | [Pimzino/spec-workflow-mcp](https://github.com/Pimzino/spec-workflow-mcp) |
 | Origin | [lbruton/specflow](https://github.com/lbruton/specflow) |
 | Branch | `main` (direct commits OK) |

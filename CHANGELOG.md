@@ -5,6 +5,77 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+SpecFlow is a fork of [Pimzino/spec-workflow-mcp](https://github.com/Pimzino/spec-workflow-mcp). Upstream releases (≤ 2.2.3) are preserved below. SpecFlow releases begin at 3.0.0.
+
+## [3.0.1] - 2026-03-29
+
+### Added
+
+- **Project root filter** (SWF-41) -- `SPEC_WORKFLOW_PROJECT_ROOT` environment variable filters which directories get registered in the dashboard project list. Supports colon-separated paths for multiple roots. Unset means all paths register (backwards compatible).
+- **mex credit in README** -- credited [theDakshJaitly/mex](https://github.com/theDakshJaitly/mex) for inspiring drift detection, pattern promotion, and staleness hook features.
+
+### Fixed
+
+- **Dashboard launchd path** -- updated `com.spec-workflow.dashboard` plist to use renamed `specflow-marketplace` symlink path, fixing 404 on dashboard after rebrand.
+- **Quick Start cd path** -- fixed stale `cd spec-workflow-mcp` in README install instructions.
+
+## [3.0.0] - 2026-03-29
+
+### Added
+
+- **SpecFlow rebrand** (SWF-6, SWF-7) -- renamed from `spec-workflow-mcp` to `specflow` across GitHub repo, npm package (`@lbruton/specflow`), local paths, symlinks, and all documentation.
+- **Logo and README** (SWF-10) -- Arrow Stack SVG mark with Plus Jakarta Sans wordmark. Complete README rewrite positioning SpecFlow as a spec-driven development framework with comparison table, architecture overview, and case study.
+- **Interactive launch page** -- GitHub Pages hosted about page at `lbruton.github.io/specflow`.
+- **Forge case study** -- documented a real build session: empty repo to production in 3 hours with 23 tasks across 30 parallel subagents.
+- **Plugin manifest** (SWF-11) -- added `.claude-plugin/plugin.json` for Claude Code marketplace integration.
+- **Collapsible annotation drawer** (SWF-9) -- comments panel in approval preview converted from fixed sidebar to collapsible drawer.
+
+### Changed
+
+- **Package name** -- `spec-workflow-mcp` → `@lbruton/specflow`
+- **GitHub repo** -- `lbruton/spec-workflow-mcp` → `lbruton/specflow`
+- **Dashboard branding** -- all UI references updated from spec-workflow-mcp to SpecFlow
+- **Context budget** -- bumped from 125k → 300k → 800k tokens for 1M context models
+
+### Fixed
+
+- **Security vulnerabilities** -- patched 9 dependency vulnerabilities flagged by Codacy/Trivy
+- **Steering guide references** -- replaced wiki-update references with vault-update/DocVault
+- **Marketplace directory path** -- corrected symlink paths after rename
+
+### Removed
+
+- **Hardcoded project links** (SWF-1, SWF-4) -- removed StakTrakr/HexTrackr-specific links and wiki references from dashboard, making it project-agnostic
+- **Linear issue tracking references** -- replaced with vault-based issue tracking terminology
+
+## [2.2.4-lbruton.2] - 2026-03-09
+
+### Fixed
+
+- **Project registry persistence** -- keep projects in registry when all MCP instances disconnect, preventing ghost state on reconnect
+- **Rate limit raised to 600 req/min** -- local dashboard was hitting 120 req/min ceiling during normal use
+- **Approval annotator text color** -- use explicit CSS variable instead of `inherit`, fixing invisible text in some themes
+- **Phase approved status** -- both parsers now read snapshot metadata to correctly report approval state
+
+### Added
+
+- **Phase 5.2 User QA Session** -- new post-implementation phase for manual QA before wiki/PR. Restructured Phase 5 into 5.1 (E2E), 5.2 (QA), 5.3 (Wiki + PR)
+- **Artifacts folder in spec structure** -- specs now include `artifacts/` directory for prototypes, mockups, and design assets
+- **Phase 3.9 Implementation Readiness Gate** -- mandatory gate between task planning and implementation with tri-modal concerns status
+- **Implementation log audit** -- `spec-status` reports logged vs unlogged tasks, catching missing `log-implementation` calls
+- **Phase 5 post-implementation flow** -- formalized E2E testing, wiki update, and PR creation as tracked phases
+- **Spec reviewer and code quality reviewer templates** -- structured review prompt templates
+- **Implementer prompt template** -- ready-to-paste prompt for dispatching implementation to subagents
+- **GitHub PR links in dashboard** -- sidebar and header show PR links for the active spec
+- **Tests artifact type** -- `log-implementation` accepts `tests` as an artifact category
+- **SRPI execution mechanics** -- Structured Research-Plan-Implement pattern merged into Phase 4
+
+---
+
+## Upstream Releases (Pimzino/spec-workflow-mcp)
+
+The following entries are from the upstream project before the fork diverged.
+
 ## [2.2.3] - 2026-02-08
 
 ### Added
