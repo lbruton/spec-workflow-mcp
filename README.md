@@ -122,7 +122,7 @@ Code Context is a [hardened fork](https://github.com/lbruton/claude-context) of 
 
 ```bash
 git clone https://github.com/lbruton/specflow.git
-cd spec-workflow-mcp
+cd specflow
 npm install && npm run build
 
 # Symlink into Claude Code plugins
@@ -231,6 +231,8 @@ Core functionality docs from Pimzino's project:
 ## Credits
 
 **[Pimzino/spec-workflow-mcp](https://github.com/Pimzino/spec-workflow-mcp)** is the foundation. Pimzino designed and built the core architecture: the MCP server, sequential spec workflow, real-time dashboard with blocking approval gates, approval storage, markdown parser, implementation logging, template engine, multi-language support, VSCode extension, Docker deployment, and security hardening. SpecFlow adds workflow extensions, knowledge architecture, and code intelligence on top of that substantial foundation.
+
+**[theDakshJaitly/mex](https://github.com/theDakshJaitly/mex)** inspired several planned features: documentation drift detection with a scoring system, deterministic pattern files promoted from session learnings, and post-commit staleness hooks. mex's per-repo memory scaffold and GROW learning loop showed what disciplined context engineering looks like -- SpecFlow's multi-project approach builds on those ideas.
 
 **[Zilliz/claude-context](https://github.com/zilliztech/mcp-server-milvus)** provides the semantic code search engine that Code Context is forked from.
 
