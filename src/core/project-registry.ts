@@ -180,14 +180,32 @@ export class ProjectRegistry {
   }
 
   /**
+   * Check if a path is under one of the configured project roots.
+   * SPEC_WORKFLOW_PROJECT_ROOT accepts colon-separated paths.
+   * Returns true (allow) when no root is configured.
+   */
+  private isUnderProjectRoot(absolutePath: string): boolean {
+    const rootEnv = process.env.SPEC_WORKFLOW_PROJECT_ROOT;
+    if (!rootEnv) return true;
+
+    const roots = rootEnv.split(':').map(r => resolve(r.trim())).filter(Boolean);
+    return roots.some(root => absolutePath.startsWith(root));
+  }
+
+  /**
    * Register a project in the global registry
    * Self-healing: If a project exists with dead PIDs, cleans them up and adds new PID
    * Multi-instance: Allows unlimited MCP server instances per project
    */
   async registerProject(projectPath: string, pid: number, options: RegisterProjectOptions = {}): Promise<string> {
-    const registry = await this.readRegistry();
-
     const workspacePath = resolve(projectPath);
+
+    // Skip registration for paths outside configured project root(s)
+    if (!this.isUnderProjectRoot(workspacePath)) {
+      return generateProjectId(workspacePath);
+    }
+
+    const registry = await this.readRegistry();
     const workflowRootPath = resolve(options.workflowRootPath || projectPath);
     const projectId = generateProjectId(workspacePath);
     const projectName = options.projectName || generateProjectDisplayName(workspacePath, workflowRootPath);
