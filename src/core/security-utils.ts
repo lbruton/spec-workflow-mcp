@@ -267,7 +267,7 @@ export function createSecurityHeadersMiddleware(port?: number) {
   const actualPort = port || DEFAULT_DASHBOARD_PORT;
 
   // Build connect-src directive with WebSocket endpoints
-  let connectSrc = `'self' ws://localhost:${actualPort} ws://127.0.0.1:${actualPort} wss://specdash.lbruton.cc https://api.staktrakr.com`;
+  let connectSrc = `'self' ws://localhost:${actualPort} ws://127.0.0.1:${actualPort} wss://specdash.lbruton.cc`;
 
   // In non-production environments, also allow Vite dev server connections
   if (process.env.NODE_ENV !== 'production') {
@@ -286,7 +286,7 @@ export function createSecurityHeadersMiddleware(port?: number) {
     // connect-src allows WebSocket connections to the dashboard on the actual port
     reply.header(
       'Content-Security-Policy',
-      `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data:; connect-src ${connectSrc}; frame-src https://polldash.lbruton.cc https://beta.staktrakr.com http://127.0.0.1:9778;`
+      `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data:; connect-src ${connectSrc}; frame-src https://polldash.lbruton.cc;`
     );
   };
 }

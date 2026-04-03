@@ -298,6 +298,12 @@ flowchart TD
    - **No contradictions**: Check for conflicting statements between documents (e.g., design says "modal" but tasks say "inline panel").
    - **Prototype consistency**: If design.md references a prototype HTML file, verify it appears in task 0.1-0.3 artifacts and/or task \`_Leverage\` fields.
    - **File touch map validation**: Verify the File Touch Map in tasks.md covers all files mentioned in individual tasks.
+   - **Test Design Coverage**: At least one task in tasks.md covers test authoring for new behavior (matching task title/description patterns: "test", "TDD", "verify", "write tests"). If no test task found → FAIL.
+   - **Release Hygiene**: Check \`.spec-workflow/project-conventions.json\` (if exists):
+     - If version lock detected: verify a task covers version bump. Missing → FAIL.
+     - If changelog detected: verify a task covers changelog entry. Missing → FAIL.
+     - Verify a task covers DocVault documentation update. Missing → FAIL.
+     - If no conventions file exists: note "No project conventions detected — consider running convention detection" as an advisory finding (not a failure).
 3. Save the report as \`readiness-report.md\` in the spec folder using the output format below.
 4. Request dashboard approval using approvals tool with action:'request', filePath pointing to readiness-report.md
 5. Poll status using approvals with action:'status' until responded — the user has THREE options on the dashboard:
@@ -330,6 +336,14 @@ flowchart TD
 
 ## File Touch Map
 - Consistent | [Task 5 touches foo.js but File Touch Map omits it]
+
+## Test Design Coverage
+- Task N: "[test task title]" ✓ | [NO TEST TASK FOUND] ✗
+
+## Release Hygiene
+- Version bump task: ✓ / ✗ / N/A (no version lock)
+- Changelog task: ✓ / ✗ / N/A (no changelog)
+- DocVault task: ✓ / ✗
 
 ## Agent Recommendation
 {Brief explanation of the recommendation — why PASS/CONCERNS/FAIL}
@@ -463,23 +477,19 @@ Only dispatch AFTER Stage 1 passes. Verify the code is well-built and production
 
 Phase 5 has three stages. The spec is NOT complete until all three are done.
 
-#### Phase 5.1: Automated E2E
+#### Phase 5.1: Automated Testing
 
-**Tools**:
-- Skill \`bb-test\`: Browserbase/Stagehand cloud E2E tests — **primary E2E tool for all specs**
-
-**⚠️ Do NOT use browserless or /smoke-test for spec E2E** — browserless is unreliable. All E2E testing uses Browserbase/Stagehand.
+**Purpose**: Run the project's test suite to verify the implementation.
 
 **Process**:
-1. **Get the PR preview URL** before running E2E — do not test against staktrakr.pages.dev (main):
-   \`\`\`bash
-   # Get Cloudflare Pages preview URL from the draft PR
-   gh pr checks <PR_NUMBER> --json name,state,targetUrl \\
-     | python3 -c "import sys,json; checks=json.load(sys.stdin); [print(c['targetUrl']) for c in checks if 'pages.dev' in c.get('targetUrl','')]"
-   \`\`\`
-   Wait for the Cloudflare Pages check to complete (green) before proceeding.
-2. Run \`/bb-test\` with the preview URL — Browserbase/Stagehand against the PR preview deployment. Session has a **10-minute hard timeout**: if any individual test step has not returned a result within 10 minutes, skip it, log a warning, and move on.
-3. If E2E tests fail: fix the failures before proceeding to QA. Do not skip to 5.2 with known test failures.
+1. Check \`.spec-workflow/project-conventions.json\` for the project's test command and framework.
+2. If conventions exist and specify a test command: run that command (e.g., \`npm test\`, \`npx vitest\`, \`pytest\`).
+3. If no conventions exist: check \`package.json\` for a \`test\` script. If found, run \`npm test\`. If not found, ask the user for the test command.
+4. If the project uses Browserbase/Stagehand (\`conventions.testing.hasBrowserbase\` is true):
+   - Get the PR preview URL from the draft PR's deployment checks
+   - Run \`/bb-test\` with the preview URL for E2E browser testing
+   - This is IN ADDITION to the unit/integration tests from step 2
+5. If tests fail: fix the failures before proceeding to QA. Do not skip to 5.2 with known test failures.
 
 #### Phase 5.2: User QA Session
 
@@ -536,7 +546,7 @@ Phase 5 has three stages. The spec is NOT complete until all three are done.
 - Get explicit user approval between phases (using approvals tool with action:'request')
 - Complete phases in sequence (no skipping)
 - Phase 5 has three stages: 5.1 (automated E2E), 5.2 (user QA session), 5.3 (docs + PR finalization) — all three are mandatory. Docs run AFTER QA so documentation captures final post-QA code
-- Phase 5 E2E always uses Browserbase/Stagehand (/bb-test) against the PR preview URL — never browserless/smoke-test
+- Phase 5.1 runs the project's test suite as detected in project-conventions.json. Browserbase/Stagehand is used additionally when the project has browser-based E2E tests.
 - CRITICAL: During Phase 5.2 (User QA), the agent MUST NOT suggest merging, declare the work done, or push back on findings. The user drives QA, the agent fixes. QA ends ONLY when the user says so
 - CRITICAL: The spec finish line is marking the PR ready for review (Phase 5.3), NOT passing automated tests. Automated tests passing = ready for QA, not ready to merge
 - One spec at a time

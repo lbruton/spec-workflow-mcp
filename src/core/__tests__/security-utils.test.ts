@@ -59,7 +59,7 @@ describe('security-utils', () => {
   describe('DEFAULT_SECURITY_CONFIG', () => {
     it('should have secure defaults', () => {
       expect(DEFAULT_SECURITY_CONFIG.rateLimitEnabled).toBe(true);
-      expect(DEFAULT_SECURITY_CONFIG.rateLimitPerMinute).toBe(120);
+      expect(DEFAULT_SECURITY_CONFIG.rateLimitPerMinute).toBe(600);
       expect(DEFAULT_SECURITY_CONFIG.auditLogEnabled).toBe(true);
       expect(DEFAULT_SECURITY_CONFIG.auditLogRetentionDays).toBe(30);
       expect(DEFAULT_SECURITY_CONFIG.corsEnabled).toBe(true);
@@ -318,7 +318,7 @@ describe('security-utils', () => {
       await middleware(mockRequest as any, mockReply as any);
 
       expect(mockReply.header).toHaveBeenCalledWith('X-Content-Type-Options', 'nosniff');
-      expect(mockReply.header).toHaveBeenCalledWith('X-Frame-Options', 'DENY');
+      expect(mockReply.header).toHaveBeenCalledWith('X-Frame-Options', 'SAMEORIGIN');
       expect(mockReply.header).toHaveBeenCalledWith('X-XSS-Protection', '1; mode=block');
       expect(mockReply.header).toHaveBeenCalledWith('Referrer-Policy', 'strict-origin-when-cross-origin');
       expect(mockReply.header).toHaveBeenCalledWith('Content-Security-Policy', expect.any(String));

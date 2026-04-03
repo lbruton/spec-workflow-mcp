@@ -4,6 +4,7 @@ import { PathUtils } from '../core/path-utils.js';
 import { SpecParser } from '../core/parser.js';
 import { ImplementationLogManager } from '../dashboard/implementation-log-manager.js';
 import { parseTasksFromMarkdown } from '../core/task-parser.js';
+import type { ProjectConventions } from '../core/convention-detector.js';
 
 export const specStatusTool: Tool = {
   name: 'spec-status',
@@ -89,6 +90,17 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
       overallStatus = 'ready-for-implementation';
     }
 
+    // Read project conventions if available
+    let conventions: ProjectConventions | null = null;
+    try {
+      const { promises: fsPromises } = await import('fs');
+      const convPath = `${translatedPath}/.spec-workflow/project-conventions.json`;
+      const convContent = await fsPromises.readFile(convPath, 'utf-8');
+      conventions = JSON.parse(convContent);
+    } catch {
+      // No conventions file — use generic defaults
+    }
+
     // Phase details
     const phaseDetails = [
       {
@@ -119,13 +131,30 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
       {
         name: 'Post-Implementation',
         status: currentPhase === 'post-implementation' ? 'action-required' : 'not-started',
-        checklist: currentPhase === 'post-implementation' ? [
-          'DocVault updated (/vault-update)',
-          'E2E tests run (/bb-test)',
-          'Vault issues closed (mark Done)',
-          'GitHub issues closed (gh issue close)',
-          'Spec archived'
-        ] : undefined
+        checklist: currentPhase === 'post-implementation' ? (() => {
+          const items = ['DocVault updated (/vault-update)'];
+
+          // Dynamic test item based on conventions
+          const testItem = conventions?.testing?.command
+            ? `Tests run (${conventions.testing.command})`
+            : 'Project test suite run';
+          items.push(testItem);
+
+          // Conditional version bump
+          if (conventions?.versioning?.hasVersionLock) {
+            items.push('Version bumped');
+          }
+
+          // Conditional changelog
+          if (conventions?.changelog?.hasChangelog || conventions?.changelog?.docvaultFallback) {
+            items.push('Changelog updated');
+          }
+
+          items.push('Vault issues closed (mark Done)');
+          items.push('GitHub issues closed (gh issue close)');
+          items.push('Spec archived');
+          return items;
+        })() : undefined
       }
     ];
 
@@ -169,7 +198,10 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
         nextSteps.push('All tasks completed (marked [x]) — Phase 5 required before spec is done');
         nextSteps.push('1. Run /vault-update to update affected DocVault documentation');
         nextSteps.push('2. Commit DocVault changes (DocVault commits go direct to main)');
-        nextSteps.push('3. Run /bb-test against PR preview URL for E2E verification');
+        const testStep = conventions?.testing?.command
+          ? `3. Run project test suite (${conventions.testing.command})`
+          : '3. Run project test suite';
+        nextSteps.push(testStep);
         nextSteps.push('4. CLOSE all linked vault issues (mark status as Done in the issue markdown file)');
         nextSteps.push('5. CLOSE the linked GitHub issue if one exists (gh issue close)');
         nextSteps.push('6. Archive the spec after all issues are closed');
