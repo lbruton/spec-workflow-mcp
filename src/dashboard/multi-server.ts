@@ -28,7 +28,7 @@ import { SecurityConfig } from '../types.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-interface WebSocketConnection {
+interface WebSocketClient {
   socket: WebSocket;
   projectId?: string;
   isAlive?: boolean;
@@ -54,7 +54,7 @@ export class MultiProjectDashboardServer {
   private rateLimiter?: RateLimiter;
   private auditLogger?: AuditLogger;
   private actualPort: number = 0;
-  private clients: Set<WebSocketConnection> = new Set();
+  private clients: Set<WebSocketClient> = new Set();
   private packageVersion: string = 'unknown';
   private heartbeatInterval?: NodeJS.Timeout;
   private readonly HEARTBEAT_INTERVAL_MS = 30000;
@@ -164,8 +164,9 @@ export class MultiProjectDashboardServer {
     // WebSocket endpoint for real-time updates
     const self = this;
     await this.app.register(async function (fastify) {
-      fastify.get('/ws', { websocket: true }, (connection: WebSocketConnection, req) => {
-        const socket = connection.socket;
+      fastify.get('/ws', { websocket: true }, (socket: WebSocket, req) => {
+        // @fastify/websocket v11: handler receives raw WebSocket, not a wrapper
+        const connection: WebSocketClient = { socket };
 
         // Get projectId from query parameter
         const url = new URL(req.url || '', `http://${req.headers.host}`);
@@ -1369,7 +1370,7 @@ export class MultiProjectDashboardServer {
     });
   }
 
-  private scheduleConnectionCleanup(connection: WebSocketConnection) {
+  private scheduleConnectionCleanup(connection: WebSocketClient) {
     // Use setImmediate to avoid modifying Set during iteration
     setImmediate(() => {
       try {
