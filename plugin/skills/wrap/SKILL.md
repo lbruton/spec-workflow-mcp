@@ -14,6 +14,7 @@ Wrap up this session. Follow each phase in order — do not skip phases unless e
 ## Arguments
 
 - **skipCleanup**: Pass `--skip-cleanup` if this session had no code changes (chat-only, research, etc.)
+- **handoff**: Pass `--handoff` if work continues in a new terminal. Adds handoff notes to the digest, writes a handoff file, and generates a paste-ready prompt for the next session. Use when context is heavy, switching machines, or relaying to another terminal.
 
 ---
 
@@ -193,6 +194,16 @@ tags: [daily-digest, <project-tag>]
 
 Include **concrete anchors**: commit hashes, issue IDs, version numbers, file paths. These make the digest searchable and verifiable.
 
+**Digest shape depends on `--handoff`:**
+
+- **Without `--handoff` (session complete):** End with a summary and conclusion. The "Next session" note is a suggestion, not a continuation plan.
+- **With `--handoff` (work continues):** Append a `## Handoff Notes` section at the end of the digest entry with:
+  - **Resume with:** The exact command or action to start with (e.g., `/prime`, a specific file to open, a test to run)
+  - **Immediate next:** The task that was actively being worked on, with enough detail to resume without re-reading code
+  - **Then:** 2-3 follow-up tasks in priority order
+  - **Watch out for:** Gotchas, non-obvious state, or things the next session needs to know
+  - This section is what `/prime` reads as "where we left off" — make it actionable and specific
+
 Commit the digest to DocVault:
 ```bash
 cd /Volumes/DATA/GitHub/DocVault && git add "Daily Digests/" && git commit -m "digest: <project> session <date>" && git push origin main
@@ -223,6 +234,78 @@ mcp__mem0__add_memory(
 - Does it say what CHANGED, not just what was "worked on"?
 - Is it different enough from the retro lessons to avoid redundancy?
 
+### 4.4: Handoff File + Paste-Ready Prompt (only if `--handoff`)
+
+Skip this step if `--handoff` was NOT passed.
+
+**Step 4.4.1: Write handoff file**
+
+Write to `~/.claude/handoffs/<YYYY-MM-DD>-<HH-MM>.md`:
+
+```markdown
+# Session Handoff — <YYYY-MM-DD> <HH:MM>
+
+## Active Work
+- **Branch:** <branch name>
+- **Worktree:** <path if applicable>
+- **Spec:** <spec name if applicable>
+- **Issues:** <issue IDs if applicable>
+
+## Completed This Session
+- <item 1>
+- <item 2>
+
+## In Progress (was actively working on)
+- <current task with specific details>
+- <files being modified and why>
+
+## Next Steps (in priority order)
+1. <next task — be specific>
+2. <following task>
+
+## Key Decisions Made
+- <decision 1 and rationale>
+
+## Context the Next Session Needs
+- <gotchas, blockers, or non-obvious state>
+- <patterns discovered that aren't in skills/CLAUDE.md>
+
+## Uncommitted Changes
+<git diff --stat output or "none — all committed">
+```
+
+**Step 4.4.2: Generate paste-ready prompt**
+
+Output this block for the user to copy into the new terminal:
+
+````
+---
+**Copy everything below this line into your new terminal:**
+---
+
+I'm continuing from a session handoff. Here's where we left off:
+
+**Branch:** <branch name>
+**Active task:** <what we were doing>
+
+Completed so far:
+- <item 1>
+- <item 2>
+
+Next steps:
+1. <next task with specifics>
+2. <following task>
+
+Key context:
+- <gotcha or non-obvious state>
+
+Handoff file with full details: `~/.claude/handoffs/<filename>.md`
+
+Please read the handoff file, then continue with step <N>.
+````
+
+Tell the user: "Handoff ready. Copy the prompt above into your new terminal."
+
 ---
 
 ## Phase 5: Final Verification
@@ -250,6 +333,7 @@ Present a compact summary:
 **Lessons:** <count> retro entries saved to mem0
 **Digest:** Written to DocVault/Daily Digests/<path>
 **Cleanup:** <worktrees removed, branches deleted>
+**Handoff:** <if --handoff: "Written to ~/.claude/handoffs/<filename>.md" | otherwise: omit this line>
 
 Next session: <1-2 sentence suggestion for what to work on>
 ```
