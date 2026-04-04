@@ -165,7 +165,9 @@ Write a session digest entry to the DocVault daily digest file. This is the huma
 
 **Path:** `/Volumes/DATA/GitHub/DocVault/Daily Digests/<ProjectFolder>/<YYYY-MM-DD>.md`
 
-Where `<ProjectFolder>` maps to the project name (e.g., StakTrakr, HexTrackr, Infrastructure, SpecFlow).
+Where `<ProjectFolder>` maps to the project name (e.g., StakTrakr, HexTrackr, SpecFlow).
+
+**Root workspace rule:** If the session was launched from `/Volumes/DATA/GitHub/` (the root workspace, not a specific project), use `Root` as the ProjectFolder — NOT `Infrastructure`. The `Infrastructure` folder is reserved for sessions launched from `HomeNetwork/` or focused on Proxmox/switches/DNS/stacks.
 
 **If the file doesn't exist**, create it with this format:
 ```markdown
@@ -177,12 +179,14 @@ tags: [daily-digest, <project-tag>]
 
 # Daily Digest — <ProjectName> (<YYYY-MM-DD>)
 
-## <HH:MM AM/PM>
+## <HH:MM AM/PM> — <AgentName>
 
 <session summary>
 ```
 
-**If the file exists**, append a new `## <HH:MM AM/PM>` section.
+Where `<AgentName>` is your identity: `Claude (Opus)`, `Claude (Sonnet)`, `Codex (GPT-5.4)`, `Gemini`, etc. This lets readers see which agent authored each digest entry at a glance.
+
+**If the file exists**, append a new `## <HH:MM AM/PM> — <AgentName>` section.
 
 **Session summary content** (200-300 words, flowing prose):
 - What was the goal of this session?

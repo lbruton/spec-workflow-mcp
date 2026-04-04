@@ -117,20 +117,103 @@ Code Context is a [hardened fork](https://github.com/lbruton/claude-context) of 
 | Self-hosted | Files | Files | Files | Files | Files | Node.js | **Milvus, Neo4j + cloud optional** |
 | Best for | Quick adoption | Enterprise teams | Solo context eng. | PRD pipelines | Per-repo memory | Structured workflow | **Multi-project governance** |
 
+## Multi-Agent Support
+
+SpecFlow works as an MCP server, which means any agent that speaks the MCP protocol can use it. Verified with all three major coding agents:
+
+| Agent | MCP Loading | Spec Lifecycle | Skills |
+|-------|------------|----------------|--------|
+| **Claude Code** | Plugin marketplace or manual | Full | 60+ skills via SKILL.md |
+| **Gemini CLI** | Manual MCP config | Full | Via GEMINI.md instructions |
+| **Codex CLI** | Manual MCP config | Full | Via CODEX.md instructions |
+
+All three agents share the same MCP tools, DocVault knowledge base, and spec workflow. Agent-specific instruction files (CLAUDE.md, GEMINI.md, CODEX.md) tailor behavior to each agent's capabilities.
+
+### Cross-Agent Spec Handoff
+
+Spec state lives on disk in `.spec-workflow/specs/` — not in any agent's memory. This means you can start a spec in one agent and continue in another:
+
+```
+Claude Code                    Codex CLI                      Gemini CLI
+────────────                   ─────────                      ──────────
+/issue create                  @spec resume                   @spec resume
+  → creates SWF-65               → reads spec from disk         → reads spec from disk
+/discover SWF-65                 → runs Phase 3 (Tasks)          → runs Phase 4 (Implement)
+  → discovery brief               → generates task list            → implements tasks
+/spec SWF-65                     → writes tasks.md                → commits code
+  → Phase 1 (Requirements)      → awaits approval                → logs implementation
+  → Phase 2 (Design)
+  → awaits approval
+```
+
+Each agent reads the current spec state, advances the workflow, and writes the result back to disk. The dashboard shows progress regardless of which agent is driving. Use whichever agent is best suited for each phase — Claude for discovery and design, Codex for implementation, Gemini for review.
+
 ## Quick Start
 
-### As a Claude Code Plugin (recommended)
+### Claude Code — Via Plugin Marketplace (recommended)
+
+The marketplace handles installation, updates, and skill registration automatically:
+
+1. Open Claude Code
+2. Run `/install-plugin` or browse the marketplace
+3. Search for `specflow`
+4. Install — tools and skills are available immediately
+
+### Claude Code — Manual Install
 
 ```bash
 git clone https://github.com/lbruton/specflow.git
 cd specflow
 npm install && npm run build
 
-# Symlink into Claude Code plugins
-ln -s "$(pwd)" ~/.claude/plugins/marketplaces/specflow-marketplace
+# Copy into Claude Code plugins directory
+cp -r . ~/.claude/plugins/marketplaces/specflow-marketplace/
 ```
 
-### As an MCP Server
+> **Note:** The plugin directory is a copy, not a symlink. After updating the repo, re-copy to pick up changes. The compiled MCP server (`dist/`) in the cache auto-updates from npm on next Claude Code launch.
+
+### Gemini CLI — Manual Install
+
+```bash
+git clone https://github.com/lbruton/specflow.git
+cd specflow
+npm install && npm run build
+```
+
+Add to your Gemini MCP config (`~/.gemini/settings.json` or project-level):
+
+```json
+{
+  "mcpServers": {
+    "spec-workflow": {
+      "command": "node",
+      "args": ["/path/to/specflow/dist/index.js", "/path/to/your/project"]
+    }
+  }
+}
+```
+
+Copy `GEMINI.md` from the specflow repo root into your project root for agent-specific instructions.
+
+### Codex CLI — Manual Install
+
+```bash
+git clone https://github.com/lbruton/specflow.git
+cd specflow
+npm install && npm run build
+```
+
+Add to your Codex MCP config (`.codex/config.toml` or user-level):
+
+```toml
+[mcp.spec-workflow]
+command = "node"
+args = ["/path/to/specflow/dist/index.js", "/path/to/your/project"]
+```
+
+Copy `CODEX.md` from the specflow repo root into your project root for agent-specific instructions.
+
+### Any MCP-Compatible Agent — Via npx
 
 ```json
 {

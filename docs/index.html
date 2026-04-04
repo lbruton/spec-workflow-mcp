@@ -485,7 +485,7 @@
       <div class="feature-card">
         <div class="tag accent">SpecFlow &mdash; MCP Server</div>
         <h3>Spec-driven lifecycle</h3>
-        <p>Requirements &rarr; Design &rarr; Tasks &rarr; Implementation with dashboard approvals at every gate. Ships as a Claude Code MCP plugin with 6 tools and 10 prompts.</p>
+        <p>Requirements &rarr; Design &rarr; Tasks &rarr; Implementation with dashboard approvals at every gate. Works with Claude Code, Gemini CLI, and Codex CLI &mdash; any MCP-compatible agent.</p>
       </div>
       <div class="feature-card">
         <div class="tag purple">DocVault &mdash; Obsidian Vault</div>
@@ -502,6 +502,55 @@
         <h3>Procedural knowledge routing</h3>
         <p>CLAUDE.md stays tiny &mdash; a routing table to skills. Each skill encodes a full workflow: debugging, deployment, PR resolution, infrastructure management.</p>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Multi-Agent Support ─── -->
+<section style="background: #0d1117;">
+  <div class="container">
+    <h2>Multi-agent, one workflow</h2>
+    <p class="dim">SpecFlow speaks MCP &mdash; the open protocol for agent-tool communication. Any agent that supports MCP gets the full spec lifecycle, shared knowledge base, and code intelligence.</p>
+
+    <div class="feature-grid" style="grid-template-columns: repeat(3, 1fr);">
+      <div class="feature-card">
+        <div class="tag accent">Claude Code</div>
+        <h3>Plugin marketplace</h3>
+        <p>One-click install via the Claude Code marketplace. Full skill system with 60+ workflows, session lifecycle, and parallel subagent dispatch.</p>
+      </div>
+      <div class="feature-card">
+        <div class="tag green">Gemini CLI</div>
+        <h3>Manual MCP config</h3>
+        <p>Add SpecFlow as an MCP server in Gemini&rsquo;s settings. Full access to spec tools, DocVault, and the approval dashboard. Uses GEMINI.md for agent-specific behavior.</p>
+      </div>
+      <div class="feature-card">
+        <div class="tag amber">Codex CLI</div>
+        <h3>Manual MCP config</h3>
+        <p>Configure in Codex&rsquo;s TOML config. Same MCP tools, same workflow, same dashboard. Uses CODEX.md for agent-specific behavior.</p>
+      </div>
+    </div>
+    <p class="dim" style="margin-top: 1.5rem; text-align: center;">All three agents share the same DocVault knowledge base, spec workflow state, and dashboard &mdash; work started in one agent can be continued in another.</p>
+
+    <div class="code-block" style="margin-top: 2rem;">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        Cross-Agent Spec Handoff
+      </div>
+      <div class="code-body"><span class="highlight">Claude Code</span>                         <span class="dim">Discovery &amp; Design</span>
+  <span class="cmd">/issue create</span>                      <span class="output">&rarr; SWF-65 created in DocVault</span>
+  <span class="cmd">/discover SWF-65</span>                   <span class="output">&rarr; Discovery brief with research</span>
+  <span class="cmd">/spec SWF-65</span>                       <span class="output">&rarr; Requirements &rarr; Design &rarr; awaiting approval</span>
+
+<span class="highlight">Codex CLI</span>                            <span class="dim">Task Generation</span>
+  <span class="cmd">@spec resume</span>                       <span class="output">&rarr; Reads spec from disk, picks up at Phase 3</span>
+  <span class="output">                                    &rarr; Generates tasks.md &rarr; awaiting approval</span>
+
+<span class="highlight">Gemini CLI</span>                           <span class="dim">Implementation</span>
+  <span class="cmd">@spec resume</span>                       <span class="output">&rarr; Reads spec from disk, picks up at Phase 4</span>
+  <span class="output">                                    &rarr; Implements tasks &rarr; commits &rarr; logs artifacts</span>
+
+<span class="dim">Spec state lives on disk in .spec-workflow/specs/ &mdash; not in any agent's memory.
+The dashboard tracks progress regardless of which agent is driving.</span></div>
     </div>
   </div>
 </section>
@@ -894,7 +943,7 @@
 <section>
   <div class="container">
     <h2>What ships in the box</h2>
-    <p class="dim">SpecFlow is an MCP server plugin. DocVault is an Obsidian vault. Code Context is a semantic search engine. They work together through Claude Code's skill and memory systems.</p>
+    <p class="dim">SpecFlow is an MCP server that works with any MCP-compatible agent &mdash; Claude Code, Gemini CLI, and Codex CLI verified. DocVault is an Obsidian vault. Code Context is a semantic search engine. Together, they replace the bloated instruction file + ad-hoc prompting pattern.</p>
 
     <div class="code-block">
       <div class="code-header">
