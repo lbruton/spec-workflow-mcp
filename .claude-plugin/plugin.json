@@ -16,6 +16,5 @@
     "dashboard",
     "governance",
     "claude-code"
-  ],
-  "skills": "./skills/"
+  ]
 }
