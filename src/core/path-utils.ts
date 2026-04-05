@@ -1,6 +1,7 @@
 import { join, normalize, sep, resolve, posix } from 'path';
 import { access, stat, mkdir } from 'fs/promises';
-import { constants, existsSync } from 'fs';
+import { constants } from 'fs';
+import type { ResolvedConfig } from './config-loader.js';
 
 export class PathUtils {
   /** macOS and Windows are case-insensitive filesystems */
@@ -9,6 +10,9 @@ export class PathUtils {
 
   /** Cached path configuration (undefined = not checked, null = invalid/missing) */
   private static pathConfig: { hostPrefix: string; containerPrefix: string } | null | undefined;
+
+  /** DocVault resolved configuration (null = not configured) */
+  private static docvaultConfig: ResolvedConfig | null = null;
 
   /**
    * Get cached path configuration from environment variables.
@@ -53,6 +57,25 @@ export class PathUtils {
   /** Reset cached config (for testing) */
   static resetPathConfig(): void {
     this.pathConfig = undefined;
+  }
+
+  static initializeDocVault(config: ResolvedConfig): void {
+    this.docvaultConfig = config;
+  }
+
+  static isDocVaultConfigured(): boolean {
+    return this.docvaultConfig !== null;
+  }
+
+  static getGlobalTemplatesPath(): string {
+    if (!this.docvaultConfig) {
+      throw new Error('DocVault not configured. Call initializeDocVault() first.');
+    }
+    return this.docvaultConfig.globalTemplatesPath;
+  }
+
+  static resetDocVaultConfig(): void {
+    this.docvaultConfig = null;
   }
 
   /**
@@ -191,16 +214,11 @@ export class PathUtils {
   }
   
   static getWorkflowRoot(projectPath: string): string {
-    const newPath = this.safeJoin(projectPath, '.specflow');
-    if (existsSync(newPath)) {
-      return newPath;
+    if (this.docvaultConfig) {
+      return this.docvaultConfig.specflowRoot;
     }
-    const legacyPath = this.safeJoin(projectPath, '.spec-workflow');
-    if (existsSync(legacyPath)) {
-      console.warn('[specflow] Found legacy .spec-workflow/ directory. Please rename to .specflow/. Legacy support will be removed in a future version.');
-      return legacyPath;
-    }
-    return newPath;
+    // Fallback for testing or pre-config state
+    return this.safeJoin(projectPath, '.specflow');
   }
 
   static getSpecPath(projectPath: string, specName: string): string {

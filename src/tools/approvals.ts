@@ -6,6 +6,8 @@ import { validateProjectPath, PathUtils } from '../core/path-utils.js';
 import { readFile } from 'fs/promises';
 import { validateTasksMarkdown, formatValidationErrors } from '../core/task-validator.js';
 import { validateMarkdownForMdx, formatMdxValidationIssues } from '../core/mdx-validator.js';
+import { addSpecToIndex } from '../core/index-updater.js';
+import { loadConfig } from '../core/config-loader.js';
 
 /**
  * Safely translate a path, with defensive checks to provide better error messages
@@ -303,6 +305,20 @@ async function handleRequestApproval(
     );
 
     await approvalStorage.stop();
+
+    // Best-effort: add spec to _Index.md when requirements.md is first submitted
+    if (
+      args.category === 'spec' &&
+      args.filePath.endsWith('requirements.md') &&
+      PathUtils.isDocVaultConfigured()
+    ) {
+      try {
+        const config = await loadConfig(validatedProjectPath);
+        await addSpecToIndex(config, args.categoryName);
+      } catch (e) {
+        console.error('Failed to update spec index:', e);
+      }
+    }
 
     // Build deeplink URL that navigates directly to this specific approval
     const deeplink = context.dashboardUrl

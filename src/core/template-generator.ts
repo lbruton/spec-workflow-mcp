@@ -2,6 +2,7 @@ import { readFile, mkdir, writeFile, stat } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import type { ProjectConventions } from './convention-detector.js';
+import { PathUtils } from './path-utils.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -34,25 +35,41 @@ async function fileExists(filePath: string): Promise<boolean> {
 }
 
 /**
- * Read a default template by name, checking the project's .specflow/templates/
- * first, then falling back to the bundled src/markdown/templates/.
+ * Read a default template by name using tiered precedence.
+ *
+ * When DocVault is configured (3-tier):
+ *   1. Project-level DocVault override  ({workflowRoot}/templates/)
+ *   2. Global DocVault templates        (globalTemplatesPath/)
+ *   3. Bundled emergency fallback       (dist/markdown/templates/)
+ *
+ * When DocVault is NOT configured (legacy 2-tier):
+ *   1. Project's local .specflow/templates/
+ *   2. Bundled emergency fallback
  */
 async function readDefaultTemplate(projectPath: string, templateName: string): Promise<string> {
-  // Primary: project's copied templates
-  const projectTemplate = join(projectPath, '.specflow', 'templates', `${templateName}.md`);
-  const content = await safeReadFile(projectTemplate);
-  if (content !== null) {
-    return content;
+  if (PathUtils.isDocVaultConfigured()) {
+    // Tier 1: Project-level DocVault override
+    const projectTemplate = join(PathUtils.getWorkflowRoot(projectPath), 'templates', `${templateName}.md`);
+    const projectContent = await safeReadFile(projectTemplate);
+    if (projectContent !== null) return projectContent;
+
+    // Tier 2: Global DocVault templates
+    const globalTemplate = join(PathUtils.getGlobalTemplatesPath(), `${templateName}.md`);
+    const globalContent = await safeReadFile(globalTemplate);
+    if (globalContent !== null) return globalContent;
+  } else {
+    // Legacy: project's local .specflow/templates/
+    const projectTemplate = join(projectPath, '.specflow', 'templates', `${templateName}.md`);
+    const content = await safeReadFile(projectTemplate);
+    if (content !== null) return content;
   }
 
-  // Fallback: bundled source templates (compiled to dist/core/, so go up to dist/markdown/templates/)
+  // Tier 3 / Fallback: bundled source templates (compiled to dist/core/, so go up to dist/markdown/templates/)
   const bundledTemplate = join(__dirname, '..', 'markdown', 'templates', `${templateName}.md`);
   const bundledContent = await safeReadFile(bundledTemplate);
-  if (bundledContent !== null) {
-    return bundledContent;
-  }
+  if (bundledContent !== null) return bundledContent;
 
-  throw new Error(`Could not find default template "${templateName}.md" in project or bundled sources`);
+  throw new Error(`Template not found: ${templateName}`);
 }
 
 /**

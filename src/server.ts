@@ -10,8 +10,10 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { registerTools, handleToolCall } from './tools/index.js';
 import { registerPrompts, handlePromptList, handlePromptGet } from './prompts/index.js';
-import { validateProjectPath } from './core/path-utils.js';
+import { validateProjectPath, PathUtils } from './core/path-utils.js';
 import { WorkspaceInitializer } from './core/workspace-initializer.js';
+import { loadOrCreateConfig } from './core/config-loader.js';
+import { needsMigration, migrateToDocVault } from './core/migration.js';
 import { ProjectRegistry } from './core/project-registry.js';
 import { DashboardSessionManager } from './core/dashboard-session.js';
 import { readFileSync } from 'fs';
@@ -66,12 +68,26 @@ export class SpecWorkflowMCPServer {
       await validateProjectPath(this.projectPath);
       await validateProjectPath(this.workspacePath);
 
+      // Load or create DocVault config
+      const config = await loadOrCreateConfig(this.projectPath);
+      console.error(`DocVault config loaded: ${config.specflowRoot}`);
+
+      // Initialize PathUtils with DocVault resolution
+      PathUtils.initializeDocVault(config);
+
       // Initialize workspace
       const __dirname = dirname(fileURLToPath(import.meta.url));
       const packageJsonPath = join(__dirname, '..', 'package.json');
       const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
-      const workspaceInitializer = new WorkspaceInitializer(this.projectPath, packageJson.version);
+      const workspaceInitializer = new WorkspaceInitializer(this.projectPath, packageJson.version, config);
       await workspaceInitializer.initializeWorkspace();
+
+      // Check for and run migration if needed
+      if (await needsMigration(this.projectPath, config)) {
+        console.error('Migrating existing .specflow/ content to DocVault...');
+        const migrationResult = await migrateToDocVault(this.projectPath, config);
+        console.error(`Migration complete: ${migrationResult.migratedDirs.length} migrated, ${migrationResult.skippedDirs.length} skipped, ${migrationResult.errors.length} errors`);
+      }
 
       // Register this project in the global registry
       const projectId = await this.projectRegistry.registerProject(this.workspacePath, process.pid, {

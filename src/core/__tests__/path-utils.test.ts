@@ -440,38 +440,147 @@ describe('PathUtils root prefix edge case', () => {
   });
 });
 
-describe('PathUtils.getWorkflowRoot backward compatibility', () => {
+describe('PathUtils.getWorkflowRoot', () => {
   let tempDir: string;
 
   beforeEach(() => {
     tempDir = mkdtempSync(join(tmpdir(), 'specflow-test-'));
+    PathUtils.resetDocVaultConfig();
   });
 
   afterEach(() => {
     rmSync(tempDir, { recursive: true, force: true });
+    PathUtils.resetDocVaultConfig();
   });
 
-  it('should return .specflow when .specflow/ exists', () => {
-    mkdirSync(join(tempDir, '.specflow'));
+  it('should return .specflow/ when no DocVault config is set', () => {
     const result = PathUtils.getWorkflowRoot(tempDir);
     expect(result).toBe(join(tempDir, '.specflow'));
   });
 
-  it('should fall back to .spec-workflow with warning when only legacy dir exists', () => {
+  it('should only use .specflow/ — no legacy .spec-workflow/ fallback', () => {
+    // SWF-80 removed the legacy fallback. getWorkflowRoot always returns
+    // .specflow/ (or DocVault path) — never .spec-workflow/.
     mkdirSync(join(tempDir, '.spec-workflow'));
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const result = PathUtils.getWorkflowRoot(tempDir);
-    expect(result).toBe(join(tempDir, '.spec-workflow'));
-    expect(warnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('legacy .spec-workflow/')
+    expect(result).toBe(join(tempDir, '.specflow'));
+  });
+
+  it('should return DocVault path after initializeDocVault()', () => {
+    const config = {
+      project: 'TestProject',
+      docvault: '../DocVault',
+      issue_prefix: 'TP',
+      docvaultAbsolute: join(tempDir, 'DocVault'),
+      specflowRoot: join(tempDir, 'DocVault', 'specflow', 'TestProject'),
+      globalTemplatesPath: join(tempDir, 'DocVault', 'specflow', 'templates'),
+    };
+    PathUtils.initializeDocVault(config);
+
+    const result = PathUtils.getWorkflowRoot(tempDir);
+    expect(result).toBe(join(tempDir, 'DocVault', 'specflow', 'TestProject'));
+  });
+
+  it('should return local .specflow/ when no DocVault config', () => {
+    PathUtils.resetDocVaultConfig();
+    const result = PathUtils.getWorkflowRoot(tempDir);
+    expect(result).toBe(join(tempDir, '.specflow'));
+  });
+});
+
+describe('PathUtils.getGlobalTemplatesPath', () => {
+  let tempDir: string;
+
+  beforeEach(() => {
+    tempDir = mkdtempSync(join(tmpdir(), 'specflow-test-'));
+    PathUtils.resetDocVaultConfig();
+  });
+
+  afterEach(() => {
+    rmSync(tempDir, { recursive: true, force: true });
+    PathUtils.resetDocVaultConfig();
+  });
+
+  it('should return correct path when configured', () => {
+    const config = {
+      project: 'TestProject',
+      docvault: '../DocVault',
+      issue_prefix: 'TP',
+      docvaultAbsolute: join(tempDir, 'DocVault'),
+      specflowRoot: join(tempDir, 'DocVault', 'specflow', 'TestProject'),
+      globalTemplatesPath: join(tempDir, 'DocVault', 'specflow', 'templates'),
+    };
+    PathUtils.initializeDocVault(config);
+
+    expect(PathUtils.getGlobalTemplatesPath()).toBe(
+      join(tempDir, 'DocVault', 'specflow', 'templates'),
     );
-    warnSpy.mockRestore();
   });
 
-  it('should prefer .specflow when both .specflow/ and .spec-workflow/ exist', () => {
-    mkdirSync(join(tempDir, '.specflow'));
-    mkdirSync(join(tempDir, '.spec-workflow'));
-    const result = PathUtils.getWorkflowRoot(tempDir);
-    expect(result).toBe(join(tempDir, '.specflow'));
+  it('should throw when not configured', () => {
+    expect(() => PathUtils.getGlobalTemplatesPath()).toThrow(
+      /DocVault not configured/,
+    );
+  });
+});
+
+describe('PathUtils.isDocVaultConfigured', () => {
+  let tempDir: string;
+
+  beforeEach(() => {
+    tempDir = mkdtempSync(join(tmpdir(), 'specflow-test-'));
+    PathUtils.resetDocVaultConfig();
+  });
+
+  afterEach(() => {
+    rmSync(tempDir, { recursive: true, force: true });
+    PathUtils.resetDocVaultConfig();
+  });
+
+  it('should return false when not configured', () => {
+    expect(PathUtils.isDocVaultConfigured()).toBe(false);
+  });
+
+  it('should return true after initializeDocVault()', () => {
+    const config = {
+      project: 'TestProject',
+      docvault: '../DocVault',
+      issue_prefix: 'TP',
+      docvaultAbsolute: join(tempDir, 'DocVault'),
+      specflowRoot: join(tempDir, 'DocVault', 'specflow', 'TestProject'),
+      globalTemplatesPath: join(tempDir, 'DocVault', 'specflow', 'templates'),
+    };
+    PathUtils.initializeDocVault(config);
+    expect(PathUtils.isDocVaultConfigured()).toBe(true);
+  });
+});
+
+describe('PathUtils.resetDocVaultConfig', () => {
+  let tempDir: string;
+
+  beforeEach(() => {
+    tempDir = mkdtempSync(join(tmpdir(), 'specflow-test-'));
+    PathUtils.resetDocVaultConfig();
+  });
+
+  afterEach(() => {
+    rmSync(tempDir, { recursive: true, force: true });
+    PathUtils.resetDocVaultConfig();
+  });
+
+  it('should clear the config', () => {
+    const config = {
+      project: 'TestProject',
+      docvault: '../DocVault',
+      issue_prefix: 'TP',
+      docvaultAbsolute: join(tempDir, 'DocVault'),
+      specflowRoot: join(tempDir, 'DocVault', 'specflow', 'TestProject'),
+      globalTemplatesPath: join(tempDir, 'DocVault', 'specflow', 'templates'),
+    };
+    PathUtils.initializeDocVault(config);
+    expect(PathUtils.isDocVaultConfigured()).toBe(true);
+
+    PathUtils.resetDocVaultConfig();
+    expect(PathUtils.isDocVaultConfigured()).toBe(false);
   });
 });

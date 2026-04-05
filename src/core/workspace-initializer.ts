@@ -1,30 +1,42 @@
 import { promises as fs } from 'fs';
-import { join, dirname } from 'path';
+import { join, dirname, basename } from 'path';
 import { fileURLToPath } from 'url';
 import { PathUtils } from './path-utils.js';
 import { ImplementationLogMigrator } from './implementation-log-migrator.js';
 import { getGlobalDir } from './global-dir.js';
+import type { ResolvedConfig } from './config-loader.js';
+import { ensureIndexExists } from './index-updater.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export class WorkspaceInitializer {
   private projectPath: string;
   private version: string;
+  private config?: ResolvedConfig;
 
-  constructor(projectPath: string, version: string) {
+  constructor(projectPath: string, version: string, config?: ResolvedConfig) {
     this.projectPath = projectPath;
     this.version = version;
+    this.config = config;
   }
 
   async initializeWorkspace(): Promise<void> {
-    // Create all necessary directories
-    await this.initializeDirectories();
+    if (this.config) {
+      // DocVault mode: scaffold DocVault directories, use centralized paths
+      // Still create local .specflow/ root (for config.json)
+      const localRoot = join(this.projectPath, '.specflow');
+      await fs.mkdir(localRoot, { recursive: true });
 
-    // Copy template files
-    await this.initializeTemplates();
-
-    // Create user templates README
-    await this.createUserTemplatesReadme();
+      await this.initializeDocVaultDirectories();
+      await this.initializeGlobalTemplates();
+      await this.initializeTemplates();
+      await this.initializeIndexFiles();
+    } else {
+      // Legacy mode: preserve existing behavior exactly
+      await this.initializeDirectories();
+      await this.initializeTemplates();
+      await this.createUserTemplatesReadme();
+    }
 
     // Migrate implementation logs from JSON to Markdown format
     await this.migrateImplementationLogs();
@@ -49,7 +61,9 @@ export class WorkspaceInitializer {
   }
   
   private async initializeTemplates(): Promise<void> {
-    const templatesDir = join(PathUtils.getWorkflowRoot(this.projectPath), 'templates');
+    const templatesDir = this.config
+      ? join(this.config.specflowRoot, 'templates')
+      : join(PathUtils.getWorkflowRoot(this.projectPath), 'templates');
     
     const templates = [
       'requirements-template',
@@ -68,6 +82,58 @@ export class WorkspaceInitializer {
     }
   }
   
+  private async initializeDocVaultDirectories(): Promise<void> {
+    if (!this.config) return;
+
+    const directories = [
+      'steering',
+      'specs',
+      'templates',
+      'approvals',
+      'archive',
+      join('archive', 'specs'),
+    ];
+
+    for (const dir of directories) {
+      const dirPath = join(this.config.specflowRoot, dir);
+      await fs.mkdir(dirPath, { recursive: true });
+    }
+
+    // Also create the global templates directory
+    await fs.mkdir(this.config.globalTemplatesPath, { recursive: true });
+  }
+
+  private async initializeGlobalTemplates(): Promise<void> {
+    if (!this.config) return;
+
+    const templates = [
+      'requirements-template',
+      'design-template',
+      'tasks-template',
+      'product-template',
+      'tech-template',
+      'structure-template',
+      'spec-reviewer-template',
+      'code-quality-reviewer-template',
+      'implementer-prompt-template',
+    ];
+
+    for (const template of templates) {
+      await this.copyTemplate(template, this.config.globalTemplatesPath);
+    }
+  }
+
+  private async initializeIndexFiles(): Promise<void> {
+    if (!this.config) return;
+
+    const projectName = basename(this.config.specflowRoot);
+
+    await ensureIndexExists(this.config.specflowRoot, projectName);
+    await ensureIndexExists(join(this.config.specflowRoot, 'steering'), 'Steering');
+    await ensureIndexExists(join(this.config.specflowRoot, 'specs'), 'Specs');
+    await ensureIndexExists(join(this.config.specflowRoot, 'templates'), 'Templates');
+  }
+
   private async copyTemplate(templateName: string, targetDir: string): Promise<void> {
     // Use simple filename without version
     const targetFileName = `${templateName}.md`;

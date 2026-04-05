@@ -1,6 +1,8 @@
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import { PathUtils } from './path-utils.js';
+import { removeSpecFromIndex, addSpecToIndex } from './index-updater.js';
+import { loadConfig } from './config-loader.js';
 
 export class SpecArchiveService {
   private projectPath: string;
@@ -34,12 +36,22 @@ export class SpecArchiveService {
     try {
       // Ensure archive directory structure exists
       await fs.mkdir(PathUtils.getArchiveSpecsPath(this.projectPath), { recursive: true });
-      
+
       // Move the entire spec directory to archive
       await fs.rename(activeSpecPath, archiveSpecPath);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       throw new Error(`Failed to archive spec '${specName}': ${errorMessage}`);
+    }
+
+    // Best-effort: remove spec from _Index.md
+    if (PathUtils.isDocVaultConfigured()) {
+      try {
+        const config = await loadConfig(this.projectPath);
+        await removeSpecFromIndex(config, specName);
+      } catch (e) {
+        console.error('Failed to update spec index after archive:', e);
+      }
     }
   }
 
@@ -67,12 +79,22 @@ export class SpecArchiveService {
     try {
       // Ensure active specs directory exists
       await fs.mkdir(PathUtils.getSpecPath(this.projectPath, ''), { recursive: true });
-      
+
       // Move the entire spec directory back to active
       await fs.rename(archiveSpecPath, activeSpecPath);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       throw new Error(`Failed to unarchive spec '${specName}': ${errorMessage}`);
+    }
+
+    // Best-effort: re-add spec to _Index.md
+    if (PathUtils.isDocVaultConfigured()) {
+      try {
+        const config = await loadConfig(this.projectPath);
+        await addSpecToIndex(config, specName);
+      } catch (e) {
+        console.error('Failed to update spec index after unarchive:', e);
+      }
     }
   }
 
