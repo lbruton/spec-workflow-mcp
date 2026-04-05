@@ -1,6 +1,7 @@
 import { readFile, readdir, access, stat } from 'fs/promises';
 import { join } from 'path';
-import { PathUtils } from '../core/path-utils.js';
+// PathUtils import removed — parser uses direct joins because PathUtils
+// relies on a process-level DocVault singleton not initialized in the dashboard.
 import { SpecData, SteeringStatus, TaskInfo } from '../types.js';
 import { parseTaskProgress } from '../core/task-parser.js';
 
@@ -67,7 +68,7 @@ export class SpecParser {
 
   async getSpec(name: string): Promise<ParsedSpec | null> {
     try {
-      const specDir = PathUtils.getSpecPath(this.projectPath, name);
+      const specDir = join(this.projectPath, 'specs', name);
       await access(specDir);
 
       const spec: ParsedSpec = {
@@ -168,7 +169,7 @@ export class SpecParser {
 
   async getArchivedSpec(name: string): Promise<ParsedSpec | null> {
     try {
-      const specDir = PathUtils.getArchiveSpecPath(this.projectPath, name);
+      const specDir = join(this.projectPath, 'archive', 'specs', name);
       await access(specDir);
 
       const spec: ParsedSpec = {
@@ -311,7 +312,7 @@ export class SpecParser {
   private async isPhaseApproved(specName: string, filename: string): Promise<boolean> {
     try {
       const metaPath = join(
-        PathUtils.getApprovalsPath(this.projectPath),
+        join(this.projectPath, 'approvals'),
         specName,
         '.snapshots',
         filename,
