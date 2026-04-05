@@ -4,6 +4,23 @@ import { PathUtils } from './path-utils.js';
 import { removeSpecFromIndex, addSpecToIndex } from './index-updater.js';
 import { loadConfig } from './config-loader.js';
 
+// Helper: resolve spec/archive paths using direct joins.
+// The caller (ProjectManager) passes the correct workflow root.
+// PathUtils.get*Path() methods rely on a process-level DocVault singleton
+// that isn't initialized in the dashboard process.
+function specsPath(projectPath: string, specName: string): string {
+  return join(projectPath, 'specs', specName);
+}
+function archiveSpecPath(projectPath: string, specName: string): string {
+  return join(projectPath, 'archive', 'specs', specName);
+}
+function archiveSpecsDir(projectPath: string): string {
+  return join(projectPath, 'archive', 'specs');
+}
+function specsDir(projectPath: string): string {
+  return join(projectPath, 'specs');
+}
+
 export class SpecArchiveService {
   private projectPath: string;
 
@@ -13,8 +30,8 @@ export class SpecArchiveService {
   }
 
   async archiveSpec(specName: string): Promise<void> {
-    const activeSpecPath = PathUtils.getSpecPath(this.projectPath, specName);
-    const archiveSpecPath = PathUtils.getArchiveSpecPath(this.projectPath, specName);
+    const activeSpecPath = specsPath(this.projectPath, specName);
+    const archivePath = archiveSpecPath(this.projectPath, specName);
 
     // Verify the active spec exists
     try {
@@ -25,7 +42,7 @@ export class SpecArchiveService {
 
     // Verify the archive destination doesn't already exist
     try {
-      await fs.access(archiveSpecPath);
+      await fs.access(archivePath);
       throw new Error(`Spec '${specName}' already exists in archive`);
     } catch (error) {
       if (error instanceof Error && (error as any).code !== 'ENOENT') {
@@ -35,10 +52,10 @@ export class SpecArchiveService {
 
     try {
       // Ensure archive directory structure exists
-      await fs.mkdir(PathUtils.getArchiveSpecsPath(this.projectPath), { recursive: true });
+      await fs.mkdir(archiveSpecsDir(this.projectPath), { recursive: true });
 
       // Move the entire spec directory to archive
-      await fs.rename(activeSpecPath, archiveSpecPath);
+      await fs.rename(activeSpecPath, archivePath);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       throw new Error(`Failed to archive spec '${specName}': ${errorMessage}`);
@@ -56,12 +73,12 @@ export class SpecArchiveService {
   }
 
   async unarchiveSpec(specName: string): Promise<void> {
-    const archiveSpecPath = PathUtils.getArchiveSpecPath(this.projectPath, specName);
-    const activeSpecPath = PathUtils.getSpecPath(this.projectPath, specName);
+    const archivePath = archiveSpecPath(this.projectPath, specName);
+    const activeSpecPath = specsPath(this.projectPath, specName);
 
     // Verify the archived spec exists
     try {
-      await fs.access(archiveSpecPath);
+      await fs.access(archivePath);
     } catch {
       throw new Error(`Spec '${specName}' not found in archive`);
     }
@@ -78,10 +95,10 @@ export class SpecArchiveService {
 
     try {
       // Ensure active specs directory exists
-      await fs.mkdir(PathUtils.getSpecPath(this.projectPath, ''), { recursive: true });
+      await fs.mkdir(specsDir(this.projectPath), { recursive: true });
 
       // Move the entire spec directory back to active
-      await fs.rename(archiveSpecPath, activeSpecPath);
+      await fs.rename(archivePath, activeSpecPath);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       throw new Error(`Failed to unarchive spec '${specName}': ${errorMessage}`);
@@ -100,7 +117,7 @@ export class SpecArchiveService {
 
   async isSpecActive(specName: string): Promise<boolean> {
     try {
-      await fs.access(PathUtils.getSpecPath(this.projectPath, specName));
+      await fs.access(specsPath(this.projectPath, specName));
       return true;
     } catch {
       return false;
@@ -109,7 +126,7 @@ export class SpecArchiveService {
 
   async isSpecArchived(specName: string): Promise<boolean> {
     try {
-      await fs.access(PathUtils.getArchiveSpecPath(this.projectPath, specName));
+      await fs.access(archiveSpecPath(this.projectPath, specName));
       return true;
     } catch {
       return false;

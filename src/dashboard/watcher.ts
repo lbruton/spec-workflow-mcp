@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import chokidar from 'chokidar';
 import { stat } from 'fs/promises';
-import { PathUtils } from '../core/path-utils.js';
+import { join } from 'path';
 import { SpecParser, ParsedSpec } from './parser.js';
 
 export interface SpecChangeEvent {
@@ -26,9 +26,10 @@ export class SpecWatcher extends EventEmitter {
   }
 
   async start(): Promise<void> {
-    const workflowRoot = PathUtils.getWorkflowRoot(this.projectPath);
-    const specsPath = PathUtils.getSpecPath(this.projectPath, '');
-    const steeringPath = PathUtils.getSteeringPath(this.projectPath);
+    // Use direct joins — PathUtils methods rely on a process-level singleton
+    // that isn't initialized in the dashboard process.
+    const specsPath = join(this.projectPath, 'specs');
+    const steeringPath = join(this.projectPath, 'steering');
 
     // Watch for changes in specs and steering directories
     this.watcher = chokidar.watch([

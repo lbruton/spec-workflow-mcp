@@ -17,10 +17,12 @@ export class SpecParser {
 
   constructor(projectPath: string) {
     // Path should already be translated by caller (ProjectManager)
+    // Use direct joins — PathUtils.get*Path() methods rely on a process-level
+    // DocVault singleton that isn't initialized in the dashboard process.
     this.projectPath = projectPath;
-    this.specsPath = PathUtils.getSpecPath(projectPath, '');
-    this.archiveSpecsPath = PathUtils.getArchiveSpecsPath(projectPath);
-    this.steeringPath = PathUtils.getSteeringPath(projectPath);
+    this.specsPath = join(projectPath, 'specs');
+    this.archiveSpecsPath = join(projectPath, 'archive', 'specs');
+    this.steeringPath = join(projectPath, 'steering');
   }
 
   async getAllSpecs(): Promise<ParsedSpec[]> {
