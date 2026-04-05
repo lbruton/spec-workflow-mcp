@@ -84,8 +84,8 @@ export async function migrateToDocVault(
         continue;
       }
 
-      // Safety: never overwrite existing content
-      if (await dirHasFiles(destPath)) {
+      // Safety: never overwrite existing content (ignore scaffolding artifacts)
+      if (await dirHasMeaningfulContent(destPath)) {
         const msg = `Skipping ${srcDir}/ — destination already has content: ${destPath}`;
         console.error(`[migration] ${msg}`);
         result.skippedDirs.push(srcDir);
@@ -122,6 +122,33 @@ async function dirHasFiles(dirPath: string): Promise<boolean> {
       if (entry.isFile()) return true;
       if (entry.isDirectory()) {
         if (await dirHasFiles(join(dirPath, entry.name))) return true;
+      }
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Scaffolding artifacts that don't count as "existing content" when deciding
+ * whether to skip migration for a destination directory.
+ */
+const SCAFFOLDING_ARTIFACTS = new Set(['_Index.md', '.DS_Store']);
+
+/**
+ * Check whether a destination directory has meaningful content beyond
+ * scaffolding artifacts (_Index.md, .DS_Store) and empty subdirectories.
+ * Used for destination checks only — source checks use dirHasFiles().
+ */
+async function dirHasMeaningfulContent(dirPath: string): Promise<boolean> {
+  try {
+    await access(dirPath, constants.F_OK);
+    const entries = await readdir(dirPath, { withFileTypes: true });
+    for (const entry of entries) {
+      if (entry.isFile() && !SCAFFOLDING_ARTIFACTS.has(entry.name)) return true;
+      if (entry.isDirectory()) {
+        if (await dirHasMeaningfulContent(join(dirPath, entry.name))) return true;
       }
     }
     return false;
