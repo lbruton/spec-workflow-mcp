@@ -110,13 +110,21 @@ export async function migrateToDocVault(
 }
 
 /**
- * Check whether a directory exists and contains at least one entry.
+ * Check whether a directory exists and contains at least one regular file
+ * (recursively). Empty subdirectories (e.g., scaffolded by WorkspaceInitializer)
+ * do not count as "content" — only actual files do.
  */
 async function dirHasFiles(dirPath: string): Promise<boolean> {
   try {
     await access(dirPath, constants.F_OK);
-    const entries = await readdir(dirPath);
-    return entries.length > 0;
+    const entries = await readdir(dirPath, { withFileTypes: true });
+    for (const entry of entries) {
+      if (entry.isFile()) return true;
+      if (entry.isDirectory()) {
+        if (await dirHasFiles(join(dirPath, entry.name))) return true;
+      }
+    }
+    return false;
   } catch {
     return false;
   }
