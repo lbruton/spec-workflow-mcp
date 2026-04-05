@@ -36,7 +36,7 @@ graph TB
     
     subgraph "File System"
         FS[Project Files]
-        WORKFLOW[.spec-workflow/]
+        WORKFLOW[.specflow/]
     end
     
     AI -->|MCP Protocol| SERVER
@@ -194,7 +194,7 @@ interface ExpansionOpportunities {
 // How context flows from project files to AI client
 interface ContextFlow {
   1: "AI Client requests context via MCP tool call";
-  2: "MCP Server loads files from .spec-workflow/ directory";
+  2: "MCP Server loads files from .specflow/ directory";
   3: "MCP Server structures data using templates and parsing";
   4: "MCP Server returns formatted context to AI Client";
   5: "AI Client uses context in its reasoning and generation";
@@ -335,7 +335,7 @@ sequenceDiagram
 ### Project Structure
 ```
 project-root/
-├── .spec-workflow/              # All workflow data
+├── .specflow/              # All workflow data
 │   ├── specs/                   # Specifications
 │   │   └── feature-name/        # Individual spec
 │   │       ├── requirements.md  # Phase 1
@@ -412,7 +412,7 @@ src/
 ### Session State
 - **Server**: Dashboard registers in global project registry
 - **Client**: Maintains connection to dashboard WebSocket
-- **Persistence**: `~/.spec-workflow-mcp/activeProjects.json` (global registry)
+- **Persistence**: `~/.specflow-mcp/activeProjects.json` (global registry)
 
 ### Approval State  
 - **Storage**: JSON files in `approvals/` directory
@@ -463,7 +463,7 @@ interface ResourceLimits {
   // Recommended project limits
   maxSpecs: "50-100 specs per project";
   maxDocumentSize: "200KB per document";
-  maxProjectSize: "5-10MB total .spec-workflow/";
+  maxProjectSize: "5-10MB total .specflow/";
   
   // Performance thresholds
   contextLoadTime: "<200ms for typical spec";
@@ -488,7 +488,7 @@ Documents per spec: 3 (requirements, design, tasks)
 Document size: 200KB each
 Total project size: 5-10MB
 Concurrent dashboard users: 1 per project
-File watch depth: .spec-workflow/ only
+File watch depth: .specflow/ only
 ```
 
 **Multi-Project Scaling**:
@@ -529,7 +529,7 @@ interface MemoryOptimization {
 ## 🔒 Security Considerations
 
 ### File System Access
-- **Restricted Scope**: Only `.spec-workflow/` directory  
+- **Restricted Scope**: Only `.specflow/` directory  
 - **Path Validation**: Prevents directory traversal
 - **Safe Operations**: No arbitrary command execution
 
@@ -559,9 +559,9 @@ interface NetworkSecurity {
 **Data Governance**:
 ```typescript
 interface DataGovernance {
-  dataLocation: "All data in project .spec-workflow/ directory";
+  dataLocation: "All data in project .specflow/ directory";
   dataRetention: "Manual - user controls all data lifecycle";
-  dataDeletion: "rm -rf .spec-workflow/ removes all MCP data";
+  dataDeletion: "rm -rf .specflow/ removes all MCP data";
   auditTrail: "File system timestamps, no application logging";
   compliance: "No data leaves local machine (except version check)";
 }

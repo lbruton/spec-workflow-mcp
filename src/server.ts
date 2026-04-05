@@ -20,7 +20,7 @@ import { fileURLToPath } from 'url';
 
 export class SpecWorkflowMCPServer {
   private server: Server;
-  private projectPath!: string;   // workflowRootPath for .spec-workflow operations
+  private projectPath!: string;   // workflowRootPath for .specflow operations
   private workspacePath!: string; // workspace/worktree path for identity in registry
   private projectRegistry: ProjectRegistry;
   private lang?: string;

@@ -84,7 +84,7 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 {
   success: true,
   message: "Document d'exigences créé avec succès",
-  path: ".spec-workflow/specs/user-authentication/requirements.md",
+  path: ".specflow/specs/user-authentication/requirements.md",
   requestedApproval: true
 }
 ```
@@ -363,7 +363,7 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 {
   success: true,
   message: "Document de direction produit créé",
-  path: ".spec-workflow/steering/product.md"
+  path: ".specflow/steering/product.md"
 }
 ```
 

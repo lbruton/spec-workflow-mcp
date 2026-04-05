@@ -10,7 +10,7 @@ import { resolveGitRoot, resolveGitWorkspaceRoot } from '../core/git-utils.js';
 
 export interface ProjectContext {
   projectId: string;
-  projectPath: string;           // Translated workflow root path for specs/.spec-workflow access
+  projectPath: string;           // Translated workflow root path for specs/.specflow access
   workspacePath: string;         // Translated workspace/worktree path for file artifact resolution
   originalProjectPath: string;   // Original workspace path for display/registry
   workflowRootPath: string;      // Original workflow root path for display/debugging

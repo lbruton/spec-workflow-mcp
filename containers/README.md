@@ -41,7 +41,7 @@ Build and run manually:
 ```bash
 # From the repository root
 docker build -f containers/Dockerfile -t spec-workflow-mcp .
-docker run -p 5000:5000 -v "./workspace/.spec-workflow:/workspace/.spec-workflow:rw" spec-workflow-mcp
+docker run -p 5000:5000 -v "./workspace/.specflow:/workspace/.specflow:rw" spec-workflow-mcp
 ```
 
 ## Testing the Docker Image
@@ -114,7 +114,7 @@ Run the dashboard on the default port (5000):
 
 ```bash
 docker run -p 5000:5000 \
-  -v "./workspace/.spec-workflow:/workspace/.spec-workflow:rw" \
+  -v "./workspace/.specflow:/workspace/.specflow:rw" \
   spec-workflow-mcp
 ```
 
@@ -125,17 +125,17 @@ Run the dashboard on a custom port (e.g., 8080):
 ```bash
 docker run -p 8080:8080 \
   -e DASHBOARD_PORT=8080 \
-  -v "./workspace/.spec-workflow:/workspace/.spec-workflow:rw" \
+  -v "./workspace/.specflow:/workspace/.specflow:rw" \
   spec-workflow-mcp
 ```
 
 ### Using a Specific Project Path
 
-Mount your project's `.spec-workflow` directory:
+Mount your project's `.specflow` directory:
 
 ```bash
 docker run -p 5000:5000 \
-  -v "/path/to/your/project/.spec-workflow:/workspace/.spec-workflow:rw" \
+  -v "/path/to/your/project/.specflow:/workspace/.specflow:rw" \
   spec-workflow-mcp
 ```
 
@@ -200,16 +200,16 @@ docker-compose up --build
 
 ### Volume Mounts
 
-The dashboard requires access to the `.spec-workflow` directory to function properly.
+The dashboard requires access to the `.specflow` directory to function properly.
 
 **Example:**
 ```bash
--v "/path/to/project/.spec-workflow:/workspace/.spec-workflow:rw"
+-v "/path/to/project/.specflow:/workspace/.specflow:rw"
 ```
 
 **Important Notes:**
 - The volume mount must be read-write (`:rw`) for the dashboard to function
-- Only the `.spec-workflow` directory needs to be mounted
+- Only the `.specflow` directory needs to be mounted
 - The directory will be created automatically if it doesn't exist
 
 ### Port Mapping
@@ -245,7 +245,7 @@ Or with Docker CLI:
 
 ```bash
 docker run -p 127.0.0.1:5000:5000 \
-  -v "./workspace/.spec-workflow:/workspace/.spec-workflow:rw" \
+  -v "./workspace/.specflow:/workspace/.specflow:rw" \
   spec-workflow-mcp
 ```
 
@@ -269,12 +269,12 @@ DASHBOARD_HOST=192.168.1.100 docker-compose up
 
 ```bash
 docker run -p 0.0.0.0:5000:5000 \
-  -v "./workspace/.spec-workflow:/workspace/.spec-workflow:rw" \
+  -v "./workspace/.specflow:/workspace/.specflow:rw" \
   spec-workflow-mcp
 
 # Or bind to a specific IP
 docker run -p 192.168.1.100:5000:5000 \
-  -v "./workspace/.spec-workflow:/workspace/.spec-workflow:rw" \
+  -v "./workspace/.specflow:/workspace/.specflow:rw" \
   spec-workflow-mcp
 ```
 
@@ -326,7 +326,7 @@ deploy:
 
 All API requests are logged to a structured JSON audit log for compliance and debugging.
 
-**Log Location:** `<project>/.spec-workflow/audit.log`
+**Log Location:** `<project>/.specflow/audit.log`
 
 **Log Format:**
 ```json
@@ -347,13 +347,13 @@ All API requests are logged to a structured JSON audit log for compliance and de
 **Viewing Logs:**
 ```bash
 # View recent logs
-tail -f .spec-workflow/audit.log
+tail -f .specflow/audit.log
 
 # Parse as JSON (requires jq)
-cat .spec-workflow/audit.log | jq '.'
+cat .specflow/audit.log | jq '.'
 
 # Filter by result
-cat .spec-workflow/audit.log | jq 'select(.result == "denied")'
+cat .specflow/audit.log | jq 'select(.result == "denied")'
 ```
 
 ### External Access with Authentication
@@ -433,11 +433,11 @@ DASHBOARD_PORT=8080 docker-compose up
 
 #### 2. Permission Denied
 
-**Error:** Permission issues with `.spec-workflow` directory
+**Error:** Permission issues with `.specflow` directory
 
 **Solutions:**
-- Ensure the directory has proper permissions: `chmod -R 755 .spec-workflow`
-- On SELinux systems, add `:z` to the volume mount: `-v "./workspace/.spec-workflow:/workspace/.spec-workflow:rw,z"`
+- Ensure the directory has proper permissions: `chmod -R 755 .specflow`
+- On SELinux systems, add `:z` to the volume mount: `-v "./workspace/.specflow:/workspace/.specflow:rw,z"`
 
 #### 3. Dashboard Not Accessible
 
@@ -488,7 +488,7 @@ docker exec -it <container-id> /bin/sh
 docker run -d \
   --name spec-workflow-dashboard \
   -p 5000:5000 \
-  -v "./workspace/.spec-workflow:/workspace/.spec-workflow:rw" \
+  -v "./workspace/.specflow:/workspace/.specflow:rw" \
   spec-workflow-mcp
 ```
 
@@ -499,7 +499,7 @@ docker run -d \
   --name spec-workflow-dashboard \
   --restart unless-stopped \
   -p 5000:5000 \
-  -v "./workspace/.spec-workflow:/workspace/.spec-workflow:rw" \
+  -v "./workspace/.specflow:/workspace/.specflow:rw" \
   spec-workflow-mcp
 ```
 
@@ -528,7 +528,7 @@ The Docker image implements enterprise-grade security controls:
 
 **Best Practices:**
 - Keep the base image updated: `docker pull node:24-alpine`
-- Use read-only volume mounts where possible (`:rw` required for `.spec-workflow`)
+- Use read-only volume mounts where possible (`:rw` required for `.specflow`)
 - For network access, always use a reverse proxy with TLS and authentication
 - Review audit logs regularly for security monitoring
 

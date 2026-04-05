@@ -23,5 +23,5 @@
   "config.language.en.description": "English",
   "config.language.ja.description": "Japanese (日本語)",
   "config.language.zh.description": "Chinese (中文)",
-  "config.workflowRoot.description": "Custom path to the .spec-workflow folder. Leave empty to use the workspace root. Useful for multi-root workspaces."
+  "config.workflowRoot.description": "Custom path to the .specflow folder. Leave empty to use the workspace root. Useful for multi-root workspaces."
 }

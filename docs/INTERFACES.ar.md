@@ -209,7 +209,7 @@ npx -y @pimzino/spec-workflow-mcp@latest /path/to/project
 
 أو عبر سطر الأوامر:
 ```bash
-code --install-extension Pimzino.spec-workflow-mcp
+code --install-extension Pimzino.specflow-mcp
 ```
 
 ### ميزات الإضافة
@@ -491,7 +491,7 @@ code --install-extension Pimzino.spec-workflow-mcp
 
 | المشكلة | الحل |
 |-------|----------|
-| لا تظهر المواصفات | تحقق من وجود دليل .spec-workflow في المشروع |
+| لا تظهر المواصفات | تحقق من وجود دليل .specflow في المشروع |
 | الأوامر لا تعمل | أعد تحميل نافذة VSCode |
 | لا توجد إشعارات | تحقق من إعدادات الإضافة |
 | الأرشيف غير مرئي | مكّن في الإعدادات |

@@ -289,8 +289,8 @@ async function cleanTestApprovals(approvalsDir, docsDir) {
 
 async function generateTestApprovals(count) {
   const projectRoot = path.resolve(__dirname, '..');
-  const approvalsDir = path.join(projectRoot, '.spec-workflow', 'approvals', 'spec');
-  const docsDir = path.join(projectRoot, '.spec-workflow', 'docs');
+  const approvalsDir = path.join(projectRoot, '.specflow', 'approvals', 'spec');
+  const docsDir = path.join(projectRoot, '.specflow', 'docs');
 
   // Parse arguments
   const args = process.argv.slice(2);
@@ -324,7 +324,7 @@ async function generateTestApprovals(count) {
     const approval = {
       id: approvalId,
       title: template.title,
-      filePath: `.spec-workflow/docs/${template.fileName}`,
+      filePath: `.specflow/docs/${template.fileName}`,
       type: 'document',
       status: 'pending',
       createdAt: timestamp.toISOString(),

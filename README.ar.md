@@ -1,7 +1,7 @@
 # Spec Workflow MCP
 
 [![npm version](https://img.shields.io/npm/v/@pimzino/spec-workflow-mcp)](https://www.npmjs.com/package/@pimzino/spec-workflow-mcp)
-[![VSCode Extension](https://vsmarketplacebadges.dev/version-short/Pimzino.spec-workflow-mcp.svg)](https://marketplace.visualstudio.com/items?itemName=Pimzino.spec-workflow-mcp)
+[![VSCode Extension](https://vsmarketplacebadges.dev/version-short/Pimzino.specflow-mcp.svg)](https://marketplace.visualstudio.com/items?itemName=Pimzino.specflow-mcp)
 
 خادم Model Context Protocol (MCP) للتطوير المنظم القائم على المواصفات مع لوحة تحكم فورية وإضافة VSCode.
 
@@ -70,7 +70,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 
 **الخيار ب: إضافة VSCode** (موصى بها لمستخدمي VSCode)
 
-قم بتثبيت [Spec Workflow MCP Extension](https://marketplace.visualstudio.com/items?itemName=Pimzino.spec-workflow-mcp) من سوق VSCode.
+قم بتثبيت [Spec Workflow MCP Extension](https://marketplace.visualstudio.com/items?itemName=Pimzino.specflow-mcp) من سوق VSCode.
 
 ## 📝 كيفية الاستخدام
 
@@ -225,7 +225,7 @@ claude mcp add spec-workflow cmd.exe /c "npx @pimzino/spec-workflow-mcp@latest /
 
 أضف إلى ملف التكوين `~/.codex/config.toml`:
 ```toml
-[mcp_servers.spec-workflow]
+[mcp_servers.specflow]
 command = "npx"
 args = ["-y", "@pimzino/spec-workflow-mcp@latest", "/path/to/your/project"]
 ```
@@ -242,7 +242,7 @@ docker-compose up --build
 
 # أو استخدام Docker CLI
 docker build -f containers/Dockerfile -t spec-workflow-mcp .
-docker run -p 5000:5000 -v "./workspace/.spec-workflow:/workspace/.spec-workflow:rw" spec-workflow-mcp
+docker run -p 5000:5000 -v "./workspace/.specflow:/workspace/.specflow:rw" spec-workflow-mcp
 ```
 
 ستكون لوحة التحكم متاحة على: http://localhost:5000
@@ -254,7 +254,7 @@ docker run -p 5000:5000 -v "./workspace/.spec-workflow:/workspace/.spec-workflow
 للبيئات المعزولة (مثل Codex CLI مع `sandbox_mode=workspace-write`) حيث يكون `$HOME` للقراءة فقط، استخدم متغير البيئة `SPEC_WORKFLOW_HOME` لإعادة توجيه ملفات الحالة العامة إلى موقع قابل للكتابة:
 
 ```bash
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
 ```
 
 [راجع دليل التكوين →](docs/CONFIGURATION.md#environment-variables)
@@ -274,7 +274,7 @@ SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-m
 
 ```
 your-project/
-  .spec-workflow/
+  .specflow/
     approvals/
     archive/
     specs/

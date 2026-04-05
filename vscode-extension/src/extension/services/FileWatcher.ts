@@ -40,10 +40,10 @@ export class FileWatcher {
     const workspaceRoot = workspaceFolders[0].uri.fsPath;
     const specWorkflowPattern = new vscode.RelativePattern(
       workspaceRoot,
-      '.spec-workflow/**/*'
+      '.specflow/**/*'
     );
 
-    // Create new watcher for .spec-workflow directory
+    // Create new watcher for .specflow directory
     this._watcher = vscode.workspace.createFileSystemWatcher(specWorkflowPattern);
 
     // Listen for file events
@@ -87,15 +87,15 @@ export class FileWatcher {
     
     return (
       // Spec documents
-      normalizedPath.includes('.spec-workflow/specs/') && 
+      normalizedPath.includes('.specflow/specs/') && 
       (normalizedPath.endsWith('.md') || normalizedPath.endsWith('.json')) ||
       
       // Steering documents
-      normalizedPath.includes('.spec-workflow/steering/') && 
+      normalizedPath.includes('.specflow/steering/') && 
       normalizedPath.endsWith('.md') ||
       
       // Approval files
-      normalizedPath.includes('.spec-workflow/approvals/') && 
+      normalizedPath.includes('.specflow/approvals/') && 
       normalizedPath.endsWith('.json')
     );
   }
@@ -103,11 +103,11 @@ export class FileWatcher {
   public getWatchedFileType(relativePath: string): 'spec' | 'steering' | 'approval' | null {
     const normalizedPath = relativePath.replace(/\\/g, '/');
     
-    if (normalizedPath.includes('.spec-workflow/specs/')) {
+    if (normalizedPath.includes('.specflow/specs/')) {
       return 'spec';
-    } else if (normalizedPath.includes('.spec-workflow/steering/')) {
+    } else if (normalizedPath.includes('.specflow/steering/')) {
       return 'steering';
-    } else if (normalizedPath.includes('.spec-workflow/approvals/')) {
+    } else if (normalizedPath.includes('.specflow/approvals/')) {
       return 'approval';
     }
     
@@ -116,7 +116,7 @@ export class FileWatcher {
 
   public extractSpecName(relativePath: string): string | null {
     const normalizedPath = relativePath.replace(/\\/g, '/');
-    const match = normalizedPath.match(/\.spec-workflow\/specs\/([^\/]+)/);
+    const match = normalizedPath.match(/\.specflow\/specs\/([^\/]+)/);
     return match ? match[1] : null;
   }
 

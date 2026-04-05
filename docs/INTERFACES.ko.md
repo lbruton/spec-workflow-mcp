@@ -209,7 +209,7 @@ VSCode 마켓플레이스에서 설치:
 
 또는 명령줄을 통해:
 ```bash
-code --install-extension Pimzino.spec-workflow-mcp
+code --install-extension Pimzino.specflow-mcp
 ```
 
 ### 확장 프로그램 기능
@@ -491,7 +491,7 @@ VSCode 접근성 상속:
 
 | 문제 | 해결책 |
 |-------|----------|
-| 스펙이 표시되지 않음 | 프로젝트에 .spec-workflow 디렉터리가 있는지 확인 |
+| 스펙이 표시되지 않음 | 프로젝트에 .specflow 디렉터리가 있는지 확인 |
 | 명령어가 작동하지 않음 | VSCode 창 리로드 |
 | 알림 없음 | 확장 프로그램 설정 확인 |
 | 아카이브가 보이지 않음 | 설정에서 활성화 |

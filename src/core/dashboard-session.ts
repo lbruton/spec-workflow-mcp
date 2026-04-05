@@ -11,7 +11,7 @@ export interface DashboardSessionEntry {
 
 /**
  * Manages the global dashboard session
- * Stores dashboard connection info in ~/.spec-workflow-mcp/activeSession.json
+ * Stores dashboard connection info in ~/.specflow-mcp/activeSession.json
  * (or SPEC_WORKFLOW_HOME if set)
  */
 export class DashboardSessionManager {

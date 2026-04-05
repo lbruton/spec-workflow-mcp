@@ -535,8 +535,8 @@ describe('security-utils', () => {
         result: 'success'
       });
 
-      // Should have created log at workspaceRoot/.spec-workflow/audit.log
-      const expectedLogPath = join(workspaceRoot, '.spec-workflow', 'audit.log');
+      // Should have created log at workspaceRoot/.specflow/audit.log
+      const expectedLogPath = join(workspaceRoot, '.specflow', 'audit.log');
       const logContent = await fs.readFile(expectedLogPath, 'utf-8');
       const entry = JSON.parse(logContent.trim());
 

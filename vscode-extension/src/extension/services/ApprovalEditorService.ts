@@ -237,19 +237,19 @@ export class ApprovalEditorService {
       candidates.push(filePath);
     }
 
-    // 2) As provided relative to project root (most common case for paths like ".spec-workflow/test/tasks.md")
+    // 2) As provided relative to project root (most common case for paths like ".specflow/test/tasks.md")
     candidates.push(path.join(workspaceRoot, normalizedFilePath));
 
-    // 3) Handle paths that start with ".spec-workflow/" - these are already correctly rooted
-    if (normalizedFilePath.startsWith('.spec-workflow/')) {
-      // Path is already relative to project root, don't double-add .spec-workflow
+    // 3) Handle paths that start with ".specflow/" - these are already correctly rooted
+    if (normalizedFilePath.startsWith('.specflow/')) {
+      // Path is already relative to project root, don't double-add .specflow
       candidates.push(path.join(workspaceRoot, normalizedFilePath));
       
       // CRITICAL FIX: Handle the specs directory structure
-      // If path is like ".spec-workflow/test/tasks.md", also try ".spec-workflow/specs/test/tasks.md"
-      const pathAfterSpecWorkflow = normalizedFilePath.substring('.spec-workflow/'.length);
+      // If path is like ".specflow/test/tasks.md", also try ".specflow/specs/test/tasks.md"
+      const pathAfterSpecWorkflow = normalizedFilePath.substring('.specflow/'.length);
       if (pathAfterSpecWorkflow && !pathAfterSpecWorkflow.startsWith('specs/')) {
-        candidates.push(path.join(workspaceRoot, '.spec-workflow', 'specs', pathAfterSpecWorkflow));
+        candidates.push(path.join(workspaceRoot, '.specflow', 'specs', pathAfterSpecWorkflow));
       }
       
       // Also try without the leading dot for legacy compatibility
@@ -258,25 +258,25 @@ export class ApprovalEditorService {
       
       // And try the specs variant without the leading dot
       if (pathAfterSpecWorkflow && !pathAfterSpecWorkflow.startsWith('specs/')) {
-        candidates.push(path.join(workspaceRoot, 'spec-workflow', 'specs', pathAfterSpecWorkflow));
+        candidates.push(path.join(workspaceRoot, 'specflow', 'specs', pathAfterSpecWorkflow));
       }
-    } else if (normalizedFilePath.startsWith('spec-workflow/')) {
+    } else if (normalizedFilePath.startsWith('specflow/')) {
       // Handle case where path might not have leading dot
       candidates.push(path.join(workspaceRoot, '.' + normalizedFilePath));
       candidates.push(path.join(workspaceRoot, normalizedFilePath));
-      
+
       // Also handle specs directory structure for this format
-      const pathAfterSpecWorkflow = normalizedFilePath.substring('spec-workflow/'.length);
+      const pathAfterSpecWorkflow = normalizedFilePath.substring('specflow/'.length);
       if (pathAfterSpecWorkflow && !pathAfterSpecWorkflow.startsWith('specs/')) {
-        candidates.push(path.join(workspaceRoot, '.spec-workflow', 'specs', pathAfterSpecWorkflow));
-        candidates.push(path.join(workspaceRoot, 'spec-workflow', 'specs', pathAfterSpecWorkflow));
+        candidates.push(path.join(workspaceRoot, '.specflow', 'specs', pathAfterSpecWorkflow));
+        candidates.push(path.join(workspaceRoot, 'specflow', 'specs', pathAfterSpecWorkflow));
       }
-    } else if (!normalizedFilePath.includes('spec-workflow')) {
-      // If path doesn't contain spec-workflow at all, try adding it
-      candidates.push(path.join(workspaceRoot, '.spec-workflow', normalizedFilePath));
+    } else if (!normalizedFilePath.includes('specflow')) {
+      // If path doesn't contain specflow at all, try adding it
+      candidates.push(path.join(workspaceRoot, '.specflow', normalizedFilePath));
       
       // Also try under specs directory
-      candidates.push(path.join(workspaceRoot, '.spec-workflow', 'specs', normalizedFilePath));
+      candidates.push(path.join(workspaceRoot, '.specflow', 'specs', normalizedFilePath));
     }
 
     // 4) Handle Windows-style paths with backslashes
@@ -286,7 +286,7 @@ export class ApprovalEditorService {
 
     // 5) Try common spec document locations as fallback
     const fileName = path.basename(normalizedFilePath);
-    const specWorkflowRoot = path.join(workspaceRoot, '.spec-workflow');
+    const specWorkflowRoot = path.join(workspaceRoot, '.specflow');
 
     // Try in various common subdirectories
     const commonDirs = ['specs', 'test', 'tasks', 'requirements', 'design'];

@@ -188,7 +188,7 @@ Spec Workflow inclut des modèles pour :
 
 ### Modèles personnalisés
 
-Créez vos propres modèles dans `.spec-workflow/templates/` :
+Créez vos propres modèles dans `.specflow/templates/` :
 
 ```markdown
 # Modèle de fonctionnalité personnalisée

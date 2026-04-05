@@ -1,7 +1,7 @@
 # Spec Workflow MCP
 
 [![npm version](https://img.shields.io/npm/v/@pimzino/spec-workflow-mcp)](https://www.npmjs.com/package/@pimzino/spec-workflow-mcp)
-[![VSCode Extension](https://vsmarketplacebadges.dev/version-short/Pimzino.spec-workflow-mcp.svg)](https://marketplace.visualstudio.com/items?itemName=Pimzino.spec-workflow-mcp)
+[![VSCode Extension](https://vsmarketplacebadges.dev/version-short/Pimzino.specflow-mcp.svg)](https://marketplace.visualstudio.com/items?itemName=Pimzino.specflow-mcp)
 
 Un serveur Model Context Protocol (MCP) pour le développement structuré basé sur les spécifications avec tableau de bord en temps réel et extension VSCode.
 
@@ -70,7 +70,7 @@ Le tableau de bord sera accessible à : http://localhost:5000
 
 **Option B : Extension VSCode** (Recommandée pour les utilisateurs de VSCode)
 
-Installez l'[Extension Spec Workflow MCP](https://marketplace.visualstudio.com/items?itemName=Pimzino.spec-workflow-mcp) depuis le marketplace VSCode.
+Installez l'[Extension Spec Workflow MCP](https://marketplace.visualstudio.com/items?itemName=Pimzino.specflow-mcp) depuis le marketplace VSCode.
 
 ## 📝 Comment utiliser
 
@@ -225,7 +225,7 @@ Ajoutez à votre fichier de configuration `~/.codeium/windsurf/mcp_config.json` 
 
 Ajoutez à votre fichier de configuration `~/.codex/config.toml` :
 ```toml
-[mcp_servers.spec-workflow]
+[mcp_servers.specflow]
 command = "npx"
 args = ["-y", "@pimzino/spec-workflow-mcp@latest", "/chemin/vers/votre/projet"]
 ```
@@ -242,7 +242,7 @@ docker-compose up --build
 
 # Ou utilisation de Docker CLI
 docker build -f containers/Dockerfile -t spec-workflow-mcp .
-docker run -p 5000:5000 -v "./workspace/.spec-workflow:/workspace/.spec-workflow:rw" spec-workflow-mcp
+docker run -p 5000:5000 -v "./workspace/.specflow:/workspace/.specflow:rw" spec-workflow-mcp
 ```
 
 Le tableau de bord sera disponible à : http://localhost:5000
@@ -254,7 +254,7 @@ Le tableau de bord sera disponible à : http://localhost:5000
 Pour les environnements isolés (par exemple, Codex CLI avec `sandbox_mode=workspace-write`) où `$HOME` est en lecture seule, utilisez la variable d'environnement `SPEC_WORKFLOW_HOME` pour rediriger les fichiers d'état globaux vers un emplacement accessible en écriture :
 
 ```bash
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
 ```
 
 [Voir le guide de configuration →](docs/CONFIGURATION.fr.md#environment-variables)
@@ -274,7 +274,7 @@ SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-m
 
 ```
 votre-projet/
-  .spec-workflow/
+  .specflow/
     approvals/
     archive/
     specs/

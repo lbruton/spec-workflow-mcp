@@ -84,7 +84,7 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 {
   success: true,
   message: "Documento de requisitos criado com sucesso",
-  path: ".spec-workflow/specs/user-authentication/requirements.md",
+  path: ".specflow/specs/user-authentication/requirements.md",
   requestedApproval: true
 }
 ```
@@ -363,7 +363,7 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 {
   success: true,
   message: "Documento de direcionamento de produto criado",
-  path: ".spec-workflow/steering/product.md"
+  path: ".specflow/steering/product.md"
 }
 ```
 

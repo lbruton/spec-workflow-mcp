@@ -132,11 +132,11 @@ sequenceDiagram
 // Response
 {
   success: true,
-  message: "Created requirements.md at: .spec-workflow/specs/user-authentication/requirements.md\n\nBLOCKING: Must request approval via dashboard or VS Code extension.",
+  message: "Created requirements.md at: .specflow/specs/user-authentication/requirements.md\n\nBLOCKING: Must request approval via dashboard or VS Code extension.",
   data: {
     specName: "user-authentication",
     document: "requirements",
-    filePath: ".spec-workflow/specs/user-authentication/requirements.md"
+    filePath: ".specflow/specs/user-authentication/requirements.md"
   }
 }
 ```
@@ -144,7 +144,7 @@ sequenceDiagram
 **Workflow Enforcement**:
 - ❌ Cannot create `design.md` without `requirements.md`
 - ❌ Cannot create `tasks.md` without `design.md`
-- ✅ Auto-creates `.spec-workflow/specs/` directory structure
+- ✅ Auto-creates `.specflow/specs/` directory structure
 
 **Next Step**: Always call `request-approval` immediately after creation
 
@@ -165,10 +165,10 @@ sequenceDiagram
 // Response  
 {
   success: true,
-  message: "Created product.md at: .spec-workflow/steering/product.md",
+  message: "Created product.md at: .specflow/steering/product.md",
   data: {
     document: "product",
-    filePath: ".spec-workflow/steering/product.md"
+    filePath: ".specflow/steering/product.md"
   }
 }
 ```
@@ -242,7 +242,7 @@ sequenceDiagram
       tasks: false
     },
     sections: 2,
-    specPath: "/project/.spec-workflow/specs/user-authentication"
+    specPath: "/project/.specflow/specs/user-authentication"
   }
 }
 
@@ -513,7 +513,7 @@ sequenceDiagram
 {
   projectPath: "/absolute/path/to/project",
   title: "Requirements Document Review",
-  filePath: ".spec-workflow/specs/user-auth/requirements.md",  // Relative to project root
+  filePath: ".specflow/specs/user-auth/requirements.md",  // Relative to project root
   type: "document",                    // "document" | "action"
   category: "spec",                    // "spec" | "steering" 
   categoryName: "user-auth"           // Spec name or "steering"
@@ -526,7 +526,7 @@ sequenceDiagram
   data: {
     approvalId: "user-auth-requirements-20241215-143022",
     title: "Requirements Document Review",
-    filePath: ".spec-workflow/specs/user-auth/requirements.md",
+    filePath: ".specflow/specs/user-auth/requirements.md",
     status: "pending",
     dashboardUrl: "http://localhost:3456"
   },

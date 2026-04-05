@@ -155,7 +155,7 @@ export async function specListHandler(args: any, context: ToolContext): Promise<
       message: `Failed to list specifications: ${errorMessage}`,
       nextSteps: [
         'Verify the project path is correct',
-        'Check if .spec-workflow/specs/ directory exists'
+        'Check if .specflow/specs/ directory exists'
       ]
     };
   }

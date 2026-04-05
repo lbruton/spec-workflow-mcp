@@ -12,8 +12,8 @@ npx -y @pimzino/spec-workflow-mcp@latest --help
 # Проверьте, что вы в правильном каталоге
 pwd  # или 'cd' на Windows
 
-# Проверьте наличие каталога .spec-workflow
-ls -la .spec-workflow  # или 'dir .spec-workflow' на Windows
+# Проверьте наличие каталога .specflow
+ls -la .specflow  # или 'dir .specflow' на Windows
 ```
 
 ### Проверка сервисов
@@ -201,7 +201,7 @@ netstat -an | findstr :3000  # Windows
 4. Проверьте работу наблюдателей файловой системы:
    ```bash
    # Создайте тестовый файл в проекте
-   touch .spec-workflow/test.md
+   touch .specflow/test.md
    # Должно вызвать обновление на панели управления
    ```
 
@@ -222,7 +222,7 @@ netstat -an | findstr :3000  # Windows
    ```
 2. Проверьте существование каталога утверждений:
    ```bash
-   ls -la .spec-workflow/approval/
+   ls -la .specflow/approval/
    ```
 3. Вручную вызовите запрос утверждения через AI
 
@@ -245,7 +245,7 @@ netstat -an | findstr :3000  # Windows
 **Решения**:
 1. Проверьте разрешения на запись:
    ```bash
-   touch .spec-workflow/test.txt
+   touch .specflow/test.txt
    ```
 2. Проверьте правильный рабочий каталог:
    ```bash
@@ -253,7 +253,7 @@ netstat -an | findstr :3000  # Windows
    ```
 3. Ищите скрытые файлы:
    ```bash
-   ls -la .spec-workflow/specs/
+   ls -la .specflow/specs/
    ```
 4. Проверьте, не блокирует ли антивирус создание файлов
 
@@ -264,11 +264,11 @@ netstat -an | findstr :3000  # Windows
 **Решения**:
 1. Исправьте разрешения каталога:
    ```bash
-   chmod -R 755 .spec-workflow  # macOS/Linux
+   chmod -R 755 .specflow  # macOS/Linux
    ```
 2. Проверьте владельца файла:
    ```bash
-   ls -la .spec-workflow
+   ls -la .specflow
    # Должен принадлежать вашему пользователю
    ```
 3. Запускайте из каталога, которым вы владеете (не системные каталоги)
@@ -288,20 +288,20 @@ netstat -an | findstr :3000  # Windows
    - Ctrl+Shift+P → "Developer: Reload Window"
 3. Проверьте вывод расширения:
    - View → Output → Выберите "Spec Workflow" из выпадающего списка
-4. Убедитесь, что в проекте есть каталог `.spec-workflow`
+4. Убедитесь, что в проекте есть каталог `.specflow`
 
 ### Команды расширения не работают
 
 **Ошибка**: Команды не выполняются или показывают ошибки
 
 **Решения**:
-1. Откройте папку проекта, содержащую `.spec-workflow`
+1. Откройте папку проекта, содержащую `.specflow`
 2. Проверьте, что VSCode использует правильное рабочее пространство
 3. Просмотрите журналы расширения для конкретных ошибок
 4. Попробуйте переустановить расширение:
    ```bash
-   code --uninstall-extension Pimzino.spec-workflow-mcp
-   code --install-extension Pimzino.spec-workflow-mcp
+   code --uninstall-extension Pimzino.specflow-mcp
+   code --install-extension Pimzino.specflow-mcp
    ```
 
 ## Проблемы конфигурации
@@ -315,10 +315,10 @@ netstat -an | findstr :3000  # Windows
    ```bash
    # Установите валидатор TOML
    npm install -g @iarna/toml
-   toml .spec-workflow/config.toml
+   toml .specflow/config.toml
    ```
 2. Проверьте расположение файла:
-   - По умолчанию: `.spec-workflow/config.toml`
+   - По умолчанию: `.specflow/config.toml`
    - Пользовательский: Используйте флаг `--config`
 3. Убедитесь в отсутствии синтаксических ошибок:
    ```toml
@@ -370,7 +370,7 @@ netstat -an | findstr :3000  # Windows
    ```
 3. Очистите старые записи утверждений:
    ```bash
-   rm -rf .spec-workflow/approval/completed/*
+   rm -rf .specflow/approval/completed/*
    ```
 4. Используйте конкретные имена спецификаций вместо перечисления всех
 
@@ -518,7 +518,7 @@ npx -y @pimzino/spec-workflow-mcp@latest /path --debug
 4. **Используйте --help** для проверки опций
 5. **Тестируйте в чистой среде** при возникновении проблем
 6. **Проверяйте логи** перед предположением о сбое
-7. **Регулярно делайте резервные копии** каталога .spec-workflow
+7. **Регулярно делайте резервные копии** каталога .specflow
 
 ### Регулярное обслуживание
 

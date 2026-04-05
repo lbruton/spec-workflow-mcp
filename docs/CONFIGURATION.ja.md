@@ -61,11 +61,11 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 ### SPEC_WORKFLOW_HOME
 
-デフォルトのグローバル状態ディレクトリ（`~/.spec-workflow-mcp`）をオーバーライドします。これは`$HOME`が読み取り専用のサンドボックス環境で役立ちます。
+デフォルトのグローバル状態ディレクトリ（`~/.specflow-mcp`）をオーバーライドします。これは`$HOME`が読み取り専用のサンドボックス環境で役立ちます。
 
 | 変数 | デフォルト | 説明 |
 |----------|---------|-------------|
-| `SPEC_WORKFLOW_HOME` | `~/.spec-workflow-mcp` | グローバル状態ファイル用のディレクトリ |
+| `SPEC_WORKFLOW_HOME` | `~/.specflow-mcp` | グローバル状態ファイル用のディレクトリ |
 
 **このディレクトリに保存されるファイル：**
 - `activeProjects.json` - プロジェクトレジストリ
@@ -78,13 +78,13 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 ```bash
 # 絶対パス
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
 
 # 相対パス（現在の作業ディレクトリに対して解決されます）
-SPEC_WORKFLOW_HOME=./.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest .
+SPEC_WORKFLOW_HOME=./.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest .
 
 # ダッシュボードモード用
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest --dashboard
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 ```
 
 **サンドボックス環境（例：Codex CLI）：**
@@ -92,12 +92,12 @@ SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-m
 Codex CLIの`sandbox_mode=workspace-write`などのサンドボックス環境で実行する場合は、`SPEC_WORKFLOW_HOME`をワークスペース内の書き込み可能な場所に設定します：
 
 ```bash
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
 ```
 
 ## ダッシュボードセッション管理
 
-ダッシュボードは`~/.spec-workflow-mcp/activeSession.json`（または設定されている場合は`$SPEC_WORKFLOW_HOME/activeSession.json`）にセッション情報を保存します。このファイルは：
+ダッシュボードは`~/.specflow-mcp/activeSession.json`（または設定されている場合は`$SPEC_WORKFLOW_HOME/activeSession.json`）にセッション情報を保存します。このファイルは：
 - 単一のダッシュボードインスタンスを強制
 - MCPサーバーが実行中のダッシュボードを発見できるようにする
 - ダッシュボードが停止すると自動的にクリーンアップされる
@@ -137,7 +137,7 @@ To use a different port:
 
 ### デフォルトの場所
 
-サーバーは次の場所で設定を検索します：`<project-dir>/.spec-workflow/config.toml`
+サーバーは次の場所で設定を検索します：`<project-dir>/.specflow/config.toml`
 
 ### ファイル形式
 
@@ -204,7 +204,7 @@ debounceMs = 300
 
 1. 例の設定をコピーします：
 ```bash
-cp .spec-workflow/config.example.toml .spec-workflow/config.toml
+cp .specflow/config.example.toml .specflow/config.toml
 ```
 
 2. 設定を編集します：
@@ -217,11 +217,11 @@ lang = "en"
 
 3. 設定を使用します：
 ```bash
-# 自動的に.spec-workflow/config.tomlを使用
+# 自動的に.specflow/config.tomlを使用
 npx -y @pimzino/spec-workflow-mcp@latest
 
 # または明示的に指定
-npx -y @pimzino/spec-workflow-mcp@latest --config .spec-workflow/config.toml
+npx -y @pimzino/spec-workflow-mcp@latest --config .specflow/config.toml
 ```
 
 ## 設定の優先順位
@@ -230,7 +230,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --config .spec-workflow/config.toml
 
 1. **コマンドライン引数** - 常に優先される
 2. **カスタム設定ファイル** - `--config`で指定
-3. **デフォルト設定ファイル** - `.spec-workflow/config.toml`
+3. **デフォルト設定ファイル** - `.specflow/config.toml`
 4. **組み込みデフォルト** - フォールバック値
 
 ### 優先順位の例
@@ -326,12 +326,12 @@ npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ```bash
 # プロジェクトA
 project-a/
-  .spec-workflow/
+  .specflow/
     config.toml  # port = 3000
 
 # プロジェクトB
 project-b/
-  .spec-workflow/
+  .specflow/
     config.toml  # port = 3001
 ```
 
@@ -368,7 +368,7 @@ VSCode拡張機能には独自の設定があります：
 
 1. **ファイルの場所を確認：**
    ```bash
-   ls -la .spec-workflow/config.toml
+   ls -la .specflow/config.toml
    ```
 
 2. **TOML構文を検証：**
@@ -377,13 +377,13 @@ VSCode拡張機能には独自の設定があります：
    npm install -g @iarna/toml
 
    # 検証
-   toml .spec-workflow/config.toml
+   toml .specflow/config.toml
    ```
 
 3. **権限を確認：**
    ```bash
    # ファイルが読み取り可能であることを確認
-   chmod 644 .spec-workflow/config.toml
+   chmod 644 .specflow/config.toml
    ```
 
 ### 一般的な問題

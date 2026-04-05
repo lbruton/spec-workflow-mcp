@@ -175,11 +175,11 @@ export class SpecWorkflowService {
     const normalizedPath = filePath.replace(/\\/g, '/');
     const normalizedRoot = this.specWorkflowRoot.replace(/\\/g, '/');
     
-    // Look for pattern: .spec-workflow/specs/{specName}/tasks.md
+    // Look for pattern: .specflow/specs/{specName}/tasks.md
     const specsDir = path.join(normalizedRoot, 'specs').replace(/\\/g, '/');
     
     if (normalizedPath.includes(specsDir) && normalizedPath.endsWith('/tasks.md')) {
-      // Extract spec name from path like: /path/.spec-workflow/specs/my-spec/tasks.md
+      // Extract spec name from path like: /path/.specflow/specs/my-spec/tasks.md
       const relativePath = normalizedPath.substring(specsDir.length + 1); // +1 for the trailing slash
       const pathParts = relativePath.split('/');
       
@@ -390,14 +390,14 @@ export class SpecWorkflowService {
     const normalizedPath = filePath.replace(/\\/g, '/');
     const normalizedRoot = this.specWorkflowRoot.replace(/\\/g, '/');
     
-    // Look for pattern: .spec-workflow/specs/{specName}/{document}.md
+    // Look for pattern: .specflow/specs/{specName}/{document}.md
     const specsDir = path.join(normalizedRoot, 'specs').replace(/\\/g, '/');
     
     if (normalizedPath.includes(specsDir) && 
         (normalizedPath.endsWith('/requirements.md') || 
          normalizedPath.endsWith('/design.md') || 
          normalizedPath.endsWith('/tasks.md'))) {
-      // Extract spec name from path like: /path/.spec-workflow/specs/my-spec/requirements.md
+      // Extract spec name from path like: /path/.specflow/specs/my-spec/requirements.md
       const relativePath = normalizedPath.substring(specsDir.length + 1); // +1 for the trailing slash
       const pathParts = relativePath.split('/');
       
@@ -447,14 +447,14 @@ export class SpecWorkflowService {
     if (customRoot) {
       // Use custom workflow root
       this.workspaceRoot = customRoot;
-      this.specWorkflowRoot = path.join(customRoot, '.spec-workflow');
+      this.specWorkflowRoot = path.join(customRoot, '.specflow');
       this.archiveService.setWorkspaceRoot(customRoot);
       this.logger.log(`SpecWorkflowService: Using custom workflow root: ${customRoot}`);
     } else if (workspaceFolders && workspaceFolders.length > 0) {
       // Use default workspace root
       const workspaceRoot = workspaceFolders[0].uri.fsPath;
       this.workspaceRoot = workspaceRoot;
-      this.specWorkflowRoot = path.join(workspaceRoot, '.spec-workflow');
+      this.specWorkflowRoot = path.join(workspaceRoot, '.specflow');
       this.archiveService.setWorkspaceRoot(workspaceRoot);
     } else {
       this.workspaceRoot = null;
@@ -509,14 +509,14 @@ export class SpecWorkflowService {
 
   async getAllActiveSpecs(): Promise<SpecData[]> {
     if (!await this.ensureSpecWorkflowExists()) {
-      this.logger.log('SpecWorkflow: No .spec-workflow directory found');
+      this.logger.log('SpecWorkflow: No .specflow directory found');
       return [];
     }
 
     const specs: SpecData[] = [];
     
     try {
-      // First, try the standard structure: .spec-workflow/specs/
+      // First, try the standard structure: .specflow/specs/
       const specsDir = path.join(this.specWorkflowRoot!, 'specs');
       this.logger.log('SpecWorkflow: Checking specs directory:', specsDir);
       
@@ -540,9 +540,9 @@ export class SpecWorkflowService {
         this.logger.log('SpecWorkflow: No specs/ subdirectory found');
       }
 
-      // If no specs found, try looking directly in .spec-workflow for spec directories
+      // If no specs found, try looking directly in .specflow for spec directories
       if (specs.length === 0) {
-        this.logger.log('SpecWorkflow: Checking root .spec-workflow directory for specs');
+        this.logger.log('SpecWorkflow: Checking root .specflow directory for specs');
         const entries = await fs.readdir(this.specWorkflowRoot!, { withFileTypes: true });
         const excludeDirs = new Set(['specs', 'steering', 'approvals', '.git', 'node_modules']);
         const potentialSpecs = entries.filter(entry => 
@@ -995,9 +995,9 @@ export class SpecWorkflowService {
       candidates.push(p);
     }
 
-    // 3) If not already under .spec-workflow, try under that root
-    if (!p.includes('.spec-workflow')) {
-      candidates.push(path.join(this.workspaceRoot, '.spec-workflow', p));
+    // 3) If not already under .specflow, try under that root
+    if (!p.includes('.specflow')) {
+      candidates.push(path.join(this.workspaceRoot, '.specflow', p));
     }
 
     // 4) Handle legacy path formats - try with path separator normalization
@@ -1006,15 +1006,15 @@ export class SpecWorkflowService {
       // Try the normalized version relative to project root
       candidates.push(path.join(this.workspaceRoot, normalizedPath));
 
-      // Try the normalized version under .spec-workflow if not already there
-      if (!normalizedPath.includes('.spec-workflow')) {
-        candidates.push(path.join(this.workspaceRoot, '.spec-workflow', normalizedPath));
+      // Try the normalized version under .specflow if not already there
+      if (!normalizedPath.includes('.specflow')) {
+        candidates.push(path.join(this.workspaceRoot, '.specflow', normalizedPath));
       }
     }
 
     // 5) Try common spec document locations as fallback
     const fileName = path.basename(p);
-    const specWorkflowRoot = path.join(this.workspaceRoot, '.spec-workflow');
+    const specWorkflowRoot = path.join(this.workspaceRoot, '.specflow');
 
     // Try in specs directory structure
     candidates.push(path.join(specWorkflowRoot, 'specs', fileName));
@@ -1367,7 +1367,7 @@ export class SpecWorkflowService {
    */
   async getAllArchivedSpecs(): Promise<SpecData[]> {
     if (!await this.ensureSpecWorkflowExists()) {
-      this.logger.log('SpecWorkflow: No .spec-workflow directory found');
+      this.logger.log('SpecWorkflow: No .specflow directory found');
       return [];
     }
 

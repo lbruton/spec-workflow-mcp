@@ -3,21 +3,21 @@ import { join, isAbsolute } from 'path';
 
 /**
  * Environment variable name for overriding the global directory location.
- * When set, all global state files will be stored in this location instead of ~/.spec-workflow-mcp
+ * When set, all global state files will be stored in this location instead of ~/.specflow-mcp
  * 
  * This is useful for sandboxed environments (e.g., Codex CLI with sandbox_mode=workspace-write)
  * where $HOME is read-only.
  * 
  * @example
  * // Set to an absolute path
- * SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx spec-workflow-mcp /workspace
+ * SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx spec-workflow-mcp /workspace
  * 
  * // Set to a relative path (resolved against current working directory)
- * SPEC_WORKFLOW_HOME=./.spec-workflow-mcp npx spec-workflow-mcp /workspace
+ * SPEC_WORKFLOW_HOME=./.specflow-mcp npx spec-workflow-mcp /workspace
  */
 export const SPEC_WORKFLOW_HOME_ENV = 'SPEC_WORKFLOW_HOME';
 
-const DEFAULT_DIR_NAME = '.spec-workflow-mcp';
+const DEFAULT_DIR_NAME = '.specflow-mcp';
 
 /**
  * Get the global directory path for storing spec-workflow-mcp state files.
@@ -26,7 +26,7 @@ const DEFAULT_DIR_NAME = '.spec-workflow-mcp';
  * 1. SPEC_WORKFLOW_HOME environment variable (if set)
  *    - Absolute paths are used as-is
  *    - Relative paths are resolved against process.cwd()
- * 2. Default: ~/.spec-workflow-mcp
+ * 2. Default: ~/.specflow-mcp
  * 
  * Files stored in this directory:
  * - activeProjects.json - Project registry
@@ -46,7 +46,7 @@ export function getGlobalDir(): string {
     return isAbsolute(envPath) ? envPath : join(process.cwd(), envPath);
   }
   
-  // Default to ~/.spec-workflow-mcp
+  // Default to ~/.specflow-mcp
   return join(homedir(), DEFAULT_DIR_NAME);
 }
 
@@ -70,11 +70,11 @@ To fix this, set the SPEC_WORKFLOW_HOME environment variable to a writable locat
 
 For example, to store state files in your workspace:
 
-  SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx spec-workflow-mcp /workspace
+  SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx spec-workflow-mcp /workspace
 
 Or use a relative path:
 
-  SPEC_WORKFLOW_HOME=./.spec-workflow-mcp npx spec-workflow-mcp .
+  SPEC_WORKFLOW_HOME=./.specflow-mcp npx spec-workflow-mcp .
 `.trim();
 }
 

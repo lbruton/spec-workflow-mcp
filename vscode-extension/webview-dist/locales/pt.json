@@ -219,7 +219,7 @@
   },
   "workflowRoot": {
     "title": "Local do Fluxo de Trabalho",
-    "description": "Configure a localização da pasta .spec-workflow para espaços de trabalho multi-raiz.",
+    "description": "Configure a localização da pasta .specflow para espaços de trabalho multi-raiz.",
     "current": "Atual",
     "notSet": "Não configurado",
     "default": "padrão",

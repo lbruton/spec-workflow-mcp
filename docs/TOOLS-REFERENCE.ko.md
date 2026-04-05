@@ -84,7 +84,7 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 {
   success: true,
   message: "Requirements document created successfully",
-  path: ".spec-workflow/specs/user-authentication/requirements.md",
+  path: ".specflow/specs/user-authentication/requirements.md",
   requestedApproval: true
 }
 ```
@@ -363,7 +363,7 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 {
   success: true,
   message: "Product steering document created",
-  path: ".spec-workflow/steering/product.md"
+  path: ".specflow/steering/product.md"
 }
 ```
 

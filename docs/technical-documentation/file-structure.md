@@ -7,7 +7,7 @@
 ### Project Root Structure
 ```
 project-root/
-├── .spec-workflow/                    # All MCP workflow data
+├── .specflow/                    # All MCP workflow data
 │   ├── specs/                         # Specification documents  
 │   │   └── feature-name/              # Individual specification
 │   │       ├── requirements.md        # Phase 1: Requirements
@@ -172,17 +172,17 @@ The system uses `PathUtils` class for consistent path handling across Windows, m
 export class PathUtils {
   // Get workflow root directory
   static getWorkflowRoot(projectPath: string): string {
-    return normalize(join(projectPath, '.spec-workflow'));
+    return normalize(join(projectPath, '.specflow'));
   }
 
   // Get spec directory path
   static getSpecPath(projectPath: string, specName: string): string {
-    return normalize(join(projectPath, '.spec-workflow', 'specs', specName));
+    return normalize(join(projectPath, '.specflow', 'specs', specName));
   }
 
   // Get steering documents path
   static getSteeringPath(projectPath: string): string {
-    return normalize(join(projectPath, '.spec-workflow', 'steering'));
+    return normalize(join(projectPath, '.specflow', 'steering'));
   }
 
   // Convert to platform-specific path
@@ -204,15 +204,15 @@ export class PathUtils {
 
 // Get spec path
 const specPath = PathUtils.getSpecPath('/project', 'user-auth');
-// Result: /project/.spec-workflow/specs/user-auth
+// Result: /project/.specflow/specs/user-auth
 
 // Get requirements file path
 const reqPath = join(specPath, 'requirements.md');
-// Result: /project/.spec-workflow/specs/user-auth/requirements.md
+// Result: /project/.specflow/specs/user-auth/requirements.md
 
 // Get relative path for API responses  
 const relativePath = PathUtils.toUnixPath(reqPath.replace(projectPath, ''));
-// Result: .spec-workflow/specs/user-auth/requirements.md
+// Result: .specflow/specs/user-auth/requirements.md
 ```
 
 ## 📂 Directory Creation & Management
@@ -224,18 +224,18 @@ The system automatically creates these directories as needed:
 ```typescript
 // Directories created during initialization
 const directories = [
-  '.spec-workflow/',
-  '.spec-workflow/specs/',
-  '.spec-workflow/steering/',
-  '.spec-workflow/archive/',
-  '.spec-workflow/archive/specs/'
+  '.specflow/',
+  '.specflow/specs/',
+  '.specflow/steering/',
+  '.specflow/archive/',
+  '.specflow/archive/specs/'
 ];
 
 // Directories created on-demand
 const onDemandDirectories = [
-  '.spec-workflow/approvals/',
-  '.spec-workflow/approvals/{spec-name}/',
-  '.spec-workflow/specs/{spec-name}/'
+  '.specflow/approvals/',
+  '.specflow/approvals/{spec-name}/',
+  '.specflow/specs/{spec-name}/'
 ];
 ```
 
@@ -284,7 +284,7 @@ export class SpecArchiveService {
 
 ```bash
 # Minimum required permissions
-.spec-workflow/           # 755 (rwxr-xr-x)
+.specflow/           # 755 (rwxr-xr-x)
 ├── specs/               # 755 (rwxr-xr-x)
 ├── steering/            # 755 (rwxr-xr-x)
 ├── approvals/           # 755 (rwxr-xr-x)
@@ -294,14 +294,14 @@ export class SpecArchiveService {
 ### Security Considerations
 
 **File Access Restrictions**:
-- ✅ Read/Write: Only within `.spec-workflow/` directory
+- ✅ Read/Write: Only within `.specflow/` directory
 - ✅ Read-Only: Project files (for analysis)
 - ❌ Forbidden: System directories, parent directory traversal
 
 **Path Traversal Prevention**:
 ```typescript
 // All paths are normalized and validated
-const safePath = normalize(join(projectPath, '.spec-workflow', userInput));
+const safePath = normalize(join(projectPath, '.specflow', userInput));
 
 // Ensure path stays within project
 if (!safePath.startsWith(projectPath)) {
@@ -342,13 +342,13 @@ interface DiskUsage {
 # Manual cleanup commands
 
 # Remove completed approvals (older than 30 days)
-find .spec-workflow/approvals -name "*.json" -mtime +30 -delete
+find .specflow/approvals -name "*.json" -mtime +30 -delete
 
 # Archive old specifications
 # (Move specs with all tasks completed to archive/)
 
 # Full reset (nuclear option)
-rm -rf .spec-workflow/
+rm -rf .specflow/
 ```
 
 ---

@@ -84,7 +84,7 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 {
   success: true,
   message: "Documento requisiti creato con successo",
-  path: ".spec-workflow/specs/user-authentication/requirements.md",
+  path: ".specflow/specs/user-authentication/requirements.md",
   requestedApproval: true
 }
 ```
@@ -363,7 +363,7 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 {
   success: true,
   message: "Documento steering prodotto creato",
-  path: ".spec-workflow/steering/product.md"
+  path: ".specflow/steering/product.md"
 }
 ```
 

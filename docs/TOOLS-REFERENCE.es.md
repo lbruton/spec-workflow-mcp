@@ -84,7 +84,7 @@ Spec Workflow MCP proporciona herramientas especializadas para desarrollo de sof
 {
   success: true,
   message: "Documento de requisitos creado exitosamente",
-  path: ".spec-workflow/specs/autenticacion-usuarios/requirements.md",
+  path: ".specflow/specs/autenticacion-usuarios/requirements.md",
   requestedApproval: true
 }
 ```
@@ -363,7 +363,7 @@ Spec Workflow MCP proporciona herramientas especializadas para desarrollo de sof
 {
   success: true,
   message: "Documento de orientación de producto creado",
-  path: ".spec-workflow/steering/product.md"
+  path: ".specflow/steering/product.md"
 }
 ```
 

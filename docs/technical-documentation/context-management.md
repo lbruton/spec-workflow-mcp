@@ -225,7 +225,7 @@ interface ContextCache {
 
 ### File Watching
 
-The system monitors the `.spec-workflow/` directory for changes:
+The system monitors the `.specflow/` directory for changes:
 
 ```typescript
 class FileWatcher {
@@ -233,7 +233,7 @@ class FileWatcher {
   
   constructor(projectPath: string) {
     this.watcher = chokidar.watch(
-      join(projectPath, '.spec-workflow'),
+      join(projectPath, '.specflow'),
       {
         ignored: /(^|[\/\\])\../,  // Ignore hidden files
         persistent: true,
@@ -255,9 +255,9 @@ class FileWatcher {
 ```
 
 **Watched Paths**:
-- `.spec-workflow/specs/**/*.md` - Specification documents
-- `.spec-workflow/steering/*.md` - Steering documents
-- `.spec-workflow/approvals/**/*.json` - Approval records
+- `.specflow/specs/**/*.md` - Specification documents
+- `.specflow/steering/*.md` - Steering documents
+- `.specflow/approvals/**/*.json` - Approval records
 
 ### Context Loading Pipeline
 

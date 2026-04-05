@@ -327,11 +327,11 @@ export async function detectConventions(projectPath: string): Promise<ProjectCon
 }
 
 /**
- * Write detected conventions to `.spec-workflow/project-conventions.json`.
- * Creates the `.spec-workflow` directory if it does not exist.
+ * Write detected conventions to `.specflow/project-conventions.json`.
+ * Creates the `.specflow` directory if it does not exist.
  */
 export async function writeConventions(projectPath: string, conventions: ProjectConventions): Promise<void> {
-  const dir = join(projectPath, '.spec-workflow');
+  const dir = join(projectPath, '.specflow');
   try {
     await mkdir(dir, { recursive: true });
   } catch {

@@ -52,7 +52,7 @@ flowchart TD
     %% Phase 1: Product
     Guide --> P1_Template[Check user-templates first,<br/>then read template:<br/>product-template.md]
     P1_Template --> P1_Generate[Generate vision & goals]
-    P1_Generate --> P1_Create[Create file:<br/>.spec-workflow/steering/<br/>product.md]
+    P1_Generate --> P1_Create[Create file:<br/>.specflow/steering/<br/>product.md]
     P1_Create --> P1_Approve[approvals<br/>action: request<br/>filePath only]
     P1_Approve --> P1_Status[approvals<br/>action: status<br/>poll status]
     P1_Status --> P1_Check{Status?}
@@ -64,7 +64,7 @@ flowchart TD
     %% Phase 2: Tech
     P1_Clean -->|success| P2_Template[Check user-templates first,<br/>then read template:<br/>tech-template.md]
     P2_Template --> P2_Analyze[Analyze tech stack]
-    P2_Analyze --> P2_Create[Create file:<br/>.spec-workflow/steering/<br/>tech.md]
+    P2_Analyze --> P2_Create[Create file:<br/>.specflow/steering/<br/>tech.md]
     P2_Create --> P2_Approve[approvals<br/>action: request<br/>filePath only]
     P2_Approve --> P2_Status[approvals<br/>action: status<br/>poll status]
     P2_Status --> P2_Check{Status?}
@@ -76,7 +76,7 @@ flowchart TD
     %% Phase 3: Structure
     P2_Clean -->|success| P3_Template[Check user-templates first,<br/>then read template:<br/>structure-template.md]
     P3_Template --> P3_Analyze[Analyze codebase structure]
-    P3_Analyze --> P3_Create[Create file:<br/>.spec-workflow/steering/<br/>structure.md]
+    P3_Analyze --> P3_Create[Create file:<br/>.specflow/steering/<br/>structure.md]
     P3_Create --> P3_Approve[approvals<br/>action: request<br/>filePath only]
     P3_Approve --> P3_Status[approvals<br/>action: status<br/>poll status]
     P3_Status --> P3_Check{Status?}
@@ -100,9 +100,9 @@ flowchart TD
 **Purpose**: Define vision, goals, and user outcomes.
 
 **File Operations**:
-- Check for custom template: \`.spec-workflow/user-templates/product-template.md\`
-- Read template: \`.spec-workflow/templates/product-template.md\` (if no custom template)
-- Create document: \`.spec-workflow/steering/product.md\`
+- Check for custom template: \`.specflow/user-templates/product-template.md\`
+- Read template: \`.specflow/templates/product-template.md\` (if no custom template)
+- Create document: \`.specflow/steering/product.md\`
 
 **Tools**:
 - steering-guide: Load workflow instructions
@@ -110,10 +110,10 @@ flowchart TD
 
 **Process**:
 1. Load steering guide for workflow overview
-2. Check for custom template at \`.spec-workflow/user-templates/product-template.md\`
-3. If no custom template, read from \`.spec-workflow/templates/product-template.md\`
+2. Check for custom template at \`.specflow/user-templates/product-template.md\`
+3. If no custom template, read from \`.specflow/templates/product-template.md\`
 4. Generate product vision and goals
-5. Create \`product.md\` at \`.spec-workflow/steering/product.md\`
+5. Create \`product.md\` at \`.specflow/steering/product.md\`
 6. Request approval using approvals tool with action:'request' (filePath only)
 7. Poll status using approvals with action:'status' until approved/needs-revision (NEVER accept verbal approval)
 8. If needs-revision: update document using comments, create NEW approval, do NOT proceed
@@ -124,19 +124,19 @@ flowchart TD
 **Purpose**: Document technology decisions and architecture.
 
 **File Operations**:
-- Check for custom template: \`.spec-workflow/user-templates/tech-template.md\`
-- Read template: \`.spec-workflow/templates/tech-template.md\` (if no custom template)
-- Create document: \`.spec-workflow/steering/tech.md\`
+- Check for custom template: \`.specflow/user-templates/tech-template.md\`
+- Read template: \`.specflow/templates/tech-template.md\` (if no custom template)
+- Create document: \`.specflow/steering/tech.md\`
 
 **Tools**:
 - approvals: Manage approval workflow (actions: request, status, delete)
 
 **Process**:
-1. Check for custom template at \`.spec-workflow/user-templates/tech-template.md\`
-2. If no custom template, read from \`.spec-workflow/templates/tech-template.md\`
+1. Check for custom template at \`.specflow/user-templates/tech-template.md\`
+2. If no custom template, read from \`.specflow/templates/tech-template.md\`
 3. Analyze existing technology stack
 4. Document architectural decisions and patterns
-5. Create \`tech.md\` at \`.spec-workflow/steering/tech.md\`
+5. Create \`tech.md\` at \`.specflow/steering/tech.md\`
 6. Request approval using approvals tool with action:'request'
 7. Poll status using approvals with action:'status' until approved/needs-revision
 8. If needs-revision: update document using comments, create NEW approval, do NOT proceed
@@ -147,19 +147,19 @@ flowchart TD
 **Purpose**: Map codebase organization and patterns.
 
 **File Operations**:
-- Check for custom template: \`.spec-workflow/user-templates/structure-template.md\`
-- Read template: \`.spec-workflow/templates/structure-template.md\` (if no custom template)
-- Create document: \`.spec-workflow/steering/structure.md\`
+- Check for custom template: \`.specflow/user-templates/structure-template.md\`
+- Read template: \`.specflow/templates/structure-template.md\` (if no custom template)
+- Create document: \`.specflow/steering/structure.md\`
 
 **Tools**:
 - approvals: Manage approval workflow (actions: request, status, delete)
 
 **Process**:
-1. Check for custom template at \`.spec-workflow/user-templates/structure-template.md\`
-2. If no custom template, read from \`.spec-workflow/templates/structure-template.md\`
+1. Check for custom template at \`.specflow/user-templates/structure-template.md\`
+2. If no custom template, read from \`.specflow/templates/structure-template.md\`
 3. Analyze directory structure and file organization
 4. Document coding patterns and conventions
-5. Create \`structure.md\` at \`.spec-workflow/steering/structure.md\`
+5. Create \`structure.md\` at \`.specflow/steering/structure.md\`
 6. Request approval using approvals tool with action:'request'
 7. Poll status using approvals with action:'status' until approved/needs-revision
 8. If needs-revision: update document using comments, create NEW approval, do NOT proceed
@@ -170,8 +170,8 @@ flowchart TD
 ## Workflow Rules
 
 - Create documents directly at specified file paths
-- Check for custom templates in \`.spec-workflow/user-templates/\` first
-- Read templates from \`.spec-workflow/templates/\` directory if no custom template exists
+- Check for custom templates in \`.specflow/user-templates/\` first
+- Read templates from \`.specflow/templates/\` directory if no custom template exists
 - Follow exact template structures
 - Get explicit user approval between phases (using approvals tool with action:'request')
 - Complete phases in sequence (no skipping)
@@ -183,7 +183,7 @@ flowchart TD
 
 ## File Structure
 \`\`\`
-.spec-workflow/
+.specflow/
 ├── templates/           # Auto-populated on server start
 │   ├── product-template.md
 │   ├── tech-template.md

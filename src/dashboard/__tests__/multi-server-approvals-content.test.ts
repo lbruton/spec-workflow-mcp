@@ -95,8 +95,8 @@ describe('MultiProjectDashboardServer approvals content resolution', () => {
   });
 
   it('falls back to workflow root when relative file only exists there', async () => {
-    const relativePath = '.spec-workflow/specs/test-spec/requirements.md';
-    await fs.mkdir(join(workflowRootPath, '.spec-workflow', 'specs', 'test-spec'), { recursive: true });
+    const relativePath = '.specflow/specs/test-spec/requirements.md';
+    await fs.mkdir(join(workflowRootPath, '.specflow', 'specs', 'test-spec'), { recursive: true });
     await fs.writeFile(join(workflowRootPath, relativePath), '# Shared requirements', 'utf-8');
 
     const approvalStorage = new ApprovalStorage(workflowRootPath, {
@@ -114,7 +114,7 @@ describe('MultiProjectDashboardServer approvals content resolution', () => {
 
     expect(response.status).toBe(200);
     expect(body.content).toBe('# Shared requirements');
-    expect(body.filePath).toContain(join('repo-main', '.spec-workflow', 'specs', 'test-spec', 'requirements.md'));
+    expect(body.filePath).toContain(join('repo-main', '.specflow', 'specs', 'test-spec', 'requirements.md'));
   });
 
   it('uses absolute approval filePath as-is', async () => {

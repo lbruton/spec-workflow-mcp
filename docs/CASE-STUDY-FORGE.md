@@ -149,7 +149,7 @@ FORGE-1 was created with structured frontmatter, detailed description, and accep
 
 ### /spec (Phases 1-4) -- Requirements, Design, Tasks, Implementation
 
-Each phase produced a formal document in `.spec-workflow/specs/`:
+Each phase produced a formal document in `.specflow/specs/`:
 
 - **requirements.md** -- 11 requirements with WHEN/THEN acceptance criteria, open questions (all resolved before approval), and non-functional requirements (performance, security, reliability, usability)
 - **design.md** -- Architecture decisions, data models, engine specifications, component hierarchy, File Touch Map

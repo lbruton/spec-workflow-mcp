@@ -61,11 +61,11 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 ### SPEC_WORKFLOW_HOME
 
-تجاوز دليل الحالة العامة الافتراضي (`~/.spec-workflow-mcp`). هذا مفيد للبيئات المعزولة حيث يكون `$HOME` للقراءة فقط.
+تجاوز دليل الحالة العامة الافتراضي (`~/.specflow-mcp`). هذا مفيد للبيئات المعزولة حيث يكون `$HOME` للقراءة فقط.
 
 | المتغير | الافتراضي | الوصف |
 |----------|---------|-------------|
-| `SPEC_WORKFLOW_HOME` | `~/.spec-workflow-mcp` | دليل ملفات الحالة العامة |
+| `SPEC_WORKFLOW_HOME` | `~/.specflow-mcp` | دليل ملفات الحالة العامة |
 
 **الملفات المخزنة في هذا الدليل:**
 - `activeProjects.json` - سجل المشاريع
@@ -78,13 +78,13 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 ```bash
 # مسار مطلق
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
 
 # مسار نسبي (يُحل مقابل دليل العمل الحالي)
-SPEC_WORKFLOW_HOME=./.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest .
+SPEC_WORKFLOW_HOME=./.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest .
 
 # لوضع لوحة التحكم
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest --dashboard
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 ```
 
 **البيئات المعزولة (مثل Codex CLI):**
@@ -92,12 +92,12 @@ SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-m
 عند التشغيل في بيئات معزولة مثل Codex CLI مع `sandbox_mode=workspace-write`، قم بتعيين `SPEC_WORKFLOW_HOME` إلى موقع قابل للكتابة داخل مساحة العمل الخاصة بك:
 
 ```bash
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
 ```
 
 ## إدارة جلسة لوحة التحكم
 
-تخزن لوحة التحكم معلومات جلستها في `~/.spec-workflow-mcp/activeSession.json` (أو `$SPEC_WORKFLOW_HOME/activeSession.json` إذا تم تعيينه). هذا الملف:
+تخزن لوحة التحكم معلومات جلستها في `~/.specflow-mcp/activeSession.json` (أو `$SPEC_WORKFLOW_HOME/activeSession.json` إذا تم تعيينه). هذا الملف:
 - يفرض مثيل واحد للوحة التحكم
 - يسمح لخوادم MCP باكتشاف لوحة التحكم قيد التشغيل
 - ينظف تلقائيًا عند توقف لوحة التحكم
@@ -137,7 +137,7 @@ To use a different port:
 
 ### الموقع الافتراضي
 
-يبحث الخادم عن التكوين في: `<project-dir>/.spec-workflow/config.toml`
+يبحث الخادم عن التكوين في: `<project-dir>/.specflow/config.toml`
 
 ### تنسيق الملف
 
@@ -204,7 +204,7 @@ debounceMs = 300
 
 1. انسخ التكوين المثالي:
 ```bash
-cp .spec-workflow/config.example.toml .spec-workflow/config.toml
+cp .specflow/config.example.toml .specflow/config.toml
 ```
 
 2. حرر التكوين:
@@ -217,11 +217,11 @@ lang = "en"
 
 3. استخدم التكوين:
 ```bash
-# يستخدم .spec-workflow/config.toml تلقائيًا
+# يستخدم .specflow/config.toml تلقائيًا
 npx -y @pimzino/spec-workflow-mcp@latest
 
 # أو حدد صراحةً
-npx -y @pimzino/spec-workflow-mcp@latest --config .spec-workflow/config.toml
+npx -y @pimzino/spec-workflow-mcp@latest --config .specflow/config.toml
 ```
 
 ## أسبقية التكوين
@@ -230,7 +230,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --config .spec-workflow/config.toml
 
 1. **وسائط سطر الأوامر** - لها الأولوية دائمًا
 2. **ملف تكوين مخصص** - محدد مع `--config`
-3. **ملف التكوين الافتراضي** - `.spec-workflow/config.toml`
+3. **ملف التكوين الافتراضي** - `.specflow/config.toml`
 4. **الافتراضيات المدمجة** - قيم احتياطية
 
 ### مثال على الأسبقية
@@ -326,12 +326,12 @@ npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ```bash
 # المشروع أ
 project-a/
-  .spec-workflow/
+  .specflow/
     config.toml  # port = 3000
 
 # المشروع ب
 project-b/
-  .spec-workflow/
+  .specflow/
     config.toml  # port = 3001
 ```
 
@@ -368,7 +368,7 @@ npx -y @pimzino/spec-workflow-mcp@latest \
 
 1. **تحقق من موقع الملف:**
    ```bash
-   ls -la .spec-workflow/config.toml
+   ls -la .specflow/config.toml
    ```
 
 2. **تحقق من صحة بناء جملة TOML:**
@@ -377,13 +377,13 @@ npx -y @pimzino/spec-workflow-mcp@latest \
    npm install -g @iarna/toml
 
    # تحقق من الصحة
-   toml .spec-workflow/config.toml
+   toml .specflow/config.toml
    ```
 
 3. **تحقق من الأذونات:**
    ```bash
    # تأكد من أن الملف قابل للقراءة
-   chmod 644 .spec-workflow/config.toml
+   chmod 644 .specflow/config.toml
    ```
 
 ### المشكلات الشائعة

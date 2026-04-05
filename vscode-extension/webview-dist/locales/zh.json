@@ -214,7 +214,7 @@
   },
   "workflowRoot": {
     "title": "工作流位置",
-    "description": "配置多根工作区的 .spec-workflow 文件夹位置。",
+    "description": "配置多根工作区的 .specflow 文件夹位置。",
     "current": "当前",
     "notSet": "未配置",
     "default": "默认",

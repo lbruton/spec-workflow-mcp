@@ -22,21 +22,21 @@ export class ArchiveService {
     if (!this.workspaceRoot) {
       throw new Error('Workspace root not set');
     }
-    return path.join(this.workspaceRoot, '.spec-workflow', 'specs', specName);
+    return path.join(this.workspaceRoot, '.specflow', 'specs', specName);
   }
 
   private getArchiveSpecPath(specName: string): string {
     if (!this.workspaceRoot) {
       throw new Error('Workspace root not set');
     }
-    return path.join(this.workspaceRoot, '.spec-workflow', 'archive', 'specs', specName);
+    return path.join(this.workspaceRoot, '.specflow', 'archive', 'specs', specName);
   }
 
   private getArchiveSpecsPath(): string {
     if (!this.workspaceRoot) {
       throw new Error('Workspace root not set');
     }
-    return path.join(this.workspaceRoot, '.spec-workflow', 'archive', 'specs');
+    return path.join(this.workspaceRoot, '.specflow', 'archive', 'specs');
   }
 
   /**

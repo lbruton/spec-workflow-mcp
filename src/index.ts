@@ -32,8 +32,8 @@ OPTIONS:
   --no-open               Don't automatically open browser when starting dashboard
                          Useful in restricted environments where browser launch is blocked
   --no-shared-worktree-specs
-                         Disable shared .spec-workflow in git worktrees
-                         Use workspace-local .spec-workflow instead of main repo
+                         Disable shared .specflow in git worktrees
+                         Use workspace-local .specflow instead of main repo
 
 IMPORTANT:
   Only ONE dashboard instance runs at a time. All MCP servers connect to the
@@ -220,7 +220,7 @@ async function main() {
       console.error(`workspacePath=${workspacePath}`);
       console.error(`workflowRootPath=${workflowRootPath}`);
     } else if (noSharedWorktreeSpecs) {
-      console.error('Shared worktree specs disabled. Using workspace-local .spec-workflow.');
+      console.error('Shared worktree specs disabled. Using workspace-local .specflow.');
       console.error(`workspacePath=${workspacePath}`);
     }
 

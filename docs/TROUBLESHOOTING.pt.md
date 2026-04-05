@@ -12,8 +12,8 @@ npx -y @pimzino/spec-workflow-mcp@latest --help
 # Verificar se está executando no diretório correto
 pwd  # ou 'cd' no Windows
 
-# Verificar se diretório .spec-workflow existe
-ls -la .spec-workflow  # ou 'dir .spec-workflow' no Windows
+# Verificar se diretório .specflow existe
+ls -la .specflow  # ou 'dir .specflow' no Windows
 ```
 
 ### Verificar Serviços
@@ -201,7 +201,7 @@ netstat -an | findstr :3000  # Windows
 4. Verificar se observadores de sistema de arquivos estão funcionando:
    ```bash
    # Criar arquivo de teste no projeto
-   touch .spec-workflow/test.md
+   touch .specflow/test.md
    # Deve acionar atualização no dashboard
    ```
 
@@ -222,7 +222,7 @@ netstat -an | findstr :3000  # Windows
    ```
 2. Verificar se diretório de aprovação existe:
    ```bash
-   ls -la .spec-workflow/approval/
+   ls -la .specflow/approval/
    ```
 3. Acionar solicitação de aprovação manualmente através da IA
 
@@ -245,7 +245,7 @@ netstat -an | findstr :3000  # Windows
 **Soluções**:
 1. Verificar permissões de escrita:
    ```bash
-   touch .spec-workflow/test.txt
+   touch .specflow/test.txt
    ```
 2. Verificar diretório de trabalho correto:
    ```bash
@@ -253,7 +253,7 @@ netstat -an | findstr :3000  # Windows
    ```
 3. Procurar por arquivos ocultos:
    ```bash
-   ls -la .spec-workflow/specs/
+   ls -la .specflow/specs/
    ```
 4. Verificar se antivírus está bloqueando criação de arquivo
 
@@ -264,11 +264,11 @@ netstat -an | findstr :3000  # Windows
 **Soluções**:
 1. Corrigir permissões de diretório:
    ```bash
-   chmod -R 755 .spec-workflow  # macOS/Linux
+   chmod -R 755 .specflow  # macOS/Linux
    ```
 2. Verificar propriedade do arquivo:
    ```bash
-   ls -la .spec-workflow
+   ls -la .specflow
    # Deve ser propriedade do seu usuário
    ```
 3. Executar de um diretório que você possui (não diretórios do sistema)
@@ -288,20 +288,20 @@ netstat -an | findstr :3000  # Windows
    - Ctrl+Shift+P → "Developer: Reload Window"
 3. Verificar saída da extensão:
    - View → Output → Selecionar "Spec Workflow" do dropdown
-4. Garantir que projeto tenha diretório `.spec-workflow`
+4. Garantir que projeto tenha diretório `.specflow`
 
 ### Comandos da Extensão Não Funcionando
 
 **Erro**: Comandos falham ou mostram erros
 
 **Soluções**:
-1. Abrir pasta de projeto que contém `.spec-workflow`
+1. Abrir pasta de projeto que contém `.specflow`
 2. Verificar se VSCode está usando workspace correto
 3. Ver logs da extensão para erros específicos
 4. Tentar reinstalar extensão:
    ```bash
-   code --uninstall-extension Pimzino.spec-workflow-mcp
-   code --install-extension Pimzino.spec-workflow-mcp
+   code --uninstall-extension Pimzino.specflow-mcp
+   code --install-extension Pimzino.specflow-mcp
    ```
 
 ## Problemas de Configuração
@@ -315,10 +315,10 @@ netstat -an | findstr :3000  # Windows
    ```bash
    # Instalar validador TOML
    npm install -g @iarna/toml
-   toml .spec-workflow/config.toml
+   toml .specflow/config.toml
    ```
 2. Verificar localização do arquivo:
-   - Padrão: `.spec-workflow/config.toml`
+   - Padrão: `.specflow/config.toml`
    - Personalizado: Use flag `--config`
 3. Garantir que não há erros de sintaxe:
    ```toml
@@ -370,7 +370,7 @@ netstat -an | findstr :3000  # Windows
    ```
 3. Limpar registros de aprovação antigos:
    ```bash
-   rm -rf .spec-workflow/approval/completed/*
+   rm -rf .specflow/approval/completed/*
    ```
 4. Usar nomes de especificações específicas em vez de listar todas
 
@@ -518,7 +518,7 @@ npx -y @pimzino/spec-workflow-mcp@latest /path --debug
 4. **Use --help** para verificar opções
 5. **Teste em ambiente limpo** quando problemas ocorrerem
 6. **Verifique logs** antes de assumir falha
-7. **Faça backup do diretório** .spec-workflow regularmente
+7. **Faça backup do diretório** .specflow regularmente
 
 ### Manutenção Regular
 

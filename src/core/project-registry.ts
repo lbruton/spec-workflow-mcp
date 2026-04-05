@@ -12,7 +12,7 @@ export interface ProjectInstance {
 export interface ProjectRegistryEntry {
   projectId: string;
   projectPath: string;       // Canonical repo root (workflowRootPath)
-  workflowRootPath: string;  // Path where .spec-workflow is stored (shared root)
+  workflowRootPath: string;  // Path where .specflow is stored (shared root)
   projectName: string;
   instances: ProjectInstance[];
   worktrees: string[];       // Active worktree workspace paths

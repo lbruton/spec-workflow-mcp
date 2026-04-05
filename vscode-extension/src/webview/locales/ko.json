@@ -222,7 +222,7 @@
   },
   "workflowRoot": {
     "title": "워크플로우 위치",
-    "description": "다중 루트 작업 영역을 위한 .spec-workflow 폴더 위치를 구성합니다.",
+    "description": "다중 루트 작업 영역을 위한 .specflow 폴더 위치를 구성합니다.",
     "current": "현재",
     "notSet": "구성되지 않음",
     "default": "기본값",

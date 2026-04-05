@@ -250,7 +250,7 @@ Maintenir la documentation à jour :
 
 ```
 votre-projet/
-├── .spec-workflow/
+├── .specflow/
 │   ├── steering/
 │   │   ├── product.md
 │   │   ├── tech.md

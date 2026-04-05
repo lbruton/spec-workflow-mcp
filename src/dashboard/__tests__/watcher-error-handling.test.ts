@@ -16,7 +16,7 @@ describe('SpecWatcher Error Handling', () => {
     await fs.mkdir(testDir, { recursive: true });
     
     // Create the workflow directory structure
-    const workflowDir = join(testDir, '.spec-workflow');
+    const workflowDir = join(testDir, '.specflow');
     const specsDir = join(workflowDir, 'specs');
     const steeringDir = join(workflowDir, 'steering');
     
@@ -62,7 +62,7 @@ describe('SpecWatcher Error Handling', () => {
     });
 
     // Modify a file
-    const requirementsPath = join(testDir, '.spec-workflow', 'specs', 'test-spec', 'requirements.md');
+    const requirementsPath = join(testDir, '.specflow', 'specs', 'test-spec', 'requirements.md');
     await fs.writeFile(requirementsPath, '# Updated Requirements\n\nUpdated content');
 
     // Wait for file system events to propagate
@@ -86,7 +86,7 @@ describe('SpecWatcher Error Handling', () => {
     });
 
     // Modify a file (this will trigger the error)
-    const requirementsPath = join(testDir, '.spec-workflow', 'specs', 'test-spec', 'requirements.md');
+    const requirementsPath = join(testDir, '.specflow', 'specs', 'test-spec', 'requirements.md');
     await fs.writeFile(requirementsPath, '# Updated Requirements\n\nUpdated content');
 
     // Wait for file system events to propagate
@@ -109,7 +109,7 @@ describe('SpecWatcher Error Handling', () => {
     });
 
     // Create a steering file
-    const steeringPath = join(testDir, '.spec-workflow', 'steering', 'product.md');
+    const steeringPath = join(testDir, '.specflow', 'steering', 'product.md');
     await fs.writeFile(steeringPath, '# Product Steering\n\nSome guidance');
 
     // Wait for file system events to propagate
@@ -132,7 +132,7 @@ describe('SpecWatcher Error Handling', () => {
   it('should handle rapid file changes without crashing', async () => {
     await watcher.start();
 
-    const requirementsPath = join(testDir, '.spec-workflow', 'specs', 'test-spec', 'requirements.md');
+    const requirementsPath = join(testDir, '.specflow', 'specs', 'test-spec', 'requirements.md');
     
     // Make multiple rapid changes
     for (let i = 0; i < 5; i++) {

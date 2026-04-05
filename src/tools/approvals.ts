@@ -329,7 +329,7 @@ async function handleRequestApproval(
       ],
       projectContext: {
         projectPath: validatedProjectPath,
-        workflowRoot: join(validatedProjectPath, '.spec-workflow'),
+        workflowRoot: join(validatedProjectPath, '.specflow'),
         dashboardUrl: deeplink
       }
     };
@@ -465,7 +465,7 @@ async function handleGetApprovalStatus(
       nextSteps,
       projectContext: {
         projectPath: validatedProjectPath,
-        workflowRoot: join(validatedProjectPath, '.spec-workflow'),
+        workflowRoot: join(validatedProjectPath, '.specflow'),
         dashboardUrl: context.dashboardUrl
       }
     };
@@ -561,7 +561,7 @@ async function handleDeleteApproval(
         ],
         projectContext: {
           projectPath: validatedProjectPath,
-          workflowRoot: join(validatedProjectPath, '.spec-workflow'),
+          workflowRoot: join(validatedProjectPath, '.specflow'),
           dashboardUrl: context.dashboardUrl
         }
       };

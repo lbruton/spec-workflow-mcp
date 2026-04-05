@@ -12,8 +12,8 @@ npx -y @pimzino/spec-workflow-mcp@latest --help
 # Check if running in correct directory
 pwd  # or 'cd' on Windows
 
-# Verify .spec-workflow directory exists
-ls -la .spec-workflow  # or 'dir .spec-workflow' on Windows
+# Verify .specflow directory exists
+ls -la .specflow  # or 'dir .specflow' on Windows
 ```
 
 ### Check Services
@@ -201,7 +201,7 @@ netstat -an | findstr :3000  # Windows
 4. Verify file system watchers are working:
    ```bash
    # Create a test file in project
-   touch .spec-workflow/test.md
+   touch .specflow/test.md
    # Should trigger update in dashboard
    ```
 
@@ -222,7 +222,7 @@ netstat -an | findstr :3000  # Windows
    ```
 2. Check approval directory exists:
    ```bash
-   ls -la .spec-workflow/approval/
+   ls -la .specflow/approval/
    ```
 3. Manually trigger approval request through AI
 
@@ -245,7 +245,7 @@ netstat -an | findstr :3000  # Windows
 **Solutions**:
 1. Check write permissions:
    ```bash
-   touch .spec-workflow/test.txt
+   touch .specflow/test.txt
    ```
 2. Verify correct working directory:
    ```bash
@@ -253,7 +253,7 @@ netstat -an | findstr :3000  # Windows
    ```
 3. Look for hidden files:
    ```bash
-   ls -la .spec-workflow/specs/
+   ls -la .specflow/specs/
    ```
 4. Check if antivirus is blocking file creation
 
@@ -264,11 +264,11 @@ netstat -an | findstr :3000  # Windows
 **Solutions**:
 1. Fix directory permissions:
    ```bash
-   chmod -R 755 .spec-workflow  # macOS/Linux
+   chmod -R 755 .specflow  # macOS/Linux
    ```
 2. Check file ownership:
    ```bash
-   ls -la .spec-workflow
+   ls -la .specflow
    # Should be owned by your user
    ```
 3. Run from a directory you own (not system directories)
@@ -288,20 +288,20 @@ netstat -an | findstr :3000  # Windows
    - Ctrl+Shift+P → "Developer: Reload Window"
 3. Check extension output:
    - View → Output → Select "Spec Workflow" from dropdown
-4. Ensure project has `.spec-workflow` directory
+4. Ensure project has `.specflow` directory
 
 ### Extension Commands Not Working
 
 **Error**: Commands fail or show errors
 
 **Solutions**:
-1. Open project folder that contains `.spec-workflow`
+1. Open project folder that contains `.specflow`
 2. Check VSCode is using correct workspace
 3. View extension logs for specific errors
 4. Try reinstalling extension:
    ```bash
-   code --uninstall-extension Pimzino.spec-workflow-mcp
-   code --install-extension Pimzino.spec-workflow-mcp
+   code --uninstall-extension Pimzino.specflow-mcp
+   code --install-extension Pimzino.specflow-mcp
    ```
 
 ## Configuration Issues
@@ -315,10 +315,10 @@ netstat -an | findstr :3000  # Windows
    ```bash
    # Install TOML validator
    npm install -g @iarna/toml
-   toml .spec-workflow/config.toml
+   toml .specflow/config.toml
    ```
 2. Check file location:
-   - Default: `.spec-workflow/config.toml`
+   - Default: `.specflow/config.toml`
    - Custom: Use `--config` flag
 3. Ensure no syntax errors:
    ```toml
@@ -370,7 +370,7 @@ netstat -an | findstr :3000  # Windows
    ```
 3. Clear old approval records:
    ```bash
-   rm -rf .spec-workflow/approval/completed/*
+   rm -rf .specflow/approval/completed/*
    ```
 4. Use specific spec names instead of listing all
 
@@ -518,7 +518,7 @@ npx -y @pimzino/spec-workflow-mcp@latest /path --debug
 4. **Use --help** to verify options
 5. **Test in clean environment** when issues occur
 6. **Check logs** before assuming failure
-7. **Backup .spec-workflow** directory regularly
+7. **Backup .specflow** directory regularly
 
 ### Regular Maintenance
 

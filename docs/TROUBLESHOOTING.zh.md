@@ -12,8 +12,8 @@ npx -y @pimzino/spec-workflow-mcp@latest --help
 # 检查是否在正确的目录中运行
 pwd  # 或在 Windows 上使用 'cd'
 
-# 验证 .spec-workflow 目录是否存在
-ls -la .spec-workflow  # 或在 Windows 上使用 'dir .spec-workflow'
+# 验证 .specflow 目录是否存在
+ls -la .specflow  # 或在 Windows 上使用 'dir .specflow'
 ```
 
 ### 检查服务
@@ -201,7 +201,7 @@ netstat -an | findstr :3000  # Windows
 4. 验证文件系统监视器是否正常工作：
    ```bash
    # 在项目中创建测试文件
-   touch .spec-workflow/test.md
+   touch .specflow/test.md
    # 应在仪表板中触发更新
    ```
 
@@ -222,7 +222,7 @@ netstat -an | findstr :3000  # Windows
    ```
 2. 检查审批目录是否存在：
    ```bash
-   ls -la .spec-workflow/approval/
+   ls -la .specflow/approval/
    ```
 3. 通过 AI 手动触发审批请求
 
@@ -245,7 +245,7 @@ netstat -an | findstr :3000  # Windows
 **解决方案**：
 1. 检查写入权限：
    ```bash
-   touch .spec-workflow/test.txt
+   touch .specflow/test.txt
    ```
 2. 验证正确的工作目录：
    ```bash
@@ -253,7 +253,7 @@ netstat -an | findstr :3000  # Windows
    ```
 3. 查找隐藏文件：
    ```bash
-   ls -la .spec-workflow/specs/
+   ls -la .specflow/specs/
    ```
 4. 检查防病毒软件是否阻止文件创建
 
@@ -264,11 +264,11 @@ netstat -an | findstr :3000  # Windows
 **解决方案**：
 1. 修复目录权限：
    ```bash
-   chmod -R 755 .spec-workflow  # macOS/Linux
+   chmod -R 755 .specflow  # macOS/Linux
    ```
 2. 检查文件所有权：
    ```bash
-   ls -la .spec-workflow
+   ls -la .specflow
    # 应由您的用户拥有
    ```
 3. 从您拥有的目录运行（不是系统目录）
@@ -288,20 +288,20 @@ netstat -an | findstr :3000  # Windows
    - Ctrl+Shift+P → "Developer: Reload Window"
 3. 检查扩展输出：
    - 视图 → 输出 → 从下拉菜单中选择 "Spec Workflow"
-4. 确保项目有 `.spec-workflow` 目录
+4. 确保项目有 `.specflow` 目录
 
 ### 扩展命令不起作用
 
 **错误**：命令失败或显示错误
 
 **解决方案**：
-1. 打开包含 `.spec-workflow` 的项目文件夹
+1. 打开包含 `.specflow` 的项目文件夹
 2. 检查 VSCode 是否使用正确的工作区
 3. 查看扩展日志以获取特定错误
 4. 尝试重新安装扩展：
    ```bash
-   code --uninstall-extension Pimzino.spec-workflow-mcp
-   code --install-extension Pimzino.spec-workflow-mcp
+   code --uninstall-extension Pimzino.specflow-mcp
+   code --install-extension Pimzino.specflow-mcp
    ```
 
 ## 配置问题
@@ -315,10 +315,10 @@ netstat -an | findstr :3000  # Windows
    ```bash
    # 安装 TOML 验证器
    npm install -g @iarna/toml
-   toml .spec-workflow/config.toml
+   toml .specflow/config.toml
    ```
 2. 检查文件位置：
-   - 默认：`.spec-workflow/config.toml`
+   - 默认：`.specflow/config.toml`
    - 自定义：使用 `--config` 标志
 3. 确保没有语法错误：
    ```toml
@@ -370,7 +370,7 @@ netstat -an | findstr :3000  # Windows
    ```
 3. 清除旧的审批记录：
    ```bash
-   rm -rf .spec-workflow/approval/completed/*
+   rm -rf .specflow/approval/completed/*
    ```
 4. 使用特定规格名称而不是列出所有
 
@@ -518,7 +518,7 @@ npx -y @pimzino/spec-workflow-mcp@latest /path --debug
 4. **使用 --help 验证**选项
 5. **出现问题时在干净环境中测试**
 6. **在假设失败前检查日志**
-7. **定期备份 .spec-workflow** 目录
+7. **定期备份 .specflow** 目录
 
 ### 定期维护
 

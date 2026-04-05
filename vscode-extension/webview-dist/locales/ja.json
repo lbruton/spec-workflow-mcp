@@ -219,7 +219,7 @@
   },
   "workflowRoot": {
     "title": "ワークフローの場所",
-    "description": "マルチルートワークスペース用の .spec-workflow フォルダの場所を設定します。",
+    "description": "マルチルートワークスペース用の .specflow フォルダの場所を設定します。",
     "current": "現在",
     "notSet": "未設定",
     "default": "デフォルト",

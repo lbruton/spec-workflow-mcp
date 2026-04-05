@@ -61,11 +61,11 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 ### SPEC_WORKFLOW_HOME
 
-기본 전역 상태 디렉터리(`~/.spec-workflow-mcp`)를 재정의합니다. `$HOME`이 읽기 전용인 샌드박스 환경에 유용합니다.
+기본 전역 상태 디렉터리(`~/.specflow-mcp`)를 재정의합니다. `$HOME`이 읽기 전용인 샌드박스 환경에 유용합니다.
 
 | 변수 | 기본값 | 설명 |
 |----------|---------|-------------|
-| `SPEC_WORKFLOW_HOME` | `~/.spec-workflow-mcp` | 전역 상태 파일을 위한 디렉터리 |
+| `SPEC_WORKFLOW_HOME` | `~/.specflow-mcp` | 전역 상태 파일을 위한 디렉터리 |
 
 **이 디렉터리에 저장되는 파일:**
 - `activeProjects.json` - 프로젝트 레지스트리
@@ -78,13 +78,13 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 ```bash
 # 절대 경로
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
 
 # 상대 경로 (현재 작업 디렉터리에 대해 확인됨)
-SPEC_WORKFLOW_HOME=./.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest .
+SPEC_WORKFLOW_HOME=./.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest .
 
 # 대시보드 모드용
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest --dashboard
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 ```
 
 **샌드박스 환경 (예: Codex CLI):**
@@ -92,12 +92,12 @@ SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-m
 `sandbox_mode=workspace-write`가 있는 Codex CLI와 같은 샌드박스 환경에서 실행할 때 `SPEC_WORKFLOW_HOME`을 작업 공간 내의 쓰기 가능한 위치로 설정하세요:
 
 ```bash
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
 ```
 
 ## 대시보드 세션 관리
 
-대시보드는 세션 정보를 `~/.spec-workflow-mcp/activeSession.json`(또는 설정된 경우 `$SPEC_WORKFLOW_HOME/activeSession.json`)에 저장합니다. 이 파일은:
+대시보드는 세션 정보를 `~/.specflow-mcp/activeSession.json`(또는 설정된 경우 `$SPEC_WORKFLOW_HOME/activeSession.json`)에 저장합니다. 이 파일은:
 - 단일 대시보드 인스턴스 강제 적용
 - MCP 서버가 실행 중인 대시보드를 찾을 수 있도록 허용
 - 대시보드가 중지되면 자동으로 정리
@@ -137,7 +137,7 @@ SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-m
 
 ### 기본 위치
 
-서버는 다음 위치에서 구성을 찾습니다: `<project-dir>/.spec-workflow/config.toml`
+서버는 다음 위치에서 구성을 찾습니다: `<project-dir>/.specflow/config.toml`
 
 ### 파일 형식
 
@@ -204,7 +204,7 @@ debounceMs = 300
 
 1. 예제 구성 복사:
 ```bash
-cp .spec-workflow/config.example.toml .spec-workflow/config.toml
+cp .specflow/config.example.toml .specflow/config.toml
 ```
 
 2. 구성 편집:
@@ -217,11 +217,11 @@ lang = "en"
 
 3. 구성 사용:
 ```bash
-# .spec-workflow/config.toml 자동 사용
+# .specflow/config.toml 자동 사용
 npx -y @pimzino/spec-workflow-mcp@latest
 
 # 또는 명시적으로 지정
-npx -y @pimzino/spec-workflow-mcp@latest --config .spec-workflow/config.toml
+npx -y @pimzino/spec-workflow-mcp@latest --config .specflow/config.toml
 ```
 
 ## 구성 우선순위
@@ -230,7 +230,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --config .spec-workflow/config.toml
 
 1. **명령줄 인수** - 항상 우선
 2. **사용자 지정 구성 파일** - `--config`로 지정
-3. **기본 구성 파일** - `.spec-workflow/config.toml`
+3. **기본 구성 파일** - `.specflow/config.toml`
 4. **내장 기본값** - 폴백 값
 
 ### 예제 우선순위
@@ -326,12 +326,12 @@ npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ```bash
 # 프로젝트 A
 project-a/
-  .spec-workflow/
+  .specflow/
     config.toml  # port = 3000
 
 # 프로젝트 B
 project-b/
-  .spec-workflow/
+  .specflow/
     config.toml  # port = 3001
 ```
 
@@ -368,7 +368,7 @@ VSCode 확장 프로그램에는 자체 설정이 있습니다:
 
 1. **파일 위치 확인:**
    ```bash
-   ls -la .spec-workflow/config.toml
+   ls -la .specflow/config.toml
    ```
 
 2. **TOML 구문 검증:**
@@ -377,13 +377,13 @@ VSCode 확장 프로그램에는 자체 설정이 있습니다:
    npm install -g @iarna/toml
 
    # 검증
-   toml .spec-workflow/config.toml
+   toml .specflow/config.toml
    ```
 
 3. **권한 확인:**
    ```bash
    # 파일이 읽기 가능한지 확인
-   chmod 644 .spec-workflow/config.toml
+   chmod 644 .specflow/config.toml
    ```
 
 ### 일반적인 문제

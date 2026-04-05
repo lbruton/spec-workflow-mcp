@@ -18,7 +18,7 @@ npx -y @pimzino/spec-workflow-mcp@latest [project-path] [options]
 | `--dashboard` | Run dashboard-only mode (default port: 5000) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard` |
 | `--port <number>` | Specify custom dashboard port (1024-65535) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080` |
 | `--no-open` | Don't auto-open browser when starting dashboard | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard --no-open` |
-| `--no-shared-worktree-specs` | Disable shared `.spec-workflow` in git worktrees (use workspace-local instead) | `npx -y @pimzino/spec-workflow-mcp@latest ~/worktree --no-shared-worktree-specs` |
+| `--no-shared-worktree-specs` | Disable shared `.specflow` in git worktrees (use workspace-local instead) | `npx -y @pimzino/spec-workflow-mcp@latest ~/worktree --no-shared-worktree-specs` |
 
 ### Important Notes
 
@@ -63,11 +63,11 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 ### SPEC_WORKFLOW_HOME
 
-Override the default global state directory (`~/.spec-workflow-mcp`). This is useful for sandboxed environments where `$HOME` is read-only.
+Override the default global state directory (`~/.specflow-mcp`). This is useful for sandboxed environments where `$HOME` is read-only.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `SPEC_WORKFLOW_HOME` | `~/.spec-workflow-mcp` | Directory for global state files |
+| `SPEC_WORKFLOW_HOME` | `~/.specflow-mcp` | Directory for global state files |
 
 **Files stored in this directory:**
 - `activeProjects.json` - Project registry
@@ -80,13 +80,13 @@ Override the default global state directory (`~/.spec-workflow-mcp`). This is us
 
 ```bash
 # Absolute path
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
 
 # Relative path (resolved against current working directory)
-SPEC_WORKFLOW_HOME=./.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest .
+SPEC_WORKFLOW_HOME=./.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest .
 
 # For dashboard mode
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest --dashboard
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 ```
 
 **Sandboxed environments (e.g., Codex CLI):**
@@ -94,12 +94,12 @@ SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-m
 When running in sandboxed environments like Codex CLI with `sandbox_mode=workspace-write`, set `SPEC_WORKFLOW_HOME` to a writable location within your workspace:
 
 ```bash
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
 ```
 
 ### SPEC_WORKFLOW_SHARED_ROOT
 
-Override the automatic git worktree detection. By default, when running in a git worktree, specs are stored in the main repository's `.spec-workflow/` directory so all worktrees share the same specs.
+Override the automatic git worktree detection. By default, when running in a git worktree, specs are stored in the main repository's `.specflow/` directory so all worktrees share the same specs.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -107,9 +107,9 @@ Override the automatic git worktree detection. By default, when running in a git
 
 **Automatic behavior (no env var set):**
 
-- **Main git repo**: Specs stored in `<project>/.spec-workflow/`
-- **Git worktree**: Specs stored in `<main-repo>/.spec-workflow/` (shared with all worktrees)
-- **Non-git directory**: Specs stored in `<project>/.spec-workflow/`
+- **Main git repo**: Specs stored in `<project>/.specflow/`
+- **Git worktree**: Specs stored in `<main-repo>/.specflow/` (shared with all worktrees)
+- **Non-git directory**: Specs stored in `<project>/.specflow/`
 
 **When to use this variable:**
 
@@ -134,7 +134,7 @@ cd ../myproject-feature
 npx -y @pimzino/spec-workflow-mcp@latest .
 # Output: Git worktree detected. Using main repo: /home/user/myproject
 
-# Both the main repo and worktree see the same specs in /home/user/myproject/.spec-workflow/
+# Both the main repo and worktree see the same specs in /home/user/myproject/.specflow/
 ```
 
 ## Git Worktree Configuration
@@ -143,7 +143,7 @@ Git worktrees are fully supported with two operating modes:
 
 ### Default Mode: Shared Specs
 
-By default, all worktrees of a repository share the same `.spec-workflow/` directory (stored in the main repo). However, each worktree registers as its own project in the dashboard with a distinct identity.
+By default, all worktrees of a repository share the same `.specflow/` directory (stored in the main repo). However, each worktree registers as its own project in the dashboard with a distinct identity.
 
 **Dashboard behavior:**
 - Each worktree appears as a separate project in the project dropdown
@@ -158,17 +158,17 @@ npx -y @pimzino/spec-workflow-mcp@latest ~/myproject
 # Worktree
 npx -y @pimzino/spec-workflow-mcp@latest ~/myproject-feature
 # Dashboard shows: "myproject · myproject-feature"
-# Specs are shared from ~/myproject/.spec-workflow/
+# Specs are shared from ~/myproject/.specflow/
 ```
 
 ### Isolated Mode: Workspace-Local Specs
 
-Use `--no-shared-worktree-specs` when you want each worktree to have its own independent `.spec-workflow/` directory:
+Use `--no-shared-worktree-specs` when you want each worktree to have its own independent `.specflow/` directory:
 
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest ~/myproject-feature --no-shared-worktree-specs
-# Output: Shared worktree specs disabled. Using workspace-local .spec-workflow.
-# Specs stored in ~/myproject-feature/.spec-workflow/
+# Output: Shared worktree specs disabled. Using workspace-local .specflow.
+# Specs stored in ~/myproject-feature/.specflow/
 ```
 
 **When to use isolated mode:**
@@ -180,14 +180,14 @@ npx -y @pimzino/spec-workflow-mcp@latest ~/myproject-feature --no-shared-worktre
 
 | Aspect | Default (Shared) | `--no-shared-worktree-specs` |
 |--------|------------------|------------------------------|
-| `.spec-workflow/` location | Main repo | Each worktree |
+| `.specflow/` location | Main repo | Each worktree |
 | Specs visible across worktrees | Yes | No |
 | Dashboard project identity | Separate per worktree | Separate per worktree |
 | Approval file resolution | Worktree → Main repo | Worktree only |
 
 ## Dashboard Session Management
 
-The dashboard stores its session information in `~/.spec-workflow-mcp/activeSession.json` (or `$SPEC_WORKFLOW_HOME/activeSession.json` if set). This file:
+The dashboard stores its session information in `~/.specflow-mcp/activeSession.json` (or `$SPEC_WORKFLOW_HOME/activeSession.json` if set). This file:
 - Enforces single dashboard instance
 - Allows MCP servers to discover the running dashboard
 - Automatically cleans up when dashboard stops
@@ -227,7 +227,7 @@ To use a different port:
 
 ### Default Location
 
-The server looks for configuration at: `<project-dir>/.spec-workflow/config.toml`
+The server looks for configuration at: `<project-dir>/.specflow/config.toml`
 
 ### File Format
 
@@ -294,7 +294,7 @@ debounceMs = 300
 
 1. Copy the example configuration:
 ```bash
-cp .spec-workflow/config.example.toml .spec-workflow/config.toml
+cp .specflow/config.example.toml .specflow/config.toml
 ```
 
 2. Edit the configuration:
@@ -307,11 +307,11 @@ lang = "en"
 
 3. Use the configuration:
 ```bash
-# Uses .spec-workflow/config.toml automatically
+# Uses .specflow/config.toml automatically
 npx -y @pimzino/spec-workflow-mcp@latest
 
 # Or specify explicitly
-npx -y @pimzino/spec-workflow-mcp@latest --config .spec-workflow/config.toml
+npx -y @pimzino/spec-workflow-mcp@latest --config .specflow/config.toml
 ```
 
 ## Configuration Precedence
@@ -320,7 +320,7 @@ Configuration values are applied in this order (highest to lowest priority):
 
 1. **Command-line arguments** - Always take precedence
 2. **Custom config file** - Specified with `--config`
-3. **Default config file** - `.spec-workflow/config.toml`
+3. **Default config file** - `.specflow/config.toml`
 4. **Built-in defaults** - Fallback values
 
 ### Example Precedence
@@ -416,12 +416,12 @@ Create project-specific configurations:
 ```bash
 # Project A
 project-a/
-  .spec-workflow/
+  .specflow/
     config.toml  # port = 3000
 
 # Project B
 project-b/
-  .spec-workflow/
+  .specflow/
     config.toml  # port = 3001
 ```
 
@@ -458,7 +458,7 @@ The VSCode extension has its own settings:
 
 1. **Check file location:**
    ```bash
-   ls -la .spec-workflow/config.toml
+   ls -la .specflow/config.toml
    ```
 
 2. **Validate TOML syntax:**
@@ -467,13 +467,13 @@ The VSCode extension has its own settings:
    npm install -g @iarna/toml
 
    # Validate
-   toml .spec-workflow/config.toml
+   toml .specflow/config.toml
    ```
 
 3. **Check permissions:**
    ```bash
    # Ensure file is readable
-   chmod 644 .spec-workflow/config.toml
+   chmod 644 .specflow/config.toml
    ```
 
 ### Common Issues

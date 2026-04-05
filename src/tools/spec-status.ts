@@ -94,7 +94,7 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
     let conventions: ProjectConventions | null = null;
     try {
       const { promises: fsPromises } = await import('fs');
-      const convPath = `${translatedPath}/.spec-workflow/project-conventions.json`;
+      const convPath = `${translatedPath}/.specflow/project-conventions.json`;
       const convContent = await fsPromises.readFile(convPath, 'utf-8');
       conventions = JSON.parse(convContent);
     } catch {
@@ -162,35 +162,35 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
     const nextSteps = [];
     switch (currentPhase) {
       case 'requirements':
-        nextSteps.push('Read template: .spec-workflow/templates/requirements-template-v*.md');
-        nextSteps.push('Create: .spec-workflow/specs/{name}/requirements.md');
+        nextSteps.push('Read template: .specflow/templates/requirements-template-v*.md');
+        nextSteps.push('Create: .specflow/specs/{name}/requirements.md');
         nextSteps.push('Request approval');
         break;
       case 'design':
-        nextSteps.push('Read template: .spec-workflow/templates/design-template-v*.md');
-        nextSteps.push('Create: .spec-workflow/specs/{name}/design.md');
+        nextSteps.push('Read template: .specflow/templates/design-template-v*.md');
+        nextSteps.push('Create: .specflow/specs/{name}/design.md');
         nextSteps.push('Request approval');
         break;
       case 'tasks':
-        nextSteps.push('Read template: .spec-workflow/templates/tasks-template-v*.md');
-        nextSteps.push('Create: .spec-workflow/specs/{name}/tasks.md');
+        nextSteps.push('Read template: .specflow/templates/tasks-template-v*.md');
+        nextSteps.push('Create: .specflow/specs/{name}/tasks.md');
         nextSteps.push('Request approval');
         break;
       case 'readiness-gate':
         nextSteps.push('Phase 3.9: Implementation Readiness Gate required before implementation');
         nextSteps.push('Cross-validate requirements.md + design.md + tasks.md for consistency');
-        nextSteps.push(`Create: .spec-workflow/specs/${specName}/readiness-report.md`);
+        nextSteps.push(`Create: .specflow/specs/${specName}/readiness-report.md`);
         nextSteps.push('Submit readiness-report.md for dashboard approval (NOT tasks.md)');
         nextSteps.push('Dashboard options: Approve (PASS), Concerns (proceed with risks), Reject (fix and re-run)');
         break;
       case 'implementation':
         if (spec.taskProgress && spec.taskProgress.pending > 0) {
-          nextSteps.push(`Read tasks: .spec-workflow/specs/${specName}/tasks.md`);
+          nextSteps.push(`Read tasks: .specflow/specs/${specName}/tasks.md`);
           nextSteps.push('Edit tasks.md: Change [ ] to [-] for task you start');
           nextSteps.push('Implement the task code');
           nextSteps.push('Edit tasks.md: Change [-] to [x] when completed');
         } else {
-          nextSteps.push(`Read tasks: .spec-workflow/specs/${specName}/tasks.md`);
+          nextSteps.push(`Read tasks: .specflow/specs/${specName}/tasks.md`);
           nextSteps.push('Begin implementation by marking first task [-]');
         }
         break;
@@ -273,7 +273,7 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
       nextSteps: [
         'Check if the specification exists',
         'Verify the project path',
-        'List directory .spec-workflow/specs/ to see available specifications'
+        'List directory .specflow/specs/ to see available specifications'
       ]
     };
   }

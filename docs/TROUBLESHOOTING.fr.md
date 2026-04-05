@@ -12,8 +12,8 @@ npx -y @pimzino/spec-workflow-mcp@latest --help
 # Vérifier si on exécute dans le bon répertoire
 pwd  # ou 'cd' sur Windows
 
-# Vérifier que le répertoire .spec-workflow existe
-ls -la .spec-workflow  # ou 'dir .spec-workflow' sur Windows
+# Vérifier que le répertoire .specflow existe
+ls -la .specflow  # ou 'dir .specflow' sur Windows
 ```
 
 ### Vérifier les Services
@@ -201,7 +201,7 @@ netstat -an | findstr :3000  # Windows
 4. Vérifier que les watchers du système de fichiers fonctionnent :
    ```bash
    # Créer un fichier test dans le projet
-   touch .spec-workflow/test.md
+   touch .specflow/test.md
    # Devrait déclencher une mise à jour dans le tableau de bord
    ```
 
@@ -222,7 +222,7 @@ netstat -an | findstr :3000  # Windows
    ```
 2. Vérifier que le répertoire d'approbation existe :
    ```bash
-   ls -la .spec-workflow/approval/
+   ls -la .specflow/approval/
    ```
 3. Déclencher manuellement une demande d'approbation via l'IA
 
@@ -245,7 +245,7 @@ netstat -an | findstr :3000  # Windows
 **Solutions** :
 1. Vérifier les permissions d'écriture :
    ```bash
-   touch .spec-workflow/test.txt
+   touch .specflow/test.txt
    ```
 2. Vérifier le bon répertoire de travail :
    ```bash
@@ -253,7 +253,7 @@ netstat -an | findstr :3000  # Windows
    ```
 3. Chercher les fichiers cachés :
    ```bash
-   ls -la .spec-workflow/specs/
+   ls -la .specflow/specs/
    ```
 4. Vérifier si l'antivirus bloque la création de fichiers
 
@@ -264,11 +264,11 @@ netstat -an | findstr :3000  # Windows
 **Solutions** :
 1. Corriger les permissions du répertoire :
    ```bash
-   chmod -R 755 .spec-workflow  # macOS/Linux
+   chmod -R 755 .specflow  # macOS/Linux
    ```
 2. Vérifier la propriété des fichiers :
    ```bash
-   ls -la .spec-workflow
+   ls -la .specflow
    # Devrait appartenir à votre utilisateur
    ```
 3. Exécuter depuis un répertoire que vous possédez (pas les répertoires système)
@@ -288,20 +288,20 @@ netstat -an | findstr :3000  # Windows
    - Ctrl+Shift+P → "Developer: Reload Window"
 3. Vérifier la sortie de l'extension :
    - View → Output → Sélectionner "Spec Workflow" dans le menu déroulant
-4. Assurer que le projet a le répertoire `.spec-workflow`
+4. Assurer que le projet a le répertoire `.specflow`
 
 ### Commandes de l'Extension ne Fonctionnent Pas
 
 **Erreur** : Les commandes échouent ou affichent des erreurs
 
 **Solutions** :
-1. Ouvrir le dossier du projet qui contient `.spec-workflow`
+1. Ouvrir le dossier du projet qui contient `.specflow`
 2. Vérifier que VSCode utilise le bon espace de travail
 3. Voir les logs de l'extension pour des erreurs spécifiques
 4. Essayer de réinstaller l'extension :
    ```bash
-   code --uninstall-extension Pimzino.spec-workflow-mcp
-   code --install-extension Pimzino.spec-workflow-mcp
+   code --uninstall-extension Pimzino.specflow-mcp
+   code --install-extension Pimzino.specflow-mcp
    ```
 
 ## Problèmes de Configuration
@@ -315,10 +315,10 @@ netstat -an | findstr :3000  # Windows
    ```bash
    # Installer le validateur TOML
    npm install -g @iarna/toml
-   toml .spec-workflow/config.toml
+   toml .specflow/config.toml
    ```
 2. Vérifier l'emplacement du fichier :
-   - Par défaut : `.spec-workflow/config.toml`
+   - Par défaut : `.specflow/config.toml`
    - Personnalisé : Utiliser le flag `--config`
 3. Assurer qu'il n'y a pas d'erreurs de syntaxe :
    ```toml
@@ -370,7 +370,7 @@ netstat -an | findstr :3000  # Windows
    ```
 3. Vider les anciens enregistrements d'approbation :
    ```bash
-   rm -rf .spec-workflow/approval/completed/*
+   rm -rf .specflow/approval/completed/*
    ```
 4. Utiliser des noms de spec spécifiques au lieu de tout lister
 
@@ -518,7 +518,7 @@ npx -y @pimzino/spec-workflow-mcp@latest /chemin --debug
 4. **Utiliser --help** pour vérifier les options
 5. **Tester dans un environnement propre** lorsque des problèmes surviennent
 6. **Vérifier les logs** avant de supposer un échec
-7. **Sauvegarder le répertoire .spec-workflow** régulièrement
+7. **Sauvegarder le répertoire .specflow** régulièrement
 
 ### Maintenance Régulière
 

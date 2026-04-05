@@ -1,7 +1,7 @@
 # Spec Workflow MCP
 
 [![npm version](https://img.shields.io/npm/v/@pimzino/spec-workflow-mcp)](https://www.npmjs.com/package/@pimzino/spec-workflow-mcp)
-[![VSCode Extension](https://vsmarketplacebadges.dev/version-short/Pimzino.spec-workflow-mcp.svg)](https://marketplace.visualstudio.com/items?itemName=Pimzino.spec-workflow-mcp)
+[![VSCode Extension](https://vsmarketplacebadges.dev/version-short/Pimzino.specflow-mcp.svg)](https://marketplace.visualstudio.com/items?itemName=Pimzino.specflow-mcp)
 
 Сервер Model Context Protocol (MCP) для структурированной разработки на основе спецификаций с панелью управления в реальном времени и расширением для VSCode.
 
@@ -70,7 +70,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 
 **Вариант B: Расширение для VSCode** (Рекомендуется для пользователей VSCode)
 
-Установите [Spec Workflow MCP Extension](https://marketplace.visualstudio.com/items?itemName=Pimzino.spec-workflow-mcp) из магазина VSCode.
+Установите [Spec Workflow MCP Extension](https://marketplace.visualstudio.com/items?itemName=Pimzino.specflow-mcp) из магазина VSCode.
 
 ## 📝 Как использовать
 
@@ -225,7 +225,7 @@ claude mcp add spec-workflow cmd.exe /c "npx @pimzino/spec-workflow-mcp@latest /
 
 Добавьте в файл конфигурации `~/.codex/config.toml`:
 ```toml
-[mcp_servers.spec-workflow]
+[mcp_servers.specflow]
 command = "npx"
 args = ["-y", "@pimzino/spec-workflow-mcp@latest", "/path/to/your/project"]
 ```
@@ -242,7 +242,7 @@ docker-compose up --build
 
 # Или использование Docker CLI
 docker build -f containers/Dockerfile -t spec-workflow-mcp .
-docker run -p 5000:5000 -v "./workspace/.spec-workflow:/workspace/.spec-workflow:rw" spec-workflow-mcp
+docker run -p 5000:5000 -v "./workspace/.specflow:/workspace/.specflow:rw" spec-workflow-mcp
 ```
 
 Панель управления будет доступна по адресу: http://localhost:5000
@@ -254,7 +254,7 @@ docker run -p 5000:5000 -v "./workspace/.spec-workflow:/workspace/.spec-workflow
 Для изолированных сред (например, Codex CLI с `sandbox_mode=workspace-write`), где `$HOME` доступен только для чтения, используйте переменную окружения `SPEC_WORKFLOW_HOME` для перенаправления глобальных файлов состояния в доступную для записи папку:
 
 ```bash
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
 ```
 
 [См. руководство по конфигурации →](docs/CONFIGURATION.ru.md#environment-variables)
@@ -274,7 +274,7 @@ SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-m
 
 ```
 your-project/
-  .spec-workflow/
+  .specflow/
     approvals/
     archive/
     specs/

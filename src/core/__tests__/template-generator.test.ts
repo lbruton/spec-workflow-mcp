@@ -91,7 +91,7 @@ beforeEach(() => {
 
 /**
  * Set up readFile to serve mock templates.
- * readDefaultTemplate checks project .spec-workflow/templates/ first, then bundled.
+ * readDefaultTemplate checks project .specflow/templates/ first, then bundled.
  * We simulate the bundled fallback by matching on the path containing 'markdown/templates/'.
  */
 function setupTemplateReads() {
@@ -191,17 +191,17 @@ describe('writeUserTemplates', () => {
     await writeUserTemplates('/fake/project', templates);
 
     expect(mockMkdir).toHaveBeenCalledWith(
-      '/fake/project/.spec-workflow/user-templates',
+      '/fake/project/.specflow/user-templates',
       { recursive: true },
     );
     expect(mockWriteFile).toHaveBeenCalledTimes(2);
     expect(mockWriteFile).toHaveBeenCalledWith(
-      '/fake/project/.spec-workflow/user-templates/design-template.md',
+      '/fake/project/.specflow/user-templates/design-template.md',
       '# Generated design',
       'utf-8',
     );
     expect(mockWriteFile).toHaveBeenCalledWith(
-      '/fake/project/.spec-workflow/user-templates/tasks-template.md',
+      '/fake/project/.specflow/user-templates/tasks-template.md',
       '# Generated tasks',
       'utf-8',
     );

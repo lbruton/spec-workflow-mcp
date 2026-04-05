@@ -131,7 +131,7 @@ All three agents share the same MCP tools, DocVault knowledge base, and spec wor
 
 ### Cross-Agent Spec Handoff
 
-Spec state lives on disk in `.spec-workflow/specs/` — not in any agent's memory. This means you can start a spec in one agent and continue in another:
+Spec state lives on disk in `.specflow/specs/` — not in any agent's memory. This means you can start a spec in one agent and continue in another:
 
 ```
 Claude Code                    Codex CLI                      Gemini CLI
@@ -212,7 +212,7 @@ npm install && npm run build
 Add to your Codex MCP config (`.codex/config.toml` or user-level):
 
 ```toml
-[mcp.spec-workflow]
+[mcp.specflow]
 command = "node"
 args = ["/path/to/specflow/dist/index.js", "/path/to/your/project"]
 ```

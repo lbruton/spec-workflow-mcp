@@ -222,7 +222,7 @@
   },
   "workflowRoot": {
     "title": "Ubicación del Flujo de Trabajo",
-    "description": "Configura la ubicación de la carpeta .spec-workflow para espacios de trabajo multi-raíz.",
+    "description": "Configura la ubicación de la carpeta .specflow para espacios de trabajo multi-raíz.",
     "current": "Actual",
     "notSet": "No configurado",
     "default": "predeterminado",

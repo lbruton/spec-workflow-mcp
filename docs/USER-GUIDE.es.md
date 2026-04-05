@@ -188,7 +188,7 @@ Spec Workflow incluye plantillas para:
 
 ### Plantillas Personalizadas
 
-Crea tus propias plantillas en `.spec-workflow/templates/`:
+Crea tus propias plantillas en `.specflow/templates/`:
 
 ```markdown
 # Plantilla de Característica Personalizada

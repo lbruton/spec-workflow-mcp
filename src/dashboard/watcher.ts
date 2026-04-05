@@ -153,7 +153,7 @@ export class SpecWatcher extends EventEmitter {
   }
 
   private async handleSpecChange(action: 'created' | 'updated' | 'deleted', filePath: string): Promise<void> {
-    // Extract spec name from path like: /path/to/.spec-workflow/specs/user-auth/requirements.md
+    // Extract spec name from path like: /path/to/.specflow/specs/user-auth/requirements.md
     const pathParts = filePath.split('/');
     const specsIndex = pathParts.findIndex(part => part === 'specs');
     
@@ -188,7 +188,7 @@ export class SpecWatcher extends EventEmitter {
 
 
   private async handleSteeringChange(action: 'created' | 'updated' | 'deleted', filePath: string): Promise<void> {
-    // Extract document name from path like: /path/to/.spec-workflow/steering/tech.md
+    // Extract document name from path like: /path/to/.specflow/steering/tech.md
     const pathParts = filePath.split('/');
     const document = pathParts[pathParts.length - 1]?.replace('.md', '');
 

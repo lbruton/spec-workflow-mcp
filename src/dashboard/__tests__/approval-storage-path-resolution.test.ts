@@ -56,10 +56,10 @@ describe('ApprovalStorage path resolution', () => {
   });
 
   it('falls back to workflow root when file only exists there', async () => {
-    const relativePath = '.spec-workflow/specs/test-spec/requirements.md';
+    const relativePath = '.specflow/specs/test-spec/requirements.md';
     const workflowFile = join(workflowRootPath, relativePath);
 
-    await fs.mkdir(join(workflowRootPath, '.spec-workflow', 'specs', 'test-spec'), { recursive: true });
+    await fs.mkdir(join(workflowRootPath, '.specflow', 'specs', 'test-spec'), { recursive: true });
     await fs.writeFile(workflowFile, '# Requirements from shared root', 'utf-8');
 
     const approvalId = await storage.createApproval(

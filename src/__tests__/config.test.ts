@@ -254,8 +254,8 @@ auditLogRetentionDays = -5
       expect(result.error).toBeUndefined();
     });
 
-    it('should load config from .spec-workflow/config.toml', async () => {
-      const configDir = join(testDir, '.spec-workflow');
+    it('should load config from .specflow/config.toml', async () => {
+      const configDir = join(testDir, '.specflow');
       await fs.mkdir(configDir, { recursive: true });
       await fs.writeFile(join(configDir, 'config.toml'), 'port = 9000');
 

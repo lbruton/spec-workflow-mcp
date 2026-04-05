@@ -200,7 +200,7 @@ describe('Tool projectPath fallback behavior', () => {
 
     it('should block approval request for markdown with MDX-incompatible content', async () => {
       const tempProject = await createTempProject('specwf-mdx-');
-      const relativePath = '.spec-workflow/specs/test-spec/requirements.md';
+      const relativePath = '.specflow/specs/test-spec/requirements.md';
       const absolutePath = join(tempProject, relativePath);
 
       try {
@@ -229,7 +229,7 @@ describe('Tool projectPath fallback behavior', () => {
 
     it('should block approval request for tasks markdown with MDX-incompatible content', async () => {
       const tempProject = await createTempProject('specwf-mdx-tasks-');
-      const relativePath = '.spec-workflow/specs/test-spec/tasks.md';
+      const relativePath = '.specflow/specs/test-spec/tasks.md';
       const absolutePath = join(tempProject, relativePath);
 
       try {

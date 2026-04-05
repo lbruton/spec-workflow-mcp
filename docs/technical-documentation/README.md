@@ -221,7 +221,7 @@ The server provides 12 MCP tools for spec-driven development:
 
 ### File Organization
 ```
-.spec-workflow/
+.specflow/
 ├── specs/           # Specification documents
 ├── steering/        # Project guidance documents
 ├── approvals/       # Approval workflow data
@@ -301,7 +301,7 @@ This project implements a **pure Model Context Protocol (MCP) server** that:
 
 ### Performance Characteristics
 - **Memory Usage**: 50KB templates + 10-100KB per spec context
-- **File System**: Local `.spec-workflow/` directory only
+- **File System**: Local `.specflow/` directory only
 - **Network**: Localhost dashboard + NPM version check
 - **Scaling**: Linear per project, 50-100 specs recommended
 - **Security**: Local-only, no external data transmission

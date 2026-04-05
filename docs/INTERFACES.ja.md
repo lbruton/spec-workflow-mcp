@@ -209,7 +209,7 @@ VSCode Marketplaceからインストール：
 
 またはコマンドライン経由で：
 ```bash
-code --install-extension Pimzino.spec-workflow-mcp
+code --install-extension Pimzino.specflow-mcp
 ```
 
 ### 拡張機能の機能
@@ -491,7 +491,7 @@ VSCodeアクセシビリティを継承：
 
 | 問題 | 解決策 |
 |-------|----------|
-| 仕様が表示されない | プロジェクトに.spec-workflowディレクトリがあるか確認 |
+| 仕様が表示されない | プロジェクトに.specflowディレクトリがあるか確認 |
 | コマンドが機能しない | VSCodeウィンドウをリロード |
 | 通知なし | 拡張機能設定を確認 |
 | アーカイブが表示されない | 設定で有効化 |

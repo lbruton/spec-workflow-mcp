@@ -46,15 +46,15 @@ ${scope ? `- Scope: ${scope}` : ''}
 ${context.dashboardUrl ? `- Dashboard: ${context.dashboardUrl}` : ''}
 
 **Instructions:**
-1. First, read the template at: .spec-workflow/templates/${docType}-template.md
-2. Check if steering docs exist at: .spec-workflow/steering/
+1. First, read the template at: .specflow/templates/${docType}-template.md
+2. Check if steering docs exist at: .specflow/steering/
 3. Create comprehensive content following the template structure
-4. Create the document at: .spec-workflow/steering/${docType}.md
+4. Create the document at: .specflow/steering/${docType}.md
 5. After creating, use approvals tool with action:'request' to get user approval
 
 **File Paths:**
-- Template location: .spec-workflow/templates/${docType}-template.md
-- Document destination: .spec-workflow/steering/${docType}.md
+- Template location: .specflow/templates/${docType}-template.md
+- Document destination: .specflow/steering/${docType}.md
 
 **Steering Document Types:**
 - **product**: Defines project vision, goals, and user outcomes

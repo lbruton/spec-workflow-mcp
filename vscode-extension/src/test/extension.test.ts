@@ -38,11 +38,11 @@ suite('Extension Test Suite', () => {
 			// As provided relative to project root
 			candidates.push(path.join(workspaceRoot, normalizedFilePath));
 
-			// Handle paths that start with ".spec-workflow/"
-			if (normalizedFilePath.startsWith('.spec-workflow/')) {
-				const pathAfterSpecWorkflow = normalizedFilePath.substring('.spec-workflow/'.length);
+			// Handle paths that start with ".specflow/"
+			if (normalizedFilePath.startsWith('.specflow/')) {
+				const pathAfterSpecWorkflow = normalizedFilePath.substring('.specflow/'.length);
 				if (pathAfterSpecWorkflow && !pathAfterSpecWorkflow.startsWith('specs/')) {
-					candidates.push(path.join(workspaceRoot, '.spec-workflow', 'specs', pathAfterSpecWorkflow));
+					candidates.push(path.join(workspaceRoot, '.specflow', 'specs', pathAfterSpecWorkflow));
 				}
 			}
 
@@ -61,10 +61,10 @@ suite('Extension Test Suite', () => {
 
 		suiteSetup(async () => {
 			// Create a temporary directory structure for testing
-			tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'spec-workflow-test-'));
+			tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'specflow-test-'));
 
 			// Create test directory structure
-			const specWorkflowDir = path.join(tempDir, '.spec-workflow');
+			const specWorkflowDir = path.join(tempDir, '.specflow');
 			const specsDir = path.join(specWorkflowDir, 'specs');
 			const testDir = path.join(specWorkflowDir, 'test');
 
@@ -86,7 +86,7 @@ suite('Extension Test Suite', () => {
 		});
 
 		test('should resolve paths with forward slashes', async () => {
-			const testPath = '.spec-workflow/specs/tasks.md';
+			const testPath = '.specflow/specs/tasks.md';
 			const result = await resolveApprovalFilePath(testPath, tempDir);
 
 			assert.ok(result, 'Should resolve path with forward slashes');
@@ -94,7 +94,7 @@ suite('Extension Test Suite', () => {
 		});
 
 		test('should resolve paths with backslashes', async () => {
-			const testPath = '.spec-workflow\\test\\tasks.md';
+			const testPath = '.specflow\\test\\tasks.md';
 			const result = await resolveApprovalFilePath(testPath, tempDir);
 
 			assert.ok(result, 'Should resolve path with backslashes');
@@ -110,7 +110,7 @@ suite('Extension Test Suite', () => {
 		});
 
 		test('should handle missing files gracefully', async () => {
-			const testPath = '.spec-workflow/nonexistent/file.md';
+			const testPath = '.specflow/nonexistent/file.md';
 			const result = await resolveApprovalFilePath(testPath, tempDir);
 
 			assert.strictEqual(result, null, 'Should return null for nonexistent files');

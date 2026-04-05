@@ -12,8 +12,8 @@ npx -y @pimzino/spec-workflow-mcp@latest --help
 # 正しいディレクトリで実行しているか確認
 pwd  # Windowsでは 'cd'
 
-# .spec-workflowディレクトリが存在するか確認
-ls -la .spec-workflow  # Windowsでは 'dir .spec-workflow'
+# .specflowディレクトリが存在するか確認
+ls -la .specflow  # Windowsでは 'dir .specflow'
 ```
 
 ### サービスの確認
@@ -201,7 +201,7 @@ netstat -an | findstr :3000  # Windows
 4. ファイルシステムウォッチャーが動作しているか確認:
    ```bash
    # プロジェクトにテストファイルを作成
-   touch .spec-workflow/test.md
+   touch .specflow/test.md
    # ダッシュボードで更新がトリガーされるはず
    ```
 
@@ -222,7 +222,7 @@ netstat -an | findstr :3000  # Windows
    ```
 2. 承認ディレクトリが存在するか確認:
    ```bash
-   ls -la .spec-workflow/approval/
+   ls -la .specflow/approval/
    ```
 3. AI経由で承認リクエストを手動でトリガー
 
@@ -245,7 +245,7 @@ netstat -an | findstr :3000  # Windows
 **解決策**:
 1. 書き込み権限を確認:
    ```bash
-   touch .spec-workflow/test.txt
+   touch .specflow/test.txt
    ```
 2. 正しい作業ディレクトリか確認:
    ```bash
@@ -253,7 +253,7 @@ netstat -an | findstr :3000  # Windows
    ```
 3. 隠しファイルを確認:
    ```bash
-   ls -la .spec-workflow/specs/
+   ls -la .specflow/specs/
    ```
 4. アンチウイルスがファイル作成をブロックしていないか確認
 
@@ -264,11 +264,11 @@ netstat -an | findstr :3000  # Windows
 **解決策**:
 1. ディレクトリの権限を修正:
    ```bash
-   chmod -R 755 .spec-workflow  # macOS/Linux
+   chmod -R 755 .specflow  # macOS/Linux
    ```
 2. ファイルの所有権を確認:
    ```bash
-   ls -la .spec-workflow
+   ls -la .specflow
    # 自分のユーザーが所有しているべき
    ```
 3. 所有するディレクトリから実行（システムディレクトリではない）
@@ -288,20 +288,20 @@ netstat -an | findstr :3000  # Windows
    - Ctrl+Shift+P → "Developer: Reload Window"
 3. 拡張機能の出力を確認:
    - View → Output → ドロップダウンから"Spec Workflow"を選択
-4. プロジェクトに`.spec-workflow`ディレクトリがあることを確認
+4. プロジェクトに`.specflow`ディレクトリがあることを確認
 
 ### 拡張機能のコマンドが機能しない
 
 **エラー**: コマンドが失敗またはエラーを表示
 
 **解決策**:
-1. `.spec-workflow`を含むプロジェクトフォルダを開く
+1. `.specflow`を含むプロジェクトフォルダを開く
 2. VSCodeが正しいワークスペースを使用しているか確認
 3. 特定のエラーについて拡張機能ログを確認
 4. 拡張機能を再インストールしてみる:
    ```bash
-   code --uninstall-extension Pimzino.spec-workflow-mcp
-   code --install-extension Pimzino.spec-workflow-mcp
+   code --uninstall-extension Pimzino.specflow-mcp
+   code --install-extension Pimzino.specflow-mcp
    ```
 
 ## 設定の問題
@@ -315,10 +315,10 @@ netstat -an | findstr :3000  # Windows
    ```bash
    # TOMLバリデーターをインストール
    npm install -g @iarna/toml
-   toml .spec-workflow/config.toml
+   toml .specflow/config.toml
    ```
 2. ファイルの場所を確認:
-   - デフォルト: `.spec-workflow/config.toml`
+   - デフォルト: `.specflow/config.toml`
    - カスタム: `--config`フラグを使用
 3. 構文エラーがないことを確認:
    ```toml
@@ -370,7 +370,7 @@ netstat -an | findstr :3000  # Windows
    ```
 3. 古い承認レコードをクリア:
    ```bash
-   rm -rf .spec-workflow/approval/completed/*
+   rm -rf .specflow/approval/completed/*
    ```
 4. すべてをリストする代わりに特定の仕様名を使用
 
@@ -518,7 +518,7 @@ npx -y @pimzino/spec-workflow-mcp@latest /path --debug
 4. **`--help`を使用してオプションを確認**
 5. **問題発生時はクリーンな環境でテスト**
 6. **失敗と判断する前にログを確認**
-7. **`.spec-workflow`ディレクトリを定期的にバックアップ**
+7. **`.specflow`ディレクトリを定期的にバックアップ**
 
 ### 定期メンテナンス
 

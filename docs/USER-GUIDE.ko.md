@@ -188,7 +188,7 @@ Spec Workflow에는 다음 템플릿이 포함됩니다:
 
 ### 사용자 지정 템플릿
 
-`.spec-workflow/templates/`에 자체 템플릿 생성:
+`.specflow/templates/`에 자체 템플릿 생성:
 
 ```markdown
 # 사용자 지정 기능 템플릿

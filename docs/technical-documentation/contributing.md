@@ -372,7 +372,7 @@ describe('PathUtils', () => {
   describe('getSpecPath', () => {
     it('should create correct spec path', () => {
       const result = PathUtils.getSpecPath('/project', 'my-spec');
-      expect(result).toBe('/project/.spec-workflow/specs/my-spec');
+      expect(result).toBe('/project/.specflow/specs/my-spec');
     });
     
     it('should handle special characters', () => {

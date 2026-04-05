@@ -100,7 +100,7 @@ export class ImplementationLogService {
   private updateWorkspaceRoot() {
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (workspaceFolders && workspaceFolders.length > 0) {
-      this.specWorkflowRoot = path.join(workspaceFolders[0].uri.fsPath, '.spec-workflow');
+      this.specWorkflowRoot = path.join(workspaceFolders[0].uri.fsPath, '.specflow');
     } else {
       this.specWorkflowRoot = null;
     }
@@ -151,7 +151,7 @@ export class ImplementationLogService {
 
   /**
    * Extract spec name from log file path
-   * Path format: .spec-workflow/specs/{specName}/Implementation Logs/*.md
+   * Path format: .specflow/specs/{specName}/Implementation Logs/*.md
    */
   private extractSpecNameFromLogPath(filePath: string): string | null {
     if (!this.specWorkflowRoot) {

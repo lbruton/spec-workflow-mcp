@@ -44,11 +44,11 @@ ${context.dashboardUrl ? `- Dashboard: ${context.dashboardUrl}` : ''}
 
 1. **Check Current Status:**
    - Use the spec-status tool with specName "${specName}" to see overall progress
-   - Read .spec-workflow/specs/${specName}/tasks.md to see all tasks
+   - Read .specflow/specs/${specName}/tasks.md to see all tasks
    - Identify ${taskId ? `task ${taskId}` : 'the next pending task marked with [ ]'}
 
 2. **Start the Task:**
-   - Edit .spec-workflow/specs/${specName}/tasks.md directly
+   - Edit .specflow/specs/${specName}/tasks.md directly
    - Change the task marker from [ ] to [-] for the task you're starting
    - Only one task should be in-progress at a time
 
@@ -63,18 +63,18 @@ ${context.dashboardUrl ? `- Dashboard: ${context.dashboardUrl}` : ''}
 
 4. **Discover Existing Implementations (CRITICAL):**
    - BEFORE writing any code, search implementation logs to understand existing artifacts
-   - Implementation logs are stored as markdown files in: .spec-workflow/specs/${specName}/Implementation Logs/
+   - Implementation logs are stored as markdown files in: .specflow/specs/${specName}/Implementation Logs/
 
    **Option 1: Use grep/ripgrep for fast searches**
    \`\`\`bash
    # Search for API endpoints
-   grep -r "GET\|POST\|PUT\|DELETE" ".spec-workflow/specs/${specName}/Implementation Logs/"
+   grep -r "GET\|POST\|PUT\|DELETE" ".specflow/specs/${specName}/Implementation Logs/"
 
    # Search for specific components
-   grep -r "ComponentName" ".spec-workflow/specs/${specName}/Implementation Logs/"
+   grep -r "ComponentName" ".specflow/specs/${specName}/Implementation Logs/"
 
    # Search for integration patterns
-   grep -r "integration\|dataFlow" ".spec-workflow/specs/${specName}/Implementation Logs/"
+   grep -r "integration\|dataFlow" ".specflow/specs/${specName}/Implementation Logs/"
    \`\`\`
 
    **Option 2: Read markdown files directly**
@@ -98,21 +98,21 @@ ${context.dashboardUrl ? `- Dashboard: ${context.dashboardUrl}` : ''}
 
 5. **Implement the Task (dispatch subagent):**
    - Dispatch a fresh subagent (Agent tool) with the full task text, _Prompt guidance, and _Leverage file paths
-   - Template: .spec-workflow/templates/implementer-prompt-template.md
+   - Template: .specflow/templates/implementer-prompt-template.md
    - The subagent implements, tests, commits, and self-reviews
    - Main context stays clean for orchestration — never write implementation code here
 
 5.5. **Spec Compliance Review (dispatch reviewer subagent):**
    - After the implementer reports back, dispatch a reviewer subagent
    - Reviewer reads actual code and compares to task requirements line by line
-   - Template: .spec-workflow/templates/spec-reviewer-template.md
+   - Template: .specflow/templates/spec-reviewer-template.md
    - If issues found: implementer fixes them, then dispatch reviewer again
    - Do NOT proceed to step 5.6 until spec review passes ✅
 
 5.6. **Code Quality Review (dispatch reviewer subagent):**
    - Only dispatch AFTER spec compliance passes in step 5.5
    - Reviewer checks: architecture, error handling, testing, production readiness
-   - Template: .spec-workflow/templates/code-quality-reviewer-template.md
+   - Template: .specflow/templates/code-quality-reviewer-template.md
    - Issues categorized: Critical (must fix) / Important (should fix) / Minor
    - Fix Critical and Important issues, re-review until approved ✅
 
@@ -151,7 +151,7 @@ ${context.dashboardUrl ? `- Dashboard: ${context.dashboardUrl}` : ''}
    - Confirm that log-implementation returned success in step 6
    - Verify all success criteria from the _Prompt are met
    - Run any relevant tests to ensure nothing is broken
-   - Edit .spec-workflow/specs/${specName}/tasks.md directly
+   - Edit .specflow/specs/${specName}/tasks.md directly
    - Change the task marker from [-] to [x] for the completed task
    - ⚠️ If you skipped step 6, go back now — a task marked [x] without a log is incomplete
 
@@ -177,7 +177,7 @@ ${context.dashboardUrl ? `- Dashboard: ${context.dashboardUrl}` : ''}
 - All logged implementations appear in the "Logs" tab of the dashboard
 - Filter by spec, task ID, or search by summary
 - View detailed statistics including files changed and lines modified
-- Or search directly using grep on markdown files in .spec-workflow/specs/{specName}/Implementation Logs/
+- Or search directly using grep on markdown files in .specflow/specs/{specName}/Implementation Logs/
 
 **Context Budget:** This session supports ~80-100 task dispatches with reviews (~800k tokens on 1M context models).
 After completing 60+ tasks, consider using a handoff to relay to a fresh session.

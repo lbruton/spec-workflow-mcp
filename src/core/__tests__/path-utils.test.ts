@@ -1,4 +1,7 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { mkdtempSync, mkdirSync, rmSync } from 'fs';
+import { join } from 'path';
+import { tmpdir } from 'os';
 import { PathUtils } from '../path-utils.js';
 
 describe('PathUtils.translatePath', () => {
@@ -434,5 +437,41 @@ describe('PathUtils root prefix edge case', () => {
     process.env.SPEC_WORKFLOW_CONTAINER_PATH_PREFIX = '/projects';
 
     expect(PathUtils.translatePath('/app/src')).toBe('/projects/app/src');
+  });
+});
+
+describe('PathUtils.getWorkflowRoot backward compatibility', () => {
+  let tempDir: string;
+
+  beforeEach(() => {
+    tempDir = mkdtempSync(join(tmpdir(), 'specflow-test-'));
+  });
+
+  afterEach(() => {
+    rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  it('should return .specflow when .specflow/ exists', () => {
+    mkdirSync(join(tempDir, '.specflow'));
+    const result = PathUtils.getWorkflowRoot(tempDir);
+    expect(result).toBe(join(tempDir, '.specflow'));
+  });
+
+  it('should fall back to .spec-workflow with warning when only legacy dir exists', () => {
+    mkdirSync(join(tempDir, '.spec-workflow'));
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const result = PathUtils.getWorkflowRoot(tempDir);
+    expect(result).toBe(join(tempDir, '.spec-workflow'));
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('legacy .spec-workflow/')
+    );
+    warnSpy.mockRestore();
+  });
+
+  it('should prefer .specflow when both .specflow/ and .spec-workflow/ exist', () => {
+    mkdirSync(join(tempDir, '.specflow'));
+    mkdirSync(join(tempDir, '.spec-workflow'));
+    const result = PathUtils.getWorkflowRoot(tempDir);
+    expect(result).toBe(join(tempDir, '.specflow'));
   });
 });

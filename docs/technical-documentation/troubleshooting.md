@@ -90,7 +90,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --help
 
 1. **Check Approval Files**
    ```bash
-   ls -la .spec-workflow/approvals/
+   ls -la .specflow/approvals/
    # Should show approval JSON files
    ```
 
@@ -127,13 +127,13 @@ npx -y @pimzino/spec-workflow-mcp@latest --help
    chmod -R 755 /path/to/project
    ```
 
-2. **`.spec-workflow/` Directory**
+2. **`.specflow/` Directory**
    ```bash
    # Create directory manually if needed
-   mkdir -p .spec-workflow/specs .spec-workflow/steering .spec-workflow/approvals
+   mkdir -p .specflow/specs .specflow/steering .specflow/approvals
    
    # Fix permissions
-   chmod -R 755 .spec-workflow/
+   chmod -R 755 .specflow/
    ```
 
 3. **Windows-specific Issues**
@@ -152,14 +152,14 @@ npx -y @pimzino/spec-workflow-mcp@latest --help
 
 1. **Check File Structure**
    ```bash
-   tree .spec-workflow/
+   tree .specflow/
    # Should show specs/, steering/, etc.
    ```
 
 2. **Verify File Contents**
    ```bash
    # Check if spec files exist and have content
-   find .spec-workflow/specs -name "*.md" -exec ls -la {} \;
+   find .specflow/specs -name "*.md" -exec ls -la {} \;
    ```
 
 3. **Path Resolution Issues**
@@ -220,7 +220,7 @@ curl http://localhost:3456/api/specs
 # Look for file change events in logs
 
 # Test manual file modification
-echo "test" >> .spec-workflow/specs/test-spec/requirements.md
+echo "test" >> .specflow/specs/test-spec/requirements.md
 # Should trigger file watcher
 ```
 
@@ -239,7 +239,7 @@ console.log('Platform:', process.platform);
 **Meaning**: File or directory not found
 
 **Solutions**:
-1. Check if `.spec-workflow/` directory exists
+1. Check if `.specflow/` directory exists
 2. Verify spec name spelling
 3. Use absolute paths in tool calls
 
@@ -289,7 +289,7 @@ lsof -ti:3456 | xargs kill -9
 
 **A**: Remove the workflow directory:
 ```bash  
-rm -rf .spec-workflow/
+rm -rf .specflow/
 # MCP server will recreate it automatically
 ```
 
@@ -307,10 +307,10 @@ rm -rf .spec-workflow/
 
 ### Q: How do I backup my specifications?
 
-**A**: The entire workflow is in `.spec-workflow/`:
+**A**: The entire workflow is in `.specflow/`:
 ```bash
 # Create backup
-tar -czf spec-backup.tar.gz .spec-workflow/
+tar -czf spec-backup.tar.gz .specflow/
 
 # Restore backup
 tar -xzf spec-backup.tar.gz
@@ -402,7 +402,7 @@ interface PerformanceIssues {
   
   dashboardLag: {
     cause: "Too many file watchers, large project";
-    solution: "Limit .spec-workflow/ directory size, cleanup old files";
+    solution: "Limit .specflow/ directory size, cleanup old files";
   };
   
   memoryLeaks: {
@@ -433,7 +433,7 @@ done
 // Check these file paths in your codebase:
 
 1. "Verify PathUtils.getSpecPath() returns correct paths";
-2. "Check file permissions on .spec-workflow/ directory";
+2. "Check file permissions on .specflow/ directory";
 3. "Confirm spec directory structure matches expectations";
 4. "Validate markdown files are not corrupted or empty";
 ```
@@ -449,18 +449,18 @@ echo "1. Node.js version:"
 node --version
 
 echo -e "\n2. Project structure:"
-if [ -d ".spec-workflow" ]; then
-    echo "✅ .spec-workflow/ directory exists"
-    tree .spec-workflow/ || ls -la .spec-workflow/
+if [ -d ".specflow" ]; then
+    echo "✅ .specflow/ directory exists"
+    tree .specflow/ || ls -la .specflow/
 else
-    echo "❌ .spec-workflow/ directory missing"
+    echo "❌ .specflow/ directory missing"
 fi
 
 echo -e "\n3. NPX cache:"
 npx -y @pimzino/spec-workflow-mcp@latest --help > /dev/null && echo "✅ MCP server loads" || echo "❌ MCP server fails"
 
 echo -e "\n4. Permissions:"
-ls -la .spec-workflow/ 2>/dev/null || echo "❌ Cannot read .spec-workflow/"
+ls -la .specflow/ 2>/dev/null || echo "❌ Cannot read .specflow/"
 
 echo -e "\n5. Port availability:"
 netstat -tulpn | grep :3456 > /dev/null && echo "❌ Port 3456 in use" || echo "✅ Port 3456 available"
@@ -472,7 +472,7 @@ echo -e "\n=== End Diagnostics ==="
 ```bash
 # Collect all relevant logs
 mkdir -p debug-logs
-find .spec-workflow/approvals -name "*.json" -exec cp {} debug-logs/ \; 2>/dev/null
+find .specflow/approvals -name "*.json" -exec cp {} debug-logs/ \; 2>/dev/null
 echo "Logs collected in debug-logs/"
 ```
 

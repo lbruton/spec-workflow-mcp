@@ -209,7 +209,7 @@ npx -y @pimzino/spec-workflow-mcp@latest /path/to/project
 
 Или через командную строку:
 ```bash
-code --install-extension Pimzino.spec-workflow-mcp
+code --install-extension Pimzino.specflow-mcp
 ```
 
 ### Функции расширения
@@ -491,7 +491,7 @@ code --install-extension Pimzino.spec-workflow-mcp
 
 | Проблема | Решение |
 |-------|----------|
-| Не показывает спецификации | Проверьте, что в проекте есть каталог .spec-workflow |
+| Не показывает спецификации | Проверьте, что в проекте есть каталог .specflow |
 | Команды не работают | Перезагрузите окно VSCode |
 | Нет уведомлений | Проверьте настройки расширения |
 | Архив не виден | Включите в настройках |

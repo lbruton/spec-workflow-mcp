@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 SpecFlow is a fork of [Pimzino/spec-workflow-mcp](https://github.com/Pimzino/spec-workflow-mcp). Upstream releases (≤ 2.2.3) are preserved below. SpecFlow releases begin at 3.0.0.
 
+## [Unreleased]
+
+### Changed
+
+- Renamed `.spec-workflow` directory to `.specflow` across all projects and configuration
+- Added backward compatibility fallback for legacy `.spec-workflow/` directories
+
 ## [3.1.0] - 2026-03-31
 
 ### Added

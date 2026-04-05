@@ -223,9 +223,9 @@ describe('writeConventions', () => {
 
     await writeConventions('/fake/project', conventions);
 
-    expect(mockMkdir).toHaveBeenCalledWith('/fake/project/.spec-workflow', { recursive: true });
+    expect(mockMkdir).toHaveBeenCalledWith('/fake/project/.specflow', { recursive: true });
     expect(mockWriteFile).toHaveBeenCalledWith(
-      '/fake/project/.spec-workflow/project-conventions.json',
+      '/fake/project/.specflow/project-conventions.json',
       expect.stringContaining('"schemaVersion": 1'),
       'utf-8',
     );

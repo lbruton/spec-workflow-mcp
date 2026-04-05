@@ -250,7 +250,7 @@ APIエンドポイントにレート制限を追加してください。
 
 ```
 your-project/
-├── .spec-workflow/
+├── .specflow/
 │   ├── steering/
 │   │   ├── product.md
 │   │   ├── tech.md

@@ -1,6 +1,6 @@
 import { join, normalize, sep, resolve, posix } from 'path';
 import { access, stat, mkdir } from 'fs/promises';
-import { constants } from 'fs';
+import { constants, existsSync } from 'fs';
 
 export class PathUtils {
   /** macOS and Windows are case-insensitive filesystems */
@@ -191,44 +191,52 @@ export class PathUtils {
   }
   
   static getWorkflowRoot(projectPath: string): string {
-    return this.safeJoin(projectPath, '.spec-workflow');
+    const newPath = this.safeJoin(projectPath, '.specflow');
+    if (existsSync(newPath)) {
+      return newPath;
+    }
+    const legacyPath = this.safeJoin(projectPath, '.spec-workflow');
+    if (existsSync(legacyPath)) {
+      console.warn('[specflow] Found legacy .spec-workflow/ directory. Please rename to .specflow/. Legacy support will be removed in a future version.');
+      return legacyPath;
+    }
+    return newPath;
   }
 
   static getSpecPath(projectPath: string, specName: string): string {
-    return this.safeJoin(projectPath, '.spec-workflow', 'specs', specName);
+    return join(this.getWorkflowRoot(projectPath), 'specs', specName);
   }
 
   static getArchiveSpecPath(projectPath: string, specName: string): string {
-    return this.safeJoin(projectPath, '.spec-workflow', 'archive', 'specs', specName);
+    return join(this.getWorkflowRoot(projectPath), 'archive', 'specs', specName);
   }
 
   static getArchiveSpecsPath(projectPath: string): string {
-    return this.safeJoin(projectPath, '.spec-workflow', 'archive', 'specs');
+    return join(this.getWorkflowRoot(projectPath), 'archive', 'specs');
   }
 
   static getSteeringPath(projectPath: string): string {
-    return this.safeJoin(projectPath, '.spec-workflow', 'steering');
+    return join(this.getWorkflowRoot(projectPath), 'steering');
   }
 
-
   static getTemplatesPath(projectPath: string): string {
-    return this.safeJoin(projectPath, '.spec-workflow', 'templates');
+    return join(this.getWorkflowRoot(projectPath), 'templates');
   }
 
   static getAgentsPath(projectPath: string): string {
-    return this.safeJoin(projectPath, '.spec-workflow', 'agents');
+    return join(this.getWorkflowRoot(projectPath), 'agents');
   }
 
   static getCommandsPath(projectPath: string): string {
-    return this.safeJoin(projectPath, '.spec-workflow', 'commands');
+    return join(this.getWorkflowRoot(projectPath), 'commands');
   }
 
   static getApprovalsPath(projectPath: string): string {
-    return this.safeJoin(projectPath, '.spec-workflow', 'approvals');
+    return join(this.getWorkflowRoot(projectPath), 'approvals');
   }
 
   static getSpecApprovalPath(projectPath: string, specName: string): string {
-    return this.safeJoin(projectPath, '.spec-workflow', 'approvals', specName);
+    return join(this.getWorkflowRoot(projectPath), 'approvals', specName);
   }
 
 

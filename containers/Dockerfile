@@ -31,7 +31,7 @@ RUN npm ci --only=production
 # Copy built application
 COPY --from=builder /app/dist ./dist
 
-RUN mkdir -p /workspace /workspace/.spec-workflow-mcp
+RUN mkdir -p /workspace /workspace/.specflow-mcp
 
 # Change ownership of the app directory to the node user (uid=1000)
 RUN chown -R node:node /app /workspace
@@ -42,7 +42,7 @@ USER node
 WORKDIR /workspace
 
 # Security: Set environment variables for secure defaults
-ENV SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp
+ENV SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp
 ENV NODE_ENV=production
 
 # Docker networking: Bind to 0.0.0.0 inside container (required for port forwarding to work)

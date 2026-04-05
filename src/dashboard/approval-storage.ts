@@ -102,7 +102,7 @@ export interface ApprovalRequest {
 }
 
 export class ApprovalStorage extends EventEmitter {
-  public projectPath: string; // Workflow root path (.spec-workflow location)
+  public projectPath: string; // Workflow root path (.specflow location)
   public originalProjectPath: string; // Original workflow root path for display/registry
   public fileResolutionPath: string; // Base path for resolving approval filePath artifacts
   private approvalsDir: string;
@@ -136,7 +136,7 @@ export class ApprovalStorage extends EventEmitter {
     // Store original path for display/registry (fall back to translated if not provided)
     this.originalProjectPath = resolve(options.originalPath ?? translatedPath);
     // Relative approval file paths are resolved against workspace path by default.
-    // Falls back to workflow root path when files only exist in shared .spec-workflow root.
+    // Falls back to workflow root path when files only exist in shared .specflow root.
     this.fileResolutionPath = resolve(options.fileResolutionPath ?? translatedPath);
     this.approvalsDir = PathUtils.getApprovalsPath(resolvedPath);
   }

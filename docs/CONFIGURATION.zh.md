@@ -61,11 +61,11 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 ### SPEC_WORKFLOW_HOME
 
-覆盖默认的全局状态目录（`~/.spec-workflow-mcp`）。这对于 `$HOME` 为只读的沙盒环境很有用。
+覆盖默认的全局状态目录（`~/.specflow-mcp`）。这对于 `$HOME` 为只读的沙盒环境很有用。
 
 | 变量 | 默认值 | 描述 |
 |----------|---------|-------------|
-| `SPEC_WORKFLOW_HOME` | `~/.spec-workflow-mcp` | 全局状态文件的目录 |
+| `SPEC_WORKFLOW_HOME` | `~/.specflow-mcp` | 全局状态文件的目录 |
 
 **存储在此目录中的文件：**
 - `activeProjects.json` - 项目注册表
@@ -78,13 +78,13 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 ```bash
 # 绝对路径
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
 
 # 相对路径（相对于当前工作目录解析）
-SPEC_WORKFLOW_HOME=./.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest .
+SPEC_WORKFLOW_HOME=./.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest .
 
 # 对于仪表板模式
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest --dashboard
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 ```
 
 **沙盒环境（例如，Codex CLI）：**
@@ -92,12 +92,12 @@ SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-m
 在使用 `sandbox_mode=workspace-write` 的 Codex CLI 等沙盒环境中运行时，将 `SPEC_WORKFLOW_HOME` 设置为工作区内的可写位置：
 
 ```bash
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
 ```
 
 ## 仪表板会话管理
 
-仪表板将其会话信息存储在 `~/.spec-workflow-mcp/activeSession.json`（如果设置了 `$SPEC_WORKFLOW_HOME`，则为 `$SPEC_WORKFLOW_HOME/activeSession.json`）中。此文件：
+仪表板将其会话信息存储在 `~/.specflow-mcp/activeSession.json`（如果设置了 `$SPEC_WORKFLOW_HOME`，则为 `$SPEC_WORKFLOW_HOME/activeSession.json`）中。此文件：
 - 强制实施单一仪表板实例
 - 允许 MCP 服务器发现正在运行的仪表板
 - 在仪表板停止时自动清理
@@ -137,7 +137,7 @@ To use a different port:
 
 ### 默认位置
 
-服务器在以下位置查找配置：`<project-dir>/.spec-workflow/config.toml`
+服务器在以下位置查找配置：`<project-dir>/.specflow/config.toml`
 
 ### 文件格式
 
@@ -204,7 +204,7 @@ debounceMs = 300
 
 1. 复制示例配置：
 ```bash
-cp .spec-workflow/config.example.toml .spec-workflow/config.toml
+cp .specflow/config.example.toml .specflow/config.toml
 ```
 
 2. 编辑配置：
@@ -217,11 +217,11 @@ lang = "en"
 
 3. 使用配置：
 ```bash
-# 自动使用 .spec-workflow/config.toml
+# 自动使用 .specflow/config.toml
 npx -y @pimzino/spec-workflow-mcp@latest
 
 # 或明确指定
-npx -y @pimzino/spec-workflow-mcp@latest --config .spec-workflow/config.toml
+npx -y @pimzino/spec-workflow-mcp@latest --config .specflow/config.toml
 ```
 
 ## 配置优先级
@@ -230,7 +230,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --config .spec-workflow/config.toml
 
 1. **命令行参数** - 始终优先
 2. **自定义配置文件** - 使用 `--config` 指定
-3. **默认配置文件** - `.spec-workflow/config.toml`
+3. **默认配置文件** - `.specflow/config.toml`
 4. **内置默认值** - 后备值
 
 ### 优先级示例
@@ -326,12 +326,12 @@ npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ```bash
 # 项目 A
 project-a/
-  .spec-workflow/
+  .specflow/
     config.toml  # port = 3000
 
 # 项目 B
 project-b/
-  .spec-workflow/
+  .specflow/
     config.toml  # port = 3001
 ```
 
@@ -368,7 +368,7 @@ VSCode 扩展有自己的设置：
 
 1. **检查文件位置：**
    ```bash
-   ls -la .spec-workflow/config.toml
+   ls -la .specflow/config.toml
    ```
 
 2. **验证 TOML 语法：**
@@ -377,13 +377,13 @@ VSCode 扩展有自己的设置：
    npm install -g @iarna/toml
 
    # 验证
-   toml .spec-workflow/config.toml
+   toml .specflow/config.toml
    ```
 
 3. **检查权限：**
    ```bash
    # 确保文件可读
-   chmod 644 .spec-workflow/config.toml
+   chmod 644 .specflow/config.toml
    ```
 
 ### 常见问题

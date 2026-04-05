@@ -1,7 +1,7 @@
 # Spec Workflow MCP
 
 [![npm version](https://img.shields.io/npm/v/@pimzino/spec-workflow-mcp)](https://www.npmjs.com/package/@pimzino/spec-workflow-mcp)
-[![VSCode Extension](https://vsmarketplacebadges.dev/version-short/Pimzino.spec-workflow-mcp.svg)](https://marketplace.visualstudio.com/items?itemName=Pimzino.spec-workflow-mcp)
+[![VSCode Extension](https://vsmarketplacebadges.dev/version-short/Pimzino.specflow-mcp.svg)](https://marketplace.visualstudio.com/items?itemName=Pimzino.specflow-mcp)
 
 リアルタイムダッシュボードとVSCode拡張機能を備えた、構造化された仕様駆動開発のためのModel Context Protocol (MCP) サーバーです。
 
@@ -72,7 +72,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 
 **オプションB: VSCode拡張機能**（VSCodeユーザーに推奨）
 
-VSCodeマーケットプレイスから[Spec Workflow MCP Extension](https://marketplace.visualstudio.com/items?itemName=Pimzino.spec-workflow-mcp)をインストールします。
+VSCodeマーケットプレイスから[Spec Workflow MCP Extension](https://marketplace.visualstudio.com/items?itemName=Pimzino.specflow-mcp)をインストールします。
 
 ## 📝 使い方
 
@@ -227,7 +227,7 @@ Cursor設定（`settings.json`）に追加します：
 
 `~/.codex/config.toml`設定ファイルに追加します：
 ```toml
-[mcp_servers.spec-workflow]
+[mcp_servers.specflow]
 command = "npx"
 args = ["-y", "@pimzino/spec-workflow-mcp@latest", "/path/to/your/project"]
 ```
@@ -244,7 +244,7 @@ docker-compose up --build
 
 # またはDocker CLIを使用
 docker build -f containers/Dockerfile -t spec-workflow-mcp .
-docker run -p 5000:5000 -v "./workspace/.spec-workflow:/workspace/.spec-workflow:rw" spec-workflow-mcp
+docker run -p 5000:5000 -v "./workspace/.specflow:/workspace/.specflow:rw" spec-workflow-mcp
 ```
 
 ダッシュボードは以下のURLで利用可能になります：http://localhost:5000
@@ -256,7 +256,7 @@ docker run -p 5000:5000 -v "./workspace/.spec-workflow:/workspace/.spec-workflow
 `$HOME`が読み取り専用のサンドボックス環境（例：Codex CLIの`sandbox_mode=workspace-write`）の場合、`SPEC_WORKFLOW_HOME`環境変数を使用してグローバル状態ファイルを書き込み可能な場所にリダイレクトします：
 
 ```bash
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
 ```
 
 [設定ガイドを見る →](docs/CONFIGURATION.ja.md#environment-variables)
@@ -276,7 +276,7 @@ SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-m
 
 ```
 your-project/
-  .spec-workflow/
+  .specflow/
     approvals/
     archive/
     specs/

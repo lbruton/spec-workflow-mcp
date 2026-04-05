@@ -1,7 +1,7 @@
 # Spec Workflow MCP
 
 [![npm version](https://img.shields.io/npm/v/@pimzino/spec-workflow-mcp)](https://www.npmjs.com/package/@pimzino/spec-workflow-mcp)
-[![VSCode Extension](https://vsmarketplacebadges.dev/version-short/Pimzino.spec-workflow-mcp.svg)](https://marketplace.visualstudio.com/items?itemName=Pimzino.spec-workflow-mcp)
+[![VSCode Extension](https://vsmarketplacebadges.dev/version-short/Pimzino.specflow-mcp.svg)](https://marketplace.visualstudio.com/items?itemName=Pimzino.specflow-mcp)
 
 실시간 대시보드와 VSCode 확장 프로그램을 갖춘 구조화된 스펙 기반 개발을 위한 Model Context Protocol(MCP) 서버입니다.
 
@@ -70,7 +70,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 
 **옵션 B: VSCode 확장 프로그램** (VSCode 사용자 권장)
 
-VSCode 마켓플레이스에서 [Spec Workflow MCP Extension](https://marketplace.visualstudio.com/items?itemName=Pimzino.spec-workflow-mcp)을 설치하세요.
+VSCode 마켓플레이스에서 [Spec Workflow MCP Extension](https://marketplace.visualstudio.com/items?itemName=Pimzino.specflow-mcp)을 설치하세요.
 
 ## 📝 사용 방법
 
@@ -225,7 +225,7 @@ Cursor 설정(`settings.json`)에 추가:
 
 `~/.codex/config.toml` 구성 파일에 추가:
 ```toml
-[mcp_servers.spec-workflow]
+[mcp_servers.specflow]
 command = "npx"
 args = ["-y", "@pimzino/spec-workflow-mcp@latest", "/path/to/your/project"]
 ```
@@ -242,7 +242,7 @@ docker-compose up --build
 
 # 또는 Docker CLI 사용
 docker build -f containers/Dockerfile -t spec-workflow-mcp .
-docker run -p 5000:5000 -v "./workspace/.spec-workflow:/workspace/.spec-workflow:rw" spec-workflow-mcp
+docker run -p 5000:5000 -v "./workspace/.specflow:/workspace/.specflow:rw" spec-workflow-mcp
 ```
 
 대시보드는 http://localhost:5000 에서 사용 가능합니다.
@@ -254,7 +254,7 @@ docker run -p 5000:5000 -v "./workspace/.spec-workflow:/workspace/.spec-workflow
 `$HOME`이 읽기 전용인 샌드박스 환경(예: `sandbox_mode=workspace-write`가 있는 Codex CLI)의 경우 `SPEC_WORKFLOW_HOME` 환경 변수를 사용하여 전역 상태 파일을 쓰기 가능한 위치로 리디렉션하세요:
 
 ```bash
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
 ```
 
 [구성 가이드 보기 →](docs/CONFIGURATION.md#environment-variables)
@@ -274,7 +274,7 @@ SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-m
 
 ```
 your-project/
-  .spec-workflow/
+  .specflow/
     approvals/
     archive/
     specs/

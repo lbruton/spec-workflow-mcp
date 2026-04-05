@@ -139,12 +139,12 @@ dist
 .claude
 .serena
 AGENTS.md
-opencodetmp.spec-workflow/session.json
+opencodetmp.specflow/session.json
 opencodetmp
 .cursor
 
 # Spec Workflow MCP
-.spec-workflow
+.specflow
 .claude-context
 .vscode/settings.json
 spec-workflow-mcp.code-workspace

@@ -84,7 +84,7 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 {
   success: true,
   message: "Anforderungsdokument erfolgreich erstellt",
-  path: ".spec-workflow/specs/user-authentication/requirements.md",
+  path: ".specflow/specs/user-authentication/requirements.md",
   requestedApproval: true
 }
 ```
@@ -363,7 +363,7 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 {
   success: true,
   message: "Product Steering-Dokument erstellt",
-  path: ".spec-workflow/steering/product.md"
+  path: ".specflow/steering/product.md"
 }
 ```
 

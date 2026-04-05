@@ -250,7 +250,7 @@ API 엔드포인트에 속도 제한 추가.
 
 ```
 your-project/
-├── .spec-workflow/
+├── .specflow/
 │   ├── steering/
 │   │   ├── product.md
 │   │   ├── tech.md

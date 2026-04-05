@@ -209,7 +209,7 @@ Instale do Marketplace do VSCode:
 
 Ou via linha de comando:
 ```bash
-code --install-extension Pimzino.spec-workflow-mcp
+code --install-extension Pimzino.specflow-mcp
 ```
 
 ### Recursos da Extensão
@@ -491,7 +491,7 @@ Herda acessibilidade do VSCode:
 
 | Problema | Solução |
 |-------|----------|
-| Não mostrando especificações | Verifique se projeto tem diretório .spec-workflow |
+| Não mostrando especificações | Verifique se projeto tem diretório .specflow |
 | Comandos não funcionando | Recarregue janela do VSCode |
 | Sem notificações | Verifique configurações da extensão |
 | Arquivo não visível | Habilite nas configurações |

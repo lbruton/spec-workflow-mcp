@@ -188,7 +188,7 @@ Spec Workflowには以下のテンプレートが含まれています：
 
 ### カスタムテンプレート
 
-`.spec-workflow/templates/`に独自のテンプレートを作成します：
+`.specflow/templates/`に独自のテンプレートを作成します：
 
 ```markdown
 # カスタム機能テンプレート

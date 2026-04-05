@@ -393,7 +393,7 @@ export async function logImplementationHandler(
           success: false,
           message: `Task '${taskId}' not found in specification '${specName}'`,
           nextSteps: [
-            `Check the task ID in .spec-workflow/specs/${specName}/tasks.md`,
+            `Check the task ID in .specflow/specs/${specName}/tasks.md`,
             'Verify the spec name is correct',
             'Use spec-status to see available tasks'
           ]
@@ -404,7 +404,7 @@ export async function logImplementationHandler(
         success: false,
         message: `Failed to validate task: ${parseError instanceof Error ? parseError.message : String(parseError)}`,
         nextSteps: [
-          `Check that .spec-workflow/specs/${specName}/tasks.md exists`,
+          `Check that .specflow/specs/${specName}/tasks.md exists`,
           'Verify the tasks file is valid markdown',
           'Use spec-status to diagnose issues'
         ]

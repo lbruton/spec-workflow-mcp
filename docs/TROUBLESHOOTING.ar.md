@@ -12,8 +12,8 @@ npx -y @pimzino/spec-workflow-mcp@latest --help
 # تحقق من التشغيل في الدليل الصحيح
 pwd  # أو 'cd' على Windows
 
-# تحقق من وجود دليل .spec-workflow
-ls -la .spec-workflow  # أو 'dir .spec-workflow' على Windows
+# تحقق من وجود دليل .specflow
+ls -la .specflow  # أو 'dir .specflow' على Windows
 ```
 
 ### التحقق من الخدمات
@@ -201,7 +201,7 @@ netstat -an | findstr :3000  # Windows
 4. تحقق من عمل مراقبي نظام الملفات:
    ```bash
    # أنشئ ملف اختبار في المشروع
-   touch .spec-workflow/test.md
+   touch .specflow/test.md
    # يجب أن يؤدي إلى تحديث في لوحة التحكم
    ```
 
@@ -222,7 +222,7 @@ netstat -an | findstr :3000  # Windows
    ```
 2. تحقق من وجود دليل الموافقة:
    ```bash
-   ls -la .spec-workflow/approval/
+   ls -la .specflow/approval/
    ```
 3. قم بتشغيل طلب الموافقة يدويًا من خلال الذكاء الاصطناعي
 
@@ -245,7 +245,7 @@ netstat -an | findstr :3000  # Windows
 **الحلول**:
 1. تحقق من أذونات الكتابة:
    ```bash
-   touch .spec-workflow/test.txt
+   touch .specflow/test.txt
    ```
 2. تحقق من دليل العمل الصحيح:
    ```bash
@@ -253,7 +253,7 @@ netstat -an | findstr :3000  # Windows
    ```
 3. ابحث عن الملفات المخفية:
    ```bash
-   ls -la .spec-workflow/specs/
+   ls -la .specflow/specs/
    ```
 4. تحقق من عدم حظر مكافح الفيروسات لإنشاء الملفات
 
@@ -264,11 +264,11 @@ netstat -an | findstr :3000  # Windows
 **الحلول**:
 1. أصلح أذونات الدليل:
    ```bash
-   chmod -R 755 .spec-workflow  # macOS/Linux
+   chmod -R 755 .specflow  # macOS/Linux
    ```
 2. تحقق من ملكية الملف:
    ```bash
-   ls -la .spec-workflow
+   ls -la .specflow
    # يجب أن يكون مملوكًا لمستخدمك
    ```
 3. قم بالتشغيل من دليل تملكه (وليس أدلة النظام)
@@ -288,20 +288,20 @@ netstat -an | findstr :3000  # Windows
    - Ctrl+Shift+P → "Developer: Reload Window"
 3. تحقق من مخرجات الإضافة:
    - عرض → الإخراج → حدد "Spec Workflow" من القائمة المنسدلة
-4. تأكد من أن المشروع لديه دليل `.spec-workflow`
+4. تأكد من أن المشروع لديه دليل `.specflow`
 
 ### أوامر الإضافة لا تعمل
 
 **الخطأ**: الأوامر تفشل أو تظهر أخطاء
 
 **الحلول**:
-1. افتح مجلد المشروع الذي يحتوي على `.spec-workflow`
+1. افتح مجلد المشروع الذي يحتوي على `.specflow`
 2. تحقق من أن VSCode يستخدم مساحة العمل الصحيحة
 3. عرض سجلات الإضافة للأخطاء المحددة
 4. حاول إعادة تثبيت الإضافة:
    ```bash
-   code --uninstall-extension Pimzino.spec-workflow-mcp
-   code --install-extension Pimzino.spec-workflow-mcp
+   code --uninstall-extension Pimzino.specflow-mcp
+   code --install-extension Pimzino.specflow-mcp
    ```
 
 ## مشكلات التكوين
@@ -315,10 +315,10 @@ netstat -an | findstr :3000  # Windows
    ```bash
    # ثبت مدقق TOML
    npm install -g @iarna/toml
-   toml .spec-workflow/config.toml
+   toml .specflow/config.toml
    ```
 2. تحقق من موقع الملف:
-   - الافتراضي: `.spec-workflow/config.toml`
+   - الافتراضي: `.specflow/config.toml`
    - مخصص: استخدم علامة `--config`
 3. تأكد من عدم وجود أخطاء في بناء الجملة:
    ```toml
@@ -370,7 +370,7 @@ netstat -an | findstr :3000  # Windows
    ```
 3. امسح سجلات الموافقة القديمة:
    ```bash
-   rm -rf .spec-workflow/approval/completed/*
+   rm -rf .specflow/approval/completed/*
    ```
 4. استخدم أسماء مواصفات محددة بدلاً من سرد الجميع
 
@@ -518,7 +518,7 @@ npx -y @pimzino/spec-workflow-mcp@latest /path --debug
 4. **استخدم --help** للتحقق من الخيارات
 5. **اختبر في بيئة نظيفة** عند حدوث مشكلات
 6. **تحقق من السجلات** قبل افتراض الفشل
-7. **احتفظ بنسخة احتياطية من دليل .spec-workflow** بانتظام
+7. **احتفظ بنسخة احتياطية من دليل .specflow** بانتظام
 
 ### الصيانة الدورية
 

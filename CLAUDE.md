@@ -14,7 +14,7 @@ MCP server plugin for spec-driven development with a real-time web dashboard. Po
 | Plugin copy | `~/.claude/plugins/marketplaces/specflow-marketplace/` (skills/commands only) |
 | MCP install | User-level `~/.claude/settings.json` → `npx -y @lbruton/specflow@latest .` |
 | Dashboard port | 5051 |
-| Dashboard service | `com.spec-workflow.dashboard` (launchd) |
+| Dashboard service | `com.specflow.dashboard` (launchd) |
 | Issue prefix | `SWF` |
 
 ## DocVault — Project Documentation
@@ -29,19 +29,35 @@ Read /Volumes/DATA/GitHub/DocVault/Projects/SpecFlow/Overview.md
 
 When making changes that affect documented behavior, run `/vault-update` before pushing.
 
-## Architecture
+## Architecture & Distribution Model
 
-This repo is the canonical source. The plugin directory at `~/.claude/plugins/marketplaces/specflow-marketplace/` is a **copy**, not a symlink — plugin skill files must be manually copied after edits (see gotcha below).
+**The npm package (`@lbruton/specflow`) is ONLY the MCP server + dashboard.** It contains compiled TypeScript (tools, prompts, dashboard server, parsers) and nothing else. Skills are NOT in the npm package.
 
-The MCP server is **not bundled with the plugin**. It is installed separately in the user's `~/.claude/settings.json` and runs via `npx`. This avoids self-referencing conflicts when working inside the specflow repo itself.
+**Skills are simple markdown files (SKILL.md)** that live in the GitHub repo under `plugin/skills/`. They are copied to the plugin directory — they are NOT compiled, bundled, or shipped via npm. Never suggest "porting skills to npm" — that premise is wrong.
 
 ```
-/Volumes/DATA/GitHub/specflow/              <-- you are here (canonical source)
-    plugin (skills/commands) copied to:
-~/.claude/plugins/marketplaces/specflow-marketplace/
-    MCP server installed separately via:
-~/.claude/settings.json → npx -y @lbruton/specflow@latest .
+npm package (@lbruton/specflow):     MCP server + dashboard only
+GitHub repo (lbruton/specflow):      Canonical source for everything
+  └─ plugin/skills/                  Markdown skill templates (copied to plugin dir)
+Plugin directory:                    Copy of plugin/skills/ + commands/
+  ~/.claude/plugins/marketplaces/specflow-marketplace/
+MCP install:                         User-level settings.json → npx
 ```
+
+### Future: DocVault Consolidation
+
+All spec-workflow artifacts currently in per-project `.specflow/` folders will migrate to DocVault:
+
+```
+DocVault/specflow/
+  templates/                         # Global templates
+  {ProjectName}/
+    steering/                        # product.md, tech.md, structure.md
+    templates/                       # Project-level template overrides
+    specs/                           # All spec artifacts (requirements, design, tasks)
+```
+
+This consolidates all knowledge into one version-controlled repo, backs up specs across projects, and lets Obsidian `_Index.md` serve as the RAG layer.
 
 ## Source Structure
 
@@ -65,7 +81,7 @@ plugin/
 
 ## Steering Documents
 
-Project-level guidance lives in `.spec-workflow/steering/`:
+Project-level guidance lives in `.specflow/steering/`:
 - `product.md` — vision, target users, principles, success metrics
 - `tech.md` — stack decisions, architecture rationale, known limitations
 - `structure.md` — directory layout, naming conventions, module boundaries
@@ -77,8 +93,8 @@ Reference these when planning new features or making architectural decisions.
 | Tier | Path | Behavior |
 |------|------|----------|
 | Bundled | `src/markdown/templates/` → `dist/markdown/templates/` | Shipped in npm, copied to projects on startup (always overwrites) |
-| Project | `.spec-workflow/templates/` | Copied from bundled on every MCP startup — always fresh |
-| User | `.spec-workflow/user-templates/` | Generated once from conventions, never auto-overwritten |
+| Project | `.specflow/templates/` | Copied from bundled on every MCP startup — always fresh |
+| User | `.specflow/user-templates/` | Generated once from conventions, never auto-overwritten |
 
 **Warning:** The bundled `tasks-template.md` body contains upstream Pimzino's TypeScript/React/Express sample (SWF-70 tracks rewrite). The closing tasks section is correctly genericized by `template-generator.ts` convention detection.
 
@@ -101,7 +117,7 @@ npm test             # Runs vitest suite (196 tests)
 After building, the MCP tools pick up changes on next invocation. The dashboard UI runs as a separate launchd service and must be restarted to serve new static assets:
 
 ```bash
-launchctl stop com.spec-workflow.dashboard && launchctl start com.spec-workflow.dashboard
+launchctl stop com.specflow.dashboard && launchctl start com.specflow.dashboard
 ```
 
 ## Post-Change Gate -- MANDATORY

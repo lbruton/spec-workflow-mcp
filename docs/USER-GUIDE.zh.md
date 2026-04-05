@@ -188,7 +188,7 @@ Spec Workflow 包含以下模板：
 
 ### 自定义模板
 
-在 `.spec-workflow/templates/` 中创建您自己的模板：
+在 `.specflow/templates/` 中创建您自己的模板：
 
 ```markdown
 # 自定义功能模板

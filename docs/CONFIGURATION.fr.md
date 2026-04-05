@@ -61,11 +61,11 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 ### SPEC_WORKFLOW_HOME
 
-Remplace le répertoire d'état global par défaut (`~/.spec-workflow-mcp`). Ceci est utile pour les environnements isolés où `$HOME` est en lecture seule.
+Remplace le répertoire d'état global par défaut (`~/.specflow-mcp`). Ceci est utile pour les environnements isolés où `$HOME` est en lecture seule.
 
 | Variable | Défaut | Description |
 |----------|---------|-------------|
-| `SPEC_WORKFLOW_HOME` | `~/.spec-workflow-mcp` | Répertoire pour les fichiers d'état globaux |
+| `SPEC_WORKFLOW_HOME` | `~/.specflow-mcp` | Répertoire pour les fichiers d'état globaux |
 
 **Fichiers stockés dans ce répertoire :**
 - `activeProjects.json` - Registre des projets
@@ -78,13 +78,13 @@ Remplace le répertoire d'état global par défaut (`~/.spec-workflow-mcp`). Cec
 
 ```bash
 # Chemin absolu
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
 
 # Chemin relatif (résolu par rapport au répertoire de travail actuel)
-SPEC_WORKFLOW_HOME=./.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest .
+SPEC_WORKFLOW_HOME=./.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest .
 
 # Pour le mode tableau de bord
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest --dashboard
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 ```
 
 **Environnements isolés (par exemple, Codex CLI) :**
@@ -92,12 +92,12 @@ SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-m
 Lors de l'exécution dans des environnements isolés comme Codex CLI avec `sandbox_mode=workspace-write`, définissez `SPEC_WORKFLOW_HOME` sur un emplacement accessible en écriture dans votre espace de travail :
 
 ```bash
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
 ```
 
 ## Gestion de session du tableau de bord
 
-Le tableau de bord stocke ses informations de session dans `~/.spec-workflow-mcp/activeSession.json` (ou `$SPEC_WORKFLOW_HOME/activeSession.json` si défini). Ce fichier :
+Le tableau de bord stocke ses informations de session dans `~/.specflow-mcp/activeSession.json` (ou `$SPEC_WORKFLOW_HOME/activeSession.json` si défini). Ce fichier :
 - Impose une instance unique de tableau de bord
 - Permet aux serveurs MCP de découvrir le tableau de bord en cours d'exécution
 - Se nettoie automatiquement lorsque le tableau de bord s'arrête
@@ -137,7 +137,7 @@ Pour utiliser un port différent :
 
 ### Emplacement par défaut
 
-Le serveur recherche la configuration à : `<répertoire-projet>/.spec-workflow/config.toml`
+Le serveur recherche la configuration à : `<répertoire-projet>/.specflow/config.toml`
 
 ### Format de fichier
 
@@ -204,7 +204,7 @@ debounceMs = 300
 
 1. Copiez l'exemple de configuration :
 ```bash
-cp .spec-workflow/config.example.toml .spec-workflow/config.toml
+cp .specflow/config.example.toml .specflow/config.toml
 ```
 
 2. Modifiez la configuration :
@@ -217,11 +217,11 @@ lang = "fr"
 
 3. Utilisez la configuration :
 ```bash
-# Utilise .spec-workflow/config.toml automatiquement
+# Utilise .specflow/config.toml automatiquement
 npx -y @pimzino/spec-workflow-mcp@latest
 
 # Ou spécifiez explicitement
-npx -y @pimzino/spec-workflow-mcp@latest --config .spec-workflow/config.toml
+npx -y @pimzino/spec-workflow-mcp@latest --config .specflow/config.toml
 ```
 
 ## Priorité de configuration
@@ -230,7 +230,7 @@ Les valeurs de configuration sont appliquées dans cet ordre (priorité la plus 
 
 1. **Arguments de ligne de commande** - Toujours prioritaires
 2. **Fichier de configuration personnalisé** - Spécifié avec `--config`
-3. **Fichier de configuration par défaut** - `.spec-workflow/config.toml`
+3. **Fichier de configuration par défaut** - `.specflow/config.toml`
 4. **Valeurs par défaut intégrées** - Valeurs de repli
 
 ### Exemple de priorité
@@ -326,12 +326,12 @@ Créez des configurations spécifiques au projet :
 ```bash
 # Projet A
 projet-a/
-  .spec-workflow/
+  .specflow/
     config.toml  # port = 3000
 
 # Projet B
 projet-b/
-  .spec-workflow/
+  .specflow/
     config.toml  # port = 3001
 ```
 
@@ -368,7 +368,7 @@ L'extension VSCode a ses propres paramètres :
 
 1. **Vérifiez l'emplacement du fichier :**
    ```bash
-   ls -la .spec-workflow/config.toml
+   ls -la .specflow/config.toml
    ```
 
 2. **Validez la syntaxe TOML :**
@@ -377,13 +377,13 @@ L'extension VSCode a ses propres paramètres :
    npm install -g @iarna/toml
 
    # Validez
-   toml .spec-workflow/config.toml
+   toml .specflow/config.toml
    ```
 
 3. **Vérifiez les permissions :**
    ```bash
    # Assurez-vous que le fichier est lisible
-   chmod 644 .spec-workflow/config.toml
+   chmod 644 .specflow/config.toml
    ```
 
 ### Problèmes courants

@@ -61,11 +61,11 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 ### SPEC_WORKFLOW_HOME
 
-Переопределяет каталог глобального состояния по умолчанию (`~/.spec-workflow-mcp`). Это полезно для изолированных сред, где `$HOME` доступен только для чтения.
+Переопределяет каталог глобального состояния по умолчанию (`~/.specflow-mcp`). Это полезно для изолированных сред, где `$HOME` доступен только для чтения.
 
 | Переменная | По умолчанию | Описание |
 |----------|---------|-------------|
-| `SPEC_WORKFLOW_HOME` | `~/.spec-workflow-mcp` | Каталог для глобальных файлов состояния |
+| `SPEC_WORKFLOW_HOME` | `~/.specflow-mcp` | Каталог для глобальных файлов состояния |
 
 **Файлы, хранящиеся в этом каталоге:**
 - `activeProjects.json` - Реестр проектов
@@ -78,13 +78,13 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 ```bash
 # Абсолютный путь
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
 
 # Относительный путь (разрешается относительно текущего рабочего каталога)
-SPEC_WORKFLOW_HOME=./.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest .
+SPEC_WORKFLOW_HOME=./.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest .
 
 # Для режима панели управления
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest --dashboard
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 ```
 
 **Изолированные среды (например, Codex CLI):**
@@ -92,12 +92,12 @@ SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-m
 При работе в изолированных средах, таких как Codex CLI с `sandbox_mode=workspace-write`, установите `SPEC_WORKFLOW_HOME` на доступное для записи место в вашем рабочем пространстве:
 
 ```bash
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
 ```
 
 ## Управление сеансом панели управления
 
-Панель управления хранит информацию о сеансе в `~/.spec-workflow-mcp/activeSession.json` (или `$SPEC_WORKFLOW_HOME/activeSession.json`, если установлено). Этот файл:
+Панель управления хранит информацию о сеансе в `~/.specflow-mcp/activeSession.json` (или `$SPEC_WORKFLOW_HOME/activeSession.json`, если установлено). Этот файл:
 - Обеспечивает один экземпляр панели управления
 - Позволяет серверам MCP обнаружить работающую панель управления
 - Автоматически очищается при остановке панели управления
@@ -137,7 +137,7 @@ To use a different port:
 
 ### Расположение по умолчанию
 
-Сервер ищет конфигурацию по адресу: `<project-dir>/.spec-workflow/config.toml`
+Сервер ищет конфигурацию по адресу: `<project-dir>/.specflow/config.toml`
 
 ### Формат файла
 
@@ -204,7 +204,7 @@ debounceMs = 300
 
 1. Скопируйте пример конфигурации:
 ```bash
-cp .spec-workflow/config.example.toml .spec-workflow/config.toml
+cp .specflow/config.example.toml .specflow/config.toml
 ```
 
 2. Отредактируйте конфигурацию:
@@ -217,11 +217,11 @@ lang = "en"
 
 3. Используйте конфигурацию:
 ```bash
-# Использует .spec-workflow/config.toml автоматически
+# Использует .specflow/config.toml автоматически
 npx -y @pimzino/spec-workflow-mcp@latest
 
 # Или укажите явно
-npx -y @pimzino/spec-workflow-mcp@latest --config .spec-workflow/config.toml
+npx -y @pimzino/spec-workflow-mcp@latest --config .specflow/config.toml
 ```
 
 ## Приоритет конфигурации
@@ -230,7 +230,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --config .spec-workflow/config.toml
 
 1. **Аргументы командной строки** - Всегда имеют приоритет
 2. **Пользовательский конфигурационный файл** - Указанный с `--config`
-3. **Конфигурационный файл по умолчанию** - `.spec-workflow/config.toml`
+3. **Конфигурационный файл по умолчанию** - `.specflow/config.toml`
 4. **Встроенные значения по умолчанию** - Резервные значения
 
 ### Пример приоритета
@@ -326,12 +326,12 @@ npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ```bash
 # Проект A
 project-a/
-  .spec-workflow/
+  .specflow/
     config.toml  # port = 3000
 
 # Проект B
 project-b/
-  .spec-workflow/
+  .specflow/
     config.toml  # port = 3001
 ```
 
@@ -368,7 +368,7 @@ npx -y @pimzino/spec-workflow-mcp@latest \
 
 1. **Проверьте расположение файла:**
    ```bash
-   ls -la .spec-workflow/config.toml
+   ls -la .specflow/config.toml
    ```
 
 2. **Проверьте синтаксис TOML:**
@@ -377,13 +377,13 @@ npx -y @pimzino/spec-workflow-mcp@latest \
    npm install -g @iarna/toml
 
    # Проверьте
-   toml .spec-workflow/config.toml
+   toml .specflow/config.toml
    ```
 
 3. **Проверьте права доступа:**
    ```bash
    # Убедитесь, что файл доступен для чтения
-   chmod 644 .spec-workflow/config.toml
+   chmod 644 .specflow/config.toml
    ```
 
 ### Распространенные проблемы

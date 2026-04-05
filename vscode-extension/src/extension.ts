@@ -83,7 +83,7 @@ export function activate(context: vscode.ExtensionContext) {
 					// Open the spec directory or a specific document
 					const specPath = vscode.Uri.file(
 						context.workspaceState.get<string>('workspaceRoot') + 
-						`/.spec-workflow/specs/${selected.description}`
+						`/.specflow/specs/${selected.description}`
 					);
 					vscode.commands.executeCommand('vscode.openFolder', specPath, true);
 				}

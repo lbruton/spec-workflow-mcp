@@ -514,10 +514,10 @@ DEBUG=spec-workflow-mcp npm run dev
 ### File System Issues
 ```bash
 # Check file permissions
-ls -la .spec-workflow/
+ls -la .specflow/
 
 # Check directory structure
-tree .spec-workflow/
+tree .specflow/
 
 # Monitor file changes
 # Use file watcher debug logs

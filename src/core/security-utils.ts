@@ -188,7 +188,7 @@ export class AuditLogger {
     if (config.auditLogPath) {
       this.logPath = config.auditLogPath;
     } else if (workspaceRoot) {
-      this.logPath = join(workspaceRoot, '.spec-workflow', 'audit.log');
+      this.logPath = join(workspaceRoot, '.specflow', 'audit.log');
     } else {
       // Fallback to temp directory
       this.logPath = join(process.cwd(), 'audit.log');

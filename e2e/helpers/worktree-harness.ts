@@ -154,8 +154,8 @@ export class WorktreeHarness {
     await mkdir(join(this.wtAPath, 'src'), { recursive: true });
     await writeFile(join(this.wtAPath, 'src', 'service-a.ts'), 'export const source = "wt-a";\n', 'utf-8');
 
-    const specDir = join(this.wtAPath, '.spec-workflow', 'specs', 'spec-a');
-    const approvalsDir = join(this.wtAPath, '.spec-workflow', 'approvals', 'spec-a');
+    const specDir = join(this.wtAPath, '.specflow', 'specs', 'spec-a');
+    const approvalsDir = join(this.wtAPath, '.specflow', 'approvals', 'spec-a');
     await mkdir(specDir, { recursive: true });
     await mkdir(approvalsDir, { recursive: true });
     await writeFile(join(specDir, 'requirements.md'), '# Requirements A\n', 'utf-8');
@@ -173,8 +173,8 @@ export class WorktreeHarness {
     await mkdir(join(this.wtBPath, 'src'), { recursive: true });
     await writeFile(join(this.wtBPath, 'src', 'service-b.ts'), 'export const source = "wt-b";\n', 'utf-8');
 
-    const specDir = join(this.wtBPath, '.spec-workflow', 'specs', 'spec-b');
-    const approvalsDir = join(this.wtBPath, '.spec-workflow', 'approvals', 'spec-b');
+    const specDir = join(this.wtBPath, '.specflow', 'specs', 'spec-b');
+    const approvalsDir = join(this.wtBPath, '.specflow', 'approvals', 'spec-b');
     await mkdir(specDir, { recursive: true });
     await mkdir(approvalsDir, { recursive: true });
     await writeFile(join(specDir, 'requirements.md'), '# Requirements B\n', 'utf-8');

@@ -481,7 +481,7 @@ export class MultiProjectDashboardServer {
         return reply.code(404).send({ error: 'Project not found' });
       }
 
-      const specDir = join(project.projectPath, '.spec-workflow', 'specs', name);
+      const specDir = join(project.projectPath, '.specflow', 'specs', name);
       const documents = ['requirements', 'design', 'tasks', 'readiness-report'];
       const result: Record<string, { content: string; lastModified: string } | null> = {};
 
@@ -511,7 +511,7 @@ export class MultiProjectDashboardServer {
       }
 
       // Use archive path instead of active specs path
-      const specDir = join(project.projectPath, '.spec-workflow', 'archive', 'specs', name);
+      const specDir = join(project.projectPath, '.specflow', 'archive', 'specs', name);
       const documents = ['requirements', 'design', 'tasks', 'readiness-report'];
       const result: Record<string, { content: string; lastModified: string } | null> = {};
 
@@ -551,10 +551,10 @@ export class MultiProjectDashboardServer {
         return reply.code(400).send({ error: 'Content must be a string' });
       }
 
-      const docPath = join(project.projectPath, '.spec-workflow', 'specs', name, `${document}.md`);
+      const docPath = join(project.projectPath, '.specflow', 'specs', name, `${document}.md`);
 
       try {
-        const specDir = join(project.projectPath, '.spec-workflow', 'specs', name);
+        const specDir = join(project.projectPath, '.specflow', 'specs', name);
         await fs.mkdir(specDir, { recursive: true });
         await fs.writeFile(docPath, content, 'utf-8');
         return { success: true, message: 'Document saved successfully' };
@@ -640,8 +640,8 @@ export class MultiProjectDashboardServer {
           candidateSet.add(join(project.projectPath, p));
 
           // 4) Legacy fallback for historical paths
-          if (!p.includes('.spec-workflow')) {
-            candidateSet.add(join(project.projectPath, '.spec-workflow', p));
+          if (!p.includes('.specflow')) {
+            candidateSet.add(join(project.projectPath, '.specflow', p));
           }
         }
 
@@ -964,7 +964,7 @@ export class MultiProjectDashboardServer {
         return reply.code(400).send({ error: 'Invalid steering document name' });
       }
 
-      const docPath = join(project.projectPath, '.spec-workflow', 'steering', `${name}.md`);
+      const docPath = join(project.projectPath, '.specflow', 'steering', `${name}.md`);
 
       try {
         const content = await readFile(docPath, 'utf-8');
@@ -1000,7 +1000,7 @@ export class MultiProjectDashboardServer {
         return reply.code(400).send({ error: 'Content must be a string' });
       }
 
-      const steeringDir = join(project.projectPath, '.spec-workflow', 'steering');
+      const steeringDir = join(project.projectPath, '.specflow', 'steering');
       const docPath = join(steeringDir, `${name}.md`);
 
       try {
@@ -1027,7 +1027,7 @@ export class MultiProjectDashboardServer {
           return reply.code(404).send({ error: 'Spec or tasks not found' });
         }
 
-        const tasksPath = join(project.projectPath, '.spec-workflow', 'specs', name, 'tasks.md');
+        const tasksPath = join(project.projectPath, '.specflow', 'specs', name, 'tasks.md');
         const tasksContent = await readFile(tasksPath, 'utf-8');
         const parseResult = parseTasksFromMarkdown(tasksContent);
 
@@ -1063,7 +1063,7 @@ export class MultiProjectDashboardServer {
       }
 
       try {
-        const tasksPath = join(project.projectPath, '.spec-workflow', 'specs', name, 'tasks.md');
+        const tasksPath = join(project.projectPath, '.specflow', 'specs', name, 'tasks.md');
 
         let tasksContent: string;
         try {
@@ -1127,7 +1127,7 @@ export class MultiProjectDashboardServer {
           return reply.code(400).send({ error: 'artifacts field is REQUIRED. Include apiEndpoints, components, functions, classes, or integrations in the artifacts object.' });
         }
 
-        const specPath = join(project.projectPath, '.spec-workflow', 'specs', name);
+        const specPath = join(project.projectPath, '.specflow', 'specs', name);
         const logManager = new ImplementationLogManager(specPath);
         const entry = await logManager.addLogEntry(logData);
 
@@ -1149,7 +1149,7 @@ export class MultiProjectDashboardServer {
       }
 
       try {
-        const specPath = join(project.projectPath, '.spec-workflow', 'specs', name);
+        const specPath = join(project.projectPath, '.specflow', 'specs', name);
         const logManager = new ImplementationLogManager(specPath);
         let logs = await logManager.getAllLogs();
 
@@ -1176,7 +1176,7 @@ export class MultiProjectDashboardServer {
       }
 
       try {
-        const specPath = join(project.projectPath, '.spec-workflow', 'specs', name);
+        const specPath = join(project.projectPath, '.specflow', 'specs', name);
         const logManager = new ImplementationLogManager(specPath);
         const stats = await logManager.getTaskStats(taskId);
 
@@ -1427,7 +1427,7 @@ export class MultiProjectDashboardServer {
       const project = this.projectManager.getProject(projectId);
       if (!project) return;
 
-      const tasksPath = join(project.projectPath, '.spec-workflow', 'specs', specName, 'tasks.md');
+      const tasksPath = join(project.projectPath, '.specflow', 'specs', specName, 'tasks.md');
       const tasksContent = await readFile(tasksPath, 'utf-8');
       const parseResult = parseTasksFromMarkdown(tasksContent);
 
@@ -1451,7 +1451,7 @@ export class MultiProjectDashboardServer {
       const project = this.projectManager.getProject(projectId);
       if (!project) return;
 
-      const specPath = join(project.projectPath, '.spec-workflow', 'specs', specName);
+      const specPath = join(project.projectPath, '.specflow', 'specs', specName);
       const logManager = new ImplementationLogManager(specPath);
       const logs = await logManager.getAllLogs();
 

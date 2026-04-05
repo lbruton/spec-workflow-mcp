@@ -1,7 +1,7 @@
 # Spec Workflow MCP
 
 [![npm version](https://img.shields.io/npm/v/@pimzino/spec-workflow-mcp)](https://www.npmjs.com/package/@pimzino/spec-workflow-mcp)
-[![VSCode Extension](https://vsmarketplacebadges.dev/version-short/Pimzino.spec-workflow-mcp.svg)](https://marketplace.visualstudio.com/items?itemName=Pimzino.spec-workflow-mcp)
+[![VSCode Extension](https://vsmarketplacebadges.dev/version-short/Pimzino.specflow-mcp.svg)](https://marketplace.visualstudio.com/items?itemName=Pimzino.specflow-mcp)
 
 一个 Model Context Protocol (MCP) 服务器，用于结构化的规格驱动开发，配备实时仪表板和 VSCode 扩展。
 
@@ -70,7 +70,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 
 **选项 B：VSCode 扩展**（推荐给 VSCode 用户）
 
-从 VSCode 市场安装 [Spec Workflow MCP Extension](https://marketplace.visualstudio.com/items?itemName=Pimzino.spec-workflow-mcp)。
+从 VSCode 市场安装 [Spec Workflow MCP Extension](https://marketplace.visualstudio.com/items?itemName=Pimzino.specflow-mcp)。
 
 ## 📝 使用方法
 
@@ -225,7 +225,7 @@ claude mcp add spec-workflow cmd.exe /c "npx @pimzino/spec-workflow-mcp@latest /
 
 添加到您的 `~/.codex/config.toml` 配置文件：
 ```toml
-[mcp_servers.spec-workflow]
+[mcp_servers.specflow]
 command = "npx"
 args = ["-y", "@pimzino/spec-workflow-mcp@latest", "/path/to/your/project"]
 ```
@@ -242,7 +242,7 @@ docker-compose up --build
 
 # 或使用 Docker CLI
 docker build -f containers/Dockerfile -t spec-workflow-mcp .
-docker run -p 5000:5000 -v "./workspace/.spec-workflow:/workspace/.spec-workflow:rw" spec-workflow-mcp
+docker run -p 5000:5000 -v "./workspace/.specflow:/workspace/.specflow:rw" spec-workflow-mcp
 ```
 
 仪表板将可通过以下地址访问：http://localhost:5000
@@ -254,7 +254,7 @@ docker run -p 5000:5000 -v "./workspace/.spec-workflow:/workspace/.spec-workflow
 对于沙盒环境（例如，使用 `sandbox_mode=workspace-write` 的 Codex CLI），其中 `$HOME` 为只读，使用 `SPEC_WORKFLOW_HOME` 环境变量将全局状态文件重定向到可写位置：
 
 ```bash
-SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
+SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@latest /workspace
 ```
 
 [查看配置指南 →](docs/CONFIGURATION.zh.md#environment-variables)
@@ -274,7 +274,7 @@ SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx -y @pimzino/spec-workflow-m
 
 ```
 your-project/
-  .spec-workflow/
+  .specflow/
     approvals/
     archive/
     specs/

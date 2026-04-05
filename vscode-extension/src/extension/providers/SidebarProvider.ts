@@ -363,7 +363,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             
             if (result === 'View Approval') {
               // First, ensure the sidebar is visible
-              await vscode.commands.executeCommand('workbench.view.extension.spec-workflow');
+              await vscode.commands.executeCommand('workbench.view.extension.specflow');
               
               // Small delay to ensure the webview is initialized
               setTimeout(async () => {
@@ -1051,8 +1051,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         canSelectFiles: false,
         canSelectFolders: true,
         canSelectMany: false,
-        openLabel: 'Select .spec-workflow Location',
-        title: 'Select folder containing .spec-workflow'
+        openLabel: 'Select .specflow Location',
+        title: 'Select folder containing .specflow'
       });
 
       if (result && result.length > 0) {

@@ -188,7 +188,7 @@ Spec Workflow enthält Templates für:
 
 ### Benutzerdefinierte Templates
 
-Erstellen Sie Ihre eigenen Templates in `.spec-workflow/templates/`:
+Erstellen Sie Ihre eigenen Templates in `.specflow/templates/`:
 
 ```markdown
 # Benutzerdefiniertes Feature-Template

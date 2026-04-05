@@ -242,7 +242,7 @@ export class SpecWatcher {
   
   constructor(projectPath: string, parser: SpecParser) {
     this.watcher = chokidar.watch(
-      join(projectPath, '.spec-workflow'),
+      join(projectPath, '.specflow'),
       {
         ignored: /(^|[\/\\])\../, // Ignore hidden files
         persistent: true,

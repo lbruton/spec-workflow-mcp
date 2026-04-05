@@ -58,7 +58,7 @@ Options:
 Examples:
   npm run validate:mdx
   npm run validate:mdx -- --spec create-listener-feature
-  npm run validate:mdx -- --file .spec-workflow/specs/my-spec/requirements.md
+  npm run validate:mdx -- --file .specflow/specs/my-spec/requirements.md
 `);
 }
 
@@ -111,12 +111,12 @@ async function getFilesToValidate(options: CliOptions): Promise<string[]> {
   }
 
   if (options.specName) {
-    const specDir = join(projectPath, '.spec-workflow', 'specs', options.specName);
+    const specDir = join(projectPath, '.specflow', 'specs', options.specName);
     return collectMarkdownFiles(specDir);
   }
 
-  const specsDir = join(projectPath, '.spec-workflow', 'specs');
-  const steeringDir = join(projectPath, '.spec-workflow', 'steering');
+  const specsDir = join(projectPath, '.specflow', 'specs');
+  const steeringDir = join(projectPath, '.specflow', 'steering');
 
   const [specFiles, steeringFiles] = await Promise.all([
     collectMarkdownFiles(specsDir),

@@ -34,12 +34,12 @@ async function fileExists(filePath: string): Promise<boolean> {
 }
 
 /**
- * Read a default template by name, checking the project's .spec-workflow/templates/
+ * Read a default template by name, checking the project's .specflow/templates/
  * first, then falling back to the bundled src/markdown/templates/.
  */
 async function readDefaultTemplate(projectPath: string, templateName: string): Promise<string> {
   // Primary: project's copied templates
-  const projectTemplate = join(projectPath, '.spec-workflow', 'templates', `${templateName}.md`);
+  const projectTemplate = join(projectPath, '.specflow', 'templates', `${templateName}.md`);
   const content = await safeReadFile(projectTemplate);
   if (content !== null) {
     return content;
@@ -202,7 +202,7 @@ function replaceTasksClosingSection(template: string, conventions: ProjectConven
 /**
  * Generate project-specific user-templates from detected conventions.
  *
- * Reads the current default templates (from .spec-workflow/templates/ or bundled fallback),
+ * Reads the current default templates (from .specflow/templates/ or bundled fallback),
  * then replaces the Testing Strategy and Standard Closing Tasks sections with
  * project-specific content based on the detected conventions.
  */
@@ -222,7 +222,7 @@ export async function generateUserTemplates(
 }
 
 /**
- * Write generated user-templates to `.spec-workflow/user-templates/`.
+ * Write generated user-templates to `.specflow/user-templates/`.
  *
  * IMPORTANT: If user-templates already exist, this function returns early
  * without overwriting them. Users own their user-templates once created.
@@ -231,7 +231,7 @@ export async function writeUserTemplates(
   projectPath: string,
   templates: GeneratedTemplates,
 ): Promise<void> {
-  const userTemplatesDir = join(projectPath, '.spec-workflow', 'user-templates');
+  const userTemplatesDir = join(projectPath, '.specflow', 'user-templates');
   const designPath = join(userTemplatesDir, 'design-template.md');
   const tasksPath = join(userTemplatesDir, 'tasks-template.md');
 
