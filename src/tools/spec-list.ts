@@ -54,7 +54,10 @@ function determinePhaseAndStatus(spec: { phases: any; taskProgress?: any }): { c
   if (!spec.phases.tasks.exists) {
     return { currentPhase: 'tasks', overallStatus: 'tasks-needed' };
   }
-  if (spec.phases.readinessReport && !spec.phases.readinessReport.exists) {
+  if (
+    spec.phases.readinessReport &&
+    (!spec.phases.readinessReport.exists || !spec.phases.readinessReport.approved)
+  ) {
     return { currentPhase: 'readiness-gate', overallStatus: 'readiness-gate-needed' };
   }
   if (spec.taskProgress && spec.taskProgress.completed === spec.taskProgress.total && spec.taskProgress.total > 0) {

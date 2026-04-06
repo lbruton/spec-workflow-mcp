@@ -76,7 +76,7 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
     } else if (!spec.phases.tasks.exists) {
       currentPhase = 'tasks';
       overallStatus = 'tasks-needed';
-    } else if (!spec.phases.readinessReport.exists) {
+    } else if (!spec.phases.readinessReport.exists || !spec.phases.readinessReport.approved) {
       currentPhase = 'readiness-gate';
       overallStatus = 'readiness-gate-needed';
     } else if (spec.taskProgress && spec.taskProgress.pending > 0) {
@@ -130,7 +130,13 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
       },
       {
         name: 'Readiness Gate',
-        status: spec.phases.readinessReport.exists ? 'completed' : (spec.phases.tasks.exists ? 'pending' : 'not-started'),
+        status: !spec.phases.tasks.exists
+          ? 'not-started'
+          : spec.phases.readinessReport.approved
+            ? 'approved'
+            : spec.phases.readinessReport.exists
+              ? 'created'
+              : 'pending',
         lastModified: spec.phases.readinessReport.lastModified
       },
       {

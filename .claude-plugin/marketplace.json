@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "specflow",
-      "version": "3.2.0",
+      "version": "3.5.10",
       "description": "Spec-driven development framework with structured lifecycle, governance gates, and real-time dashboard.",
       "author": {
         "name": "lbruton"

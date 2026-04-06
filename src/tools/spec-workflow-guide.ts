@@ -23,7 +23,7 @@ export async function specWorkflowGuideHandler(args: any, context: ToolContext):
   // Dashboard URL is populated from registry in server.ts
   const dashboardMessage = context.dashboardUrl ?
     `Monitor progress on dashboard: ${context.dashboardUrl}` :
-    'Please start the dashboard with: spec-workflow-mcp --dashboard';
+    'Please start the dashboard with: specflow --dashboard';
 
   return {
     success: true,
@@ -35,7 +35,7 @@ export async function specWorkflowGuideHandler(args: any, context: ToolContext):
     },
     nextSteps: [
       'Follow sequence: Requirements → Design → Tasks → Implementation',
-      'Load templates with get-template-context first',
+      'Read the current phase template from the resolved workflow root',
       'Request approval after each document',
       'Use MCP tools only',
       dashboardMessage

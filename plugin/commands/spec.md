@@ -22,14 +22,14 @@ Resuming a spec does NOT mean "wing it." It means:
 
 1. **Call `spec-workflow-guide`** — load the workflow. Every time. Even if you think you know the workflow.
 2. **Call `spec-status`** — check which phase the spec is in and what's been completed.
-3. **Read the template** for the current phase (from `.spec-workflow/user-templates/` first, then `.spec-workflow/templates/`). Do not write spec documents from memory or by guessing the format.
+3. **Read the template** for the current phase from the resolved workflow root `templates/` directory. Do not write spec documents from memory or by guessing the format.
 4. **Use `approvals`** — request dashboard approval after writing each document. Never accept verbal approval. Never skip the approval → poll → delete cycle.
 5. **Use `log-implementation`** — log every task completion with full artifacts. Never mark `[x]` without a successful log call.
 6. **Use `spec-list`** — find the existing spec by issue ID before assuming a spec name or directory structure.
 
 **Common violations this rule prevents:**
 - Writing a `requirements.md` from scratch without reading the template → produces documents missing required sections (References, User Stories, Acceptance Criteria, Non-Functional Requirements)
-- Writing `tasks.md` without reading the user-template → produces tasks missing `_Prompt`, `_Leverage`, `_Requirements` fields, VERSION CHECKOUT GATE, and Standard Closing Tasks
+- Writing `tasks.md` without reading the resolved workflow template → produces tasks missing `_Prompt`, `_Leverage`, `_Requirements` fields, VERSION CHECKOUT GATE, and Standard Closing Tasks
 - Skipping `approvals` and asking the user "does this look good?" → verbal approval is never valid
 - Resuming Phase 4 without calling `spec-status` → leads to re-implementing completed tasks or missing in-progress state
 - Editing spec files directly without knowing the current approval state → overwrites pending approvals
@@ -115,7 +115,7 @@ spec-list query: "{kebab-title keywords}"
 ### Legacy fallback: directory listing
 
 ```bash
-ls .spec-workflow/specs/{specName}/ 2>/dev/null
+spec-list query: "{ISSUE-ID}"
 ```
 
 ### Decision
@@ -124,7 +124,7 @@ ls .spec-workflow/specs/{specName}/ 2>/dev/null
 - Call `spec-status` with the matched `specName` to see phase progress
 - Display current state (phase, task completion counts, pending approvals)
 - **MANDATORY before resuming any phase:** Call `spec-workflow-guide` to reload the full workflow procedure. Do NOT rely on memory of how the workflow works.
-- **MANDATORY before writing/editing any phase document:** Read the template for that phase from `.spec-workflow/user-templates/` (preferred) or `.spec-workflow/templates/` (fallback). Do NOT write from memory.
+- **MANDATORY before writing/editing any phase document:** Read the template for that phase from the resolved workflow root `templates/` directory. Do NOT write from memory.
 - If `--resume` flag was passed, jump directly to the current phase (but still load guide + template first)
 - Otherwise ask: "Resume at current phase, or restart from scratch?"
 - If Phase 4 in progress, jump to Step 5 (Implementation)
@@ -137,9 +137,9 @@ ls .spec-workflow/specs/{specName}/ 2>/dev/null
 
 | Resuming Phase | Required MCP calls before any edits |
 |---|---|
-| Phase 1 (Requirements) | `spec-workflow-guide` → `spec-status` → read `user-templates/requirements-template.md` or `templates/requirements-template.md` |
-| Phase 2 (Design) | `spec-workflow-guide` → `spec-status` → read `user-templates/design-template.md` or `templates/design-template.md` → read existing `requirements.md` |
-| Phase 3 (Tasks) | `spec-workflow-guide` → `spec-status` → read `user-templates/tasks-template.md` or `templates/tasks-template.md` → read existing `requirements.md` + `design.md` |
+| Phase 1 (Requirements) | `spec-workflow-guide` → `spec-status` → read `templates/requirements-template.md` from the resolved workflow root |
+| Phase 2 (Design) | `spec-workflow-guide` → `spec-status` → read `templates/design-template.md` from the resolved workflow root → read existing `requirements.md` |
+| Phase 3 (Tasks) | `spec-workflow-guide` → `spec-status` → read `templates/tasks-template.md` from the resolved workflow root → read existing `requirements.md` + `design.md` |
 | Phase 4 (Implementation) | `spec-workflow-guide` → `spec-status` → read existing `tasks.md` → check Implementation Logs directory |
 
 Skipping any of these calls is a workflow violation.
@@ -157,7 +157,7 @@ Skipping any of these calls is a workflow violation.
 
 2. **Read requirements template (MANDATORY — do NOT write from memory):**
    ```bash
-   cat .spec-workflow/user-templates/requirements-template.md 2>/dev/null || cat .spec-workflow/templates/requirements-template.md
+   cat <workflowRoot>/templates/requirements-template.md
    ```
 
 3. **Search mem0 for prior context:**
@@ -182,14 +182,14 @@ Skipping any of these calls is a workflow violation.
 
 6. **Write requirements.md:**
    ```
-   .spec-workflow/specs/{specName}/requirements.md
+   <workflowRoot>/specs/{specName}/requirements.md
    ```
 
 7. **Request dashboard approval:**
    ```
    approvals action:"request"
      title: "Requirements: {issue title}"
-     filePath: ".spec-workflow/specs/{specName}/requirements.md"
+     filePath: "specs/{specName}/requirements.md"
      type: "document"
      category: "spec"
      categoryName: "{specName}"
@@ -218,7 +218,7 @@ Skipping any of these calls is a workflow violation.
 
 2. **Read design template (MANDATORY — do NOT write from memory):**
    ```bash
-   cat .spec-workflow/user-templates/design-template.md 2>/dev/null || cat .spec-workflow/templates/design-template.md
+   cat <workflowRoot>/templates/design-template.md
    ```
 
 3. **Reference requirements.md and Impact Report** from Step 2.
@@ -229,7 +229,7 @@ Skipping any of these calls is a workflow violation.
 
 5. **Write design.md:**
    ```
-   .spec-workflow/specs/{specName}/design.md
+   <workflowRoot>/specs/{specName}/design.md
    ```
 
 6. **Request dashboard approval** (same pattern as Step 2 — request → poll → delete on approval).
@@ -240,7 +240,7 @@ Skipping any of these calls is a workflow violation.
 
 ## Step 4: Phase 3 — Tasks
 
-> **SESSION BOUNDARY RULE:** If you are entering this phase from a handoff or new session, you MUST: (1) call `spec-workflow-guide`, (2) call `spec-status`, (3) read the tasks template (user-templates first!), (4) read the existing `requirements.md` + `design.md`. The tasks template contains critical project-specific patterns, gates, and prompt structures that CANNOT be improvised.
+> **SESSION BOUNDARY RULE:** If you are entering this phase from a handoff or new session, you MUST: (1) call `spec-workflow-guide`, (2) call `spec-status`, (3) read the tasks template from the resolved workflow root, (4) read the existing `requirements.md` + `design.md`. The tasks template contains critical project-specific patterns, gates, and prompt structures that CANNOT be improvised.
 
 1. **Load workflow guide (MANDATORY — every session):**
    ```
@@ -249,7 +249,7 @@ Skipping any of these calls is a workflow violation.
 
 2. **Read tasks template (MANDATORY — the user-template has project-specific gates):**
    ```bash
-   cat .spec-workflow/user-templates/tasks-template.md 2>/dev/null || cat .spec-workflow/templates/tasks-template.md
+   cat <workflowRoot>/templates/tasks-template.md
    ```
 
 3. **Reference requirements.md + design.md.**
@@ -263,7 +263,7 @@ Skipping any of these calls is a workflow violation.
 
 4. **Write tasks.md:**
    ```
-   .spec-workflow/specs/{specName}/tasks.md
+   <workflowRoot>/specs/{specName}/tasks.md
    ```
 
 5. **Request dashboard approval** (same pattern as Steps 2–3).
@@ -327,28 +327,28 @@ For each pending task (or parallel batch of independent tasks):
 
    #### b) Check prior implementation logs
    ```bash
-   ls ".spec-workflow/specs/{specName}/Implementation Logs/" 2>/dev/null
+   ls "<workflowRoot>/specs/{specName}/Implementation Logs/" 2>/dev/null
    ```
 
    #### c) Dispatch implementer subagent
    Use the Agent tool with:
    - The full `_Prompt` text from the task
    - All `_Leverage` file paths
-   - Reference: `.spec-workflow/templates/implementer-prompt-template.md` (if exists)
+   - Reference: `<workflowRoot>/templates/implementer-prompt-template.md` (if exists)
    - **Inject specialized role context** based on the task's File Touch Map (see Specialized Agent Roles below)
    - Subagent implements, tests, commits, and self-reviews
    - **Main context does NOT write implementation code**
 
    #### d) Dispatch spec compliance reviewer
    Use the Agent tool with:
-   - Reference: `.spec-workflow/templates/spec-reviewer-template.md` (if exists)
+   - Reference: `<workflowRoot>/templates/spec-reviewer-template.md` (if exists)
    - Reads actual code changes vs task requirements
    - If fail → dispatch implementer again to fix → re-review
    - Must pass before proceeding
 
    #### e) Dispatch code quality reviewer
    Use the Agent tool with:
-   - Reference: `.spec-workflow/templates/code-quality-reviewer-template.md` (if exists)
+   - Reference: `<workflowRoot>/templates/code-quality-reviewer-template.md` (if exists)
    - Checks architecture, error handling, testing, production readiness
    - If Critical or Important issues found → fix → re-review
    - Must pass before proceeding
@@ -481,7 +481,7 @@ After all implementation tasks are `[x]` and logged, two gates must pass before 
 ### a) Test Authoring — dispatch test author agent
 
 Dispatch a subagent with:
-- All implementation logs for this spec (read from `.spec-workflow/specs/{specName}/Implementation Logs/`)
+- All implementation logs for this spec (read from `<workflowRoot>/specs/{specName}/Implementation Logs/`)
 - The `browserbase-test-maintenance` skill
 - Instructions: "Review the implementation logs. Author new test steps that cover the new or changed behavior. Add steps to the existing test suite."
 

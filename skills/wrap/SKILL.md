@@ -35,7 +35,7 @@ gh pr list --state open --json number,title,headRefName,state,mergeStateStatus
 ```
 
 Also check spec-workflow state if the project uses it:
-- If `.spec-workflow/specs/` exists, use the **spec-status** tool to check for in-progress tasks
+- If `.specflow/config.json` exists, use the **spec-status** tool to check for in-progress tasks
 - Look for any tasks marked `[-]` (in-progress) that need to be completed or reverted
 
 **Report the status** before proceeding. If there are blockers (uncommitted files, unmerged PRs, in-progress tasks), present them and ask what to do.

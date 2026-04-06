@@ -2,6 +2,7 @@ import { Prompt, PromptMessage } from '@modelcontextprotocol/sdk/types.js';
 import { PromptDefinition } from './types.js';
 import { ToolContext } from '../types.js';
 import { PathUtils } from '../core/path-utils.js';
+import { SpecParser } from '../core/parser.js';
 
 const prompt: Prompt = {
   name: 'implement-task',
@@ -34,6 +35,20 @@ async function handler(args: Record<string, any>, context: ToolContext): Promise
   const templatesDir = `${workflowRoot}/templates`;
   const tasksFile = `${specDir}/tasks.md`;
   const logsDir = `${specDir}/Implementation Logs`;
+
+  const parser = new SpecParser(context.projectPath);
+  const spec = await parser.getSpec(specName);
+  if (!spec) {
+    throw new Error(`Specification "${specName}" not found. Use spec-list or spec-status first.`);
+  }
+  if (!spec.phases.tasks.exists) {
+    throw new Error(`Cannot implement tasks for "${specName}" before tasks.md exists.`);
+  }
+  if (!spec.phases.readinessReport.exists || !spec.phases.readinessReport.approved) {
+    throw new Error(
+      `PHASE GATE: Cannot start implementation for "${specName}" until readiness-report.md exists and is approved in the dashboard.`
+    );
+  }
 
   const messages: PromptMessage[] = [
     {

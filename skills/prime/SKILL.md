@@ -73,8 +73,8 @@ Run these checks (all instant, run in parallel):
 # Has wiki?
 [ -d "wiki/" ] && echo "hasWiki=true" || echo "hasWiki=false"
 
-# Has spec-workflow?
-[ -d ".spec-workflow/specs/" ] && echo "hasSpecs=true" || echo "hasSpecs=false"
+# Has specflow config?
+[ -f ".specflow/config.json" ] && echo "hasSpecs=true" || echo "hasSpecs=false"
 
 # Has version lock?
 [ -f "devops/version.lock" ] && echo "hasVersionLock=true" || echo "hasVersionLock=false"
@@ -747,7 +747,7 @@ Not every project has every capability. Handle missing pieces:
 | CGC MCP disconnected | Note "CGC MCP unavailable — container may have restarted" in Index Health. Do NOT restart containers. |
 | CGC index job fails | Note "CGC re-index failed — Neo4j connection error" in Index Health. Continue without. |
 | No wiki/ | Skip wiki index check |
-| No .spec-workflow/ | Omit spec sections entirely |
+| No .specflow/config.json | Omit spec sections entirely |
 | No version.lock | Show "n/a" for version |
 | No undigested logs | Skip session-digest, note "All logs processed" |
 | Agent timeout | Note which agent timed out, continue with available data |

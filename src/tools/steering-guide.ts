@@ -32,7 +32,7 @@ export async function steeringGuideHandler(args: any, context: ToolContext): Pro
       'Create product.md first',
       'Then tech.md and structure.md',
       'Reference in future specs',
-      context.dashboardUrl ? `Dashboard: ${context.dashboardUrl}` : 'Start the dashboard with: spec-workflow-mcp --dashboard'
+      context.dashboardUrl ? `Dashboard: ${context.dashboardUrl}` : 'Start the dashboard with: specflow --dashboard'
     ]
   };
 }

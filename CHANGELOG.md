@@ -13,6 +13,16 @@ SpecFlow is a fork of [Pimzino/spec-workflow-mcp](https://github.com/Pimzino/spe
 
 - Renamed `.spec-workflow` directory to `.specflow` across all projects and configuration
 - Added backward compatibility fallback for legacy `.spec-workflow/` directories
+- Enforced readiness-gate approval before implementation is considered ready in MCP status and task prompts
+- Swept live plugin skills, commands, and templates to use resolved workflow-root paths and current `specflow` runtime references
+
+## [3.5.10] - 2026-04-05
+
+### Changed
+
+- Enforced approved `readiness-report.md` as the gate to implementation in MCP status/listing and implement-task guidance
+- Updated live skills, plugin command docs, and templates to reference resolved workflow-root paths instead of stale local `.spec-workflow` or user-template paths
+- Updated dashboard/package guidance strings from legacy `spec-workflow-mcp` references to `specflow`
 
 ## [3.1.0] - 2026-03-31
 

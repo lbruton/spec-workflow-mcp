@@ -13,10 +13,10 @@ Parse arguments: first argument is docType (product, tech, or structure), option
 
 ## Instructions
 
-1. Read the template at: `.spec-workflow/templates/<docType>-template.md`
-2. Check if steering docs exist at: `.spec-workflow/steering/`
+1. Read the template at the resolved workflow root: `templates/<docType>-template.md`
+2. Check if steering docs exist at: `steering/` under the resolved workflow root
 3. Create comprehensive content following the template structure
-4. Create the document at: `.spec-workflow/steering/<docType>.md`
+4. Create the document at: `steering/<docType>.md` under the resolved workflow root
 5. After creating, use the **approvals** MCP tool with `action:'request'` to get user approval
 
 ## Steering Document Types

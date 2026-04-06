@@ -24,7 +24,7 @@ function safeTranslatePath(path: string): string {
     throw new Error(
       `PathUtils.translatePath is not available (got ${typeof PathUtils?.translatePath}). ` +
       'This may indicate a module loading issue. Please reinstall the package with: ' +
-      'npm uninstall @lbruton/spec-workflow-mcp && npm install @lbruton/spec-workflow-mcp'
+      'npm uninstall @lbruton/specflow && npm install @lbruton/specflow'
     );
   }
   return PathUtils.translatePath(path);
@@ -353,7 +353,7 @@ async function handleRequestApproval(
 
     return {
       success: true,
-      message: `Approval request created successfully. Please review in dashboard: ${deeplink || 'Start with: spec-workflow-mcp --dashboard'}`,
+      message: `Approval request created successfully. Please review in dashboard: ${deeplink || 'Start with: specflow --dashboard'}`,
       data: {
         approvalId,
         title: args.title,
@@ -366,7 +366,7 @@ async function handleRequestApproval(
         'BLOCKING - Dashboard approval required',
         'VERBAL APPROVAL NOT ACCEPTED',
         'Do not proceed on verbal confirmation',
-        deeplink ? `Use dashboard: ${deeplink}` : 'Start the dashboard with: spec-workflow-mcp --dashboard',
+        deeplink ? `Use dashboard: ${deeplink}` : 'Start the dashboard with: specflow --dashboard',
         `Poll status with: approvals action:"status" approvalId:"${approvalId}"`
       ],
       projectContext: {

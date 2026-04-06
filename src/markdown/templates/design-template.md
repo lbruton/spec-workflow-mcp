@@ -4,7 +4,7 @@
 
 - **Issue:** PROJ-XXX
 - **GitHub PR:** [#NNN](https://github.com/owner/repo/pull/NNN)
-- **Spec Path:** `.spec-workflow/specs/{spec-name}/`
+- **Spec Path:** `specs/{spec-name}/` (under the resolved workflow root)
 
 ## Overview
 

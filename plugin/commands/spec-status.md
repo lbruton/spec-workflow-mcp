@@ -15,11 +15,11 @@ Parse arguments: optional specName to filter to one spec, optional --detailed fl
 
 If a specName is provided:
 1. Use the **spec-status** MCP tool with that specName
-2. If --detailed, also read `.spec-workflow/specs/<specName>/tasks.md` for full task breakdown
+2. If --detailed, also read `specs/<specName>/tasks.md` under the resolved workflow root for full task breakdown
 3. Check for pending approvals using the **approvals** MCP tool with `action:'status'`
 
 If no specName:
-1. List `.spec-workflow/specs/` to see all specifications
+1. Use the **spec-list** MCP tool to see all specifications
 2. Use the **spec-status** MCP tool for each specification
 3. Provide a consolidated overview of project progress
 
