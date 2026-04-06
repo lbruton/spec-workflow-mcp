@@ -208,7 +208,13 @@ mcp__mem0__add_memory(
 - Things Claude did: "Claude should..."
 - Codebase facts: passive voice or component name
 
-**Critical:** Always set BOTH `user_id` AND `agent_id`. Without `agent_id`, mem0 creates placeholder entity names.
+**Critical (SWF-90):** Always set `metadata.project: "<tag>"` — this is the only project-scoping
+field mem0 v1 API actually persists as queryable. The top-level `agent_id` parameter is silently
+dropped (records have `agent_id: null`). Setting both is fine — `agent_id` is a harmless intent
+signal, but `metadata.project` is what makes the record findable.
+
+**Note:** The "Alice" placeholder bug is unrelated — it comes from passing `messages=[{role: "user"}]`
+instead of `text=`. Always use `text=`.
 
 ### 4.2: Session Digest (human-readable report for DocVault)
 
@@ -367,7 +373,7 @@ Next session: <1-2 sentence suggestion for what to work on>
 - **Ask, don't assume**: At every decision point (commit/stash/discard, merge/wait), ask the user.
 - **No Haiku agents**: All summaries and digests are written by YOU (the current in-context model). Never dispatch a subagent for summarization.
 - **Idempotent**: Running /wrap twice should be safe. Check if retro/digest already ran before duplicating.
-- **mem0 writes require both user_id and agent_id**: Missing agent_id causes entity tracking issues.
+- **mem0 writes require `metadata.project: "<tag>"`** (SWF-90): top-level `agent_id` is silently dropped by the v1 API; `metadata.project` is the only queryable project-scoping field.
 - **DocVault commits go direct to main**: No PR needed for documentation updates.
 - **Never auto-delete uncommitted work**: Always ask first.
 - **The session isn't over until Phase 5 prints the recap.**

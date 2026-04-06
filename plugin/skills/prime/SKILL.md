@@ -204,12 +204,21 @@ even if agents fail, time out, or get skipped.
 
 **This step is mandatory.** A prime that does not query mem0 is not a valid prime.
 
+**SWF-90 — schema reality:** mem0 cloud v1 API does NOT persist top-level `agent_id`
+as a queryable field — it is `null` on every record. Project tag lives in
+`metadata.project`. **Do NOT** use `filters: {AND: [{agent_id: "<tag>"}]}` — that
+returns zero results. Run an unfiltered search and post-filter by `metadata.project`
+matching `<tag>` case-insensitively (legacy records have inconsistent casing like
+`SpecFlow` vs `specflow`). The canonical pattern is in
+`~/.claude/hooks/mem0-session-start.py:83-140` — fetch 4× the limit, then post-filter.
+
 ```
 mcp__mem0__search_memories(
   query="recent work decisions handoffs",
-  filters={"AND": [{"agent_id": "<tag>"}]},
-  limit=10
+  limit=30
 )
+# Then keep only memories where metadata.project.lower() == "<tag>".lower()
+# (or is in the variant set for <tag> from PROJECT_NAMES in mem0-session-start.py)
 ```
 
 Also run a second query for active state:
@@ -217,19 +226,20 @@ Also run a second query for active state:
 ```
 mcp__mem0__search_memories(
   query="active project state current focus blockers",
-  filters={"AND": [{"agent_id": "<tag>"}]},
-  limit=10
+  limit=30
 )
+# Same post-filter pattern.
 ```
 
-Store ALL results in `mem0_preload`. These memories will be merged with Phase 1.5's
+Store ALL post-filtered results in `mem0_preload`. These will be merged with Phase 1.5's
 keyword-targeted searches to produce the final "Where We Left Off" section.
 
-**If mem0 returns zero results for both queries:**
+**If post-filtered results are empty for both queries:**
 - Note `mem0_preload_empty=true` in the report
-- This is a RED FLAG — either mem0 is broken, the project tag is wrong, or no memories
-  have been saved for this project. Surface this prominently in the report header so
-  the user knows context is incomplete.
+- This is a RED FLAG — either mem0 is broken, the project tag is wrong/missing from
+  `~/.claude/mem0-projects.json`, the casing variants don't cover legacy records, or no
+  memories have actually been saved for this project. Surface this prominently in the
+  report header so the user knows context is incomplete.
 
 **If mem0 MCP is unavailable:**
 - Note `mem0_unavailable=true` in the report header
@@ -334,10 +344,11 @@ Run 1-2 targeted mem0 searches using keywords from the digest and new commits. m
 supplements the digest with retro learnings, workarounds, and cross-session decisions:
 
 ```
-mcp__mem0__search_memories(query="<keywords from digest next-steps + new commit topics>", filters={"AND": [{"agent_id": "<tag>"}]}, limit=5)
+mcp__mem0__search_memories(query="<keywords from digest next-steps + new commit topics>", limit=20)
+# Post-filter on metadata.project matching <tag> case-insensitively (SWF-90).
 ```
 
-If the project tag yields few results, try without `agent_id` for cross-project context.
+If the post-filtered results are sparse, run a second unfiltered search and merge for cross-project context.
 
 ### Step I.5: Produce delta report
 
@@ -537,12 +548,15 @@ decisions that Step 0.7's broad query would miss.
 Run 2-3 mem0 searches using the extracted keywords. Group related keywords into queries:
 
 ```
-mcp__mem0__search_memories(query="<keyword group 1 — e.g., feature/component names>", filters={"AND": [{"agent_id": "<tag>"}]}, limit=5)
-mcp__mem0__search_memories(query="<keyword group 2 — e.g., bug/issue terms>", filters={"AND": [{"agent_id": "<tag>"}]}, limit=5)
+mcp__mem0__search_memories(query="<keyword group 1 — e.g., feature/component names>", limit=20)
+mcp__mem0__search_memories(query="<keyword group 2 — e.g., bug/issue terms>", limit=20)
+# Post-filter on metadata.project matching <tag> case-insensitively (SWF-90).
+# The project tag's casing variants are listed in
+# ~/.claude/hooks/mem0-session-start.py PROJECT_NAMES — use the same set.
 ```
 
-If the project tag yields few results, also try without the agent_id filter for
-cross-project context (some decisions span repos).
+If post-filtered results are sparse, also run an unfiltered search for cross-project
+context (some decisions span repos).
 
 Deduplicate results and keep only memories that **add context beyond what the digest shows**
 (e.g., retro learnings from earlier sessions, known workarounds, blocked-on-external-dependency).
