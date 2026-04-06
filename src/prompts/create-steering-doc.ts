@@ -56,7 +56,14 @@ ${context.dashboardUrl ? `- Dashboard: ${context.dashboardUrl}` : ''}
 2. Check if steering docs exist at: ${steeringDir}/
 3. Create comprehensive content following the template structure
 4. Create the document at: ${steeringDir}/${docType}.md
-5. After creating, use approvals tool with action:'request' to get user approval
+5. After creating, request approval with EXACTLY these parameters:
+   - action: "request"
+   - title: "${docType} steering document"
+   - filePath: "steering/${docType}.md"
+   - type: "document"
+   - category: "steering"
+   - categoryName: "steering"
+6. Poll approval status until approved, then delete the approval before proceeding
 
 **File Paths:**
 - Template location: ${templatesDir}/${docType}-template.md

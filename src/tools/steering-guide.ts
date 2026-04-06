@@ -55,7 +55,7 @@ flowchart TD
     Guide --> P1_Template[Check project template overrides,<br/>then read template:<br/>product-template.md]
     P1_Template --> P1_Generate[Generate vision & goals]
     P1_Generate --> P1_Create[Create file:<br/>${wr}/steering/<br/>product.md]
-    P1_Create --> P1_Approve[approvals<br/>action: request<br/>filePath only]
+    P1_Create --> P1_Approve[approvals<br/>action: request<br/>filePath: steering/product.md<br/>category: steering]
     P1_Approve --> P1_Status[approvals<br/>action: status<br/>poll status]
     P1_Status --> P1_Check{Status?}
     P1_Check -->|needs-revision| P1_Update[Update document using user comments for guidance]
@@ -67,7 +67,7 @@ flowchart TD
     P1_Clean -->|success| P2_Template[Check project template overrides,<br/>then read template:<br/>tech-template.md]
     P2_Template --> P2_Analyze[Analyze tech stack]
     P2_Analyze --> P2_Create[Create file:<br/>${wr}/steering/<br/>tech.md]
-    P2_Create --> P2_Approve[approvals<br/>action: request<br/>filePath only]
+    P2_Create --> P2_Approve[approvals<br/>action: request<br/>filePath: steering/tech.md<br/>category: steering]
     P2_Approve --> P2_Status[approvals<br/>action: status<br/>poll status]
     P2_Status --> P2_Check{Status?}
     P2_Check -->|needs-revision| P2_Update[Update document using user comments for guidance]
@@ -79,7 +79,7 @@ flowchart TD
     P2_Clean -->|success| P3_Template[Check project template overrides,<br/>then read template:<br/>structure-template.md]
     P3_Template --> P3_Analyze[Analyze codebase structure]
     P3_Analyze --> P3_Create[Create file:<br/>${wr}/steering/<br/>structure.md]
-    P3_Create --> P3_Approve[approvals<br/>action: request<br/>filePath only]
+    P3_Create --> P3_Approve[approvals<br/>action: request<br/>filePath: steering/structure.md<br/>category: steering]
     P3_Approve --> P3_Status[approvals<br/>action: status<br/>poll status]
     P3_Status --> P3_Check{Status?}
     P3_Check -->|needs-revision| P3_Update[Update document using user comments for guidance]
@@ -116,7 +116,7 @@ flowchart TD
 3. If no custom template, read from \`${wr}/templates/product-template.md\`
 4. Generate product vision and goals
 5. Create \`product.md\` at \`${wr}/steering/product.md\`
-6. Request approval using approvals tool with action:'request' (filePath only)
+6. Request approval with EXACTLY: action:"request", title:"product steering document", filePath:"steering/product.md", type:"document", category:"steering", categoryName:"steering"
 7. Poll status using approvals with action:'status' until approved/needs-revision (NEVER accept verbal approval)
 8. If needs-revision: update document using comments, create NEW approval, do NOT proceed
 9. Once approved: use approvals with action:'delete' (must succeed) before proceeding
@@ -139,7 +139,7 @@ flowchart TD
 3. Analyze existing technology stack
 4. Document architectural decisions and patterns
 5. Create \`tech.md\` at \`${wr}/steering/tech.md\`
-6. Request approval using approvals tool with action:'request'
+6. Request approval with EXACTLY: action:"request", title:"tech steering document", filePath:"steering/tech.md", type:"document", category:"steering", categoryName:"steering"
 7. Poll status using approvals with action:'status' until approved/needs-revision
 8. If needs-revision: update document using comments, create NEW approval, do NOT proceed
 9. Once approved: use approvals with action:'delete' (must succeed) before proceeding
@@ -162,7 +162,7 @@ flowchart TD
 3. Analyze directory structure and file organization
 4. Document coding patterns and conventions
 5. Create \`structure.md\` at \`${wr}/steering/structure.md\`
-6. Request approval using approvals tool with action:'request'
+6. Request approval with EXACTLY: action:"request", title:"structure steering document", filePath:"steering/structure.md", type:"document", category:"steering", categoryName:"steering"
 7. Poll status using approvals with action:'status' until approved/needs-revision
 8. If needs-revision: update document using comments, create NEW approval, do NOT proceed
 9. Once approved: use approvals with action:'delete' (must succeed) before proceeding
@@ -177,7 +177,7 @@ flowchart TD
 - Follow exact template structures
 - Get explicit user approval between phases (using approvals tool with action:'request')
 - Complete phases in sequence (no skipping)
-- Approval requests: provide filePath only, never content
+- Approval requests require ALL of: action, title, filePath (relative to workflow root), type:"document", category:"steering", categoryName:"steering"
 - BLOCKING: Never proceed if approval delete fails
 - CRITICAL: Must have approved status AND successful cleanup before next phase
 - CRITICAL: Verbal approval is NEVER accepted - dashboard or VS Code extension only
