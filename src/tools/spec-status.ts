@@ -91,12 +91,22 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
     }
 
     // Read project conventions if available
+    // Check DocVault workflow root first, fall back to local .specflow/
+    const workflowRoot = PathUtils.getWorkflowRoot(translatedPath);
     let conventions: ProjectConventions | null = null;
     try {
       const { promises: fsPromises } = await import('fs');
-      const convPath = `${translatedPath}/.specflow/project-conventions.json`;
-      const convContent = await fsPromises.readFile(convPath, 'utf-8');
-      conventions = JSON.parse(convContent);
+      const convCandidates = [
+        `${workflowRoot}/project-conventions.json`,
+        `${translatedPath}/.specflow/project-conventions.json`,
+      ];
+      for (const convPath of convCandidates) {
+        try {
+          const convContent = await fsPromises.readFile(convPath, 'utf-8');
+          conventions = JSON.parse(convContent);
+          break;
+        } catch { /* try next */ }
+      }
     } catch {
       // No conventions file — use generic defaults
     }
@@ -159,38 +169,40 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
     ];
 
     // Next steps based on current phase
+    // Use workflow root for all path references in next steps
+    const wr = workflowRoot;
     const nextSteps = [];
     switch (currentPhase) {
       case 'requirements':
-        nextSteps.push('Read template: .specflow/templates/requirements-template-v*.md');
-        nextSteps.push('Create: .specflow/specs/{name}/requirements.md');
+        nextSteps.push(`Read template: ${wr}/templates/requirements-template.md`);
+        nextSteps.push(`Create: ${wr}/specs/{name}/requirements.md`);
         nextSteps.push('Request approval');
         break;
       case 'design':
-        nextSteps.push('Read template: .specflow/templates/design-template-v*.md');
-        nextSteps.push('Create: .specflow/specs/{name}/design.md');
+        nextSteps.push(`Read template: ${wr}/templates/design-template.md`);
+        nextSteps.push(`Create: ${wr}/specs/{name}/design.md`);
         nextSteps.push('Request approval');
         break;
       case 'tasks':
-        nextSteps.push('Read template: .specflow/templates/tasks-template-v*.md');
-        nextSteps.push('Create: .specflow/specs/{name}/tasks.md');
+        nextSteps.push(`Read template: ${wr}/templates/tasks-template.md`);
+        nextSteps.push(`Create: ${wr}/specs/{name}/tasks.md`);
         nextSteps.push('Request approval');
         break;
       case 'readiness-gate':
         nextSteps.push('Phase 3.9: Implementation Readiness Gate required before implementation');
         nextSteps.push('Cross-validate requirements.md + design.md + tasks.md for consistency');
-        nextSteps.push(`Create: .specflow/specs/${specName}/readiness-report.md`);
+        nextSteps.push(`Create: ${wr}/specs/${specName}/readiness-report.md`);
         nextSteps.push('Submit readiness-report.md for dashboard approval (NOT tasks.md)');
         nextSteps.push('Dashboard options: Approve (PASS), Concerns (proceed with risks), Reject (fix and re-run)');
         break;
       case 'implementation':
         if (spec.taskProgress && spec.taskProgress.pending > 0) {
-          nextSteps.push(`Read tasks: .specflow/specs/${specName}/tasks.md`);
+          nextSteps.push(`Read tasks: ${wr}/specs/${specName}/tasks.md`);
           nextSteps.push('Edit tasks.md: Change [ ] to [-] for task you start');
           nextSteps.push('Implement the task code');
           nextSteps.push('Edit tasks.md: Change [-] to [x] when completed');
         } else {
-          nextSteps.push(`Read tasks: .specflow/specs/${specName}/tasks.md`);
+          nextSteps.push(`Read tasks: ${wr}/specs/${specName}/tasks.md`);
           nextSteps.push('Begin implementation by marking first task [-]');
         }
         break;
@@ -273,7 +285,7 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
       nextSteps: [
         'Check if the specification exists',
         'Verify the project path',
-        'List directory .specflow/specs/ to see available specifications'
+        'Use spec-list tool to see available specifications'
       ]
     };
   }

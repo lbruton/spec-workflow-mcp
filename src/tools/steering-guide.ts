@@ -52,7 +52,7 @@ flowchart TD
     Start([Start: Setup steering docs]) --> Guide[steering-guide<br/>Load workflow instructions]
 
     %% Phase 1: Product
-    Guide --> P1_Template[Check user-templates first,<br/>then read template:<br/>product-template.md]
+    Guide --> P1_Template[Check project template overrides,<br/>then read template:<br/>product-template.md]
     P1_Template --> P1_Generate[Generate vision & goals]
     P1_Generate --> P1_Create[Create file:<br/>${wr}/steering/<br/>product.md]
     P1_Create --> P1_Approve[approvals<br/>action: request<br/>filePath only]
@@ -64,7 +64,7 @@ flowchart TD
     P1_Clean -->|failed| P1_Status
 
     %% Phase 2: Tech
-    P1_Clean -->|success| P2_Template[Check user-templates first,<br/>then read template:<br/>tech-template.md]
+    P1_Clean -->|success| P2_Template[Check project template overrides,<br/>then read template:<br/>tech-template.md]
     P2_Template --> P2_Analyze[Analyze tech stack]
     P2_Analyze --> P2_Create[Create file:<br/>${wr}/steering/<br/>tech.md]
     P2_Create --> P2_Approve[approvals<br/>action: request<br/>filePath only]
@@ -76,7 +76,7 @@ flowchart TD
     P2_Clean -->|failed| P2_Status
 
     %% Phase 3: Structure
-    P2_Clean -->|success| P3_Template[Check user-templates first,<br/>then read template:<br/>structure-template.md]
+    P2_Clean -->|success| P3_Template[Check project template overrides,<br/>then read template:<br/>structure-template.md]
     P3_Template --> P3_Analyze[Analyze codebase structure]
     P3_Analyze --> P3_Create[Create file:<br/>${wr}/steering/<br/>structure.md]
     P3_Create --> P3_Approve[approvals<br/>action: request<br/>filePath only]
@@ -102,7 +102,7 @@ flowchart TD
 **Purpose**: Define vision, goals, and user outcomes.
 
 **File Operations**:
-- Check for custom template: \`${wr}/user-templates/product-template.md\`
+- Check for custom template: \`${wr}/templates/product-template.md\`
 - Read template: \`${wr}/templates/product-template.md\` (if no custom template)
 - Create document: \`${wr}/steering/product.md\`
 
@@ -112,7 +112,7 @@ flowchart TD
 
 **Process**:
 1. Load steering guide for workflow overview
-2. Check for custom template at \`${wr}/user-templates/product-template.md\`
+2. Check for custom template at \`${wr}/templates/product-template.md\`
 3. If no custom template, read from \`${wr}/templates/product-template.md\`
 4. Generate product vision and goals
 5. Create \`product.md\` at \`${wr}/steering/product.md\`
@@ -126,7 +126,7 @@ flowchart TD
 **Purpose**: Document technology decisions and architecture.
 
 **File Operations**:
-- Check for custom template: \`${wr}/user-templates/tech-template.md\`
+- Check for custom template: \`${wr}/templates/tech-template.md\`
 - Read template: \`${wr}/templates/tech-template.md\` (if no custom template)
 - Create document: \`${wr}/steering/tech.md\`
 
@@ -134,7 +134,7 @@ flowchart TD
 - approvals: Manage approval workflow (actions: request, status, delete)
 
 **Process**:
-1. Check for custom template at \`${wr}/user-templates/tech-template.md\`
+1. Check for custom template at \`${wr}/templates/tech-template.md\`
 2. If no custom template, read from \`${wr}/templates/tech-template.md\`
 3. Analyze existing technology stack
 4. Document architectural decisions and patterns
@@ -149,7 +149,7 @@ flowchart TD
 **Purpose**: Map codebase organization and patterns.
 
 **File Operations**:
-- Check for custom template: \`${wr}/user-templates/structure-template.md\`
+- Check for custom template: \`${wr}/templates/structure-template.md\`
 - Read template: \`${wr}/templates/structure-template.md\` (if no custom template)
 - Create document: \`${wr}/steering/structure.md\`
 
@@ -157,7 +157,7 @@ flowchart TD
 - approvals: Manage approval workflow (actions: request, status, delete)
 
 **Process**:
-1. Check for custom template at \`${wr}/user-templates/structure-template.md\`
+1. Check for custom template at \`${wr}/templates/structure-template.md\`
 2. If no custom template, read from \`${wr}/templates/structure-template.md\`
 3. Analyze directory structure and file organization
 4. Document coding patterns and conventions
@@ -172,7 +172,7 @@ flowchart TD
 ## Workflow Rules
 
 - Create documents directly at specified file paths
-- Check for custom templates in \`${wr}/user-templates/\` first
+- Check for custom templates in \`${wr}/templates/\` first
 - Read templates from \`${wr}/templates/\` directory if no custom template exists
 - Follow exact template structures
 - Get explicit user approval between phases (using approvals tool with action:'request')

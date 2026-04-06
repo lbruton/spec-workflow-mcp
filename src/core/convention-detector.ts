@@ -1,5 +1,6 @@
 import { readFile, readdir, stat, mkdir, writeFile } from 'fs/promises';
 import { join } from 'path';
+import { PathUtils } from './path-utils.js';
 
 export interface ProjectConventions {
   schemaVersion: 1;
@@ -327,11 +328,16 @@ export async function detectConventions(projectPath: string): Promise<ProjectCon
 }
 
 /**
- * Write detected conventions to `.specflow/project-conventions.json`.
- * Creates the `.specflow` directory if it does not exist.
+ * Write detected conventions to the workflow root.
+ *
+ * When DocVault is configured: writes to DocVault specflow root.
+ * Otherwise: writes to local `.specflow/`.
  */
 export async function writeConventions(projectPath: string, conventions: ProjectConventions): Promise<void> {
-  const dir = join(projectPath, '.specflow');
+  // Use DocVault workflow root when configured, otherwise local .specflow/
+  const dir = PathUtils.isDocVaultConfigured()
+    ? PathUtils.getWorkflowRoot(projectPath)
+    : join(projectPath, '.specflow');
   try {
     await mkdir(dir, { recursive: true });
   } catch {

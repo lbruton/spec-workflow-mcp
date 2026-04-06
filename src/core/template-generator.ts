@@ -311,7 +311,10 @@ export async function generateUserTemplates(
 }
 
 /**
- * Write generated user-templates to `.specflow/user-templates/`.
+ * Write generated user-templates to the project template override directory.
+ *
+ * When DocVault is configured: writes to DocVault specflow project templates dir.
+ * Otherwise: writes to local `.specflow/user-templates/`.
  *
  * IMPORTANT: If user-templates already exist, this function returns early
  * without overwriting them. Users own their user-templates once created.
@@ -320,7 +323,10 @@ export async function writeUserTemplates(
   projectPath: string,
   templates: GeneratedTemplates,
 ): Promise<void> {
-  const userTemplatesDir = join(projectPath, '.specflow', 'user-templates');
+  // Use DocVault workflow root when configured, otherwise local .specflow/user-templates/
+  const userTemplatesDir = PathUtils.isDocVaultConfigured()
+    ? join(PathUtils.getWorkflowRoot(projectPath), 'templates')
+    : join(projectPath, '.specflow', 'user-templates');
   const designPath = join(userTemplatesDir, 'design-template.md');
   const tasksPath = join(userTemplatesDir, 'tasks-template.md');
 
