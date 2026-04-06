@@ -107,7 +107,7 @@ in DocVault and contain structured session summaries with goals, decisions, and 
 ```bash
 # Find the most recent digest for this project
 DIGEST_DIR="/Volumes/DATA/GitHub/DocVault/Daily Digests/<tag>"
-LATEST_DIGEST=$(ls -t "$DIGEST_DIR"/*.md 2>/dev/null | head -1)
+LATEST_DIGEST=$(ls "$DIGEST_DIR"/*.md 2>/dev/null | grep -v _Index | sort -r | head -1)
 if [ -n "$LATEST_DIGEST" ]; then
   echo "latest_digest=$LATEST_DIGEST"
   echo "latest_digest_date=$(basename "$LATEST_DIGEST" .md)"
@@ -146,7 +146,7 @@ Store the list of undigested log files.
 ```bash
 # Find most recent prime report for this project
 PRIME_DIR="/Volumes/DATA/GitHub/DocVault/Projects/<name>/prime"
-LATEST_PRIME=$(ls -t "$PRIME_DIR"/*.md 2>/dev/null | head -1)
+LATEST_PRIME=$(ls "$PRIME_DIR"/*.md 2>/dev/null | grep -v _Index | sort -r | head -1)
 if [ -n "$LATEST_PRIME" ]; then
   echo "latest_prime=$LATEST_PRIME"
   echo "latest_prime_ts=$(basename "$LATEST_PRIME" .md)"

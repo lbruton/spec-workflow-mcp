@@ -63,6 +63,10 @@ export class SpecWorkflowMCPServer {
     this.workspacePath = workspacePath;
     this.lang = lang;
 
+    // Track whether project initialization succeeded (degraded mode if not)
+    let projectInitialized = false;
+    let initError: string | undefined;
+
     try {
       // Validate project path
       await validateProjectPath(this.projectPath);
@@ -94,57 +98,76 @@ export class SpecWorkflowMCPServer {
         workflowRootPath: this.projectPath
       });
       console.error(`Project registered: ${projectId}`);
+      projectInitialized = true;
 
-      // Try to get the dashboard URL from session manager
-      let dashboardUrl: string | undefined = undefined;
-      try {
-        const sessionManager = new DashboardSessionManager();
-        const dashboardSession = await sessionManager.getDashboardSession();
-        if (dashboardSession) {
-          dashboardUrl = dashboardSession.url;
-        }
-      } catch (error) {
-        // Dashboard not running, continue without it
+    } catch (error: any) {
+      // Project initialization failed — enter degraded mode instead of crashing.
+      // This allows the MCP server to start and report the error via tool calls,
+      // rather than silently dying and leaving the client with no connection.
+      initError = error.message || String(error);
+      console.error(`WARNING: Project initialization failed — starting in degraded mode.`);
+      console.error(`  Path: ${this.projectPath}`);
+      console.error(`  Error: ${initError}`);
+      console.error(`  Hint: Launch specflow with an explicit project path, e.g.:`);
+      console.error(`    npx -y @lbruton/specflow@latest /path/to/your/project`);
+      console.error(`  The MCP server will start, but tools will return errors until a valid project is configured.`);
+    }
+
+    // Try to get the dashboard URL from session manager
+    let dashboardUrl: string | undefined = undefined;
+    try {
+      const sessionManager = new DashboardSessionManager();
+      const dashboardSession = await sessionManager.getDashboardSession();
+      if (dashboardSession) {
+        dashboardUrl = dashboardSession.url;
       }
-
-      // Create context for tools
-      const context = {
-        projectPath: this.projectPath,
-        dashboardUrl: dashboardUrl,
-        lang: this.lang
-      };
-
-      // Register handlers
-      this.setupHandlers(context);
-
-      // Connect to stdio transport
-      const transport = new StdioServerTransport();
-
-      // Handle client disconnection - exit gracefully when transport closes
-      transport.onclose = async () => {
-        await this.stop();
-        process.exit(0);
-      };
-
-      await this.server.connect(transport);
-
-      // Monitor stdin for client disconnection (additional safety net)
-      process.stdin.on('end', async () => {
-        await this.stop();
-        process.exit(0);
-      });
-
-      // Handle stdin errors
-      process.stdin.on('error', async (error) => {
-        console.error('stdin error:', error);
-        await this.stop();
-        process.exit(1);
-      });
-
-      // MCP server initialized successfully
-
     } catch (error) {
-      throw error;
+      // Dashboard not running, continue without it
+    }
+
+    // Create context for tools — include degraded mode info
+    const context: any = {
+      projectPath: this.projectPath,
+      dashboardUrl: dashboardUrl,
+      lang: this.lang
+    };
+
+    if (!projectInitialized) {
+      context.degraded = true;
+      context.degradedReason = initError;
+    }
+
+    // Register handlers
+    this.setupHandlers(context);
+
+    // Connect to stdio transport
+    const transport = new StdioServerTransport();
+
+    // Handle client disconnection - exit gracefully when transport closes
+    transport.onclose = async () => {
+      await this.stop();
+      process.exit(0);
+    };
+
+    await this.server.connect(transport);
+
+    // Monitor stdin for client disconnection (additional safety net)
+    process.stdin.on('end', async () => {
+      await this.stop();
+      process.exit(0);
+    });
+
+    // Handle stdin errors
+    process.stdin.on('error', async (error) => {
+      console.error('stdin error:', error);
+      await this.stop();
+      process.exit(1);
+    });
+
+    if (projectInitialized) {
+      console.error('MCP server initialized successfully');
+    } else {
+      console.error('MCP server started in degraded mode — tools will report configuration errors');
     }
   }
 
@@ -155,6 +178,25 @@ export class SpecWorkflowMCPServer {
     }));
 
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
+      // In degraded mode, return a clear error for every tool call
+      if (context.degraded) {
+        return {
+          content: [{
+            type: 'text' as const,
+            text: `SpecFlow MCP server is running in degraded mode — no valid project found.\n\n` +
+              `Error: ${context.degradedReason}\n\n` +
+              `The server was launched without a valid project path. To fix this:\n` +
+              `1. Ensure your MCP config passes the project directory as an argument:\n` +
+              `   npx -y @lbruton/specflow@latest .\n` +
+              `2. Or specify an absolute path:\n` +
+              `   npx -y @lbruton/specflow@latest /path/to/your/project\n` +
+              `3. Ensure the project has a .specflow/config.json file\n\n` +
+              `Current path: ${context.projectPath}`
+          }],
+          isError: true
+        };
+      }
+
       try {
         return await handleToolCall(request.params.name, request.params.arguments || {}, context);
       } catch (error: any) {
@@ -172,6 +214,21 @@ export class SpecWorkflowMCPServer {
     });
 
     this.server.setRequestHandler(GetPromptRequestSchema, async (request) => {
+      // In degraded mode, return a helpful error for prompt requests too
+      if (context.degraded) {
+        return {
+          messages: [{
+            role: 'user' as const,
+            content: {
+              type: 'text' as const,
+              text: `SpecFlow MCP server is in degraded mode — no valid project found at: ${context.projectPath}\n` +
+                `Error: ${context.degradedReason}\n` +
+                `Fix: Add the project path to your MCP config args, e.g.: npx -y @lbruton/specflow@latest .`
+            }
+          }]
+        };
+      }
+
       try {
         return await handlePromptGet(
           request.params.name,
