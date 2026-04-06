@@ -65,6 +65,46 @@ git branch --show-current
 git status --short
 ```
 
+### Step 0.2.5: Worktree awareness (CRITICAL — prevents stale assumptions)
+
+Detect whether prime is running inside a git worktree. **Worktrees are by definition
+side-branch in-progress work** — they do NOT represent the main pulse of the project,
+and using their state alone produces stale or wrong "where we left off" results.
+
+```bash
+# Detect worktree mode
+PWD_NOW=$(pwd)
+GIT_DIR=$(git rev-parse --git-dir 2>/dev/null)
+GIT_COMMON_DIR=$(git rev-parse --git-common-dir 2>/dev/null)
+CURRENT_BRANCH=$(git branch --show-current)
+MAIN_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main")
+
+# A worktree has GIT_DIR != GIT_COMMON_DIR
+if [ "$GIT_DIR" != "$GIT_COMMON_DIR" ] || echo "$PWD_NOW" | grep -q "\.worktrees/"; then
+  echo "inWorktree=true"
+  echo "worktreeBranch=$CURRENT_BRANCH"
+  echo "mainBranch=$MAIN_BRANCH"
+  # Find the main checkout path (parent repo)
+  MAIN_CHECKOUT=$(git worktree list | head -1 | awk '{print $1}')
+  echo "mainCheckout=$MAIN_CHECKOUT"
+else
+  echo "inWorktree=false"
+  echo "mainBranch=$MAIN_BRANCH"
+fi
+```
+
+**If `inWorktree=true`:**
+- Set a banner in the report header: `⚠️ Worktree mode — branch: <worktreeBranch>, main: <mainBranch>`
+- Agent D's git history queries MUST also pull main branch history from `$MAIN_CHECKOUT`
+  (e.g., `cd $MAIN_CHECKOUT && git log --oneline -15 $MAIN_BRANCH`) so the report shows
+  the actual project pulse, not just the worktree's WIP commits
+- "Where We Left Off" must NOT infer from worktree branch state alone — the worktree is
+  by definition mid-task, so its current commits are the in-progress work, not the recap
+- The session digest and mem0 are the authoritative "where we left off" sources in
+  worktree mode, not git
+
+**If `inWorktree=false`:** Standard mode — git is the ground truth for recent activity.
+
 ### Step 0.3: Detect capabilities
 
 Run these checks (all instant, run in parallel):
@@ -155,6 +195,71 @@ fi
 
 Compare the filename timestamp to current time. If the most recent prime report is
 **less than 24 hours old**, set `recentPrimeExists=true` and store the file path and timestamp.
+
+### Step 0.7: Pre-load mem0 project memories (REQUIRED — runs early, no agent dispatch)
+
+mem0 is a **first-class data source**, not supplemental. Pre-load project memories now,
+in main context, before any agent dispatch. This ensures mem0 context is available
+even if agents fail, time out, or get skipped.
+
+**This step is mandatory.** A prime that does not query mem0 is not a valid prime.
+
+```
+mcp__mem0__search_memories(
+  query="recent work decisions handoffs",
+  filters={"AND": [{"agent_id": "<tag>"}]},
+  limit=10
+)
+```
+
+Also run a second query for active state:
+
+```
+mcp__mem0__search_memories(
+  query="active project state current focus blockers",
+  filters={"AND": [{"agent_id": "<tag>"}]},
+  limit=10
+)
+```
+
+Store ALL results in `mem0_preload`. These memories will be merged with Phase 1.5's
+keyword-targeted searches to produce the final "Where We Left Off" section.
+
+**If mem0 returns zero results for both queries:**
+- Note `mem0_preload_empty=true` in the report
+- This is a RED FLAG — either mem0 is broken, the project tag is wrong, or no memories
+  have been saved for this project. Surface this prominently in the report header so
+  the user knows context is incomplete.
+
+**If mem0 MCP is unavailable:**
+- Note `mem0_unavailable=true` in the report header
+- This is a STOP-AND-FIX condition — prime should still complete, but the user must
+  be told the report is operating without long-term memory
+
+### Step 0.8: Read DocVault Expiration Tracker (deterministic, instant)
+
+Read the central expiration tracker page to surface anything expiring soon:
+
+```bash
+TRACKER="/Volumes/DATA/GitHub/DocVault/Infrastructure/Expiration Tracker.md"
+if [ -f "$TRACKER" ]; then
+  cat "$TRACKER"
+fi
+```
+
+Parse all markdown tables in the file. For each row that has an `Expires` column with
+a date, compute `days_left = (expires_date - today)`. Filter to only rows where
+`days_left <= 60`. Assign status icon:
+
+| Days Left | Icon | Bucket |
+|---|---|---|
+| `< 0` (expired) or `< 7` | 🔴 | URGENT — render at top of report with banner |
+| `7 <= days < 30` | 🟡 | Rotate soon |
+| `30 <= days <= 60` | 🟢 | Reminder |
+| `> 60` | (skip) | Not shown |
+
+Store filtered rows in `expiring_soon`. If empty, the section will be omitted from the
+report entirely (no "nothing expiring" noise).
 
 ## Incremental vs Full Prime
 
@@ -418,10 +523,16 @@ names, bug descriptions, technology references).
 Example: If the digest mentions "three-tier architecture", "plugin skills", "template
 inversion" and commits mention "migrate-skill", "marketplace.json" — those are the keywords.
 
-### Step 1.5.2: Targeted mem0 search (supplemental)
+### Step 1.5.2: Targeted mem0 search (REQUIRED — keyword-driven deep search)
 
-mem0 is **supplemental** — it fills gaps the digest doesn't cover: retro learnings,
-workarounds, known issues, cross-session decisions, and verbal plans not captured in digests.
+mem0 is **a first-class data source**. Step 0.7 already pre-loaded recent project
+memories. This step does deeper, keyword-targeted searches based on what Agent D and
+the digest revealed. Both layers are mandatory.
+
+**Why two layers:** Step 0.7 catches "what did we work on recently" without needing
+keywords. This step catches "what does mem0 know about the specific things showing up
+in the current commits/PRs/issues" — much more targeted, finds workarounds and prior
+decisions that Step 0.7's broad query would miss.
 
 Run 2-3 mem0 searches using the extracted keywords. Group related keywords into queries:
 
@@ -617,6 +728,19 @@ version: <from version.lock or "n/a">
 
 # Prime Report — <name> (<date>)
 Branch: <branch> | Status: <clean/dirty> | Version: <from version.lock or "n/a">
+<If inWorktree=true: append "⚠️ Worktree mode — branch: <worktreeBranch>, main: <mainBranch>">
+<If mem0_preload_empty=true: append "⚠️ mem0 returned no project memories — context may be incomplete">
+<If mem0_unavailable=true: append "🔴 mem0 MCP unavailable — operating without long-term memory">
+
+## ⚠️ Expiring Soon
+<Only render this section if expiring_soon (from Step 0.8) is non-empty. If empty, OMIT entirely — no "nothing expiring" placeholder text.>
+<If any 🔴 items exist, lead with: "**🔴 URGENT:** N item(s) expire in less than 7 days — rotate immediately">
+
+| Item | Expires | Days Left | Status |
+|------|---------|-----------|--------|
+<Render each row from expiring_soon, sorted ascending by days_left. Format days_left as integer. Status column = the icon (🔴 / 🟡 / 🟢).>
+
+Source: [[Expiration Tracker]] (DocVault/Infrastructure/)
 
 ## Recent Activity (ground truth from git + GitHub)
 <From Agent D — this section is MANDATORY and comes first because it shows what actually happened>
@@ -822,8 +946,8 @@ Not every project has every capability. Handle missing pieces:
 - If ALL agents fail, fall back to Phase 0 local context + digest + Phase 2 indexing
 
 ### Output
-- The **full report** goes to DocVault ONLY — never dump the full report in the terminal
-- The **terminal summary** must stay under 40 lines — concise, actionable, scannable
+- **The full Forge-layout report renders in BOTH the terminal AND DocVault** — same content, both places. The user wants the dense dashboard in their terminal, not a stripped summary.
+- The Terminal Summary Template (below) is **DEPRECATED** — kept in this file for reference only. Do NOT use it. Render the Full Report Template in the terminal as-is.
 - Always `mkdir -p` the prime/ subdirectory before writing — it may not exist on first run
 - DocVault path is ALWAYS `/Volumes/DATA/GitHub/DocVault/Projects/<name>/prime/` — use the project name from `project.json`, not the tag
 - Timestamp format for filenames: `YYYY-MM-DD-HHMMSS` (local time, no colons — filesystem safe)
