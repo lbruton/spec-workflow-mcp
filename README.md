@@ -131,7 +131,7 @@ All three agents share the same MCP tools, DocVault knowledge base, and spec wor
 
 ### Cross-Agent Spec Handoff
 
-Spec state lives on disk in `.specflow/specs/` — not in any agent's memory. This means you can start a spec in one agent and continue in another:
+Spec state lives on disk in DocVault (`DocVault/specflow/{project}/specs/`) — not in any agent's memory. Each project has a thin `.specflow/config.json` pointer. This means you can start a spec in one agent and continue in another:
 
 ```
 Claude Code                    Codex CLI                      Gemini CLI

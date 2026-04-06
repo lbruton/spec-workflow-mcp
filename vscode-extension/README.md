@@ -1,4 +1,9 @@
-# Spec Workflow MCP Extension
+# Spec Workflow MCP Extension (DEPRECATED)
+
+> **DEPRECATED (2026-04-05):** This VS Code extension is no longer maintained. It assumes
+> repo-local `.specflow/` paths and is incompatible with the DocVault centralization model
+> shipped in v3.5.0. Use the web dashboard (`specflow --dashboard`) and MCP tools via
+> Claude Code, Codex, or Gemini instead. See SWF-86 for context.
 
 A VSCode extension that provides an integrated dashboard for managing Spec-Workflow MCP projects directly in your workspace.
 

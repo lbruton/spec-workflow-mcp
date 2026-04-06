@@ -73,8 +73,8 @@ Run these checks (all instant, run in parallel):
 # Has wiki?
 [ -d "wiki/" ] && echo "hasWiki=true" || echo "hasWiki=false"
 
-# Has spec-workflow?
-[ -d ".specflow/specs/" ] && echo "hasSpecs=true" || echo "hasSpecs=false"
+# Has spec-workflow? (config.json is the thin pointer to DocVault)
+[ -f ".specflow/config.json" ] && echo "hasSpecs=true" || echo "hasSpecs=false"
 
 # Has version lock?
 [ -f "devops/version.lock" ] && echo "hasVersionLock=true" || echo "hasVersionLock=false"
