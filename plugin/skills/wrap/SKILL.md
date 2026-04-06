@@ -18,6 +18,34 @@ Wrap up this session. Follow each phase in order — do not skip phases unless e
 
 ---
 
+## Phase Transition Rules (SWF-88)
+
+These rules prevent phase blending and gate skipping:
+
+1. **Phase transition banners are mandatory.** After completing each phase, print a banner BEFORE starting the next:
+   > **Phase N complete.** Moving to Phase N+1: {Phase Name}.
+
+   Never combine two phases in the same response without a banner between them.
+
+2. **Phase 1 ends with status only.** The Phase 1 response MUST end after presenting the status report. Do NOT ask Phase 2 questions (commit/stash/discard) in the same response. Wait for the user to acknowledge the status before starting cleanup.
+
+3. **Phase 2 gate summary is mandatory.** After working through ALL sub-gates (2.1-2.6), print a visible checklist before proceeding to Phase 3:
+
+   | Gate | Status |
+   |------|--------|
+   | 2.1 Uncommitted changes | {result} |
+   | 2.2 Implementation logging | {result} |
+   | 2.3 PR status | {result} |
+   | 2.4 Version bump | {result} |
+   | 2.5 Worktree cleanup | {result} |
+   | 2.6 Stale remote branches | {result} |
+
+   **All gates pass / Blockers: {list}.** Proceeding to Phase 3.
+
+   Do NOT proceed to Phase 3 without printing this table. Every gate must have a status, even if it's "N/A".
+
+---
+
 ## Phase 1: Status Check
 
 Gather the current state before making any changes. Run ALL of these in parallel:
@@ -41,7 +69,11 @@ Also check spec-workflow state if the project uses it:
 
 **Report the status** before proceeding. If there are blockers (uncommitted files, unmerged PRs, in-progress tasks), present them and ask what to do.
 
+**STOP HERE.** Do not ask Phase 2 questions in this response. Wait for user acknowledgment.
+
 ---
+
+> **Phase 1 complete.** Moving to Phase 2: Cleanup Gate.
 
 ## Phase 2: Cleanup Gate
 
@@ -88,7 +120,24 @@ git pull origin <main-branch>
 git status --short
 ```
 
+### 2.6: Stale Remote Branch Pruning
+Check for remote branches whose PRs have been merged (squash-merge leaves branches that `git branch -r --merged` misses):
+```bash
+# List all non-main remote branches
+git branch -r | grep -v 'origin/main\|origin/HEAD' | sed 's|origin/||' | tr -d ' '
+```
+For each branch, check if its PR was merged: `gh pr list --head "<branch>" --state merged`
+- If PR was **merged**: delete with `git push origin --delete <branch>`
+- If **no PR found** or PR is **open**: leave it, note it in the recap
+- After deletions, run `git fetch --prune`
+
+### Phase 2 Gate Summary (MANDATORY — print before proceeding)
+
+Print the gate table showing every sub-gate's result. Do not skip this step.
+
 ---
+
+> **Phase 2 complete (all gates pass).** Moving to Phase 3: Documentation.
 
 ## Phase 3: Documentation
 
@@ -113,6 +162,8 @@ If spec-workflow specs were involved:
 - Check for pending approvals that should be resolved
 
 ---
+
+> **Phase 3 complete.** Moving to Phase 4: Knowledge Capture.
 
 ## Phase 4: Knowledge Capture
 
@@ -273,6 +324,8 @@ Tell the user: "Handoff ready. Copy the prompt above into your new terminal. `/p
 
 ---
 
+> **Phase 4 complete.** Moving to Phase 5: Final Verification.
+
 ## Phase 5: Final Verification
 
 Run these checks and present the results:
@@ -308,6 +361,9 @@ Next session: <1-2 sentence suggestion for what to work on>
 ## Rules
 
 - **Sequential phases**: Do not skip ahead. Phase 2 must complete before Phase 3.
+- **Phase banners are mandatory**: Print a transition banner between every phase (SWF-88).
+- **Phase 1 stops at status**: Do not ask Phase 2 questions in the Phase 1 response (SWF-88).
+- **Phase 2 gate table is mandatory**: Print the full gate summary before proceeding to Phase 3 (SWF-88).
 - **Ask, don't assume**: At every decision point (commit/stash/discard, merge/wait), ask the user.
 - **No Haiku agents**: All summaries and digests are written by YOU (the current in-context model). Never dispatch a subagent for summarization.
 - **Idempotent**: Running /wrap twice should be safe. Check if retro/digest already ran before duplicating.

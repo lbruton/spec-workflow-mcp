@@ -11,6 +11,14 @@ Skip cleanup: only if arguments contain "--skip-cleanup" (use when wrapping a se
 
 ---
 
+## Phase Transition Rules (SWF-88)
+
+1. **Phase transition banners are mandatory.** Print `> Phase N complete. Moving to Phase N+1: {Name}.` between every phase.
+2. **Phase 1 ends with status only.** Do NOT ask Phase 2 questions in the same response. Wait for user acknowledgment.
+3. **Phase 2 gate summary is mandatory.** Print the gate checklist table before proceeding to Phase 3.
+
+---
+
 ## Phase 1: Status Check
 
 Gather the current state before making any changes. Run ALL of these in parallel:
@@ -29,12 +37,16 @@ gh pr list --state open --json number,title,headRefName,state,mergeStateStatus
 ```
 
 Also check spec-workflow state if the project uses it:
-- If `.spec-workflow/specs/` exists, use the **spec-status** MCP tool to check for in-progress tasks
+- If `.specflow/config.json` exists, use the **spec-status** tool to check for in-progress tasks
 - Look for any tasks marked `[-]` (in-progress) that need to be completed or reverted
 
 **Report the status** before proceeding. If there are blockers (uncommitted files, unmerged PRs, in-progress tasks), present them and ask what to do.
 
+**STOP HERE.** Do not ask Phase 2 questions in this response. Wait for user acknowledgment.
+
 ---
+
+> **Phase 1 complete.** Moving to Phase 2: Cleanup Gate.
 
 ## Phase 2: Cleanup Gate
 
@@ -81,7 +93,13 @@ For each branch, check if its PR was merged: `gh pr list --head "<branch>" --sta
 
 This catches branches from prior sessions that accumulated via GitHub squash-merge.
 
+### Phase 2 Gate Summary (MANDATORY — print before proceeding)
+
+Print the gate table showing every sub-gate's result. Do not skip this step.
+
 ---
+
+> **Phase 2 complete (all gates pass).** Moving to Phase 3: Documentation.
 
 ## Phase 3: Documentation
 
@@ -102,6 +120,8 @@ If spec-workflow specs were involved:
 - Check for pending approvals that should be resolved
 
 ---
+
+> **Phase 3 complete.** Moving to Phase 4: Knowledge Capture.
 
 ## Phase 4: Knowledge Capture
 
@@ -138,6 +158,8 @@ Write ONE concise mem0 entry summarizing this session with `metadata.type: "sess
 
 ---
 
+> **Phase 4 complete.** Moving to Phase 5: Final Verification.
+
 ## Phase 5: Final Verification
 
 ```bash
@@ -165,6 +187,9 @@ Next session: <1-2 sentence suggestion>
 ## Rules
 
 - **Sequential phases**: Do not skip ahead. Phase 2 must complete before Phase 3.
+- **Phase banners are mandatory**: Print a transition banner between every phase (SWF-88).
+- **Phase 1 stops at status**: Do not ask Phase 2 questions in the Phase 1 response (SWF-88).
+- **Phase 2 gate table is mandatory**: Print the full gate summary before proceeding to Phase 3 (SWF-88).
 - **Ask, don't assume**: At every decision point, ask the user.
 - **No Haiku agents**: All summaries written by the current model.
 - **Idempotent**: Running /wrap twice should be safe.
