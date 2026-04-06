@@ -94,10 +94,13 @@ export class SpecWorkflowMCPServer {
       }
 
       // Register this project in the global registry
+      // Use DocVault specflow root (where specs/approvals/steering live) as the
+      // workflowRootPath, not the git root. The dashboard uses this path to find
+      // spec documents, approvals, and steering files.
       const projectId = await this.projectRegistry.registerProject(this.workspacePath, process.pid, {
-        workflowRootPath: this.projectPath
+        workflowRootPath: config.specflowRoot
       });
-      console.error(`Project registered: ${projectId}`);
+      console.error(`Project registered: ${projectId} (workflow root: ${config.specflowRoot})`);
       projectInitialized = true;
 
     } catch (error: any) {

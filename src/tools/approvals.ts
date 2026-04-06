@@ -213,9 +213,14 @@ async function handleRequestApproval(
     // Translate path at tool entry point (ApprovalStorage expects pre-translated paths)
     const translatedPath = safeTranslatePath(validatedProjectPath);
 
-    const approvalStorage = new ApprovalStorage(translatedPath, {
+    // Use DocVault workflow root for approval storage so approvals land in the
+    // centralized DocVault tree where the dashboard can find them (INC-006 fix)
+    const workflowRoot = PathUtils.getWorkflowRoot(validatedProjectPath);
+    const translatedWorkflowRoot = safeTranslatePath(workflowRoot);
+
+    const approvalStorage = new ApprovalStorage(translatedWorkflowRoot, {
       originalPath: validatedProjectPath,
-      fileResolutionPath: translatedPath
+      fileResolutionPath: translatedWorkflowRoot
     });
     await approvalStorage.start();
 
@@ -398,12 +403,13 @@ async function handleGetApprovalStatus(
 
     // Validate and resolve project path
     const validatedProjectPath = await validateProjectPath(projectPath);
-    // Translate path at tool entry point (ApprovalStorage expects pre-translated paths)
-    const translatedPath = safeTranslatePath(validatedProjectPath);
+    // Use DocVault workflow root for approval storage (INC-006 fix)
+    const workflowRoot = PathUtils.getWorkflowRoot(validatedProjectPath);
+    const translatedWorkflowRoot = safeTranslatePath(workflowRoot);
 
-    const approvalStorage = new ApprovalStorage(translatedPath, {
+    const approvalStorage = new ApprovalStorage(translatedWorkflowRoot, {
       originalPath: validatedProjectPath,
-      fileResolutionPath: translatedPath
+      fileResolutionPath: translatedWorkflowRoot
     });
     await approvalStorage.start();
 
@@ -534,12 +540,13 @@ async function handleDeleteApproval(
 
     // Validate and resolve project path
     const validatedProjectPath = await validateProjectPath(projectPath);
-    // Translate path at tool entry point (ApprovalStorage expects pre-translated paths)
-    const translatedPath = safeTranslatePath(validatedProjectPath);
+    // Use DocVault workflow root for approval storage (INC-006 fix)
+    const workflowRoot = PathUtils.getWorkflowRoot(validatedProjectPath);
+    const translatedWorkflowRoot = safeTranslatePath(workflowRoot);
 
-    const approvalStorage = new ApprovalStorage(translatedPath, {
+    const approvalStorage = new ApprovalStorage(translatedWorkflowRoot, {
       originalPath: validatedProjectPath,
-      fileResolutionPath: translatedPath
+      fileResolutionPath: translatedWorkflowRoot
     });
     await approvalStorage.start();
 
