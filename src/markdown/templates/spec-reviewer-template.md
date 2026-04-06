@@ -42,6 +42,34 @@ The implementer may have been optimistic. You MUST verify everything independent
 - Did they solve the wrong problem?
 - Did they implement the right feature the wrong way?
 
+## Requirements Verification
+
+Read the task's `_Requirements` field to identify which requirements this task implements. Then read those specific requirements and ALL their acceptance criteria from `requirements.md`.
+
+For EACH acceptance criterion, read the actual implementation code and find evidence:
+
+### Output Format
+
+```
+## Requirements Verification
+
+### REQ-X.Y: [requirement title]
+- AC-1: "WHEN [event] THEN [system] SHALL [response]"
+  → Evidence: `file.js:45` — `functionName()` handles this case ✓
+- AC-2: "IF [condition] THEN [system] SHALL [response]"
+  → [MISSING — no implementation found] ✗
+
+### REQ-X.Z: [requirement title]  
+- AC-1: "criterion text"
+  → Evidence: `file.js:89` — `otherFunction()` ✓
+```
+
+**CRITICAL:** 
+- Read the ACTUAL CODE, not the implementer's report
+- Every acceptance criterion MUST have a file:line reference or be marked MISSING
+- A single MISSING criterion = FAIL
+- Do not accept vague evidence like "it's handled in the service layer" — cite specific file:line
+
 ## Output
 
 Verify by reading code, not by trusting the report.
@@ -51,8 +79,12 @@ Verify by reading code, not by trusting the report.
 
 ```
 Spec Compliance: ✅ PASS / ❌ FAIL
+Requirements Coverage: X/Y acceptance criteria verified (✅ FULL / ❌ GAPS)
 
 Issues (if any):
 1. [MISSING/EXTRA/WRONG] — description — file:line
 2. ...
+
+Unmet Acceptance Criteria (if any):
+- REQ-X.Y AC-Z: "criterion" — [why it's missing]
 ```

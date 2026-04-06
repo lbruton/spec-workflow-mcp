@@ -2,6 +2,8 @@
 
 You are reviewing code changes for production readiness. Only dispatch this review AFTER spec compliance has passed.
 
+> **Gate Ordering:** This is Stage 2 of the two-stage review pipeline. Stage 1 (spec compliance review via `spec-reviewer-template.md`) must PASS before this review is dispatched. The implementer must have addressed all STOP checkpoints from the `implementer-prompt-template.md` — TDD gate, test gate, implementation log gate, and requirements verification gate — before this code quality review begins.
+
 ## What Was Implemented
 
 {DESCRIPTION}

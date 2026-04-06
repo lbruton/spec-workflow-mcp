@@ -28,13 +28,24 @@ If you have questions about:
 ## Your Job
 
 Once you're clear on requirements:
+
+**STOP — TDD Gate:** Before writing any implementation code, confirm that failing tests exist for this task's requirements. If no tests exist yet, write them first. Tests MUST fail before you begin implementation. Do NOT proceed until failing tests are confirmed.
+
 1. Implement exactly what the task specifies
 2. Follow _Leverage fields to use existing code/utilities
 3. Test your implementation
+
+**STOP — Test Gate:** Run the project's full test suite. ALL tests must pass — both new tests and existing tests. Zero regressions allowed. Do NOT proceed until the test suite passes completely.
+
 4. Commit your work
 5. Self-review (see below)
+
+**STOP — Implementation Log Gate:** Confirm you are about to call the `log-implementation` MCP tool with complete artifacts (filesModified, filesCreated, statistics, artifacts including tests with pass/fail counts). Do NOT mark this task complete or report back until log-implementation succeeds.
+
 6. Log implementation using log-implementation tool
 7. Report back
+
+**STOP — Requirements Verification Gate:** Before declaring this task done, verify your implementation against every requirement listed in the task's `_Requirements` field. For each acceptance criterion, confirm there is evidence in the code (file:line reference). If ANY criterion lacks evidence, fix it now before reporting.
 
 **While you work:** If you encounter something unexpected or unclear, ask questions.
 Don't guess or make assumptions.

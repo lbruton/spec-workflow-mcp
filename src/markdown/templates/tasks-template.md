@@ -4,7 +4,7 @@
 
 - **Issue:** PROJ-XXX
 - **GitHub PR:** [#NNN](https://github.com/owner/repo/pull/NNN)
-- **Spec Path:** `.spec-workflow/specs/{spec-name}/`
+- **Spec Path:** `DocVault/specflow/{{projectName}}/specs/{{spec-name}}/`
 
 ## UI Prototype Gate (conditional — include ONLY if design.md declares `Has UI Changes: Yes` AND `Prototype Required: Yes`)
 
@@ -37,149 +37,135 @@
 
 ---
 
-- [ ] 1. Create core interfaces in src/types/feature.ts
-  - File: src/types/feature.ts
-  - Define TypeScript interfaces for feature data structures
-  - Extend existing base interfaces from base.ts
-  - Purpose: Establish type safety for feature implementation
-  - _Leverage: src/types/base.ts_
-  - _Requirements: 1.1_
-  - _Prompt: Role: TypeScript Developer specializing in type systems and interfaces | Task: Create comprehensive TypeScript interfaces for the feature data structures following requirements 1.1, extending existing base interfaces from src/types/base.ts | Restrictions: Do not modify existing base interfaces, maintain backward compatibility, follow project naming conventions | Success: All interfaces compile without errors, proper inheritance from base types, full type coverage for feature requirements_
+<!-- MANDATORY GATES — These gates appear verbatim in every generated tasks.md. Do NOT treat as placeholders.
 
-- [ ] 2. Create base model class in src/models/FeatureModel.ts
-  - File: src/models/FeatureModel.ts
-  - Implement base model extending BaseModel class
-  - Add validation methods using existing validation utilities
-  - Purpose: Provide data layer foundation for feature
-  - _Leverage: src/models/BaseModel.ts, src/utils/validation.ts_
-  - _Requirements: 2.1_
-  - _Prompt: Role: Backend Developer with expertise in Node.js and data modeling | Task: Create a base model class extending BaseModel and implementing validation following requirement 2.1, leveraging existing patterns from src/models/BaseModel.ts and src/utils/validation.ts | Restrictions: Must follow existing model patterns, do not bypass validation utilities, maintain consistent error handling | Success: Model extends BaseModel correctly, validation methods implemented and tested, follows project architecture patterns_
+VERSION CHECKOUT GATE — INTERACTIVE:
+Before implementing ANY task below, check the project's version management:
+1. IF the project has `devops/version.lock`:
+   - Run `/release patch` to claim a version and create a worktree
+   - Record the assigned version in the first implementation log
+   - ALL file edits happen inside the worktree — never in the main repo working directory
+   - Verify: `git branch --show-current` returns patch/VERSION, not dev or main
+   - If multiple tasks are parallelized across agents, each agent gets its own /release patch
+2. IF the project has NO `devops/version.lock`:
+   - Prompt the user: "This project has no version lock or changelog. Would you like to set up version tracking (version.lock + CHANGELOG.md)?"
+   - IF yes: assist with scaffolding `devops/version.lock` and `CHANGELOG.md` before proceeding
+   - IF no: skip this gate and record the decision as a comment in tasks.md
+Skipping this gate without user acknowledgment is a workflow violation.
 
-- [ ] 3. Add specific model methods to FeatureModel.ts
-  - File: src/models/FeatureModel.ts (continue from task 2)
-  - Implement create, update, delete methods
-  - Add relationship handling for foreign keys
-  - Purpose: Complete model functionality for CRUD operations
-  - _Leverage: src/models/BaseModel.ts_
-  - _Requirements: 2.2, 2.3_
-  - _Prompt: Role: Backend Developer with expertise in ORM and database operations | Task: Implement CRUD methods and relationship handling in FeatureModel.ts following requirements 2.2 and 2.3, extending patterns from src/models/BaseModel.ts | Restrictions: Must maintain transaction integrity, follow existing relationship patterns, do not duplicate base model functionality | Success: All CRUD operations work correctly, relationships are properly handled, database operations are atomic and efficient_
+IMPLEMENTATION LOGGING GATE — HARD GATE:
+Before marking ANY task [x], you MUST call the `log-implementation` MCP tool with full
+artifacts (functions added/modified, files changed, endpoints created, tests written).
+Do NOT mark [x] until the log-implementation tool call succeeds. No exceptions.
 
-- [ ] 4. Create model unit tests in tests/models/FeatureModel.test.ts
-  - File: tests/models/FeatureModel.test.ts
-  - Write tests for model validation and CRUD methods
-  - Use existing test utilities and fixtures
-  - Purpose: Ensure model reliability and catch regressions
-  - _Leverage: tests/helpers/testUtils.ts, tests/fixtures/data.ts_
-  - _Requirements: 2.1, 2.2_
-  - _Prompt: Role: QA Engineer with expertise in unit testing and Jest/Mocha frameworks | Task: Create comprehensive unit tests for FeatureModel validation and CRUD methods covering requirements 2.1 and 2.2, using existing test utilities from tests/helpers/testUtils.ts and fixtures from tests/fixtures/data.ts | Restrictions: Must test both success and failure scenarios, do not test external dependencies directly, maintain test isolation | Success: All model methods are tested with good coverage, edge cases covered, tests run independently and consistently_
+SPEC COMPLETION GATE — BLOCKING (Phase 5):
+After ALL tasks are [x] and implementation logs are recorded:
+1. Generate `verification.md` in the spec directory — a checklist mapping every requirement
+   and acceptance criterion from requirements.md to file:line code evidence. Any unchecked
+   item means the spec is NOT complete — loop back to implementation.
+2. Run `/vault-update` to update DocVault pages affected by this spec's changed files
+3. Close all linked DocVault issues (move to Done, move file to Closed/)
+4. Run `/verification-before-completion` for a final smoke check
+5. The spec is NOT complete until all four steps are verified.
+-->
 
-- [ ] 5. Create service interface in src/services/IFeatureService.ts
-  - File: src/services/IFeatureService.ts
-  - Define service contract with method signatures
-  - Extend base service interface patterns
-  - Purpose: Establish service layer contract for dependency injection
-  - _Leverage: src/services/IBaseService.ts_
-  - _Requirements: 3.1_
-  - _Prompt: Role: Software Architect specializing in service-oriented architecture and TypeScript interfaces | Task: Design service interface contract following requirement 3.1, extending base service patterns from src/services/IBaseService.ts for dependency injection | Restrictions: Must maintain interface segregation principle, do not expose internal implementation details, ensure contract compatibility with DI container | Success: Interface is well-defined with clear method signatures, extends base service appropriately, supports all required service operations_
+---
 
-- [ ] 6. Implement feature service in src/services/FeatureService.ts
-  - File: src/services/FeatureService.ts
-  - Create concrete service implementation using FeatureModel
-  - Add error handling with existing error utilities
-  - Purpose: Provide business logic layer for feature operations
-  - _Leverage: src/services/BaseService.ts, src/utils/errorHandler.ts, src/models/FeatureModel.ts_
-  - _Requirements: 3.2_
-  - _Prompt: Role: Backend Developer with expertise in service layer architecture and business logic | Task: Implement concrete FeatureService following requirement 3.2, using FeatureModel and extending BaseService patterns with proper error handling from src/utils/errorHandler.ts | Restrictions: Must implement interface contract exactly, do not bypass model validation, maintain separation of concerns from data layer | Success: Service implements all interface methods correctly, robust error handling implemented, business logic is well-encapsulated and testable_
+## Phase 1 — [Phase Name]
 
-- [ ] 7. Add service dependency injection in src/utils/di.ts
-  - File: src/utils/di.ts (modify existing)
-  - Register FeatureService in dependency injection container
-  - Configure service lifetime and dependencies
-  - Purpose: Enable service injection throughout application
-  - _Leverage: existing DI configuration in src/utils/di.ts_
-  - _Requirements: 3.1_
-  - _Prompt: Role: DevOps Engineer with expertise in dependency injection and IoC containers | Task: Register FeatureService in DI container following requirement 3.1, configuring appropriate lifetime and dependencies using existing patterns from src/utils/di.ts | Restrictions: Must follow existing DI container patterns, do not create circular dependencies, maintain service resolution efficiency | Success: FeatureService is properly registered and resolvable, dependencies are correctly configured, service lifetime is appropriate for use case_
+- [ ] 1. [Task title]
+  - File: `[file path]`
+  - [What to implement — be specific about function names, line numbers, and code patterns]
+  - [Second bullet if multi-part]
+  - Purpose: [Why this task exists — what problem it solves]
+  - _Leverage: [Existing functions/constants/patterns to reuse, with file:line references]_
+  - _Requirements: REQ-X_
+  - _Prompt: Implement the task for spec {{spec-name}}, first run spec-workflow-guide to get the workflow guide then implement the task: Role: [Role] | Task: [Detailed implementation instructions referencing specific file paths, line numbers, existing functions, and exact variable names. Include the complete behavior specification.] | Restrictions: [What NOT to do — other files to leave untouched, patterns to avoid, anti-patterns for this codebase] | Success: [Concrete, verifiable acceptance criteria — what works, what doesn't break] PREREQUISITE: Before writing any code, verify you are in the correct working context. If the project uses version.lock, confirm `git branch --show-current` returns patch/VERSION. If not, STOP and run /release patch first. Mark task as [-] in tasks.md before starting. BLOCKING: After implementation, you MUST call the log-implementation tool with full artifacts before marking [x]. Do NOT mark [x] until the log-implementation tool call succeeds._
 
-- [ ] 8. Create service unit tests in tests/services/FeatureService.test.ts
-  - File: tests/services/FeatureService.test.ts
-  - Write tests for service methods with mocked dependencies
-  - Test error handling scenarios
-  - Purpose: Ensure service reliability and proper error handling
-  - _Leverage: tests/helpers/testUtils.ts, tests/mocks/modelMocks.ts_
-  - _Requirements: 3.2, 3.3_
-  - _Prompt: Role: QA Engineer with expertise in service testing and mocking frameworks | Task: Create comprehensive unit tests for FeatureService methods covering requirements 3.2 and 3.3, using mocked dependencies from tests/mocks/modelMocks.ts and test utilities | Restrictions: Must mock all external dependencies, test business logic in isolation, do not test framework code | Success: All service methods tested with proper mocking, error scenarios covered, tests verify business logic correctness and error handling_
+- [ ] 2. [Task title]
+  - File: `[file path]`
+  - [Implementation details]
+  - Purpose: [Why]
+  - _Leverage: [Existing code to reuse]_
+  - _Requirements: REQ-Y_
+  - _Prompt: Implement the task for spec {{spec-name}}, first run spec-workflow-guide to get the workflow guide then implement the task: Role: [Role] | Task: [Instructions] | Restrictions: [Constraints] | Success: [Criteria] PREREQUISITE: Before writing any code, verify you are in the correct working context. If the project uses version.lock, confirm `git branch --show-current` returns patch/VERSION. If not, STOP and run /release patch first. Mark task as [-] in tasks.md before starting. BLOCKING: After implementation, you MUST call the log-implementation tool with full artifacts before marking [x]. Do NOT mark [x] until the log-implementation tool call succeeds._
 
-- [ ] 4. Create API endpoints
-  - Design API structure
-  - _Leverage: src/api/baseApi.ts, src/utils/apiUtils.ts_
-  - _Requirements: 4.0_
-  - _Prompt: Role: API Architect specializing in RESTful design and Express.js | Task: Design comprehensive API structure following requirement 4.0, leveraging existing patterns from src/api/baseApi.ts and utilities from src/utils/apiUtils.ts | Restrictions: Must follow REST conventions, maintain API versioning compatibility, do not expose internal data structures directly | Success: API structure is well-designed and documented, follows existing patterns, supports all required operations with proper HTTP methods and status codes_
+---
 
-- [ ] 4.1 Set up routing and middleware
-  - Configure application routes
-  - Add authentication middleware
-  - Set up error handling middleware
-  - _Leverage: src/middleware/auth.ts, src/middleware/errorHandler.ts_
-  - _Requirements: 4.1_
-  - _Prompt: Role: Backend Developer with expertise in Express.js middleware and routing | Task: Configure application routes and middleware following requirement 4.1, integrating authentication from src/middleware/auth.ts and error handling from src/middleware/errorHandler.ts | Restrictions: Must maintain middleware order, do not bypass security middleware, ensure proper error propagation | Success: Routes are properly configured with correct middleware chain, authentication works correctly, errors are handled gracefully throughout the request lifecycle_
+## Phase 2 — [Phase Name] (optional — remove if single-phase)
 
-- [ ] 4.2 Implement CRUD endpoints
-  - Create API endpoints
-  - Add request validation
-  - Write API integration tests
-  - _Leverage: src/controllers/BaseController.ts, src/utils/validation.ts_
-  - _Requirements: 4.2, 4.3_
-  - _Prompt: Role: Full-stack Developer with expertise in API development and validation | Task: Implement CRUD endpoints following requirements 4.2 and 4.3, extending BaseController patterns and using validation utilities from src/utils/validation.ts | Restrictions: Must validate all inputs, follow existing controller patterns, ensure proper HTTP status codes and responses | Success: All CRUD operations work correctly, request validation prevents invalid data, integration tests pass and cover all endpoints_
+- [ ] 3. [Task title]
+  - File: `[file path]`
+  - [Implementation details]
+  - Purpose: [Why]
+  - _Leverage: [Existing code to reuse]_
+  - _Requirements: REQ-Z_
+  - _Prompt: Implement the task for spec {{spec-name}}, first run spec-workflow-guide to get the workflow guide then implement the task: Role: [Role] | Task: [Instructions] | Restrictions: [Constraints] | Success: [Criteria] PREREQUISITE: Before writing any code, verify you are in the correct working context. If the project uses version.lock, confirm `git branch --show-current` returns patch/VERSION. If not, STOP and run /release patch first. Mark task as [-] in tasks.md before starting. BLOCKING: After implementation, you MUST call the log-implementation tool with full artifacts before marking [x]. Do NOT mark [x] until the log-implementation tool call succeeds._
 
-- [ ] 5. Add frontend components
-  - Plan component architecture
-  - _Leverage: src/components/BaseComponent.tsx, src/styles/theme.ts_
-  - _Requirements: 5.0_
-  - _Prompt: Role: Frontend Architect with expertise in React component design and architecture | Task: Plan comprehensive component architecture following requirement 5.0, leveraging base patterns from src/components/BaseComponent.tsx and theme system from src/styles/theme.ts | Restrictions: Must follow existing component patterns, maintain design system consistency, ensure component reusability | Success: Architecture is well-planned and documented, components are properly organized, follows existing patterns and theme system_
-
-- [ ] 5.1 Create base UI components
-  - Set up component structure
-  - Implement reusable components
-  - Add styling and theming
-  - _Leverage: src/components/BaseComponent.tsx, src/styles/theme.ts_
-  - _Requirements: 5.1_
-  - _Prompt: Role: Frontend Developer specializing in React and component architecture | Task: Create reusable UI components following requirement 5.1, extending BaseComponent patterns and using existing theme system from src/styles/theme.ts | Restrictions: Must use existing theme variables, follow component composition patterns, ensure accessibility compliance | Success: Components are reusable and properly themed, follow existing architecture, accessible and responsive_
-
-- [ ] 5.2 Implement feature-specific components
-  - Create feature components
-  - Add state management
-  - Connect to API endpoints
-  - _Leverage: src/hooks/useApi.ts, src/components/BaseComponent.tsx_
-  - _Requirements: 5.2, 5.3_
-  - _Prompt: Role: React Developer with expertise in state management and API integration | Task: Implement feature-specific components following requirements 5.2 and 5.3, using API hooks from src/hooks/useApi.ts and extending BaseComponent patterns | Restrictions: Must use existing state management patterns, handle loading and error states properly, maintain component performance | Success: Components are fully functional with proper state management, API integration works smoothly, user experience is responsive and intuitive_
+---
 
 ## Standard Closing Tasks
 
-- [ ] 6. Run project test suite and verify baseline
-  - Run the project's test command to establish a passing baseline before changes
-  - If no test suite exists, flag this and discuss with the user
-  - _Leverage: Project test configuration (package.json scripts, vitest.config, jest.config, etc.)_
+- [ ] C1. Establish test baseline
+  - File: (no file changes — testing only)
+  - Run the project's test command to establish a passing baseline before any implementation changes
+  - If no test suite exists, flag this to the user and discuss whether to set one up
+  - Purpose: Record the starting state so regressions can be detected
+  - _Leverage: Project test configuration (test scripts, config files, CI definitions)_
   - _Requirements: All_
-  - _Prompt: Role: QA Engineer | Task: Run the project's established test suite to verify a passing baseline before implementation. Identify the test command from package.json, CLAUDE.md, or project conventions. If no test suite exists, flag this to the user. | Restrictions: Use the project's existing test framework, do not introduce a new one. | Success: Test suite runs and baseline results are recorded._
+  - _Prompt: Implement the task for spec {{spec-name}}, first run spec-workflow-guide to get the workflow guide then implement the task: Role: QA Engineer | Task: Identify and run the project's established test suite to verify a passing baseline before implementation. Check project documentation and config files for the test command. Record the number of passing/failing/skipped tests. If no test suite exists, flag this to the user and ask whether to set one up before proceeding. | Restrictions: Use the project's existing test framework — do not introduce a new one. Do not modify any source files. | Success: Test suite runs and baseline results (pass/fail/skip counts) are recorded. PREREQUISITE: This is a verification-only task — no worktree changes needed. BLOCKING: After recording baseline, you MUST call the log-implementation tool with the test results before marking [x]. Do NOT mark [x] until the log-implementation tool call succeeds._
 
-- [ ] 6.1 Write tests for new behavior (TDD — write BEFORE implementation)
-  - Write failing tests using the project's test framework for all new behavior
-  - Tests should cover the acceptance criteria from requirements.md
+- [ ] C2. Write failing tests for new behavior (TDD — BEFORE implementation)
+  - File: [test file paths — determined by project conventions]
+  - Write failing tests using the project's test framework for all new behavior described in requirements.md
+  - Tests should map to acceptance criteria — one or more tests per AC
+  - Purpose: TDD — tests define the expected behavior before code is written
   - _Leverage: Project test framework, requirements.md acceptance criteria_
   - _Requirements: All_
-  - _Prompt: Role: QA Engineer | Task: Write failing tests for all new behavior described in requirements.md using the project's test framework. Follow TDD - tests must fail before implementation, pass after. | Restrictions: Use the project's existing test framework. Tests must be runnable with the project's test command. | Success: Failing tests exist for all new acceptance criteria._
+  - _Prompt: Implement the task for spec {{spec-name}}, first run spec-workflow-guide to get the workflow guide then implement the task: Role: QA Engineer | Task: Write failing tests for all new behavior described in requirements.md acceptance criteria. Use the project's existing test framework and conventions. Each acceptance criterion should have at least one corresponding test. Tests MUST fail before implementation (red phase of TDD) and pass after (green phase). | Restrictions: Use the project's existing test framework — do not introduce a new one. Tests must be runnable with the project's test command. Do not write implementation code in this task. | Success: Failing tests exist for every acceptance criterion in requirements.md. Running the test suite shows the new tests fail (expected) while existing tests still pass. PREREQUISITE: Before writing any code, verify you are in the correct working context. If the project uses version.lock, confirm `git branch --show-current` returns patch/VERSION. If not, STOP and run /release patch first. Mark task as [-] in tasks.md before starting. BLOCKING: After writing tests, you MUST call the log-implementation tool with test file paths and AC mapping before marking [x]. Do NOT mark [x] until the log-implementation tool call succeeds._
 
-- [ ] 6.2 Verify all tests pass after implementation
-  - Run the full test suite after all implementation tasks are complete
-  - All new tests must pass; no existing tests may regress
-  - _Leverage: Project test command_
+- [ ] C3. Implement — make tests pass
+  - File: [implementation file paths — determined by design.md]
+  - Write the minimum code needed to make all failing tests from C2 pass
+  - Follow existing project patterns and conventions
+  - Purpose: Green phase of TDD — implementation is driven by tests
+  - _Leverage: design.md architecture decisions, existing project patterns_
   - _Requirements: All_
-  - _Prompt: Role: QA Engineer | Task: Run the project's full test suite. Verify all new tests pass and no existing tests regressed. | Restrictions: Do not skip or disable failing tests. | Success: Full test suite passes with zero regressions._
+  - _Prompt: Implement the task for spec {{spec-name}}, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Senior Developer | Task: Write the implementation code to make all failing tests from task C2 pass. Follow the architecture and patterns described in design.md. Use existing project utilities and patterns — do not reinvent. Keep changes minimal and focused on making tests green. | Restrictions: Do not modify test files from C2 to make them pass — fix the implementation instead. Do not introduce new dependencies without justification. Follow existing code style and patterns. | Success: All tests from C2 now pass. No existing tests regress. Code follows project conventions. PREREQUISITE: Before writing any code, verify you are in the correct working context. If the project uses version.lock, confirm `git branch --show-current` returns patch/VERSION. If not, STOP and run /release patch first. Mark task as [-] in tasks.md before starting. BLOCKING: After implementation, you MUST call the log-implementation tool with full artifacts before marking [x]. Do NOT mark [x] until the log-implementation tool call succeeds._
 
-- [ ] 6.3 Final integration and cleanup
-  - Integrate all components
-  - Verify no lint or type errors
-  - Clean up temporary code and documentation
-  - _Leverage: Project lint/build commands_
+- [ ] C4. Run full test suite — zero regressions
+  - File: (no file changes — testing only)
+  - Run the project's complete test suite after all implementation is done
+  - All new tests must pass; no existing tests may regress from the C1 baseline
+  - Purpose: Verify implementation is complete and nothing is broken
+  - _Leverage: Project test command, baseline results from C1_
   - _Requirements: All_
-  - _Prompt: Role: Senior Developer | Task: Complete final integration of all components and perform comprehensive cleanup. Run lint and type checks. Remove any temporary code or debug statements. | Restrictions: Must not break existing functionality. Ensure code quality standards are met. | Success: All components integrated, no lint or type errors, code is clean._
+  - _Prompt: Implement the task for spec {{spec-name}}, first run spec-workflow-guide to get the workflow guide then implement the task: Role: QA Engineer | Task: Run the project's full test suite. Compare results against the baseline from task C1. All new tests from C2 must pass. No existing tests may have regressed. If any test fails, diagnose and fix before proceeding — do not skip or disable failing tests. | Restrictions: Do not skip or disable any tests. Do not modify tests to make them pass unless they have a genuine bug. | Success: Full test suite passes. New test count matches C2. Zero regressions from C1 baseline. PREREQUISITE: This is a verification-only task — no file changes expected unless fixing regressions. BLOCKING: After test run, you MUST call the log-implementation tool with pass/fail/skip counts and comparison to C1 baseline before marking [x]. Do NOT mark [x] until the log-implementation tool call succeeds._
+
+- [ ] C5. Log implementation — HARD GATE
+  - File: (no file changes — logging only)
+  - Call the `log-implementation` MCP tool with a comprehensive summary of ALL implementation work done across all tasks in this spec
+  - Include: all functions added/modified, all files changed, all tests written, all endpoints created
+  - Purpose: Create a permanent record of what was implemented for future reference and audit
+  - _Leverage: Implementation logs from individual tasks, git diff_
+  - _Requirements: All_
+  - _Prompt: Implement the task for spec {{spec-name}}, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Project Coordinator | Task: Call the log-implementation MCP tool with a comprehensive summary covering all implementation tasks in this spec. Aggregate: (1) all functions added or modified with file paths, (2) all files created or changed, (3) all test files and test counts, (4) any new endpoints, routes, or APIs, (5) any configuration changes. This is the consolidated implementation record. | Restrictions: Do not skip any task's artifacts. Do not mark this task [x] until the log-implementation tool call succeeds. | Success: log-implementation MCP tool call succeeds with full artifact listing. BLOCKING: This IS the logging gate. Do NOT mark [x] until the log-implementation tool call succeeds._
+
+- [ ] C6. Generate verification.md
+  - File: `DocVault/specflow/{{projectName}}/specs/{{spec-name}}/verification.md`
+  - Generate a verification checklist in the spec directory
+  - List every requirement and acceptance criterion from requirements.md as a checklist item
+  - For each item: mark `[x]` with `file:line` code evidence, OR mark `[ ]` with a gap description
+  - Purpose: Prove every requirement is met with traceable evidence — no hand-waving
+  - _Leverage: requirements.md, implementation logs, git diff_
+  - _Requirements: All_
+  - _Prompt: Implement the task for spec {{spec-name}}, first run spec-workflow-guide to get the workflow guide then implement the task: Role: QA Engineer | Task: Generate verification.md in the spec directory. Read requirements.md and list every requirement and acceptance criterion as a markdown checklist. For each item, search the codebase for the implementing code and mark [x] with file:line evidence (e.g., "src/core/parser.ts:142 — validates input format"). If any criterion cannot be verified, mark [ ] with a description of the gap. Run /vault-update to update any DocVault pages affected by this spec's changes. Close all linked DocVault issues. Run /verification-before-completion for a final check. | Restrictions: Do not mark [x] without concrete file:line evidence. Do not fabricate evidence. If a gap exists, document it honestly. | Success: verification.md exists with every requirement/AC listed. All items marked [x] with evidence, OR [ ] items have gap descriptions. /vault-update completed. Linked issues closed. /verification-before-completion passed. BLOCKING: After generating verification.md, you MUST call the log-implementation tool before marking [x]. Do NOT mark [x] until the log-implementation tool call succeeds._
+
+- [ ] C7. Loop or complete
+  - File: (no file changes — decision gate only)
+  - IF verification.md has ANY unchecked `[ ]` items → return to task C2 and write tests for the gaps, then implement (C3), test (C4), log (C5), and re-verify (C6)
+  - ONLY when ALL items in verification.md are `[x]` → proceed to PR/commit
+  - Purpose: Enforce the verification loop — specs are not complete until every requirement is proven
+  - _Leverage: verification.md from C6_
+  - _Requirements: All_
+  - _Prompt: Implement the task for spec {{spec-name}}, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Project Coordinator | Task: Read verification.md from task C6. Count unchecked [ ] items. IF any exist: list the gaps, return to task C2 to write tests targeting those gaps, then re-execute C3 through C6. Repeat until verification.md has zero unchecked items. ONLY when all items are [x]: proceed to create the PR or commit. | Restrictions: Do NOT proceed to PR/commit if ANY [ ] items remain in verification.md. Do NOT remove unchecked items to force completion. Each loop iteration must go through C2→C6 in order. | Success: verification.md has zero unchecked items. All requirements are proven with code evidence. PR/commit may proceed. BLOCKING: After confirming all items are verified, you MUST call the log-implementation tool with the final verification status before marking [x]. Do NOT mark [x] until the log-implementation tool call succeeds._
