@@ -1,6 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import type { Stats } from 'fs';
 import type { ProjectConventions } from '../convention-detector.js';
+
+const __dirname_test = dirname(fileURLToPath(import.meta.url));
 
 // Mock fs/promises before importing the module under test
 vi.mock('fs/promises', () => ({
@@ -116,9 +121,10 @@ describe('generateUserTemplates', () => {
     expect(result.designTemplate).toContain('Runbook E2E Tests');
     expect(result.designTemplate).toContain('tests/runbook/');
 
-    // Tasks template should contain /bb-test references
+    // Tasks template should contain /bb-test references AND verification.md
     expect(result.tasksTemplate).toContain('/bb-test');
     expect(result.tasksTemplate).toContain('runbook');
+    expect(result.tasksTemplate).toContain('verification.md');
   });
 
   it('should generate vitest-specific templates', async () => {
@@ -132,6 +138,15 @@ describe('generateUserTemplates', () => {
     // Should reference vitest
     expect(result.designTemplate).toContain('vitest');
     expect(result.tasksTemplate).toContain('npx vitest');
+
+    // Should contain verification.md and log-implementation gate
+    expect(result.tasksTemplate).toContain('verification.md');
+    expect(result.tasksTemplate).toContain('log-implementation');
+
+    // Should NOT contain upstream TypeScript/React/Express sample references
+    expect(result.tasksTemplate).not.toContain('TypeScript');
+    expect(result.tasksTemplate).not.toContain('IFeatureService');
+    expect(result.tasksTemplate).not.toContain('BaseComponent');
 
     // Should NOT contain browserbase references
     expect(result.designTemplate).not.toContain('bb-test');
@@ -151,9 +166,37 @@ describe('generateUserTemplates', () => {
     expect(result.designTemplate).toContain('tests/');
     expect(result.tasksTemplate).toContain('npm test');
 
+    // Should contain the HARD GATE and verification artifacts
+    expect(result.tasksTemplate).toContain('HARD GATE');
+    expect(result.tasksTemplate).toContain('verification.md');
+    expect(result.tasksTemplate).toContain('log-implementation');
+
+    // Should NOT contain upstream TypeScript/React/Express sample references
+    expect(result.tasksTemplate).not.toContain('TypeScript');
+    expect(result.tasksTemplate).not.toContain('IFeatureService');
+    expect(result.tasksTemplate).not.toContain('BaseComponent');
+
     // Should NOT contain browserbase references
     expect(result.designTemplate).not.toContain('bb-test');
     expect(result.tasksTemplate).not.toContain('bb-test');
+  });
+});
+
+describe('bundled tasks-template.md', () => {
+  it('should contain MANDATORY GATES comment and no upstream sample references', () => {
+    // Read the source template directly from disk
+    const templatePath = join(__dirname_test, '..', '..', 'markdown', 'templates', 'tasks-template.md');
+    const content = readFileSync(templatePath, 'utf-8');
+
+    // Must contain the MANDATORY GATES HTML comment
+    expect(content).toContain('MANDATORY GATES');
+
+    // Must NOT contain upstream Pimzino TypeScript/React/Express sample references
+    expect(content).not.toContain('TypeScript');
+    expect(content).not.toContain('React');
+    expect(content).not.toContain('Express');
+    expect(content).not.toContain('IFeatureService');
+    expect(content).not.toContain('BaseComponent');
   });
 });
 
