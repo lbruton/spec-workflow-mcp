@@ -222,6 +222,68 @@ describe('ProjectRegistry worktree identity', () => {
     expect(entry!.worktrees).toContain(resolve(worktreePath));
   });
 
+  it('registerProject absorbs stale entry when workflowRootPath changes', async () => {
+    const registry = new ProjectRegistry();
+    const gitRoot = '/tmp/my-repo';
+    const docvaultRoot = '/tmp/docvault/specflow/MyRepo';
+
+    // Simulate pre-DocVault registration (keyed by git root)
+    await registry.registerProject(gitRoot, process.pid, { workflowRootPath: gitRoot });
+    let projects = await registry.getAllProjects();
+    expect(projects).toHaveLength(1);
+    expect(projects[0].projectId).toBe(generateProjectId(resolve(gitRoot)));
+
+    // Simulate post-DocVault registration (keyed by DocVault path, git root as workspace)
+    await registry.registerProject(gitRoot, process.pid + 1, { workflowRootPath: docvaultRoot });
+    projects = await registry.getAllProjects();
+    expect(projects).toHaveLength(1); // Stale entry absorbed, not duplicated
+    expect(projects[0].projectId).toBe(generateProjectId(resolve(docvaultRoot)));
+    expect(projects[0].workflowRootPath).toBe(resolve(docvaultRoot));
+    expect(projects[0].worktrees).toContain(resolve(gitRoot));
+  });
+
+  it('cleanup migrates worktree overlaps from pre-DocVault entries', async () => {
+    const registryPath = join(tempDir, 'activeProjects.json');
+    const gitRoot = '/tmp/my-repo';
+    const docvaultRoot = '/tmp/docvault/specflow/MyRepo';
+    const resolvedGitRoot = resolve(gitRoot);
+    const resolvedDocvaultRoot = resolve(docvaultRoot);
+
+    // Simulate two entries: old (keyed by git root) and new (keyed by DocVault path)
+    const oldId = generateProjectId(resolvedGitRoot);
+    const newId = generateProjectId(resolvedDocvaultRoot);
+
+    const data: Record<string, any> = {
+      [oldId]: {
+        projectId: oldId,
+        projectPath: resolvedGitRoot,
+        workflowRootPath: resolvedGitRoot,
+        projectName: 'my-repo',
+        instances: [{ pid: 99990, registeredAt: new Date().toISOString() }],
+        worktrees: []
+      },
+      [newId]: {
+        projectId: newId,
+        projectPath: resolvedDocvaultRoot,
+        workflowRootPath: resolvedDocvaultRoot,
+        projectName: 'MyRepo',
+        instances: [{ pid: 99991, registeredAt: new Date().toISOString() }],
+        worktrees: [resolvedGitRoot] // The git root is listed as a worktree
+      }
+    };
+
+    await fs.writeFile(registryPath, JSON.stringify(data, null, 2), 'utf-8');
+
+    const registry = new ProjectRegistry();
+    await registry.cleanupStaleProjects();
+
+    const projects = await registry.getAllProjects();
+    expect(projects).toHaveLength(1);
+    expect(projects[0].projectId).toBe(newId);
+    expect(projects[0].projectName).toBe('MyRepo');
+    expect(projects[0].worktrees).toContain(resolvedGitRoot);
+  });
+
   it('isProjectRegistered returns true for worktree path', async () => {
     const registry = new ProjectRegistry();
     const workflowRootPath = '/tmp/my-repo';

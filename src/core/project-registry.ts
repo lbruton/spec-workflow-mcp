@@ -235,10 +235,35 @@ export class ProjectRegistry {
       existing.instances = liveInstances;
       registry.set(projectId, existing);
     } else {
-      // New project
+      // New project — but first, absorb any stale entry whose workflowRootPath
+      // matches our workspacePath. This happens when the workflowRootPath changes
+      // (e.g., from git root to DocVault path after consolidation) and the old
+      // entry keyed by the git root is left behind.
       const worktrees: string[] = [];
       if (workspacePath !== workflowRootPath) {
         worktrees.push(workspacePath);
+      }
+
+      const staleId = generateProjectId(workspacePath);
+      const staleEntry = (staleId !== projectId) ? registry.get(staleId) : undefined;
+      const mergedInstances: ProjectInstance[] = [{ pid, registeredAt: new Date().toISOString() }];
+      if (staleEntry) {
+        // Merge live instances from the stale entry
+        const seenPids = new Set<number>([pid]);
+        for (const inst of staleEntry.instances) {
+          if (this.isProcessAlive(inst.pid) && !seenPids.has(inst.pid)) {
+            seenPids.add(inst.pid);
+            mergedInstances.push(inst);
+          }
+        }
+        // Merge worktrees from the stale entry
+        for (const wt of staleEntry.worktrees) {
+          if (wt !== workspacePath && wt !== workflowRootPath && !worktrees.includes(wt)) {
+            worktrees.push(wt);
+          }
+        }
+        registry.delete(staleId);
+        console.error(`[ProjectRegistry] Absorbed stale entry ${staleId} (${staleEntry.projectName}) into ${projectId}`);
       }
 
       const entry: ProjectRegistryEntry = {
@@ -247,7 +272,7 @@ export class ProjectRegistry {
         workflowRootPath,
         projectName,
         worktrees,
-        instances: [{ pid, registeredAt: new Date().toISOString() }]
+        instances: mergedInstances
       };
       registry.set(projectId, entry);
     }
@@ -431,6 +456,57 @@ export class ProjectRegistry {
   }
 
   /**
+   * Absorb entries whose workflowRootPath appears as a worktree in another entry.
+   * This handles the DocVault consolidation case: the old entry was keyed by git root,
+   * the new entry is keyed by DocVault path and lists the git root as a worktree.
+   * Idempotent — returns true if any changes were made.
+   */
+  private migrateWorktreeOverlaps(registry: Map<string, ProjectRegistryEntry>): boolean {
+    // Build a lookup: workflowRootPath → projectId for quick matching
+    const pathToId = new Map<string, string>();
+    for (const [id, entry] of registry.entries()) {
+      pathToId.set(entry.workflowRootPath, id);
+    }
+
+    let changed = false;
+
+    for (const [id, entry] of registry.entries()) {
+      for (const wt of entry.worktrees) {
+        const staleId = pathToId.get(wt);
+        if (!staleId || staleId === id) continue;
+
+        const staleEntry = registry.get(staleId);
+        if (!staleEntry) continue;
+
+        // Merge instances (dedup by PID)
+        const seenPids = new Set(entry.instances.map(i => i.pid));
+        for (const inst of staleEntry.instances) {
+          if (!seenPids.has(inst.pid)) {
+            seenPids.add(inst.pid);
+            entry.instances.push(inst);
+          }
+        }
+
+        // Merge worktrees (dedup, skip self-references)
+        const seenWorktrees = new Set(entry.worktrees);
+        for (const staleWt of staleEntry.worktrees) {
+          if (!seenWorktrees.has(staleWt) && staleWt !== entry.workflowRootPath) {
+            seenWorktrees.add(staleWt);
+            entry.worktrees.push(staleWt);
+          }
+        }
+
+        registry.delete(staleId);
+        pathToId.delete(wt);
+        console.error(`[ProjectRegistry] Migration: absorbed ${staleEntry.projectName} (${staleId}) into ${entry.projectName} (${id})`);
+        changed = true;
+      }
+    }
+
+    return changed;
+  }
+
+  /**
    * Clean up stale instances (where the process is no longer running)
    * Projects with no live instances are removed entirely
    * Returns the count of removed instances
@@ -458,6 +534,13 @@ export class ProjectRegistry {
 
     // Deduplicate legacy entries that were keyed by worktree path instead of workflowRootPath
     if (await this.migrateDeduplicateEntries(registry)) {
+      needsWrite = true;
+    }
+
+    // Absorb entries whose workflowRootPath is listed as a worktree in another entry.
+    // This catches stale pre-DocVault entries where the workflowRootPath was the git root,
+    // but the newer entry (keyed by DocVault path) lists that git root as a worktree.
+    if (this.migrateWorktreeOverlaps(registry)) {
       needsWrite = true;
     }
 
