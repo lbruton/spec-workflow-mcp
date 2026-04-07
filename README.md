@@ -152,7 +152,7 @@ Each agent reads the current spec state, advances the workflow, and writes the r
 
 ### Claude Code
 
-**Step 1 — Install the MCP server** (provides tools and prompts):
+**Step 1 — Install the MCP server** (provides tools, prompts, and templates):
 
 Add to your user-level settings (`~/.claude/settings.json`):
 
@@ -167,16 +167,19 @@ Add to your user-level settings (`~/.claude/settings.json`):
 }
 ```
 
-**Step 2 — Install the plugin** (optional — provides skills and slash commands):
+The npm package contains the MCP server, dashboard, and the 9 spec templates (requirements, design, tasks, implementer-prompt, spec-reviewer, code-quality-reviewer, product, tech, structure). Templates auto-populate `DocVault/specflow/templates/` on first run.
+
+**Step 2 — Install the skills and commands** (recommended — provides `/spec`, `/prime`, `/wrap`, etc.):
 
 ```bash
-git clone https://github.com/lbruton/specflow.git
-cp -r specflow/plugin/ ~/.claude/plugins/marketplaces/specflow-marketplace/
+git clone https://github.com/lbruton/specflow.git ~/specflow-source
+cp -r ~/specflow-source/plugin/skills/* ~/.claude/skills/
+cp -r ~/specflow-source/plugin/commands ~/.claude/
 ```
 
-Skills like `/prime`, `/wrap`, `/spec` are available immediately after restarting Claude Code.
+Skills like `/prime`, `/wrap`, `/spec`, `/publish-templates` are available after restarting Claude Code.
 
-> **Note:** The plugin provides skills and commands only — it does not start the MCP server. The MCP server must be installed separately via Step 1.
+> **Architecture:** The npm package is the MCP server + dashboard + templates. The GitHub repo is the source of truth for skills, commands, and templates. The two are intentionally separate — skills are markdown files that Claude reads directly, not bundled into the npm package. See [`CLAUDE.md`](./CLAUDE.md) "Plugin Skills vs Production Skills — NEVER Symlink" for the rationale.
 
 ### Gemini CLI — Manual Install
 
