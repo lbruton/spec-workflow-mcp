@@ -150,5 +150,8 @@ opencodetmp
 spec-workflow-mcp.code-workspace
 
 
+# Backups
+.backups/
+
 # Other
 social-post.md

@@ -13,11 +13,11 @@ Parse arguments: first argument is the specName (e.g., STAK-123-user-authenticat
 
 ## Instructions
 
-1. Read the template at: `.spec-workflow/templates/<documentType>-template.md`
+1. Read the template at the resolved workflow root: `templates/<documentType>-template.md`
 2. Follow the template structure exactly — this ensures consistency
 3. Create comprehensive content following spec-driven development best practices
 4. Include all required sections from the template
-5. Create the document at: `.spec-workflow/specs/<specName>/<documentType>.md`
+5. Create the document at: `specs/<specName>/<documentType>.md` under the resolved workflow root
 6. After creating, use the **approvals** MCP tool with `action:'request'` to get user approval
 
 ## Document Types

@@ -11,7 +11,8 @@ MCP server plugin for spec-driven development with a real-time web dashboard. Po
 | Upstream | [Pimzino/spec-workflow-mcp](https://github.com/Pimzino/spec-workflow-mcp) |
 | Origin | [lbruton/specflow](https://github.com/lbruton/specflow) |
 | Branch | `main` (direct commits OK) |
-| Plugin copy | `~/.claude/plugins/marketplaces/specflow-marketplace/` (skills/commands only) |
+| Skills source | `specflow/skills/` in the repo (users copy → `~/.claude/skills/`) |
+| Commands source | `specflow/commands/` in the repo (users copy → `~/.claude/commands/`) |
 | MCP install | User-level `~/.claude/settings.json` → `npx -y @lbruton/specflow@latest .` |
 | Dashboard port | 5051 |
 | Dashboard service | `com.specflow.dashboard` (launchd) |
@@ -31,18 +32,41 @@ When making changes that affect documented behavior, run `/vault-update` before 
 
 ## Architecture & Distribution Model
 
-**The npm package (`@lbruton/specflow`) is ONLY the MCP server + dashboard.** It contains compiled TypeScript (tools, prompts, dashboard server, parsers) and nothing else. Skills are NOT in the npm package.
+**Two completely separate distribution channels — do not confuse them:**
 
-**Skills are simple markdown files (SKILL.md)** that live in the GitHub repo under `plugin/skills/`. They are copied to the plugin directory — they are NOT compiled, bundled, or shipped via npm. Never suggest "porting skills to npm" — that premise is wrong.
+| Channel | What ships | How users get it | Where it lives in the repo |
+|---|---|---|---|
+| **npm package** `@lbruton/specflow` | MCP server + dashboard (compiled TypeScript) | `npx -y @lbruton/specflow@latest .` in user-level settings.json | `src/` → built into `dist/` → published to npm |
+| **GitHub repo direct download** | Skills + slash commands (markdown files) | Clone/zip the repo, copy `skills/` and `commands/` into `~/.claude/` | `specflow/skills/` and `specflow/commands/` (top-level) |
 
+**Skills and commands are NEVER in the npm package.** They are plain markdown that users install by copying. The MCP server and the skills are independent — installing one does not install the other. The README must instruct users to do both.
+
+### Skill Distribution Pipeline
+
+```mermaid
+flowchart LR
+    A[User-level skill<br/>~/.claude/skills/&lt;name&gt;/SKILL.md] -->|battle test in real sessions| B{Proven?}
+    B -->|no, iterate| A
+    B -->|yes, ready to share| C[Make project-agnostic<br/>strip personal customization]
+    C --> D[cp → specflow/skills/&lt;name&gt;/SKILL.md]
+    D --> E[git commit + push to specflow repo]
+    E --> F[Users clone or download ZIP from GitHub]
+    F --> G[cp specflow/skills/* → ~/.claude/skills/]
 ```
-npm package (@lbruton/specflow):     MCP server + dashboard only
-GitHub repo (lbruton/specflow):      Canonical source for everything
-  └─ plugin/skills/                  Markdown skill templates (copied to plugin dir)
-Plugin directory:                    Copy of plugin/skills/ + commands/
-  ~/.claude/plugins/marketplaces/specflow-marketplace/
-MCP install:                         User-level settings.json → npx
-```
+
+**Canonical locations (single source of truth — no duplicates):**
+
+| Location | Purpose |
+|---|---|
+| `~/.claude/skills/<name>/SKILL.md` | lbruton's daily-driver, where new skills are battle-tested first |
+| `specflow/skills/<name>/SKILL.md` | **The shipped copy.** This is what users download from GitHub. |
+| `specflow/commands/<name>.md` | Shipped slash-command definitions (same model — users copy into `~/.claude/commands/`) |
+
+**Hard rules:**
+- There is NO `plugin/` directory. If you see one, it's an orphan from before the 2026-04-07 reconciliation — delete it, do not edit it.
+- There is NO marketplace directory under `~/.claude/plugins/marketplaces/`. If one exists, it's stale — delete it.
+- **Never symlink** the user-level skill to the repo copy. They are intentionally separate so user-level can iterate without dirtying the shipped version.
+- Promotion is a manual `cp` after the user-level version has been tested. Long-term we may automate this, but today it's a deliberate human step.
 
 ### DocVault Consolidation (SWF-2 — shipped v3.5.0)
 
@@ -83,12 +107,14 @@ src/
   dashboard/       # Dashboard UI server (parser.ts + server.ts)
   types.ts         # Shared TypeScript types
   index.ts         # Server entry point
-plugin/
-  skills/          # Plugin skills — session commands Claude follows literally
-    prime/         # Universal session boot
-    wrap/          # End-of-session orchestrator (supports --handoff)
-    audit/         # On-demand project health check
-    migrate-skill/ # Skill migration checklist
+skills/            # Shipped skills — users copy to ~/.claude/skills/
+  prime/           # Universal session boot
+  wrap/            # End-of-session orchestrator (supports --handoff)
+  audit/           # On-demand project health check
+  migrate-skill/   # Skill migration checklist
+  publish-templates/  # Template publish pipeline (⚠️ needs Phase 2 rewrite — see below)
+commands/          # Shipped slash-command definitions — users copy to ~/.claude/commands/
+  spec.md, prime.md, wrap.md, audit.md, ...
 ```
 
 ## Steering Documents
@@ -179,31 +205,22 @@ Never leave uncommitted source changes. `dist/` is gitignored -- if you build wi
 
 **npm publish constraint:** lbruton uses passkey authentication for npm. Claude CANNOT run `npm login` or `npm publish` directly — both fail with 401 at the auth step. Always hand off step 5 to the user and wait for confirmation before running step 6 verification. See mem0 `feedback_npm_publish_passkey.md` for the rationale.
 
-## Gotcha: Plugin Skills vs Production Skills — NEVER Symlink
+## Promoting a Skill — User-Level → Shipped
 
-**Two intentionally separate file sets:**
+The promotion flow is intentionally manual. After a skill has been battle-tested at `~/.claude/skills/<name>/SKILL.md`:
 
-| Location | Audience | Purpose |
-|---|---|---|
-| `~/.claude/skills/<name>/SKILL.md` | lbruton only | Daily-driver production skills, may contain personal customization |
-| `plugin/skills/<name>/SKILL.md` (this repo) | npm consumers | Sanitized public release copy that ships in the npm package |
+1. **Sanitize** — strip any lbruton-specific paths, personal preferences, or workspace assumptions. The shipped copy must work for any user on any project.
+2. **Copy** — `cp ~/.claude/skills/<name>/SKILL.md /Volumes/DATA/GitHub/specflow/skills/<name>/SKILL.md` (create the subdirectory if it's a brand-new skill)
+3. **Verify** — `diff ~/.claude/skills/<name>/SKILL.md specflow/skills/<name>/SKILL.md` — only the sanitization changes should appear; if anything else differs, you copied the wrong version
+4. **Commit + push** — direct to `main` (specflow uses no PR workflow for repo-internal docs/skills)
+5. **Update README** if the skill is new — add it to the skills inventory section
 
-**The two are NOT symlinked and must NOT be symlinked.** Production skills may diverge from shipped skills. We do not ship lbruton-customized skills in the public release. After editing one, **explicitly decide** whether the change belongs in the other and manually copy it across — there is no automatic sync, by design.
+The same flow applies to slash commands in `commands/`. There is no build step, no compile, no npm involvement. Skills and commands ship as raw markdown.
 
-If you find a symlink between these locations, it's a bug — replace it with a real file copy:
-
-```bash
-rm ~/.claude/skills/<name>/SKILL.md
-cp plugin/skills/<name>/SKILL.md ~/.claude/skills/<name>/SKILL.md
-```
-
-After editing a plugin skill, also copy to the marketplace cache so it picks up immediately:
-
-```bash
-cp plugin/skills/<name>/SKILL.md ~/.claude/plugins/marketplaces/specflow-marketplace/plugin/skills/<name>/SKILL.md
-```
-
-The compiled MCP server (`dist/`) auto-updates from npm on next Claude Code launch.
+**Anti-patterns to avoid:**
+- Editing `specflow/skills/<name>/SKILL.md` directly without testing at user level first — you'll ship something that broke in the first session.
+- Symlinking user-level → repo copy. They must be separate files so user-level can iterate freely.
+- Looking for a `plugin/` directory. There isn't one. If your search returns one, it's an orphan and should be deleted, not edited.
 
 ## Gotcha: mem0 Reader Pattern (SWF-90)
 

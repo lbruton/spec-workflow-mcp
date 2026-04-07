@@ -14,6 +14,35 @@ Wrap up this session. Follow each phase in order — do not skip phases unless e
 ## Arguments
 
 - **skipCleanup**: Pass `--skip-cleanup` if this session had no code changes (chat-only, research, etc.)
+- **handoff**: Pass `--handoff` if work continues in a new terminal. Adds handoff notes to the digest, writes a handoff file, and generates a paste-ready prompt for the next session. Use when context is heavy, switching machines, or relaying to another terminal.
+
+---
+
+## Phase Transition Rules (SWF-88)
+
+These rules prevent phase blending and gate skipping:
+
+1. **Phase transition banners are mandatory.** After completing each phase, print a banner BEFORE starting the next:
+   > **Phase N complete.** Moving to Phase N+1: {Phase Name}.
+
+   Never combine two phases in the same response without a banner between them.
+
+2. **Phase 1 ends with status only.** The Phase 1 response MUST end after presenting the status report. Do NOT ask Phase 2 questions (commit/stash/discard) in the same response. Wait for the user to acknowledge the status before starting cleanup.
+
+3. **Phase 2 gate summary is mandatory.** After working through ALL sub-gates (2.1-2.6), print a visible checklist before proceeding to Phase 3:
+
+   | Gate | Status |
+   |------|--------|
+   | 2.1 Uncommitted changes | {result} |
+   | 2.2 Implementation logging | {result} |
+   | 2.3 PR status | {result} |
+   | 2.4 Version bump | {result} |
+   | 2.5 Worktree cleanup | {result} |
+   | 2.6 Stale remote branches | {result} |
+
+   **All gates pass / Blockers: {list}.** Proceeding to Phase 3.
+
+   Do NOT proceed to Phase 3 without printing this table. Every gate must have a status, even if it's "N/A".
 
 ---
 
@@ -40,7 +69,11 @@ Also check spec-workflow state if the project uses it:
 
 **Report the status** before proceeding. If there are blockers (uncommitted files, unmerged PRs, in-progress tasks), present them and ask what to do.
 
+**STOP HERE.** Do not ask Phase 2 questions in this response. Wait for user acknowledgment.
+
 ---
+
+> **Phase 1 complete.** Moving to Phase 2: Cleanup Gate.
 
 ## Phase 2: Cleanup Gate
 
@@ -87,7 +120,24 @@ git pull origin <main-branch>
 git status --short
 ```
 
+### 2.6: Stale Remote Branch Pruning
+Check for remote branches whose PRs have been merged (squash-merge leaves branches that `git branch -r --merged` misses):
+```bash
+# List all non-main remote branches
+git branch -r | grep -v 'origin/main\|origin/HEAD' | sed 's|origin/||' | tr -d ' '
+```
+For each branch, check if its PR was merged: `gh pr list --head "<branch>" --state merged`
+- If PR was **merged**: delete with `git push origin --delete <branch>`
+- If **no PR found** or PR is **open**: leave it, note it in the recap
+- After deletions, run `git fetch --prune`
+
+### Phase 2 Gate Summary (MANDATORY — print before proceeding)
+
+Print the gate table showing every sub-gate's result. Do not skip this step.
+
 ---
+
+> **Phase 2 complete (all gates pass).** Moving to Phase 3: Documentation.
 
 ## Phase 3: Documentation
 
@@ -112,6 +162,8 @@ If spec-workflow specs were involved:
 - Check for pending approvals that should be resolved
 
 ---
+
+> **Phase 3 complete.** Moving to Phase 4: Knowledge Capture.
 
 ## Phase 4: Knowledge Capture
 
@@ -156,7 +208,13 @@ mcp__mem0__add_memory(
 - Things Claude did: "Claude should..."
 - Codebase facts: passive voice or component name
 
-**Critical:** Always set BOTH `user_id` AND `agent_id`. Without `agent_id`, mem0 creates placeholder entity names.
+**Critical (SWF-90):** Always set `metadata.project: "<tag>"` — this is the only project-scoping
+field mem0 v1 API actually persists as queryable. The top-level `agent_id` parameter is silently
+dropped (records have `agent_id: null`). Setting both is fine — `agent_id` is a harmless intent
+signal, but `metadata.project` is what makes the record findable.
+
+**Note:** The "Alice" placeholder bug is unrelated — it comes from passing `messages=[{role: "user"}]`
+instead of `text=`. Always use `text=`.
 
 ### 4.2: Session Digest (human-readable report for DocVault)
 
@@ -164,7 +222,9 @@ Write a session digest entry to the DocVault daily digest file. This is the huma
 
 **Path:** `/Volumes/DATA/GitHub/DocVault/Daily Digests/<ProjectFolder>/<YYYY-MM-DD>.md`
 
-Where `<ProjectFolder>` maps to the project name (e.g., StakTrakr, HexTrackr, Infrastructure, SpecFlow).
+Where `<ProjectFolder>` maps to the project name (e.g., StakTrakr, HexTrackr, SpecFlow).
+
+**Root workspace rule:** If the session was launched from `/Volumes/DATA/GitHub/` (the root workspace, not a specific project), use `Root` as the ProjectFolder — NOT `Infrastructure`. The `Infrastructure` folder is reserved for sessions launched from `HomeNetwork/` or focused on Proxmox/switches/DNS/stacks.
 
 **If the file doesn't exist**, create it with this format:
 ```markdown
@@ -176,12 +236,14 @@ tags: [daily-digest, <project-tag>]
 
 # Daily Digest — <ProjectName> (<YYYY-MM-DD>)
 
-## <HH:MM AM/PM>
+## <HH:MM AM/PM> — <AgentName>
 
 <session summary>
 ```
 
-**If the file exists**, append a new `## <HH:MM AM/PM>` section.
+Where `<AgentName>` is your identity: `Claude (Opus)`, `Claude (Sonnet)`, `Codex (GPT-5.4)`, `Gemini`, etc. This lets readers see which agent authored each digest entry at a glance.
+
+**If the file exists**, append a new `## <HH:MM AM/PM> — <AgentName>` section.
 
 **Session summary content** (200-300 words, flowing prose):
 - What was the goal of this session?
@@ -192,6 +254,17 @@ tags: [daily-digest, <project-tag>]
 - What should happen next?
 
 Include **concrete anchors**: commit hashes, issue IDs, version numbers, file paths. These make the digest searchable and verifiable.
+
+**Digest shape depends on `--handoff`:**
+
+- **Without `--handoff` (session complete):** End with a summary and conclusion. The "Next session" note is a suggestion, not a continuation plan.
+- **With `--handoff` (work continues):** Append a `## Handoff Notes` section at the end of the digest entry with:
+  - **Continue issue:** The issue ID to jump to next session (REQUIRED — e.g., `SWF-48`). If no issue exists for the active work, create one before writing handoff notes.
+  - **Resume with:** The exact command or action to start with (e.g., `/prime`, a specific file to open, a test to run)
+  - **Immediate next:** The task that was actively being worked on, with enough detail to resume without re-reading code
+  - **Then:** 2-3 follow-up tasks in priority order
+  - **Watch out for:** Gotchas, non-obvious state, or things the next session needs to know
+  - This section is what `/prime` reads as "where we left off" — make it actionable and specific
 
 Commit the digest to DocVault:
 ```bash
@@ -223,7 +296,41 @@ mcp__mem0__add_memory(
 - Does it say what CHANGED, not just what was "worked on"?
 - Is it different enough from the retro lessons to avoid redundancy?
 
+### 4.4: Paste-Ready Prompt (only if `--handoff`)
+
+Skip this step if `--handoff` was NOT passed.
+
+The session digest (Step 4.2) already contains the `## Handoff Notes` section with all
+the context the next session needs — `/prime` reads it directly from DocVault. No separate
+handoff file is needed.
+
+Generate a paste-ready prompt for the user to copy into the new terminal:
+
+````
 ---
+**Copy everything below this line into your new terminal:**
+---
+
+I'm continuing from a session handoff. Here's where we left off:
+
+**Branch:** <branch name>
+**Active task:** <what we were doing>
+
+Next steps:
+1. <next task with specifics>
+2. <following task>
+
+Key context:
+- <gotcha or non-obvious state>
+
+Run `/prime` to load the full session digest with handoff notes.
+````
+
+Tell the user: "Handoff ready. Copy the prompt above into your new terminal. `/prime` will pick up the full context from the digest."
+
+---
+
+> **Phase 4 complete.** Moving to Phase 5: Final Verification.
 
 ## Phase 5: Final Verification
 
@@ -250,6 +357,7 @@ Present a compact summary:
 **Lessons:** <count> retro entries saved to mem0
 **Digest:** Written to DocVault/Daily Digests/<path>
 **Cleanup:** <worktrees removed, branches deleted>
+**Handoff:** <if --handoff: "Handoff notes in digest — paste-ready prompt above" | otherwise: omit this line>
 
 Next session: <1-2 sentence suggestion for what to work on>
 ```
@@ -259,10 +367,13 @@ Next session: <1-2 sentence suggestion for what to work on>
 ## Rules
 
 - **Sequential phases**: Do not skip ahead. Phase 2 must complete before Phase 3.
+- **Phase banners are mandatory**: Print a transition banner between every phase (SWF-88).
+- **Phase 1 stops at status**: Do not ask Phase 2 questions in the Phase 1 response (SWF-88).
+- **Phase 2 gate table is mandatory**: Print the full gate summary before proceeding to Phase 3 (SWF-88).
 - **Ask, don't assume**: At every decision point (commit/stash/discard, merge/wait), ask the user.
 - **No Haiku agents**: All summaries and digests are written by YOU (the current in-context model). Never dispatch a subagent for summarization.
 - **Idempotent**: Running /wrap twice should be safe. Check if retro/digest already ran before duplicating.
-- **mem0 writes require both user_id and agent_id**: Missing agent_id causes entity tracking issues.
+- **mem0 writes require `metadata.project: "<tag>"`** (SWF-90): top-level `agent_id` is silently dropped by the v1 API; `metadata.project` is the only queryable project-scoping field.
 - **DocVault commits go direct to main**: No PR needed for documentation updates.
 - **Never auto-delete uncommitted work**: Always ask first.
 - **The session isn't over until Phase 5 prints the recap.**

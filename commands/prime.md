@@ -56,11 +56,8 @@ grep -rl "status: backlog\|status: todo\|status: in-progress" /Volumes/DATA/GitH
 ```
 For each file found, extract just the title and status from frontmatter (read first 10 lines).
 
-**Active Specs** — if `.spec-workflow/specs/` exists:
-- Use the **spec-status** MCP tool (no specName — returns all specs) or:
-```bash
-ls .spec-workflow/specs/ 2>/dev/null
-```
+**Active Specs** — if specs exist under the resolved workflow root:
+- Use the **spec-list** MCP tool (returns all specs across the resolved workflow root) or **spec-status** for a single spec.
 For each spec, check if tasks.md has any `[-]` (in-progress) or `[ ]` (pending) markers.
 
 **Today's Digest** — check if a session digest was written today or yesterday:

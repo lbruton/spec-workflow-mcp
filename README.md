@@ -169,17 +169,23 @@ Add to your user-level settings (`~/.claude/settings.json`):
 
 The npm package contains the MCP server, dashboard, and the 9 spec templates (requirements, design, tasks, implementer-prompt, spec-reviewer, code-quality-reviewer, product, tech, structure). Templates auto-populate `DocVault/specflow/templates/` on first run.
 
-**Step 2 — Install the skills and commands** (recommended — provides `/spec`, `/prime`, `/wrap`, etc.):
+**Step 2 — Install the skills and slash commands** (recommended — provides `/spec`, `/prime`, `/wrap`, etc.):
 
 ```bash
 git clone https://github.com/lbruton/specflow.git ~/specflow-source
-cp -r ~/specflow-source/plugin/skills/* ~/.claude/skills/
-cp -r ~/specflow-source/plugin/commands ~/.claude/
+cp -r ~/specflow-source/skills/* ~/.claude/skills/
+cp -r ~/specflow-source/commands/* ~/.claude/commands/
 ```
 
-Skills like `/prime`, `/wrap`, `/spec`, `/publish-templates` are available after restarting Claude Code.
+Or, if you prefer not to clone the repo, [download the latest ZIP](https://github.com/lbruton/specflow/archive/refs/heads/main.zip), unpack it, and copy the `skills/` and `commands/` directories into your `~/.claude/` directory.
 
-> **Architecture:** The npm package is the MCP server + dashboard + templates. The GitHub repo is the source of truth for skills, commands, and templates. The two are intentionally separate — skills are markdown files that Claude reads directly, not bundled into the npm package. See [`CLAUDE.md`](./CLAUDE.md) "Plugin Skills vs Production Skills — NEVER Symlink" for the rationale.
+After restarting Claude Code, the new skills (`/prime`, `/wrap`, `/spec`, `/audit`, `/publish-templates`, `/migrate-skill`) and the slash commands they invoke will be available.
+
+> **Architecture:** The two install steps are independent and serve different purposes:
+> - **The npm package** (`@lbruton/specflow`) ships the MCP server, dashboard, and bundled spec templates. It is the engine.
+> - **The GitHub repo** (`specflow/skills/` and `specflow/commands/`) ships the markdown skills and slash commands that Claude reads directly. They are the user-facing workflows.
+>
+> Skills are NEVER bundled into the npm package — they are plain markdown installed by copying. See [`CLAUDE.md`](./CLAUDE.md) § "Architecture & Distribution Model" for the full pipeline diagram.
 
 ### Gemini CLI — Manual Install
 

@@ -130,7 +130,7 @@ mcp__codacy__codacy_list_repository_issues(
 
 **DocVault security reviews — staleness check:**
 ```bash
-ls -t "/Volumes/DATA/GitHub/DocVault/Projects/<name>/Security Reviews/"*.md 2>/dev/null | head -1
+ls "/Volumes/DATA/GitHub/DocVault/Projects/<name>/Security Reviews/"*.md 2>/dev/null | sort -r | head -1
 ```
 If the most recent review is older than 30 days, flag it as stale.
 
