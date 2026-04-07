@@ -129,6 +129,44 @@ _If **No**, skip this section entirely. If **Yes**, complete all fields below �
    - **Handling:** [How to handle]
    - **User Impact:** [What user sees]
 
+## Security Considerations
+
+> **GATE:** This section must be filled in for every spec, even if the answer is "no security impact." A spec that explicitly declares no security impact is fine; a spec that omits this section is not — it cannot be assessed by reviewers and will fail the readiness gate.
+
+### Security Impact: [Yes / No / Minimal]
+
+_If **No** or **Minimal**, briefly justify (e.g., "string rename with no input/auth/network changes"). If **Yes**, complete the fields below — these gate the Codacy SRM scan in tasks.md C5.5._
+
+### Sensitive Data Touched
+- **User input parsed/validated:** [list inputs that cross trust boundaries — form fields, query params, file uploads, API payloads]
+- **Authentication/authorization changes:** [any change to who can access what — new roles, new permission checks, session/token handling]
+- **Secrets or credentials handled:** [API keys, tokens, passwords, encryption keys — and where they're sourced from, e.g., Infisical]
+- **PII or sensitive user data:** [any field that contains personal info, financial data, health data, location, etc.]
+
+### Threat Surface Changes
+- **New network endpoints:** [URLs/methods being exposed, with auth requirements]
+- **New external dependencies:** [npm/pip packages being added — supply-chain risk]
+- **New file system access:** [paths being read/written, especially user-controlled paths]
+- **New shell commands or eval:** [any `exec`, `eval`, `Function()`, template strings used as commands — injection risk]
+- **New deserialization of untrusted input:** [JSON/YAML/binary formats parsing untrusted bytes — deserialization vulnerabilities]
+
+### Input Validation Strategy
+- **Where validation happens:** [client / server / both]
+- **What is validated:** [type, length, format, allow-list, deny-list]
+- **Sanitization for storage/display:** [HTML escape, SQL parameterization, path normalization]
+
+### Codacy SRM Pre-Check (advisory)
+- **Run before tasks.md C5.5:** Check existing Codacy findings against the files this spec will modify (use `mcp__codacy__codacy_list_repository_issues` filtered to changed files)
+- **Findings to address up front:** [list any pre-existing Critical/High findings on files this spec touches, so they can be fixed in scope rather than orphaned]
+
+### Codacy SRM Gate (enforced in tasks.md C5.5)
+- The spec workflow's tasks.md template includes C5.5 Security Review which runs Codacy SRM against changed files post-implementation
+- This design section captures the **intent and threat model**; C5.5 verifies the implementation
+- For specs declaring `Security Impact: No`, C5.5 still runs but is expected to find zero new issues — any Critical/High finding becomes a hard gate
+
+### Out-of-Scope Security Notes
+[Anything related to security that this spec does NOT address but should be tracked separately — file as a follow-up issue rather than expanding this spec's scope]
+
 ## Testing Strategy
 
 ### Automated Tests
