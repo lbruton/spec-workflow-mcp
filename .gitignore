@@ -150,6 +150,9 @@ opencodetmp
 spec-workflow-mcp.code-workspace
 
 
+# Git worktrees (local-only; never commit)
+.worktrees/
+
 # Backups
 .backups/
 
