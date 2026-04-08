@@ -10,7 +10,7 @@ MCP server plugin for spec-driven development with a real-time web dashboard. Po
 | Version | `3.5.11` |
 | Upstream | [Pimzino/spec-workflow-mcp](https://github.com/Pimzino/spec-workflow-mcp) |
 | Origin | [lbruton/specflow](https://github.com/lbruton/specflow) |
-| Branch | `main` (direct commits OK) |
+| Branch | `main` (PR required, signed commits, status checks) |
 | Skills source | `specflow/skills/` in the repo (users copy → `~/.claude/skills/`) |
 | Commands source | `specflow/commands/` in the repo (users copy → `~/.claude/commands/`) |
 | MCP install | User-level `~/.claude/settings.json` → `npx -y @lbruton/specflow@latest .` |
@@ -207,10 +207,12 @@ After ANY source edit:
 
 1. `npm run build` -- verify compilation succeeds
 2. `git status --short` -- verify your changes
-3. `git add src/` and commit
-4. `git push origin main`
+3. Create a worktree branch, commit your changes there, and open a PR
+4. Merge the PR once all status checks pass
 
 Never leave uncommitted source changes. `dist/` is gitignored -- if you build without committing, the next `git pull` silently reverts your work.
+
+**Branch protection:** `main` enforces signed commits, required pull requests, and required status checks. Direct pushes are rejected. All changes (including skills, templates, docs) go through a PR. See the security note in the user-level `CLAUDE.md` § Repo Boundaries for the post-INC-001 rationale.
 
 ## Publishing
 
@@ -237,8 +239,8 @@ The promotion flow is intentionally manual. After a skill has been battle-tested
 1. **Sanitize** — strip any lbruton-specific paths, personal preferences, or workspace assumptions. The shipped copy must work for any user on any project.
 2. **Copy** — `cp ~/.claude/skills/<name>/SKILL.md /Volumes/DATA/GitHub/specflow/skills/<name>/SKILL.md` (create the subdirectory if it's a brand-new skill)
 3. **Verify** — `diff ~/.claude/skills/<name>/SKILL.md specflow/skills/<name>/SKILL.md` — only the sanitization changes should appear; if anything else differs, you copied the wrong version
-4. **Commit + push** — direct to `main` (specflow uses no PR workflow for repo-internal docs/skills)
-5. **Update README** if the skill is new — add it to the skills inventory section
+4. **Commit + push on a worktree branch, open a PR** — signed commits and required status checks are enforced on `main`, so there is no direct-push path even for docs/skills. Skills and commands ship through the same PR flow as source changes.
+5. **Update README** if the skill is new — add it to the skills inventory section in the same PR
 
 The same flow applies to slash commands in `commands/`. There is no build step, no compile, no npm involvement. Skills and commands ship as raw markdown.
 
