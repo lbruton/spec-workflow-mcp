@@ -1,177 +1,101 @@
 ---
 name: wrap
 description: >
-  End-of-session orchestrator — verifies work complete, cleans worktrees, updates DocVault,
-  captures retro lessons to mem0, writes session digest. Replaces /goodnight and /digest-session.
+  End-of-session orchestrator — autonomously verifies session work, captures retro lessons
+  to mem0, writes a template-enforced session digest to DocVault, and reports a soft
+  Session Health block at the end. Replaces /goodnight and /digest-session.
   Triggers: "wrap", "wrap up", "close session", "end of session", "done for the night",
   "finish up", "closing time".
 ---
 
 # Wrap Session
 
-Wrap up this session. Follow each phase in order — do not skip phases unless explicitly noted.
+End-of-session orchestrator. Run the entire flow autonomously without asking the user
+for permission between steps. The user invoked `/wrap` once — that is the permission.
 
 ## Arguments
 
-- **skipCleanup**: Pass `--skip-cleanup` if this session had no code changes (chat-only, research, etc.)
-- **handoff**: Pass `--handoff` if work continues in a new terminal. Adds handoff notes to the digest, writes a handoff file, and generates a paste-ready prompt for the next session. Use when context is heavy, switching machines, or relaying to another terminal.
+- **handoff**: Pass `--handoff` if work continues in a new terminal. Adds a `Handoff Notes`
+  section to the digest with a required Continue Issue ID.
 
 ---
 
-## Phase Transition Rules (SWF-88)
+## DocVault path convention
 
-These rules prevent phase blending and gate skipping:
-
-1. **Phase transition banners are mandatory.** After completing each phase, print a banner BEFORE starting the next:
-   > **Phase N complete.** Moving to Phase N+1: {Phase Name}.
-
-   Never combine two phases in the same response without a banner between them.
-
-2. **Phase 1 ends with status only.** The Phase 1 response MUST end after presenting the status report. Do NOT ask Phase 2 questions (commit/stash/discard) in the same response. Wait for the user to acknowledge the status before starting cleanup.
-
-3. **Phase 2 gate summary is mandatory.** After working through ALL sub-gates (2.1-2.6), print a visible checklist before proceeding to Phase 3:
-
-   | Gate | Status |
-   |------|--------|
-   | 2.1 Uncommitted changes | {result} |
-   | 2.2 Implementation logging | {result} |
-   | 2.3 PR status | {result} |
-   | 2.4 Version bump | {result} |
-   | 2.5 Worktree cleanup | {result} |
-   | 2.6 Stale remote branches | {result} |
-
-   **All gates pass / Blockers: {list}.** Proceeding to Phase 3.
-
-   Do NOT proceed to Phase 3 without printing this table. Every gate must have a status, even if it's "N/A".
+All paths in this skill that reference DocVault use `../DocVault/` relative to the current
+project root. By spec-workflow convention, **DocVault lives one directory up from every
+project folder, as a sibling**. For example, if your project is at
+`~/code/MyProject/`, DocVault is at `~/code/DocVault/`. No configuration — the layout is
+fixed. If your DocVault lives elsewhere, adjust the paths below for your environment.
 
 ---
 
-## Phase 1: Status Check
+## Design Principle (read this first — it governs everything below)
 
-Gather the current state before making any changes. Run ALL of these in parallel:
+Earlier versions of `/wrap` used five gated phases with mandatory approval prompts between
+each one. That over-corrected for prompt drift by stopping the agent every few steps to ask
+the user "is it OK to continue?" — which shifted the burden from *verification* to
+*permission*. The user shouldn't have to babysit a wrap-up.
+
+This version replaces the gates with a **template-enforced digest**. The digest file has
+required sections (Summary / Retro Lessons / Git State / Session Health / Next Session); if
+any section is empty or missing, the wrap is broken. The agent cannot finish the wrap
+without filling every section, and that artifact-shape requirement does the work that the
+gates used to do — without ever stopping to ask permission.
+
+**Three rules that follow from this:**
+
+1. **Run the whole flow in one shot.** No "STOP HERE", no "wait for user acknowledgment",
+   no phase banners. Just observe → retro → write digest → report.
+2. **Take action autonomously where the action is obvious.** If a task was marked `[x]`
+   without `log-implementation`, run `log-implementation` *now* — do not ask. If main is
+   behind origin and the working tree is clean, pull — do not ask. If a worktree has
+   uncommitted changes, *do not* delete it and *do not* ask — just report it as a soft
+   warning.
+3. **All warnings live in the Session Health block at the end.** Never interrupt the flow
+   with a yellow/red issue mid-stream. Report once, at the bottom, in one place.
+
+---
+
+## The Flow
+
+Run these steps in order. Steps 1, 4, and 6 do parallel work internally; otherwise the
+order matters because each step uses earlier results.
+
+### Step 1 — Observe (parallel)
+
+Gather all the state in one parallel batch. No analysis yet, just collection.
 
 ```bash
-# Git state
 git status --short
 git branch --show-current
+git log --oneline @{u}..HEAD 2>/dev/null    # commits ahead of remote
+git log --oneline HEAD..@{u} 2>/dev/null    # commits behind remote (we may need to pull)
 git stash list
-
-# Open worktrees
 git worktree list
-
-# Check for open PRs from this repo
-gh pr list --state open --json number,title,headRefName,state,mergeStateStatus
+gh pr list --author "@me" --state all --search "updated:>=$(date -v-1d +%Y-%m-%d)" --json number,title,headRefName,state,mergedAt
 ```
 
-Also check spec-workflow state if the project uses it:
-- If `.specflow/config.json` exists, use the **spec-status** tool to check for in-progress tasks
-- Look for any tasks marked `[-]` (in-progress) that need to be completed or reverted
+Plus, if `.specflow/config.json` exists, call the **spec-list** MCP tool (no args) to
+check for in-progress specs across the project. Do NOT call `spec-status` without a
+`specName` — it requires the spec name as a mandatory argument and crashes without it
+(see SWF-93). `spec-list` is the correct tool for "are there any in-progress tasks?".
 
-**Report the status** before proceeding. If there are blockers (uncommitted files, unmerged PRs, in-progress tasks), present them and ask what to do.
+Hold the results in working memory for later steps. Do not display them yet.
 
-**STOP HERE.** Do not ask Phase 2 questions in this response. Wait for user acknowledgment.
+### Step 2 — Implementation log catch-up (autonomous)
 
----
+If spec-workflow is active and any task was marked `[x]` during this session without a
+matching `log-implementation` call, run `log-implementation` now for each missing entry.
+Do not ask permission — this is a correctness fix, not a judgment call.
 
-> **Phase 1 complete.** Moving to Phase 2: Cleanup Gate.
+If no spec-workflow tasks were touched this session, skip.
 
-## Phase 2: Cleanup Gate
+### Step 3 — Retro lessons (autonomous)
 
-If `--skip-cleanup` was passed, skip to Phase 3.
+Scan the conversation for high-signal lessons and save them to mem0. Target 3-8 entries.
 
-Work through each item. **Do not proceed to Phase 3 until all gates pass.**
-
-### 2.1: Uncommitted Changes
-If `git status` shows dirty files:
-- Present the list and ask: **commit, stash, or discard?**
-- If commit: stage relevant files and commit with a descriptive message
-- If stash: `git stash push -m "wrap: uncommitted work from session"`
-- If discard: confirm with user before running `git checkout -- .`
-
-### 2.2: Implementation Logging
-If spec-workflow is active and tasks were completed this session:
-- Check that **log-implementation** was called for every task marked `[x]` during this session
-- If any task was marked complete WITHOUT a log entry, run log-implementation NOW
-- This is a **hard gate** — the most commonly skipped step in the workflow
-
-### 2.3: PR Status
-For each open PR from this session:
-- If **merged**: note it, proceed to worktree cleanup
-- If **open, checks passing**: ask user — merge now or leave for review?
-- If **open, checks failing**: flag it, ask user how to proceed
-- If **draft**: leave it, note it in the session summary
-
-### 2.4: Version Bump
-If the project has `devops/version.lock`:
-- Check if runtime code was changed this session (check git log for non-chore commits)
-- If runtime changes exist and no version bump commit is present, flag it:
-  "Runtime code changed but no version bump detected. Run /release patch before merging."
-
-### 2.5: Worktree Cleanup
-For each worktree listed in `git worktree list`:
-- If the branch was **merged**: remove the worktree (`git worktree remove <path>`) and delete the branch (`git branch -d <branch>`)
-- If the branch is **unmerged with no uncommitted changes**: ask user — delete or keep?
-- If the branch has **uncommitted changes**: flag it, do not auto-delete
-
-After cleanup, verify main/dev branch is clean:
-```bash
-git checkout <main-branch>
-git pull origin <main-branch>
-git status --short
-```
-
-### 2.6: Stale Remote Branch Pruning
-Check for remote branches whose PRs have been merged (squash-merge leaves branches that `git branch -r --merged` misses):
-```bash
-# List all non-main remote branches
-git branch -r | grep -v 'origin/main\|origin/HEAD' | sed 's|origin/||' | tr -d ' '
-```
-For each branch, check if its PR was merged: `gh pr list --head "<branch>" --state merged`
-- If PR was **merged**: delete with `git push origin --delete <branch>`
-- If **no PR found** or PR is **open**: leave it, note it in the recap
-- After deletions, run `git fetch --prune`
-
-### Phase 2 Gate Summary (MANDATORY — print before proceeding)
-
-Print the gate table showing every sub-gate's result. Do not skip this step.
-
----
-
-> **Phase 2 complete (all gates pass).** Moving to Phase 3: Documentation.
-
-## Phase 3: Documentation
-
-### 3.1: DocVault Updates
-If code was changed this session, update relevant DocVault documentation:
-- Identify which DocVault pages are affected by the changes (architecture, API, features, etc.)
-- Read each affected page to check if it needs updates
-- Update pages with current information
-- Commit DocVault changes directly to main (DocVault uses direct commits, no PR needed)
-
-The DocVault lives at `/Volumes/DATA/GitHub/DocVault/`. Use the project name to find the right subdirectory under `Projects/`.
-
-### 3.2: Issue Updates
-If the session was driven by an issue (DocVault or GitHub):
-- If work is **complete**: update the issue status to `done` and add a completion note with PR/commit references
-- If work is **partially complete**: update the issue with progress notes and remaining work
-- If work is **blocked**: update the issue with blocker details
-
-### 3.3: Spec Status
-If spec-workflow specs were involved:
-- Update spec phase status if all tasks are complete
-- Check for pending approvals that should be resolved
-
----
-
-> **Phase 3 complete.** Moving to Phase 4: Knowledge Capture.
-
-## Phase 4: Knowledge Capture
-
-This is the most important phase — it's what makes the next session productive. Run steps 4.1 and 4.2 sequentially (retro first, then digest), but 4.3 can run in parallel with 4.2.
-
-### 4.1: Retrospective (prescriptive lessons)
-
-Scan the current conversation for high-signal lessons. Look for:
+Look for:
 - **Mistakes** that cost time or caused rework
 - **Wrong assumptions** that led you astray
 - **Successful approaches** worth repeating
@@ -179,13 +103,13 @@ Scan the current conversation for high-signal lessons. Look for:
 - **Codebase gotchas** discovered (tricky code, hidden dependencies, surprising behavior)
 - **Process improvements** — things that should be done differently next time
 
-For each lesson (target 3-8), save to mem0:
+For each lesson, save to mem0:
 
 ```
 mcp__mem0__add_memory(
   text: "<single prescriptive sentence — action verb or 'When X, do Y' format>",
-  user_id: "lbruton",
-  agent_id: "<project-tag from project.json>",
+  user_id: "<your-mem0-user-id>",
+  agent_id: "<project-tag from .claude/project.json>",
   metadata: {
     "type": "retro-learning",
     "category": "<error|pattern|preference|improvement|warning|win>",
@@ -195,38 +119,71 @@ mcp__mem0__add_memory(
 )
 ```
 
-**Categories:**
-- **error**: Mistake that cost time — "Always check X before Y"
-- **pattern**: Reusable approach — "When doing X, use Y"
-- **preference**: User preference — "lbruton prefers X over Y"
-- **improvement**: Process improvement — "Next time, do X first"
-- **warning**: Gotcha or risk — "Watch out for X when touching Y"
-- **win**: Successful approach — "X worked well for Y"
+**Critical (SWF-90):** Always set `metadata.project: "<tag>"` — this is the only
+project-scoping field mem0 v1 API actually persists as queryable. The top-level `agent_id`
+parameter is silently dropped. Setting both is fine but `metadata.project` is what makes
+the record findable.
 
-**Actor attribution rules (strict):**
-- Things lbruton did: "lbruton prefers/uses/instructs..."
+**Actor attribution (strict):**
+- Things the user did: "the user prefers/uses/instructs..." (or use the user's real name/handle if known)
 - Things Claude did: "Claude should..."
 - Codebase facts: passive voice or component name
+- Never use generic placeholder names ("User", "Alice", "Bob") — use a real identifier or "the user" / "this user"
 
-**Critical (SWF-90):** Always set `metadata.project: "<tag>"` — this is the only project-scoping
-field mem0 v1 API actually persists as queryable. The top-level `agent_id` parameter is silently
-dropped (records have `agent_id: null`). Setting both is fine — `agent_id` is a harmless intent
-signal, but `metadata.project` is what makes the record findable.
+Hold the list of lessons in working memory — they go into the digest in Step 5.
 
-**Note:** The "Alice" placeholder bug is unrelated — it comes from passing `messages=[{role: "user"}]`
-instead of `text=`. Always use `text=`.
+### Step 4 — DocVault sync check (autonomous, conditional)
 
-### 4.2: Session Digest (human-readable report for DocVault)
+If code was changed this session AND the change affects documented behavior, update the
+relevant DocVault page now. Identify which pages are affected (architecture, API,
+features, etc.), read them, update them, commit directly to main.
 
-Write a session digest entry to the DocVault daily digest file. This is the human-readable record of what happened.
+DocVault commits use direct commits to main, no PR needed. Do not push the project repo
+yet — that's the user's call, after they review the wrap.
 
-**Path:** `/Volumes/DATA/GitHub/DocVault/Daily Digests/<ProjectFolder>/<YYYY-MM-DD>.md`
+If no documentation impact, skip.
 
-Where `<ProjectFolder>` maps to the project name (e.g., StakTrakr, HexTrackr, SpecFlow).
+### Step 5 — Compute Session Health (autonomous)
 
-**Root workspace rule:** If the session was launched from `/Volumes/DATA/GitHub/` (the root workspace, not a specific project), use `Root` as the ProjectFolder — NOT `Infrastructure`. The `Infrastructure` folder is reserved for sessions launched from `HomeNetwork/` or focused on Proxmox/switches/DNS/stacks.
+Using the Step 1 data, derive the four Session Health checks:
 
-**If the file doesn't exist**, create it with this format:
+| Check | Question | Pass criteria |
+|---|---|---|
+| **Commits committed** | Are all this session's changes committed? | `git status --short` is empty |
+| **Local in sync** | Is local main ahead/behind origin? | `git log @{u}..HEAD` empty AND `git log HEAD..@{u}` empty |
+| **Session PR status** | Did this session merge a PR? If yes, did we pull main? | If session-merged PR exists, local main matches origin AFTER pull |
+| **Worktrees clean** | Any worktrees with uncommitted changes or stale merged branches? | `git worktree list` shows only main + worktrees with clean state |
+
+**Action allowed in this step:** If local main is *behind* origin and the working tree is
+clean and the current branch is main, run `git pull --ff-only` autonomously. This is the
+"if the PR has been merged, pull the changes back down" rule from the redesign discussion.
+
+**Action NOT allowed:** Anything that touches uncommitted user work — no auto-commit, no
+auto-stash, no auto-discard, no `git checkout --`, no worktree deletion. Those become
+warnings, not actions.
+
+Compute the traffic-light color:
+- **🟢 Green** — all four checks pass
+- **🟡 Yellow** — one or more soft warnings (uncommitted files, stale worktrees, PR open
+  with passing checks, etc.) but nothing broken
+- **🔴 Red** — something is genuinely wrong (PR with failing checks, log-implementation
+  catch-up failed, mem0 write failed, etc.)
+
+### Step 6 — Write the digest (TEMPLATE-ENFORCED — this is the gate)
+
+This is the artifact that replaces the old phase gates. The digest MUST contain every
+section listed in the template below. Missing sections = broken wrap. Empty sections =
+broken wrap. Do not abbreviate, do not omit, do not "skip if N/A" — write `_(none)_` if a
+section legitimately has nothing to report, but the heading must exist.
+
+**Path:** `../DocVault/Daily Digests/<ProjectFolder>/<YYYY-MM-DD>.md`
+
+`<ProjectFolder>` maps to the project name (the basename of the current project
+directory, preserving its original casing). If the session was launched from a parent or
+root workspace that contains multiple projects, use `Root` as the project folder name.
+
+If the file doesn't exist, create it with frontmatter:
+
 ```markdown
 ---
 date: <YYYY-MM-DD>
@@ -235,50 +192,75 @@ tags: [daily-digest, <project-tag>]
 ---
 
 # Daily Digest — <ProjectName> (<YYYY-MM-DD>)
-
-## <HH:MM AM/PM> — <AgentName>
-
-<session summary>
 ```
 
-Where `<AgentName>` is your identity: `Claude (Opus)`, `Claude (Sonnet)`, `Codex (GPT-5.4)`, `Gemini`, etc. This lets readers see which agent authored each digest entry at a glance.
+Then append a new digest entry. If the file already exists, just append the entry.
 
-**If the file exists**, append a new `## <HH:MM AM/PM> — <AgentName>` section.
+#### Digest entry template (REQUIRED structure)
 
-**Session summary content** (200-300 words, flowing prose):
-- What was the goal of this session?
-- What was accomplished? (specific: commits, PRs, issues closed, features shipped)
-- What problems were encountered and how were they resolved?
-- What decisions were made and why?
-- What's the current state? (branch, version, open work)
-- What should happen next?
+```markdown
+## <HH:MM AM/PM> — <Agent name, e.g., Claude (Opus 4.6)>
 
-Include **concrete anchors**: commit hashes, issue IDs, version numbers, file paths. These make the digest searchable and verifiable.
+### Summary
+<200-300 words of flowing prose. Cover: goal of the session, what was accomplished
+(commits, PRs, issues closed, features shipped), problems encountered and how resolved,
+decisions made and why, current state, what should happen next. Include concrete anchors:
+commit hashes, issue IDs, version numbers, file paths.>
 
-**Digest shape depends on `--handoff`:**
+### Retro Lessons
+<bullet list of the lessons saved to mem0 in Step 3, with category tag>
+- [<category>] <one-sentence prescriptive lesson>
+- [<category>] <one-sentence prescriptive lesson>
+- ...
+_(write `_(none — chat-only session)_` if no lessons were saved)_
 
-- **Without `--handoff` (session complete):** End with a summary and conclusion. The "Next session" note is a suggestion, not a continuation plan.
-- **With `--handoff` (work continues):** Append a `## Handoff Notes` section at the end of the digest entry with:
-  - **Continue issue:** The issue ID to jump to next session (REQUIRED — e.g., `SWF-48`). If no issue exists for the active work, create one before writing handoff notes.
-  - **Resume with:** The exact command or action to start with (e.g., `/prime`, a specific file to open, a test to run)
-  - **Immediate next:** The task that was actively being worked on, with enough detail to resume without re-reading code
-  - **Then:** 2-3 follow-up tasks in priority order
-  - **Watch out for:** Gotchas, non-obvious state, or things the next session needs to know
-  - This section is what `/prime` reads as "where we left off" — make it actionable and specific
+### Git State
+- **Branch:** <current branch>
+- **Session commits:** <count> (<short SHA list>)
+- **Session PRs:** <#N status mergeState — or "none">
+- **Worktrees:** <count, with brief status>
+- **Uncommitted at wrap:** <count or "clean">
 
-Commit the digest to DocVault:
+### Session Health <emoji>
+<the soft warnings block — see "Session Health Block" section below for the format>
+
+### Next Session
+<1-3 sentences suggesting what to work on next, based on what's still open. NOT a binding
+commitment — just a hint for /prime to surface.>
+```
+
+**If `--handoff` was passed**, append a `### Handoff Notes` section AFTER `Next Session`
+with these required fields:
+
+```markdown
+### Handoff Notes
+- **Continue issue:** <ISSUE-ID — REQUIRED. If no issue exists for the active work,
+  create one before writing handoff notes>
+- **Resume with:** <exact command or first action — e.g., `/prime`, a file to open>
+- **Immediate next:** <task being actively worked on, with enough detail to resume
+  without re-reading code>
+- **Then:** <2-3 follow-up tasks in priority order>
+- **Watch out for:** <gotchas, non-obvious state, things the next session needs to know>
+```
+
+`/prime` reads this section as "where we left off" — make it actionable and specific.
+
+#### Commit the digest
+
 ```bash
-cd /Volumes/DATA/GitHub/DocVault && git add "Daily Digests/" && git commit -m "digest: <project> session <date>" && git push origin main
+cd ../DocVault && git add "Daily Digests/" && git commit -m "digest: <project> session <date>" && git push origin main
 ```
 
-### 4.3: Curated Session Summary (mem0 — machine-readable)
+### Step 7 — Save curated mem0 session summary
 
-Write ONE concise mem0 entry summarizing this session. This is what the startup hook and /prime will retrieve next session.
+Write ONE concise mem0 entry for the startup hook and `/prime` to retrieve next session.
 
 ```
 mcp__mem0__add_memory(
-  text: "[<ProjectName> | <branch> | <date>] <2-3 sentence summary of what was accomplished, key decisions, and current state. Include commit hashes, issue IDs, and version numbers as anchors.>",
-  user_id: "lbruton",
+  text: "[<ProjectName> | <branch> | <date>] <2-3 sentence summary of what was
+         accomplished, key decisions, and current state. Include commit hashes,
+         issue IDs, and version numbers as anchors.>",
+  user_id: "<your-mem0-user-id>",
   agent_id: "<project-tag>",
   metadata: {
     "category": "session-summary",
@@ -290,90 +272,123 @@ mcp__mem0__add_memory(
 )
 ```
 
-**Quality bar for this entry:**
-- Would this be useful if it showed up in 5 search results next session? If not, make it more specific.
-- Does it contain at least one concrete anchor (commit, issue ID, version)?
-- Does it say what CHANGED, not just what was "worked on"?
-- Is it different enough from the retro lessons to avoid redundancy?
+**Quality bar:**
+- Would this be useful in 5 search results next session? If not, more specific.
+- Contains at least one concrete anchor (commit, issue ID, version)?
+- Says what CHANGED, not just what was "worked on"?
+- Different enough from the retro lessons to avoid redundancy?
 
-### 4.4: Paste-Ready Prompt (only if `--handoff`)
+### Step 8 — Print the recap to the user
 
-Skip this step if `--handoff` was NOT passed.
-
-The session digest (Step 4.2) already contains the `## Handoff Notes` section with all
-the context the next session needs — `/prime` reads it directly from DocVault. No separate
-handoff file is needed.
-
-Generate a paste-ready prompt for the user to copy into the new terminal:
-
-````
----
-**Copy everything below this line into your new terminal:**
----
-
-I'm continuing from a session handoff. Here's where we left off:
-
-**Branch:** <branch name>
-**Active task:** <what we were doing>
-
-Next steps:
-1. <next task with specifics>
-2. <following task>
-
-Key context:
-- <gotcha or non-obvious state>
-
-Run `/prime` to load the full session digest with handoff notes.
-````
-
-Tell the user: "Handoff ready. Copy the prompt above into your new terminal. `/prime` will pick up the full context from the digest."
-
----
-
-> **Phase 4 complete.** Moving to Phase 5: Final Verification.
-
-## Phase 5: Final Verification
-
-Run these checks and present the results:
-
-```bash
-# Confirm repo is clean
-git status --short
-git worktree list
-
-# Confirm we're on the right branch
-git branch --show-current
-```
-
-### Session Recap
-
-Present a compact summary:
+The recap is the *last* thing the user sees. It's a compact mirror of the digest's Session
+Health block plus a one-line pointer to the digest path.
 
 ```
-## Session Complete
+## Session Wrapped 🟢 / 🟡 / 🔴
 
-**Shipped:** <list PRs merged, issues closed, versions bumped>
-**Pending:** <list open PRs, unfinished work, blockers>
-**Lessons:** <count> retro entries saved to mem0
-**Digest:** Written to DocVault/Daily Digests/<path>
-**Cleanup:** <worktrees removed, branches deleted>
-**Handoff:** <if --handoff: "Handoff notes in digest — paste-ready prompt above" | otherwise: omit this line>
+**Digest:** ../DocVault/Daily Digests/<path>.md
+**Lessons saved:** <count> retro entries to mem0
+**Session summary:** Saved to mem0 as session-digest
 
-Next session: <1-2 sentence suggestion for what to work on>
+<Session Health block — same content as the digest section, see format below>
+
+<If --handoff: "Handoff ready — /prime in your new terminal will load the notes.">
 ```
+
+That's it. No "press enter to continue", no "is everything OK?". The user invoked `/wrap`
+and the wrap is done.
 
 ---
 
-## Rules
+## Session Health Block — Format
 
-- **Sequential phases**: Do not skip ahead. Phase 2 must complete before Phase 3.
-- **Phase banners are mandatory**: Print a transition banner between every phase (SWF-88).
-- **Phase 1 stops at status**: Do not ask Phase 2 questions in the Phase 1 response (SWF-88).
-- **Phase 2 gate table is mandatory**: Print the full gate summary before proceeding to Phase 3 (SWF-88).
-- **Ask, don't assume**: At every decision point (commit/stash/discard, merge/wait), ask the user.
-- **No Haiku agents**: All summaries and digests are written by YOU (the current in-context model). Never dispatch a subagent for summarization.
-- **Idempotent**: Running /wrap twice should be safe. Check if retro/digest already ran before duplicating.
-- **mem0 writes require `metadata.project: "<tag>"`** (SWF-90): top-level `agent_id` is silently dropped by the v1 API; `metadata.project` is the only queryable project-scoping field.
-- **DocVault commits go direct to main**: No PR needed for documentation updates.
-- **Never auto-delete uncommitted work**: Always ask first.
-- **The session isn't over until Phase 5 prints the recap.**
+The Session Health block appears in TWO places: inside the digest (as a section) and at
+the end of the user-facing recap (as the final report). Both use the same format.
+
+### 🟢 Green — all checks pass
+
+```
+### Session Health 🟢
+
+✅ All session changes committed (<N> commits on <branch>)
+✅ Local in sync with origin/<branch>
+✅ Session PRs: <N merged | none open | none touched this session>
+✅ No worktree warnings
+✅ DocVault synced
+```
+
+When green, the recap is silent beyond that block. No suggestions, no follow-up questions.
+
+### 🟡 Yellow — soft warnings, nothing broken
+
+```
+### Session Health 🟡
+
+⚠ <warning 1 — short, specific, actionable>
+⚠ <warning 2>
+⚠ <warning 3>
+
+_These are warnings, not blockers. The session is wrapped — address these in your next
+session if needed._
+```
+
+Warning examples:
+- `⚠ 2 uncommitted files in src/tools/ (not staged) — review and decide next session`
+- `⚠ Local main is behind origin/main by 3 commits — auto-pull skipped because working tree was dirty`
+- `⚠ PR #47 open with passing checks — not merged this session`
+- `⚠ Worktree .worktrees/swf-92 has uncommitted changes — left intact`
+- `⚠ Stale worktree .worktrees/swf-88 (branch merged) — manual cleanup recommended`
+- `⚠ Runtime code changed but no version bump detected — run /release patch before next PR`
+
+### 🔴 Red — something is genuinely broken
+
+```
+### Session Health 🔴
+
+❌ <broken thing 1 — what failed and why>
+❌ <broken thing 2>
+
+⚠ <any soft warnings as well>
+
+_Red items need attention before the next session can proceed cleanly._
+```
+
+Red examples:
+- `❌ log-implementation catch-up failed for SWF-92 task 3.1 — manual fix required`
+- `❌ PR #47 has failing checks — investigate before next session`
+- `❌ DocVault push rejected — check credentials`
+- `❌ mem0 write failed for retro lessons — saved to fallback file at <path>`
+
+Even when red, the wrap still completes — the digest still gets written, mem0 still gets
+the session summary. Red is a *report*, not a halt.
+
+---
+
+## Rules (the short version)
+
+- **One flow, no gates.** No "STOP HERE", no phase banners, no mid-flow approval prompts.
+- **Run actions autonomously where the action is obvious.** Implementation logging, fast-
+  forward pull when clean, DocVault sync. Anything that touches dirty user work becomes a
+  warning, not an action.
+- **Template-enforced digest.** Every section in the template MUST exist with content (or
+  `_(none)_`). Missing section = broken wrap.
+- **Session Health is the only place warnings appear.** Never interrupt the flow to flag
+  something — collect it for the Health block.
+- **The recap is the last thing the user sees.** No follow-up questions after it.
+- **No Haiku agents.** All summaries and digests are written by YOU (the in-context model).
+  Never dispatch a subagent for summarization.
+- **mem0 writes require `metadata.project: "<tag>"`** (SWF-90).
+- **DocVault commits go direct to main** (no PR).
+- **Idempotent.** Running `/wrap` twice should be safe — check if a digest entry for this
+  session already exists before duplicating.
+- **Never auto-delete uncommitted work, ever.** Worktrees, branches, files, stashes — all
+  off-limits to autonomous deletion.
+
+## What this skill does NOT do
+
+- Ask the user to commit/stash/discard uncommitted changes (those become warnings)
+- Ask the user to merge or close PRs (those become warnings)
+- Auto-delete worktrees or branches (warnings)
+- Print phase banners or gate tables
+- Stop and wait for user acknowledgment between steps
+- Push the project repo (the user does that themselves after reviewing the wrap)
