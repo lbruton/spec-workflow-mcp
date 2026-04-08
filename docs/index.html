@@ -500,7 +500,7 @@
       <div class="feature-card">
         <div class="tag amber">Skill System &mdash; 6 shipped skills</div>
         <h3>Procedural knowledge routing</h3>
-        <p>CLAUDE.md stays tiny &mdash; a routing table to skills. Ships with 6 lifecycle skills (<code>/prime</code>, <code>/wrap</code>, <code>/audit</code>, <code>/retro</code>, <code>/publish-templates</code>, <code>/migrate-skill</code>) and 11 slash commands. Designed to compose with your own library &mdash; the author runs ~70 personal skills on top of these defaults.</p>
+        <p>CLAUDE.md stays tiny &mdash; a routing table to skills. Ships with 6 lifecycle skills (<code>/prime</code>, <code>/wrap</code>, <code>/audit</code>, <code>/retro</code>, <code>/publish-templates</code>, <code>/migrate-skill</code>) and 11 commands (7 slash commands plus 4 MCP prompt helpers). Designed to compose with your own library &mdash; the author runs ~70 personal skills on top of these defaults.</p>
       </div>
     </div>
   </div>
@@ -516,7 +516,7 @@
       <div class="feature-card">
         <div class="tag accent">Claude Code</div>
         <h3>Plugin marketplace</h3>
-        <p>One-click install via the Claude Code marketplace. Ships 6 lifecycle skills, 11 slash commands, 7 MCP prompts, and parallel subagent dispatch.</p>
+        <p>One-click install via the Claude Code marketplace. Ships 6 lifecycle skills, 11 commands (7 slash + 4 MCP prompt helpers), 6 workflow prompts plus 2 injection prompts, and parallel subagent dispatch.</p>
       </div>
       <div class="feature-card">
         <div class="tag green">Gemini CLI</div>
@@ -674,7 +674,7 @@ The dashboard tracks progress regardless of which agent is driving.</span></div>
         <div class="phase-name">/retro</div>
       </div>
     </div>
-    <p class="dim" style="text-align: center; margin-top: 1rem; font-size: 0.85rem;">SpecFlow ships <code>/spec</code> (Phases 2&ndash;4), plus <code>/audit</code>, <code>/wrap</code>, <code>/prime</code>, and <code>/retro</code>. Phases 0&ndash;1 (<code>/chat</code>, <code>/discover</code>) live in the author&rsquo;s personal skill library and are on the roadmap for inclusion.</p>
+    <p class="dim" style="text-align: center; margin-top: 1rem; font-size: 0.85rem;">SpecFlow ships <code>/spec</code> (Phases 2&ndash;4), plus <code>/audit</code>, <code>/wrap</code>, <code>/prime</code>, and <code>/retro</code>. Phases 0&ndash;1 (<code>/chat</code>, <code>/discover</code>) are work in progress &mdash; being ported from the author&rsquo;s personal skill library.</p>
 
     <div class="code-block">
       <div class="code-header">
@@ -959,15 +959,16 @@ The dashboard tracks progress regardless of which agent is driving.</span></div>
   <span class="cmd">log-implementation</span>     <span class="output">Record artifacts (functions, endpoints, tests)</span>
   <span class="cmd">spec-list</span>              <span class="output">List all specs with status</span>
 
-<span class="highlight">MCP Prompts (7)</span>
-  <span class="cmd">create-spec</span>            <span class="output">Create requirements, design, or tasks doc</span>
-  <span class="cmd">create-steering-doc</span>    <span class="output">Create product/tech/structure steering</span>
-  <span class="cmd">implement-task</span>         <span class="output">Dispatch implementation to subagents</span>
-  <span class="cmd">refresh-tasks</span>          <span class="output">Re-sync task state from spec files</span>
-  <span class="cmd">spec-status</span>            <span class="output">Phase and completion summary</span>
-  <span class="cmd">+ 2 injection prompts</span>  <span class="output">spec-workflow-guide, steering-guide</span>
+<span class="highlight">MCP Prompts (6 workflow + 2 injection)</span>
+  <span class="cmd">create-spec</span>                  <span class="output">Create requirements, design, or tasks doc</span>
+  <span class="cmd">create-steering-doc</span>          <span class="output">Create product/tech/structure steering</span>
+  <span class="cmd">implement-task</span>               <span class="output">Dispatch implementation to subagents</span>
+  <span class="cmd">refresh-tasks</span>                <span class="output">Re-sync task state from spec files</span>
+  <span class="cmd">spec-status</span>                  <span class="output">Phase and completion summary</span>
+  <span class="cmd">inject-spec-workflow-guide</span>   <span class="output">Inject the spec workflow guide into the session</span>
+  <span class="cmd">inject-steering-guide</span>        <span class="output">Inject the steering doc guide into the session</span>
 
-<span class="highlight">Slash Commands &amp; Skills (11 commands / 6 skills)</span>
+<span class="highlight">Commands &amp; Skills (11 commands / 6 skills &mdash; /spec is command-only; the others map 1:1)</span>
   <span class="cmd">/spec</span>                  <span class="output">Phase 2-4 orchestrator (Requirements → Design → Tasks → Implement)</span>
   <span class="cmd">/prime</span>                 <span class="output">Fast session quick-start (~15s, optional deep mode)</span>
   <span class="cmd">/wrap</span>                  <span class="output">End-of-session orchestrator (cleanup, docs, retro, digest)</span>
@@ -1056,7 +1057,7 @@ The dashboard tracks progress regardless of which agent is driving.</span></div>
   <span class="cmd">obsidian-mcp + CLI</span>     <span class="output">Vault operations: create, query, wikilink (skills in testing)</span>
 
 <span class="highlight">Compatible &mdash; optional integrations that extend the stack</span>
-  <span class="cmd">Codacy</span>                <span class="output">Code quality + security gate (used by /audit and /codacy-resolve)</span>
+  <span class="cmd">Codacy</span>                <span class="output">Code quality + security gate (used by /audit)</span>
   <span class="cmd">Infisical</span>             <span class="output">Self-hosted secrets manager for API keys</span>
   <span class="cmd">firecrawl</span>             <span class="output">Self-hosted web scraping for research workflows</span></div>
     </div>
