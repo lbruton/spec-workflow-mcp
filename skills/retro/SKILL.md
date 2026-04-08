@@ -24,12 +24,15 @@ point in a session when you want to capture lessons without closing out the sess
 ## Step 1: Detect current project
 
 ```bash
-git rev-parse --show-toplevel 2>/dev/null | xargs basename
+repo_root=$(git rev-parse --show-toplevel 2>/dev/null)
+if [ -n "$repo_root" ]; then
+  basename "$repo_root"
+fi
 ```
 
 Lowercase the result to use as the project tag (e.g., `StakTrakr` → `staktrakr`). If the
-current directory is not inside a git repo, prompt the user for a project tag or use
-`global`.
+command produces no output (not inside a git repo), prompt the user for a project tag or
+fall back to `global`.
 
 ## Step 2: Reflect on the conversation
 
@@ -53,7 +56,7 @@ For each lesson, call `mcp__mem0__add_memory` with:
 ```
 mcp__mem0__add_memory(
   text: "<single prescriptive sentence — action verb or 'When X, do Y' format>",
-  user_id: "<your mem0 user id>",
+  user_id: "<your mem0 user id — environment-specific, do not hardcode>",
   agent_id: "<project tag>",
   metadata: {
     "type": "retro-learning",
@@ -90,17 +93,17 @@ instead of saving the literal lesson.
 - One lesson per memory call — do NOT batch multiple lessons into one memory
 - 1–2 sentences max per memory
 - **Actor attribution:** always use explicit subjects. Never leave the actor ambiguous:
-  - Things the **user** did or prefers → use their name or "this user ..." (e.g., "This user prefers 2–3 row layouts")
+  - Things the **user** did or prefers → use their name/handle when known, otherwise "this user ..." or "the user ..." (e.g., "This user prefers 2–3 row layouts")
   - Things the **agent** did or should do → use "Claude should ..." / "When Claude ..." / "The agent should ..."
   - Codebase facts → use passive voice or name the component (e.g., "The events.js file contains duplicate definitions")
-  - **NEVER** use "User", "Alice", "Bob", or any placeholder name — use a real identifier
+  - **NEVER** use generic placeholder names like "User", "Alice", or "Bob". When the user's real name/handle is unknown, "this user" / "the user" is the acceptable fallback.
 
 ## Step 4: Present summary
 
 After all mem0 writes complete, show a formatted summary:
 
 ```
-## Session Retro — <project> (<date>)
+## Session Retro — <project> (<YYYY-MM-DD>)
 
 Saved <N> lessons to mem0:
 
@@ -139,5 +142,5 @@ Retro learnings are intended to be surfaced at the start of future sessions. The
 pattern is a session-start hook that searches recent mem0 entries tagged
 `type: retro-learning` for the current project and prepends the top results to the
 conversation. A PreToolUse hook can also surface relevant retro lessons before skill
-execution. Hook scripts are not shipped with the plugin — see the specflow README for
-reference implementations.
+execution. Hook scripts are not shipped with the plugin — users are expected to wire these
+up themselves using Claude Code's standard hooks system (SessionStart, PreToolUse).
