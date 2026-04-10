@@ -58,7 +58,9 @@ Spec names MUST use issue prefix: {ISSUE-ID}-{kebab-title} (e.g., STAK-123-user-
 ## Workflow Diagram
 \`\`\`mermaid
 flowchart TD
-    Start([Start: User requests feature]) --> CheckSteering{Steering docs exist?}
+    Start([Start: User requests feature]) --> DiscoveryChoice{Run Discovery<br/>Phase 0?}
+    DiscoveryChoice -->|Yes| CheckSteering{Steering docs exist?}
+    DiscoveryChoice -->|Skip| P1_Template
     CheckSteering -->|Yes| P0_Load[Read steering docs]
     CheckSteering -->|No| P0_Template
     P0_Load --> P0_Template[Check project template overrides,<br/>then global template:<br/>discovery-template.md]
@@ -171,6 +173,7 @@ flowchart TD
     style P3_Check fill:#ffe6e6
     style P4_SpecReview fill:#ffe6e6
     style P4_QualityReview fill:#ffe6e6
+    style DiscoveryChoice fill:#fff4e6
     style CheckSteering fill:#fff4e6
     style P4_More fill:#fff4e6
     style P35_Check fill:#fff4e6
@@ -219,6 +222,8 @@ flowchart TD
 **Purpose**: Define what to build based on user needs.
 
 **File Operations**:
+- Read discovery: \`${wr}/specs/{issue-id}-{kebab-title}/discovery.md\` (if it exists)
+- Read steering docs: \`${wr}/steering/*.md\` (if they exist and Phase 0 was skipped)
 - Check for project override: \`${wr}/templates/requirements-template.md\`
 - Read global template: \`${wr}/templates/requirements-template.md\` (if no custom template)
 - Create document: \`${wr}/specs/{issue-id}-{kebab-title}/requirements.md\`
