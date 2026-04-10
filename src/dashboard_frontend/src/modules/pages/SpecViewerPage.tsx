@@ -6,7 +6,7 @@ import hljs from 'highlight.js/lib/common';
 import { useTranslation } from 'react-i18next';
 
 type ViewMode = 'rendered' | 'source';
-type SpecDocument = 'requirements' | 'design' | 'tasks' | 'readiness-report';
+type SpecDocument = 'discovery' | 'requirements' | 'design' | 'tasks' | 'readiness-report';
 
 function Content() {
   const { getAllSpecDocuments } = useApi();
@@ -29,6 +29,15 @@ function Content() {
       .finally(() => active && setLoading(false));
     return () => { active = false; };
   }, [spec, getAllSpecDocuments]);
+
+  // Fall back to first available doc if activeDoc doesn't exist in this spec
+  useEffect(() => {
+    if (!documents?.[activeDoc]) {
+      const firstAvailable = (['discovery', 'requirements', 'design', 'tasks', 'readiness-report'] as const)
+        .find((d) => documents?.[d]);
+      if (firstAvailable) setActiveDoc(firstAvailable);
+    }
+  }, [documents, activeDoc]);
 
   const current = documents?.[activeDoc];
 
@@ -55,8 +64,8 @@ function Content() {
         <div className="flex items-center gap-3">
           {/* Document Type Tabs */}
           <div className="flex items-center bg-[var(--surface-sunken)] rounded-lg p-1">
-            {(['requirements', 'design', 'tasks', 'readiness-report'] as const)
-              .filter((d) => d !== 'readiness-report' || documents?.['readiness-report'])
+            {(['discovery', 'requirements', 'design', 'tasks', 'readiness-report'] as const)
+              .filter((d) => (d !== 'readiness-report' || documents?.['readiness-report']) && (d !== 'discovery' || documents?.['discovery']))
               .map((d) => (
               <button
                 key={d}

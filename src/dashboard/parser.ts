@@ -1,5 +1,5 @@
 import { readFile, readdir, access, stat } from 'fs/promises';
-import { join } from 'path';
+import { join, basename } from 'path';
 // PathUtils import removed — parser uses direct joins because PathUtils
 // relies on a process-level DocVault singleton not initialized in the dashboard.
 import { SpecData, SteeringStatus, TaskInfo } from '../types.js';
@@ -67,6 +67,8 @@ export class SpecParser {
   }
 
   async getSpec(name: string): Promise<ParsedSpec | null> {
+    // Sanitize name to prevent path traversal from API input
+    name = basename(name);
     try {
       const specDir = join(this.projectPath, 'specs', name);
       await access(specDir);
@@ -77,6 +79,7 @@ export class SpecParser {
         createdAt: '',
         lastModified: '',
         phases: {
+          discovery: { exists: false },
           requirements: { exists: false },
           design: { exists: false },
           tasks: { exists: false },
@@ -91,10 +94,24 @@ export class SpecParser {
       spec.lastModified = dirStats.mtime.toISOString();
 
       // Check each phase
+      const discoveryPath = join(specDir, 'discovery.md');
       const requirementsPath = join(specDir, 'requirements.md');
       const designPath = join(specDir, 'design.md');
       const tasksPath = join(specDir, 'tasks.md');
       const readinessReportPath = join(specDir, 'readiness-report.md');
+
+      // Check discovery
+      try {
+        await access(discoveryPath);
+        spec.phases.discovery.exists = true;
+        spec.phases.discovery.approved = await this.isPhaseApproved(name, 'discovery.md');
+        const discStats = await stat(discoveryPath);
+        spec.phases.discovery.lastModified = discStats.mtime.toISOString();
+
+        if (discStats.mtime > new Date(spec.lastModified)) {
+          spec.lastModified = discStats.mtime.toISOString();
+        }
+      } catch {}
 
       // Check requirements
       try {
@@ -168,6 +185,8 @@ export class SpecParser {
   }
 
   async getArchivedSpec(name: string): Promise<ParsedSpec | null> {
+    // Sanitize name to prevent path traversal from API input
+    name = basename(name);
     try {
       const specDir = join(this.projectPath, 'archive', 'specs', name);
       await access(specDir);
@@ -178,6 +197,7 @@ export class SpecParser {
         createdAt: '',
         lastModified: '',
         phases: {
+          discovery: { exists: false },
           requirements: { exists: false },
           design: { exists: false },
           tasks: { exists: false },
@@ -192,10 +212,24 @@ export class SpecParser {
       spec.lastModified = dirStats.mtime.toISOString();
 
       // Check each phase
+      const discoveryPath = join(specDir, 'discovery.md');
       const requirementsPath = join(specDir, 'requirements.md');
       const designPath = join(specDir, 'design.md');
       const tasksPath = join(specDir, 'tasks.md');
       const readinessReportPath = join(specDir, 'readiness-report.md');
+
+      // Check discovery
+      try {
+        await access(discoveryPath);
+        spec.phases.discovery.exists = true;
+        spec.phases.discovery.approved = await this.isPhaseApproved(name, 'discovery.md');
+        const discStats = await stat(discoveryPath);
+        spec.phases.discovery.lastModified = discStats.mtime.toISOString();
+
+        if (discStats.mtime > new Date(spec.lastModified)) {
+          spec.lastModified = discStats.mtime.toISOString();
+        }
+      } catch {}
 
       // Check requirements
       try {
