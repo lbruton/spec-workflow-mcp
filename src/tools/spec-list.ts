@@ -45,6 +45,12 @@ interface SpecListEntry {
 }
 
 function determinePhaseAndStatus(spec: { phases: any; taskProgress?: any }): { currentPhase: string; overallStatus: string } {
+  if (!spec.phases.discovery?.exists && !spec.phases.requirements.exists) {
+    return { currentPhase: 'discovery', overallStatus: 'discovery-needed' };
+  }
+  if (spec.phases.discovery?.exists && !spec.phases.discovery?.approved) {
+    return { currentPhase: 'discovery', overallStatus: 'discovery-in-progress' };
+  }
   if (!spec.phases.requirements.exists) {
     return { currentPhase: 'requirements', overallStatus: 'requirements-needed' };
   }

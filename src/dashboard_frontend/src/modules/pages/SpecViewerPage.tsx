@@ -30,6 +30,15 @@ function Content() {
     return () => { active = false; };
   }, [spec, getAllSpecDocuments]);
 
+  // Fall back to first available doc if activeDoc doesn't exist in this spec
+  useEffect(() => {
+    if (!documents?.[activeDoc]) {
+      const firstAvailable = (['discovery', 'requirements', 'design', 'tasks', 'readiness-report'] as const)
+        .find((d) => documents?.[d]);
+      if (firstAvailable) setActiveDoc(firstAvailable);
+    }
+  }, [documents, activeDoc]);
+
   const current = documents?.[activeDoc];
 
   const renderSourceView = (content: string) => {

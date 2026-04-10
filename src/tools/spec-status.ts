@@ -70,7 +70,7 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
     if (!spec.phases.discovery.exists && !spec.phases.requirements.exists) {
       currentPhase = 'discovery';
       overallStatus = 'discovery-needed';
-    } else if (spec.phases.discovery.exists && !spec.phases.discovery.approved && !spec.phases.requirements.exists) {
+    } else if (spec.phases.discovery.exists && !spec.phases.discovery.approved) {
       currentPhase = 'discovery';
       overallStatus = 'discovery-in-progress';
     } else if (!spec.phases.requirements.exists) {
