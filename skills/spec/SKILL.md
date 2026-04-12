@@ -169,9 +169,9 @@ ls "$SPECFLOW_ROOT/specs/{specName}/" 2>/dev/null
 
 | Resuming Phase | Required MCP calls before any edits |
 |---|---|
-| Phase 1 (Requirements) | `spec-workflow-guide` → `spec-status` → read `user-templates/requirements-template.md` or `templates/requirements-template.md` |
-| Phase 2 (Design) | `spec-workflow-guide` → `spec-status` → read `user-templates/design-template.md` or `templates/design-template.md` → read existing `requirements.md` |
-| Phase 3 (Tasks) | `spec-workflow-guide` → `spec-status` → read `user-templates/tasks-template.md` or `templates/tasks-template.md` → read existing `requirements.md` + `design.md` |
+| Phase 1 (Requirements) | `spec-workflow-guide` → `spec-status` → read `$SPECFLOW_ROOT/templates/requirements-template.md` (fallback: `$SPECFLOW_GLOBAL/templates/`) |
+| Phase 2 (Design) | `spec-workflow-guide` → `spec-status` → read `$SPECFLOW_ROOT/templates/design-template.md` (fallback: `$SPECFLOW_GLOBAL/templates/`) → read existing `requirements.md` |
+| Phase 3 (Tasks) | `spec-workflow-guide` → `spec-status` → read `$SPECFLOW_ROOT/templates/tasks-template.md` (fallback: `$SPECFLOW_GLOBAL/templates/`) → read existing `requirements.md` + `design.md` |
 | Phase 4 (Implementation) | `spec-workflow-guide` → `spec-status` → read existing `tasks.md` → check Implementation Logs directory |
 
 Skipping any of these calls is a workflow violation.
@@ -201,7 +201,7 @@ Skipping any of these calls is a workflow violation.
 
 4. **Check for existing discovery brief:**
    ```bash
-   ls $SPECFLOW_ROOT/discovery/{ISSUE-ID}.md 2>/dev/null
+   ls "$SPECFLOW_ROOT/discovery/{ISSUE-ID}.md" 2>/dev/null
    ```
    If a `/discover` brief exists for this issue, read it. The discovery findings inform requirements — user stories, edge cases, and technical constraints that were surfaced during exploration.
 
@@ -298,7 +298,7 @@ Skipping any of these calls is a workflow violation.
    spec-workflow-guide
    ```
 
-2. **Read tasks template (MANDATORY — the user-template has project-specific gates):**
+2. **Read tasks template (MANDATORY — project-level template may have project-specific gates):**
    ```bash
    cat "$SPECFLOW_ROOT/templates/tasks-template.md" 2>/dev/null || cat "$SPECFLOW_GLOBAL/templates/tasks-template.md"
    ```
@@ -387,21 +387,21 @@ For each pending task (or parallel batch of independent tasks):
    Use the Agent tool with:
    - The full `_Prompt` text from the task
    - All `_Leverage` file paths
-   - Reference: `.specflow/templates/implementer-prompt-template.md` (if exists)
+   - Reference: `$SPECFLOW_ROOT/templates/implementer-prompt-template.md` or `$SPECFLOW_GLOBAL/templates/` (if exists)
    - **Inject specialized role context** based on the task's File Touch Map (see Specialized Agent Roles below)
    - Subagent implements, tests, commits, and self-reviews
    - **Main context does NOT write implementation code**
 
    #### d) Dispatch spec compliance reviewer
    Use the Agent tool with:
-   - Reference: `.specflow/templates/spec-reviewer-template.md` (if exists)
+   - Reference: `$SPECFLOW_ROOT/templates/spec-reviewer-template.md` or `$SPECFLOW_GLOBAL/templates/` (if exists)
    - Reads actual code changes vs task requirements
    - If fail → dispatch implementer again to fix → re-review
    - Must pass before proceeding
 
    #### e) Dispatch code quality reviewer
    Use the Agent tool with:
-   - Reference: `.specflow/templates/code-quality-reviewer-template.md` (if exists)
+   - Reference: `$SPECFLOW_ROOT/templates/code-quality-reviewer-template.md` or `$SPECFLOW_GLOBAL/templates/` (if exists)
    - Checks architecture, error handling, testing, production readiness
    - If Critical or Important issues found → fix → re-review
    - Must pass before proceeding
