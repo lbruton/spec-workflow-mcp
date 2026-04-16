@@ -180,7 +180,7 @@ Run these checks (all instant, run in parallel):
 docker ps --filter "name=cgc" --format "{{.Names}}" 2>/dev/null | grep -q cgc && echo "hasCGC=true" || echo "hasCGC=false"
 
 # Has security reviews?
-[ -d "/Volumes/DATA/GitHub/DocVault/Projects/<name>/Security Reviews" ] && echo "hasSecurityReviews=true" || echo "hasSecurityReviews=false"
+[ -d "${DOCVAULT_PATH}/Projects/<name>/Security Reviews" ] && echo "hasSecurityReviews=true" || echo "hasSecurityReviews=false"
 
 # Codacy configured? (check if MCP server responds)
 # hasCodacy is true if the codacy MCP tools are available in this session
@@ -290,7 +290,7 @@ keyword-targeted searches to produce the final "Where We Left Off" section.
 Read the central expiration tracker page to surface anything expiring soon:
 
 ```bash
-TRACKER="/Volumes/DATA/GitHub/DocVault/Infrastructure/Expiration Tracker.md"
+TRACKER="${DOCVAULT_PATH}/Infrastructure/Expiration Tracker.md"
 if [ -f "$TRACKER" ]; then
   cat "$TRACKER"
 fi
@@ -800,7 +800,7 @@ Not every project has every capability. Handle missing pieces:
 - **The full Forge-layout report renders in BOTH the terminal AND DocVault** — same content, both places. The user wants the dense dashboard in their terminal, not a stripped summary.
 - The Terminal Summary Template (below) is **DEPRECATED** — kept in this file for reference only. Do NOT use it. Render the Full Report Template in the terminal as-is.
 - Always `mkdir -p` the prime/ subdirectory before writing — it may not exist on first run
-- DocVault path is ALWAYS `/Volumes/DATA/GitHub/DocVault/Projects/<name>/prime/` — use the project name from `project.json`, not the tag
+- DocVault path is ALWAYS `${DOCVAULT_PATH}/Projects/<name>/prime/` — use the project name from `project.json`, not the tag
 - Timestamp format for filenames: `YYYY-MM-DD-HHMMSS` (local time, no colons — filesystem safe)
 - After presenting the terminal summary, the session is ready for work — do not prompt for /prime again
 - **The report body MUST include the save path**: end every report (full and delta) with a line like `Full report saved to: \`DocVault/Projects/<name>/prime/<filename>.md\`` — this is required for traceability

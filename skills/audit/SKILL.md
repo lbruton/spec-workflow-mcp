@@ -130,7 +130,7 @@ mcp__codacy__codacy_list_repository_issues(
 
 **DocVault security reviews — staleness check:**
 ```bash
-ls "../DocVault/Projects/<name>/Security Reviews/"*.md 2>/dev/null | sort -r | head -1
+ls "${DOCVAULT_PATH}/Projects/<name>/Security Reviews/"*.md 2>/dev/null | sort -r | head -1
 ```
 If the most recent review is older than 30 days, flag it as stale.
 
@@ -180,7 +180,7 @@ cat ~/.codex/config.toml 2>/dev/null | head -100
 **Vault issues:**
 ```bash
 # All open issues
-grep -rl "status: backlog\|status: todo\|status: in-progress" ../DocVault/Projects/<name>/Issues/*.md 2>/dev/null
+grep -rl "status: backlog\|status: todo\|status: in-progress" ${DOCVAULT_PATH}/Projects/<name>/Issues/*.md 2>/dev/null
 ```
 
 For each open issue, read frontmatter to extract: id, title, status, priority, created date.
@@ -316,7 +316,7 @@ Wait for all scans to complete. Combine results into a structured report.
 
 Write the complete report to:
 ```
-../DocVault/Projects/<name>/audit/<YYYY-MM-DD>-<HHMMSS>.md
+${DOCVAULT_PATH}/Projects/<name>/audit/<YYYY-MM-DD>-<HHMMSS>.md
 ```
 
 Include YAML frontmatter:
@@ -331,7 +331,7 @@ focus: <focus-value>
 
 The full report includes all raw findings (not just the summary). Commit to DocVault:
 ```bash
-cd ../DocVault && mkdir -p "Projects/<name>/audit" && git add "Projects/<name>/audit/" && git commit -m "audit: <project> <date>" && git push origin main
+cd ${DOCVAULT_PATH} && mkdir -p "Projects/<name>/audit" && git add "Projects/<name>/audit/" && git commit -m "audit: <project> <date>" && git push origin main
 ```
 
 ---

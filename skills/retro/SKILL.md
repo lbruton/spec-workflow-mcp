@@ -46,7 +46,7 @@ For each lesson, call `mcp__mem0__add_memory` with:
 ```
 mcp__mem0__add_memory(
   text: "<single prescriptive sentence — action verb or 'When X, do Y' format>",
-  user_id: "lbruton",
+  user_id: "$USER",
   agent_id: "<project tag>",
   metadata: {
     "type": "retro-learning",
@@ -83,10 +83,10 @@ instead of `text=`. Always use `text=`.
 - One lesson per memory call (do NOT batch multiple lessons into one memory)
 - 1-2 sentences max per memory
 - **Actor attribution:** Always use explicit subjects — never leave the actor ambiguous:
-  - Things the **user** did/prefers → start with "lbruton ..." (e.g., "lbruton prefers 2-3 row layouts")
+  - Things the **user** did/prefers → start with "your-username ..." (e.g., "lbruton prefers 2-3 row layouts")
   - Things **Claude** did/should do → start with "Claude should ..." or "When Claude ..." (e.g., "Claude should run /wiki-update BEFORE pushing")
   - Codebase facts → use passive voice or name the component (e.g., "The events.js file contains duplicate definitions")
-  - **NEVER** use "User", "Alice", "Bob", or any placeholder name — use "lbruton" for the user and "Claude" for the agent
+  - **NEVER** use "User", "Alice", "Bob", or any placeholder name — use your username for the user and "Claude" for the agent
 
 ## Step 4: Present summary
 
