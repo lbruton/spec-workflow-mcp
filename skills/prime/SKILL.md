@@ -14,6 +14,38 @@ description: >
 Orchestrates four parallel agents + indexing to produce a comprehensive startup report.
 Works on any project — discovers context from `.claude/project.json`.
 
+## CRITICAL OUTPUT REQUIREMENTS
+
+These rules apply to every prime report — full and delta alike:
+
+1. **Frontmatter first**: The very first line of the report MUST be `---` (YAML block open). Never start with a heading or body text.
+
+   **Note**: The YAML at the top of THIS skill file (`name: prime`, `description: ...`) describes the skill itself for the plugin registry — it is NOT the output format. The prime REPORT uses completely different field names.
+
+   Every prime report — full and delta — begins with exactly these field names (no others, no substitutions):
+   ```yaml
+   ---
+   tags: [prime-report, stak]
+   project: StakTrakr
+   date: "2026-04-10"
+   branch: dev
+   version: "2.1.0"
+   ---
+   ```
+   - Field `tags` (NOT `tag`, NOT `type`) — must be a YAML list containing `prime-report`
+   - Field `project` (NOT `name`, NOT `title`) — project name as string
+   - Field `date` (quoted string: `"2026-04-10"` NOT `2026-04-10`) — today's date
+   - Field `branch` (NOT `git_branch`) — current git branch
+   - Field `version` (NOT `ver`) — from version.lock or `"n/a"`
+
+   Delta reports add a sixth field: `delta_from: <previous-prime-filename>`.
+2. **Quote the date**: Always `date: "2026-04-10"` — NEVER `date: 2026-04-10`. Unquoted dates break Obsidian Bases sorting.
+3. **All frontmatter fields required**: `tags` (must include `prime-report`), `project`, `date`, `branch`, `version`. Use `"n/a"` if unknown — never omit any field.
+4. **All section headers required**: `## Recent Activity`, `## Where We Left Off`, `## Index Health`, `## Code Health`, `## Security Reviews`, `## Project Status`, `## Suggested Session Plan`. Show a placeholder if data is unavailable — never omit the header.
+5. **Session plan must have items**: `## Suggested Session Plan` MUST have at least one `1. ...` numbered item.
+6. **DocVault save path in output**: End every report with a line like: `Full report saved to: \`DocVault/Projects/<name>/prime/<filename>.md\``
+7. **No unfilled placeholders**: Replace ALL `<angle-bracket>` tokens with real values before outputting. Never leave `<name>`, `<tag>`, `<branch>`, etc. in the final report.
+
 ## Pre-flight: Local/Remote Sync Check
 
 Before anything else, check if local is behind remote:
@@ -46,17 +78,42 @@ delta of what changed since the last run. Use `/prime full` to force a complete 
 
 ```bash
 cat .claude/project.json 2>/dev/null
+pwd
+git rev-parse --show-toplevel 2>/dev/null
 ```
 
 Extract: `name`, `tag`, `issuePrefix` (may be absent — e.g., Playground has no tracked issues).
 
-If no `project.json` exists, infer from git:
+**If `.claude/project.json` is missing**, WARN prominently before continuing:
+
+```
+⚠ .claude/project.json MISSING
+  cwd: <pwd>
+  git toplevel: <git-toplevel>
+  Likely cause: .claude/ is gitignored; file dropped during merge/reset/worktree switch.
+  Impact: digests land under wrong folder (e.g. Root/ instead of Devops/), project scoping
+  in mem0 breaks silently, prime/start/wrap all mis-route.
+  Offer fix: create .claude/project.json now from sibling template.
+```
+
+Also warn if `pwd` is a subdirectory of a different git repo toplevel (e.g., Devops/ inside
+the outer GitHub/ repo) — this usually means project.json was expected and missing.
+
+Offer to create `project.json` immediately. Template:
+
+```json
+{"name":"<Name>","tag":"<name-lower>","issuePrefix":"<PREFIX>","issueTag":"<name-lower>","cachePrefix":"<name-lower>"}
+```
+
+If user declines / auto-create not possible, fall back to git inference:
 
 ```bash
 basename "$(git remote get-url origin 2>/dev/null)" .git
 ```
 
 Set `tag` to lowercase repo name, `issuePrefix` to empty.
+
+**No-project-json does NOT mean a degraded report.** The full report format (frontmatter, all required sections, full content) is still required. Use the inferred name/tag/branch for all frontmatter fields. Note `project.json not found — inferred from git` in the report header line.
 
 ### Step 0.2: Local context snapshot
 
@@ -123,7 +180,7 @@ Run these checks (all instant, run in parallel):
 docker ps --filter "name=cgc" --format "{{.Names}}" 2>/dev/null | grep -q cgc && echo "hasCGC=true" || echo "hasCGC=false"
 
 # Has security reviews?
-[ -d "../DocVault/Projects/<name>/Security Reviews" ] && echo "hasSecurityReviews=true" || echo "hasSecurityReviews=false"
+[ -d "/Volumes/DATA/GitHub/DocVault/Projects/<name>/Security Reviews" ] && echo "hasSecurityReviews=true" || echo "hasSecurityReviews=false"
 
 # Codacy configured? (check if MCP server responds)
 # hasCodacy is true if the codacy MCP tools are available in this session
@@ -134,67 +191,49 @@ Also extract the git remote to derive `owner` and `repo` for Codacy API calls:
 
 ```bash
 git remote get-url origin 2>/dev/null
-# Parse: git@github.com:<owner>/<repo>.git → owner=<owner>, repo=<repo>
+# Parse: git@github.com:lbruton/<repo>.git → owner=lbruton, repo=<repo>
 ```
 
 Store all values for agent dispatch.
 
-### Step 0.4: Find and read latest session digest
+### Step 0.4: Retrieve recent session context (session-rag)
 
-The session digest is the **primary** "where we left off" source — NOT mem0. Digests live
-in DocVault and contain structured session summaries with goals, decisions, and next steps.
+session-rag is the **primary** "where we left off" source. It indexes every jsonl turn
+locally via Milvus Lite + EmbeddingGemma and provides project-scoped semantic search.
 
-```bash
-# Find the most recent digest for this project
-DIGEST_DIR="../DocVault/Daily Digests/<tag>"
-LATEST_DIGEST=$(ls "$DIGEST_DIR"/*.md 2>/dev/null | grep -v _Index | sort -r | head -1)
-if [ -n "$LATEST_DIGEST" ]; then
-  echo "latest_digest=$LATEST_DIGEST"
-  echo "latest_digest_date=$(basename "$LATEST_DIGEST" .md)"
-fi
+**IMPORTANT:** Do NOT pass the filesystem path as `project_root` — it silently returns
+empty results. Use `project_root="*"` for cross-project search, or omit the parameter
+entirely (defaults to current project via HTTP header).
+
+```
+mcp__session-rag__search_all_sessions(
+  query="last session summary recent work decisions next steps handoff <project-name>",
+  n=10
+)
 ```
 
-If a digest exists, **read it in full** immediately — it's a small file and provides the
-richest context. Extract:
-- **Goals and accomplishments** from each session block
+Extract from results:
+- **Goals and accomplishments** from recent session turns
 - **Decisions made** and their rationale
-- **Next steps** / follow-up items listed at the end
+- **Next steps** / follow-up items mentioned
 - **Key learnings** and pain points
 
-Store the full digest content. This is the authoritative session history that feeds the
-"Where We Left Off" section. If no digest exists, set `hasDigest=false`.
+Store the session context. This feeds the "Where We Left Off" section.
+If session-rag is unreachable (port 7102 down), set `hasSessionRag=false` and fall back
+to mem0 (Step 0.7) as the sole context source.
 
-**Handoff detection:** If the digest contains a `## Handoff Notes` section, extract the
-**Continue issue** ID (e.g., `SWF-48`). Set `handoffIssue=<ID>`. This issue becomes the
-top suggested action in the session plan — the previous session explicitly handed off to it.
+**Handoff detection:** If session-rag results mention a handoff issue ID (e.g., `SWF-48`),
+set `handoffIssue=<ID>`. This issue becomes the top suggested action in the session plan.
 Read the issue file from DocVault to get its title and acceptance criteria for context.
 
-### Step 0.5: Find undigested session logs
+### Step 0.5: (Retired — iTerm2 log digestion removed)
 
-```bash
-# Count logs not yet processed
-LOGDIR="$HOME/.claude/iterm2"
-PROCESSED="$LOGDIR/.processed"
-touch "$PROCESSED"
-find "$LOGDIR" -maxdepth 1 -name "*.log" -newer "$PROCESSED" -type f 2>/dev/null | head -20
-```
+iTerm2 session logging is disabled. Session history is covered by JSONL files
+digested into mem0 via `/batch-digest` and `/wrap`. Skip this step entirely.
 
-Store the list of undigested log files.
+### Step 0.6: (Removed — incremental prime retired)
 
-### Step 0.6: Check for recent prime run
-
-```bash
-# Find most recent prime report for this project
-PRIME_DIR="../DocVault/Projects/<name>/prime"
-LATEST_PRIME=$(ls "$PRIME_DIR"/*.md 2>/dev/null | grep -v _Index | sort -r | head -1)
-if [ -n "$LATEST_PRIME" ]; then
-  echo "latest_prime=$LATEST_PRIME"
-  echo "latest_prime_ts=$(basename "$LATEST_PRIME" .md)"
-fi
-```
-
-Compare the filename timestamp to current time. If the most recent prime report is
-**less than 24 hours old**, set `recentPrimeExists=true` and store the file path and timestamp.
+Every `/prime` runs the full pipeline. Use `/start` for lightweight reorientation.
 
 ### Step 0.7: Pre-load mem0 project memories (REQUIRED — runs early, no agent dispatch)
 
@@ -251,7 +290,7 @@ keyword-targeted searches to produce the final "Where We Left Off" section.
 Read the central expiration tracker page to surface anything expiring soon:
 
 ```bash
-TRACKER="../DocVault/Infrastructure/Expiration Tracker.md"
+TRACKER="/Volumes/DATA/GitHub/DocVault/Infrastructure/Expiration Tracker.md"
 if [ -f "$TRACKER" ]; then
   cat "$TRACKER"
 fi
@@ -271,181 +310,11 @@ a date, compute `days_left = (expires_date - today)`. Filter to only rows where
 Store filtered rows in `expiring_soon`. If empty, the section will be omitted from the
 report entirely (no "nothing expiring" noise).
 
-## Incremental vs Full Prime
+## (Incremental Prime — retired)
 
-After Phase 0, check `recentPrimeExists`:
+Every `/prime` runs the full pipeline. Use `/start` for lightweight session reorientation.
+No incremental detection, no state files, no delta reports.
 
-- **`recentPrimeExists=true`** → jump to **Incremental Prime** (next section)
-- **`recentPrimeExists=false`** → skip ahead to **Phase 1** (full prime)
-
-## Incremental Prime (delta since last run)
-
-When a full prime report exists within the last 24 hours, skip the heavyweight agent
-dispatch and produce a lightweight delta showing only what changed. This avoids burning
-time and context on data we already have.
-
-### Step I.1: Read previous prime report
-
-Read the most recent prime report to establish the baseline state. Note the commit hashes,
-open PRs, issue counts, and security review date from that report.
-
-### Step I.2: Gather delta data (parallel, main context)
-
-Run ALL of these in parallel — no agents needed:
-
-```bash
-# New commits since last prime (use the date from the filename)
-cd <workingDir> && git log --oneline --since="<last_prime_date> <last_prime_time>" --no-merges
-
-# Current git status
-cd <workingDir> && git status --short
-
-# Open PRs (may have changed)
-gh pr list --repo <owner>/<repo> --state open --json number,title,headRefName,isDraft
-
-# New/changed vault issues since last prime (if issuePrefix exists)
-find ../DocVault/Projects/<name>/Issues/ -name "*.md" -newer "<latest_prime_file>" 2>/dev/null
-
-# New security reviews since last prime (if hasSecurityReviews)
-find "../DocVault/Projects/<name>/Security Reviews/" -name "*.md" -newer "<latest_prime_file>" 2>/dev/null
-```
-
-### Step I.3: Summarize new security reviews
-
-If new security review files were found in Step I.2, read each one and extract:
-- Finding counts by severity (High / Medium / Low)
-- The summary/posture line
-- Any high-severity findings (one-line each)
-
-### Step I.3.5: Codacy SRM check (parallel with I.3)
-
-Run the same Codacy queries as Step 2.3 in full prime — these are lightweight MCP calls
-that run in parallel with the security review file reads:
-
-```
-mcp__codacy__codacy_search_repository_srm_items(
-  provider="gh", organization="<owner>", repository="<repo>",
-  options={"statuses": ["OnTrack", "DueSoon", "Overdue"], "priorities": ["Critical", "High"]},
-  limit=25
-)
-```
-
-Compare results against the previous prime report's Codacy section to identify **new**
-findings since last prime. Highlight net-new items in the delta report.
-
-### Step I.4: Read latest session digest
-
-Read the latest digest found in Step 0.4 (if not already read). This is the primary
-"where we left off" source — even in incremental mode.
-
-### Step I.4.5: Supplemental mem0 check
-
-Run 1-2 targeted mem0 searches using keywords from the digest and new commits. mem0
-supplements the digest with retro learnings, workarounds, and cross-session decisions:
-
-```
-mcp__mem0__search_memories(query="<keywords from digest next-steps + new commit topics>", limit=20)
-# Post-filter on metadata.project matching <tag> case-insensitively (SWF-90).
-```
-
-If the post-filtered results are sparse, run a second unfiltered search and merge for cross-project context.
-
-### Step I.5: Produce delta report
-
-Write the delta report to DocVault at the same path as full reports:
-
-```
-../DocVault/Projects/<name>/prime/<YYYY-MM-DD>-<HHMMSS>.md
-```
-
-Use the **Delta Report Template** below. Display the **Delta Terminal Summary** to the user.
-
----
-
-### Delta Report Template (written to DocVault)
-
-```markdown
----
-tags: [prime-report, prime-delta, <tag>]
-project: <name>
-date: <YYYY-MM-DD>
-branch: <branch>
-version: <from version.lock or "n/a">
-delta_from: <previous prime filename>
----
-
-# Prime Delta — <name> (<date>)
-Branch: <branch> | Status: <clean/dirty> | Version: <version>
-Delta from: <previous prime date/time>
-
-## New Commits Since Last Prime
-| Date | Commit | Message |
-|------|--------|---------|
-<Commits since last prime. If none: "No new commits.">
-
-## Changes
-- **New commits**: N since last prime
-- **Open PRs**: N (list any new/closed since last prime)
-- **New/changed issues**: N (list titles)
-- **Git status**: clean/dirty (list dirty files if any)
-
-## Security Reviews
-<If new review found: summarize with severity table and high-severity findings>
-<If no new review: "No new security reviews since last prime.">
-<If hasSecurityReviews=false: "No security reviews on file.">
-
-## Codacy Findings (live)
-<From Step I.3.5 — compare against previous prime's Codacy section>
-- **N** open SRM findings (Critical: N, High: N) | **N** Overdue
-- **Net new since last prime:** N findings (list titles if any)
-<If no new findings: "No change in Codacy findings since last prime.">
-<If Codacy unavailable: "Codacy MCP unavailable — skipped.">
-
-## Where We Left Off (from session digest)
-<3-5 sentence recap from the latest session digest — goals, decisions, next steps>
-<Supplement with any relevant mem0 findings: retro learnings, workarounds, known issues>
-<If no digest: fall back to mem0 context. If neither: "No recent session context found.">
-
-## Suggested Next Steps
-1. <based on new commits and open work>
-2. <based on issues/PRs>
-3. <based on security findings if any>
-```
-
----
-
-### Delta Terminal Summary (displayed to user)
-
-```markdown
-# <name> — <date> (delta)
-Branch: `<branch>` | Version: `<version>` | Since: <last prime time>
-
-## What Changed
-- **N** new commits since last prime
-- **N** open PRs (<list titles if ≤3>)
-- **N** new/changed issues
-<If new security review: "**New security review** — N High, N Medium, N Low">
-<If Codacy has open findings: "**Codacy:** N Critical, N High SRM findings (N overdue) — see full report">
-<If Codacy clean: "**Codacy:** Clean">
-
-## Where We Left Off
-<3-5 sentence recap from session digest, supplemented by mem0>
-
-## Suggested Next Steps
-1. <highest priority>
-2. <next>
-3. <next>
-
----
-Delta report saved to: `DocVault/Projects/<name>/prime/<filename>.md`
-Full prime last ran: <previous prime date/time> — run `/prime full` to force a complete refresh
-```
-
----
-
-> **Forcing a full prime:** If the user explicitly says `/prime full` or `prime full`, ignore
-> `recentPrimeExists` and run the full Phase 1-3 flow regardless. This lets users force a
-> refresh when they know the delta won't be sufficient.
 
 ## Phase 1: Indexes + Parallel Agent Dispatch
 
@@ -456,21 +325,10 @@ else gathers data. By the time we reach the report, index results are ready.
 
 Run Phase 2 Steps 2.1, 2.2, and 2.3 (claude-context, CGC, Codacy) in parallel NOW.
 
-### Agent A: Session Digest (if undigested logs exist, background)
+### Agent A: Session Digest (retired — iTerm2 logs removed)
 
-Skip if no undigested logs found in Step 0.5.
-
-Dispatch `session-digest` agent for the most recent undigested log:
-
-```
-Process this iTerm2 session log into mem0 memories:
-- logFile: <most recent undigested .log path>
-- project: <name from project.json>
-- tag: <tag from project.json>
-```
-
-If there are multiple undigested logs (>1), dispatch one agent per log (up to 3 max —
-oldest logs can wait for /digest-session).
+Skip. iTerm2 session logging is disabled. Session digestion happens via `/batch-digest`
+and `/wrap` against JSONL files, not iTerm2 logs.
 
 ### Agent C: Code Oracle (health check, background)
 
@@ -510,17 +368,17 @@ Return only the synthesized report.
 
 ## Phase 1.5: Keyword-Informed Context Enrichment
 
-This phase runs AFTER Agent D returns. The session digest (read in Step 0.4) is the
+This phase runs AFTER Agent D returns. The session-rag context (from Step 0.4) is the
 **primary** "where we left off" source. This phase extracts keywords from ALL deterministic
-sources (git + digest + issues) and uses them for **targeted mem0 queries** that supplement
-the digest with retro learnings, workarounds, and cross-session decisions.
+sources (git + session-rag + issues) and uses them for **targeted mem0 queries** that
+supplement session-rag with retro learnings, workarounds, and cross-session decisions.
 
-**Data flow:** GitHub → Session Digest → Issues → Compile Keywords → mem0 (supplemental)
+**Data flow:** GitHub → session-rag → Issues → Compile Keywords → mem0 (supplemental)
 
 ### Step 1.5.1: Extract keywords from Agent D results + digest
 
-Parse BOTH the prime-status report AND the session digest to extract:
-- **Digest keywords**: Goals, decisions, next steps, pain points from the latest digest
+Parse BOTH the prime-status report AND the session-rag context (Step 0.4) to extract:
+- **Session-rag keywords**: Goals, decisions, next steps, pain points from session-rag results
 - **Commit keywords**: Significant nouns and verbs from the last 15 commit messages
   (strip prefixes like "fix:", "feat:", "update:", "add:" — keep the substance)
 - **PR keywords**: Titles of open PRs
@@ -562,24 +420,10 @@ Deduplicate results and keep only memories that **add context beyond what the di
 (e.g., retro learnings from earlier sessions, known workarounds, blocked-on-external-dependency).
 Discard mem0 results that merely repeat what the digest already says.
 
-### Step 1.5.3: Session-oracle (optional, background only)
+### Step 1.5.3: (Removed — session-oracle redundant)
 
-Session-oracle is **optional** — only dispatch if `hasDigest=false` (no digest exists for
-this project). When a digest exists, the oracle adds little value and burns time/context.
-
-If dispatched:
-
-```
-Search for the most recent session context for this project:
-- query: "last session for <name>: <top 5-8 keywords from step 1.5.1>"
-- project: <name>
-- dateRange: "last 7 days"
-
-Focus on: decisions made, rationale for choices, next steps discussed,
-blockers identified, and any handoff notes.
-
-Return a 3-5 sentence recap of where we left off.
-```
+session-oracle uses session-rag internally. If session-rag is down, oracle falls back to
+mem0 — same thing Step 0.7 already does. No unique data source. Removed.
 
 ## Phase 2: Indexing (started in Phase 1, Step 1.0)
 
@@ -611,7 +455,7 @@ CGC MCP runs via `docker exec -i cgc-server cgc mcp start`. Restarting the conta
 kills the MCP connection — never restart CGC containers during a session.
 
 The CGC workspace path is `/workspace/<name>` (not the host path), because the Docker
-volume mounts the projects parent directory as `/workspace`.
+volume mounts `/Volumes/DATA/GitHub` as `/workspace`.
 
 First, check if the project is indexed:
 
@@ -697,7 +541,7 @@ Wait for ALL agents (Phase 1 + Phase 1.5) to return. Combine their reports into 
 report below and write it to the Obsidian DocVault for historical tracking. Then display a
 concise terminal summary. The data flow is:
 
-- Step 0.4 session digest → **primary** "where we left off" (read directly from DocVault)
+- Step 0.4 session-rag → **primary** "where we left off" (project-scoped semantic search)
 - Agent D (prime-status) → ground truth: git, PRs, issues, specs
 - Phase 1.5 mem0 → **supplemental** context: retro learnings, workarounds, cross-session decisions
 - Agent C (code-oracle) → code health: dead code, complexity, conventions
@@ -709,23 +553,15 @@ concise terminal summary. The data flow is:
 Build the complete report using the **Full Report Template** below, populated with data from
 all agents.
 
-### Step 3.2: Write to DocVault
+### Step 3.2: (DocVault write — retired)
 
-Write the full report to:
+Prime reports are no longer written to DocVault. The terminal output IS the report.
+No `prime/` directory, no file write, no "Full report saved to:" line.
 
-```
-../DocVault/Projects/<name>/prime/<YYYY-MM-DD>-<HHMMSS>.md
-```
+### Step 3.3: Terminal output
 
-Where `<name>` is the project name from `project.json` and the timestamp uses local time.
-Create the `prime/` subdirectory if it doesn't exist (`mkdir -p`).
-
-The file MUST include Obsidian-compatible YAML frontmatter (see template below).
-
-### Step 3.3: Terminal summary
-
-Display ONLY the **Terminal Summary Template** to the user. This is the concise, actionable
-output — everything else lives in the DocVault file.
+Render the full report directly in the terminal. This is the only output — there is no
+separate file. The report uses the Full Report Template below.
 
 ---
 
@@ -735,7 +571,7 @@ output — everything else lives in the DocVault file.
 ---
 tags: [prime-report, <tag>]
 project: <name>
-date: <YYYY-MM-DD>
+date: "<YYYY-MM-DD>"
 branch: <branch>
 version: <from version.lock or "n/a">
 ---
@@ -783,7 +619,8 @@ Source: [[Expiration Tracker]] (DocVault/Infrastructure/)
 | Version range           | vX.Y.Z1 -> vX.Y.Z2 (N patches)   |
 
 ## Where We Left Off (from session digest + mem0 supplemental)
-<3-5 sentence recap from the latest session digest — goals, decisions, next steps, pain points>
+<If hasDigest=false or no digest file found: write exactly "No session digest found for this project." then supplement with any mem0 context.>
+<If digest exists: 3-5 sentence recap from the latest session digest — goals, decisions, next steps, pain points>
 <Weave in relevant mem0 findings: retro learnings, workarounds, known issues from earlier sessions>
 <If no digest exists: fall back to mem0 + session-oracle results>
 <If neither: "No recent session history found.">
@@ -930,7 +767,7 @@ Not every project has every capability. Handle missing pieces:
 
 | Missing | Behavior |
 |---------|----------|
-| No session digest | Set `hasDigest=false`, fall back to mem0 + session-oracle for "where we left off" |
+| session-rag MCP down | Set `hasSessionRag=false`, fall back to mem0 + session-oracle for "where we left off" |
 | No `issuePrefix` | Skip vault issue queries, show GitHub issues only |
 | No CGC (Docker down) | Skip CGC stats + dead code + complexity, note in Index Health |
 | CGC MCP disconnected | Note "CGC MCP unavailable — container may have restarted" in Index Health. Do NOT restart containers. |
@@ -943,15 +780,15 @@ Not every project has every capability. Handle missing pieces:
 | No security reviews | Show "No security reviews on file" in Security section |
 | Codacy MCP down | Show "Codacy MCP unavailable — skipping live security scan" in Codacy section |
 | Codacy returns error | Note the error, continue without Codacy data — never block prime on Codacy |
-| Recent prime (<24h) | Switch to Incremental Prime — skip full agents, show delta only |
+| Recent prime (<24h) | (Retired — incremental mode removed. Use `/start` for lightweight reorientation) |
 
 ## Rules
 
 ### Data Source Priority
-- **Session digest is the PRIMARY "where we left off" source** — read from DocVault/Daily Digests/<tag>/
+- **session-rag is the PRIMARY "where we left off" source** — project-scoped semantic search over all past turns
 - **mem0 is SUPPLEMENTAL** — retro learnings, workarounds, cross-session decisions, known issues
-- **session-oracle is OPTIONAL** — only dispatch when no digest exists for the project
-- The correct flow is: GitHub → Session Digest → Issues → Code/Security → Compile Keywords → mem0 → Report
+- **session-oracle is NOT dispatched by prime** — redundant (it uses session-rag internally; if session-rag is down, Step 0.7 mem0 covers it)
+- The correct flow is: GitHub → session-rag → Issues → Code/Security → Compile Keywords → mem0 → Report
 
 ### Execution
 - Phase 2 indexes (CGC, claude-context, Codacy) start FIRST in Phase 1 Step 1.0 — they run in background while data is gathered
@@ -963,9 +800,34 @@ Not every project has every capability. Handle missing pieces:
 - **The full Forge-layout report renders in BOTH the terminal AND DocVault** — same content, both places. The user wants the dense dashboard in their terminal, not a stripped summary.
 - The Terminal Summary Template (below) is **DEPRECATED** — kept in this file for reference only. Do NOT use it. Render the Full Report Template in the terminal as-is.
 - Always `mkdir -p` the prime/ subdirectory before writing — it may not exist on first run
-- DocVault path is ALWAYS `../DocVault/Projects/<name>/prime/` — use the project name from `project.json`, not the tag
+- DocVault path is ALWAYS `/Volumes/DATA/GitHub/DocVault/Projects/<name>/prime/` — use the project name from `project.json`, not the tag
 - Timestamp format for filenames: `YYYY-MM-DD-HHMMSS` (local time, no colons — filesystem safe)
 - After presenting the terminal summary, the session is ready for work — do not prompt for /prime again
+- **The report body MUST include the save path**: end every report (full and delta) with a line like `Full report saved to: \`DocVault/Projects/<name>/prime/<filename>.md\`` — this is required for traceability
+
+### Frontmatter
+- Frontmatter is **MANDATORY in every prime report** — full and delta alike. The very first line of the report MUST be `---` (YAML block open), not a heading.
+- If `project.json` is missing, infer the project name from git remote URL, directory name, or context. Never use `<name>` literally — always substitute the real value.
+- **ALWAYS quote the date field** — this is the most common mistake: write `date: "2026-04-10"` NOT `date: 2026-04-10`. Unquoted dates are parsed as datetime objects and break Obsidian Bases sorting.
+- All fields are required: `tags`, `project`, `date`, `branch`, `version`, and (for delta) `delta_from`. Use `"n/a"` if a value is unavailable — never omit the field.
+- The `tags` list MUST include `"prime-report"` — this is how Obsidian Bases finds all prime reports across projects.
+
+### Session Digest Absence
+- When `hasDigest=false` or no digest file is found, the **Where We Left Off** section MUST include the exact phrase "No recent session history" (or "No session digest found" / "No session context found"). Never invent context or silently skip it.
+- When no `project.json` exists and no digest exists, note both explicitly in the report.
+
+### P1 Issue Surfacing
+- Any open issue with `priority: 1` (critical/blocking) MUST appear prominently in `## Project Status` — use a dedicated **🔴 Priority 1 — Blocking** subsection or bold/flag it clearly. Never bury P1 issues in a generic issue list.
+
+### Required Sections
+Both full and delta reports MUST include ALL of these section headers. If data is unavailable, show a one-line placeholder — **never omit the header**:
+- `## Recent Activity` — show "No data available." if git history unavailable
+- `## Where We Left Off` — show "No recent session context found." if no digest or mem0
+- `## Index Health` — show "Not applicable." or "Not re-checked in delta." as appropriate
+- `## Code Health` — show "Not applicable." or "Not re-analyzed in delta." as appropriate
+- `## Security Reviews` — show "No security reviews on file." if hasSecurityReviews=false
+- `## Project Status` — show "No open issues." if issue list is empty
+- `## Suggested Session Plan` — MUST have at least one numbered item (`1. ...`). If nothing is in progress, generate a sensible default based on open issues or recent commits.
 
 ### Incremental Mode
 - Incremental prime skips ALL background agents (code-oracle, session-digest, prime-status) — main context only
