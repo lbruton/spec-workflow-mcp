@@ -12,10 +12,10 @@ npx -y @pimzino/spec-workflow-mcp@latest [projekt-pfad] [optionen]
 
 ### Verfügbare Optionen
 
-| Option | Beschreibung | Beispiel |
-|--------|--------------|----------|
-| `--help` | Umfassende Nutzungsinformationen anzeigen | `npx -y @pimzino/spec-workflow-mcp@latest --help` |
-| `--dashboard` | Nur-Dashboard-Modus ausführen (Standardport: 5000) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard` |
+| Option            | Beschreibung                                            | Beispiel                                                           |
+| ----------------- | ------------------------------------------------------- | ------------------------------------------------------------------ |
+| `--help`          | Umfassende Nutzungsinformationen anzeigen               | `npx -y @pimzino/spec-workflow-mcp@latest --help`                  |
+| `--dashboard`     | Nur-Dashboard-Modus ausführen (Standardport: 5000)      | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard`             |
 | `--port <nummer>` | Benutzerdefinierten Dashboard-Port angeben (1024-65535) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080` |
 
 ### Wichtige Hinweise
@@ -29,12 +29,14 @@ npx -y @pimzino/spec-workflow-mcp@latest [projekt-pfad] [optionen]
 ### Typischer Workflow
 
 1. **Dashboard starten** (zuerst tun, nur einmal):
+
 ```bash
 # Verwendet Standardport 5000
 npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 ```
 
 2. **MCP-Server starten** (einer pro Projekt, in separaten Terminals):
+
 ```bash
 # Projekt 1
 npx -y @pimzino/spec-workflow-mcp@latest ~/projects/app1
@@ -63,11 +65,12 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 Überschreiben Sie das standardmäßige globale Zustandsverzeichnis (`~/.specflow-mcp`). Dies ist nützlich für Sandbox-Umgebungen, in denen `$HOME` schreibgeschützt ist.
 
-| Variable | Standard | Beschreibung |
-|----------|----------|--------------|
+| Variable             | Standard          | Beschreibung                            |
+| -------------------- | ----------------- | --------------------------------------- |
 | `SPEC_WORKFLOW_HOME` | `~/.specflow-mcp` | Verzeichnis für globale Zustandsdateien |
 
 **In diesem Verzeichnis gespeicherte Dateien:**
+
 - `activeProjects.json` - Projektregister
 - `activeSession.json` - Dashboard-Sitzungsinformationen
 - `settings.json` - Globale Einstellungen
@@ -98,6 +101,7 @@ SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@la
 ## Dashboard-Sitzungsverwaltung
 
 Das Dashboard speichert seine Sitzungsinformationen in `~/.specflow-mcp/activeSession.json` (oder `$SPEC_WORKFLOW_HOME/activeSession.json` falls gesetzt). Diese Datei:
+
 - Erzwingt einzelne Dashboard-Instanz
 - Ermöglicht MCP-Servern das laufende Dashboard zu finden
 - Räumt automatisch auf, wenn das Dashboard stoppt
@@ -177,12 +181,12 @@ debounceMs = 300
 
 #### Grundeinstellungen
 
-| Option | Typ | Standard | Beschreibung |
-|--------|-----|----------|--------------|
-| `projectDir` | string | Aktuelles Verzeichnis | Projektverzeichnispfad |
-| `port` | number | Ephemeral | Dashboard-Port (1024-65535) |
-| `dashboardOnly` | boolean | false | Dashboard ohne MCP-Server ausführen |
-| `lang` | string | "en" | Oberflächensprache |
+| Option          | Typ     | Standard              | Beschreibung                        |
+| --------------- | ------- | --------------------- | ----------------------------------- |
+| `projectDir`    | string  | Aktuelles Verzeichnis | Projektverzeichnispfad              |
+| `port`          | number  | Ephemeral             | Dashboard-Port (1024-65535)         |
+| `dashboardOnly` | boolean | false                 | Dashboard ohne MCP-Server ausführen |
+| `lang`          | string  | "en"                  | Oberflächensprache                  |
 
 > **Hinweis**: Die Option `autoStartDashboard` wurde in v2.0.0 entfernt. Das Dashboard verwendet jetzt einen einheitlichen Mehrprojekt-Modus, der über das `--dashboard` Flag zugänglich ist.
 
@@ -203,11 +207,13 @@ debounceMs = 300
 ### Eine benutzerdefinierte Konfiguration erstellen
 
 1. Die Beispielkonfiguration kopieren:
+
 ```bash
 cp .specflow/config.example.toml .specflow/config.toml
 ```
 
 2. Die Konfiguration bearbeiten:
+
 ```toml
 # Meine Projektkonfiguration
 projectDir = "/Users/meinname/projects/meineapp"
@@ -216,6 +222,7 @@ lang = "de"
 ```
 
 3. Die Konfiguration verwenden:
+
 ```bash
 # Verwendet automatisch .specflow/config.toml
 npx -y @pimzino/spec-workflow-mcp@latest
@@ -262,6 +269,7 @@ verboseLogging = true
 ```
 
 Verwendung:
+
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest --config dev-config.toml
 ```
@@ -280,6 +288,7 @@ verboseLogging = false
 ```
 
 Verwendung:
+
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ```
@@ -293,6 +302,7 @@ Ports müssen zwischen 1024 und 65535 liegen.
 ### Ephemere Ports
 
 Wenn kein Port angegeben ist, wählt das System automatisch einen verfügbaren ephemeren Port. Dies wird empfohlen für:
+
 - Entwicklungsumgebungen
 - Mehrere gleichzeitige Projekte
 - Vermeidung von Port-Konflikten
@@ -300,6 +310,7 @@ Wenn kein Port angegeben ist, wählt das System automatisch einen verfügbaren e
 ### Feste Ports
 
 Verwenden Sie feste Ports, wenn Sie benötigen:
+
 - Konsistente URLs für Lesezeichen
 - Integration mit anderen Tools
 - Teamzusammenarbeit mit gemeinsamen Konfigurationen
@@ -367,11 +378,13 @@ Die VSCode Extension hat eigene Einstellungen:
 ### Konfiguration lädt nicht
 
 1. **Dateispeicherort überprüfen:**
+
    ```bash
    ls -la .specflow/config.toml
    ```
 
 2. **TOML-Syntax validieren:**
+
    ```bash
    # TOML CLI-Tool installieren
    npm install -g @iarna/toml
@@ -388,12 +401,12 @@ Die VSCode Extension hat eigene Einstellungen:
 
 ### Häufige Probleme
 
-| Problem | Lösung |
-|---------|--------|
-| Port bereits verwendet | Anderen Port verwenden oder für ephemeren Port weglassen |
-| Konfigurationsdatei nicht gefunden | Pfad überprüfen und absoluten Pfad verwenden falls nötig |
-| Ungültige TOML-Syntax | Mit TOML-Linter validieren |
-| Einstellungen werden nicht angewendet | Konfigurationspriorität überprüfen |
+| Problem                               | Lösung                                                   |
+| ------------------------------------- | -------------------------------------------------------- |
+| Port bereits verwendet                | Anderen Port verwenden oder für ephemeren Port weglassen |
+| Konfigurationsdatei nicht gefunden    | Pfad überprüfen und absoluten Pfad verwenden falls nötig |
+| Ungültige TOML-Syntax                 | Mit TOML-Linter validieren                               |
+| Einstellungen werden nicht angewendet | Konfigurationspriorität überprüfen                       |
 
 ## Best Practices
 

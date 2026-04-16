@@ -11,10 +11,7 @@ import {
   closestCenter,
   useDroppable,
 } from '@dnd-kit/core';
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { KanbanTaskCard } from './KanbanTaskCard';
 import { useTranslation } from 'react-i18next';
 
@@ -48,7 +45,7 @@ export function KanbanBoard({
   onCopyTaskPrompt,
   copiedTaskId,
   data,
-  statusFilter = 'all'
+  statusFilter = 'all',
 }: KanbanBoardProps) {
   const { t } = useTranslation();
   const [activeTask, setActiveTask] = React.useState<Task | null>(null);
@@ -85,21 +82,21 @@ export function KanbanBoard({
         delay: 250, // Industry standard 250ms
         tolerance: 5, // Standard tolerance for finger movement
       },
-    })
+    }),
   );
 
   // Group tasks by status
   const tasksByStatus = useMemo(() => {
-    const filtered = tasks.filter(task => !task.isHeader); // Exclude headers from kanban
+    const filtered = tasks.filter((task) => !task.isHeader); // Exclude headers from kanban
     return {
-      pending: filtered.filter(task => task.status === 'pending'),
-      'in-progress': filtered.filter(task => task.status === 'in-progress'),
-      completed: filtered.filter(task => task.status === 'completed'),
+      pending: filtered.filter((task) => task.status === 'pending'),
+      'in-progress': filtered.filter((task) => task.status === 'in-progress'),
+      completed: filtered.filter((task) => task.status === 'completed'),
     };
   }, [tasks]);
 
   const handleDragStart = (event: DragStartEvent) => {
-    const task = tasks.find(t => t.id === event.active.id);
+    const task = tasks.find((t) => t.id === event.active.id);
     setActiveTask(task || null);
 
     // Only prevent text selection during drag, allow scrolling
@@ -134,7 +131,7 @@ export function KanbanBoard({
       console.log('[KanbanBoard] Dropped on column:', newStatus);
     } else {
       // We dropped on a task - figure out which column that task is in
-      const targetTask = tasks.find(t => t.id === over.id);
+      const targetTask = tasks.find((t) => t.id === over.id);
       if (targetTask) {
         newStatus = targetTask.status;
         console.log('[KanbanBoard] Dropped on task:', targetTask.id, 'in column:', newStatus);
@@ -148,7 +145,7 @@ export function KanbanBoard({
       return;
     }
 
-    const task = tasks.find(t => t.id === taskId);
+    const task = tasks.find((t) => t.id === taskId);
     if (!task) {
       console.log('[KanbanBoard] Could not find dragged task:', taskId);
       return;
@@ -159,7 +156,14 @@ export function KanbanBoard({
       return;
     }
 
-    console.log('[KanbanBoard] Updating task status:', taskId, 'from', task.status, 'to', newStatus);
+    console.log(
+      '[KanbanBoard] Updating task status:',
+      taskId,
+      'from',
+      task.status,
+      'to',
+      newStatus,
+    );
     onTaskStatusChange(taskId, newStatus);
   };
 
@@ -174,7 +178,12 @@ export function KanbanBoard({
         dotColor: 'bg-gray-400',
         icon: (
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
         ),
       },
@@ -187,7 +196,12 @@ export function KanbanBoard({
         dotColor: 'bg-orange-500',
         icon: (
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
         ),
       },
@@ -200,7 +214,12 @@ export function KanbanBoard({
         dotColor: 'bg-green-500',
         icon: (
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
         ),
       },
@@ -213,10 +232,7 @@ export function KanbanBoard({
     const config = getColumnConfig(status);
     const columnTasks = tasksByStatus[status];
 
-    const {
-      isOver,
-      setNodeRef,
-    } = useDroppable({
+    const { isOver, setNodeRef } = useDroppable({
       id: status,
       data: {
         type: 'column',
@@ -241,11 +257,11 @@ export function KanbanBoard({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className={`w-2 h-2 rounded-full ${config.dotColor}`} />
-              <h3 className={`text-sm font-medium ${config.textColor}`}>
-                {config.title}
-              </h3>
+              <h3 className={`text-sm font-medium ${config.textColor}`}>{config.title}</h3>
             </div>
-            <span className={`text-sm ${config.textColor} bg-[var(--surface-base)] px-2 py-1 rounded-md`}>
+            <span
+              className={`text-sm ${config.textColor} bg-[var(--surface-base)] px-2 py-1 rounded-md`}
+            >
               {columnTasks.length}
             </span>
           </div>
@@ -254,7 +270,7 @@ export function KanbanBoard({
         {/* Drop Zone */}
         <SortableContext
           id={`${status}-sortable`}
-          items={columnTasks.map(task => task.id)}
+          items={columnTasks.map((task) => task.id)}
           strategy={verticalListSortingStrategy}
         >
           <div
@@ -262,21 +278,24 @@ export function KanbanBoard({
               flex-1 p-2 sm:p-3 space-y-2 transition-all duration-200
               max-h-[70vh] overflow-y-auto
               ${/* Enhanced mobile drop zone feedback */ ''}
-              ${isOver
-                ? 'bg-blue-50 dark:bg-blue-900/20 ring-2 ring-blue-400 ring-opacity-75 scale-[1.02]'
-                : ''
+              ${
+                isOver
+                  ? 'bg-blue-50 dark:bg-blue-900/20 ring-2 ring-blue-400 ring-opacity-75 scale-[1.02]'
+                  : ''
               }
             `}
             style={{
-              touchAction: 'pan-y', /* Allow vertical scrolling within columns */
+              touchAction: 'pan-y' /* Allow vertical scrolling within columns */,
             }}
           >
             {columnTasks.length === 0 ? (
               <div className="flex items-center justify-center min-h-[120px] text-center py-4 text-gray-400 dark:text-gray-500">
                 <div className="text-xs">
                   {status === 'pending' && t('tasksPage.kanban.noPendingTasks', 'No pending tasks')}
-                  {status === 'in-progress' && t('tasksPage.kanban.noInProgressTasks', 'No tasks in progress')}
-                  {status === 'completed' && t('tasksPage.kanban.noCompletedTasks', 'No completed tasks')}
+                  {status === 'in-progress' &&
+                    t('tasksPage.kanban.noInProgressTasks', 'No tasks in progress')}
+                  {status === 'completed' &&
+                    t('tasksPage.kanban.noCompletedTasks', 'No completed tasks')}
                 </div>
               </div>
             ) : (
@@ -375,7 +394,7 @@ export function KanbanBoard({
         <div
           className="w-full max-w-full overflow-hidden"
           style={{
-            touchAction: 'pan-x pan-y', /* Allow both horizontal and vertical scrolling */
+            touchAction: 'pan-x pan-y' /* Allow both horizontal and vertical scrolling */,
           }}
         >
           <div
@@ -388,13 +407,13 @@ export function KanbanBoard({
               lg:justify-start
             `}
             style={{
-              scrollbarWidth: 'none', /* Firefox */
-              msOverflowStyle: 'none', /* IE and Edge */
-              WebkitOverflowScrolling: 'touch', /* iOS momentum scrolling */
-              touchAction: 'pan-x', /* Horizontal scroll only for this container */
+              scrollbarWidth: 'none' /* Firefox */,
+              msOverflowStyle: 'none' /* IE and Edge */,
+              WebkitOverflowScrolling: 'touch' /* iOS momentum scrolling */,
+              touchAction: 'pan-x' /* Horizontal scroll only for this container */,
             }}
           >
-            {columnsToShow.map(status => renderColumn(status))}
+            {columnsToShow.map((status) => renderColumn(status))}
           </div>
         </div>
 
@@ -417,15 +436,16 @@ export function KanbanBoard({
 
                       container.scrollTo({
                         left: targetPosition,
-                        behavior: 'smooth'
+                        behavior: 'smooth',
                       });
                     }
                   }}
                   className={`
                     w-2 h-2 rounded-full transition-colors duration-200
-                    ${index === currentScrollIndex
-                      ? 'bg-blue-500 dark:bg-blue-400'
-                      : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
+                    ${
+                      index === currentScrollIndex
+                        ? 'bg-blue-500 dark:bg-blue-400'
+                        : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
                     }
                   `}
                   style={{ touchAction: 'manipulation' }}

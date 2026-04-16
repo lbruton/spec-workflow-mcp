@@ -23,12 +23,12 @@ const initI18n = async () => {
   // Detect initial language
   const detector = new LanguageDetector();
   detector.init();
-  const detectedLang = detector.detect() as string || 'en';
+  const detectedLang = (detector.detect() as string) || 'en';
   const initialLang = ['en', 'ja', 'zh'].includes(detectedLang) ? detectedLang : 'en';
-  
+
   // Load initial translation
   const initialTranslation = await loadTranslation(initialLang);
-  
+
   await i18n
     .use(LanguageDetector)
     .use(initReactI18next)
@@ -54,7 +54,7 @@ const initI18n = async () => {
         useSuspense: false, // Disable suspense for async loading
       },
     });
-  
+
   // Add language changed listener to dynamically load translations
   i18n.on('languageChanged', async (lng) => {
     if (!i18n.hasResourceBundle(lng, 'translation')) {
@@ -62,7 +62,7 @@ const initI18n = async () => {
       i18n.addResourceBundle(lng, 'translation', translation, true, true);
     }
   });
-  
+
   return i18n;
 };
 

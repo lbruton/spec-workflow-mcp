@@ -55,15 +55,15 @@ A comprehensive test script is provided to validate the Docker image configurati
 
 The test script validates:
 
-| Test | Description |
-|------|-------------|
-| **Image Build** | Verifies the Docker image builds successfully |
-| **Docker Default Config** | Tests app binding to 0.0.0.0, Docker exposing to localhost |
-| **Security Check** | Verifies app-level security block (when overriding Docker defaults) |
-| **Network Exposure** | Tests full network port mapping |
-| **Rate Limiting** | Verifies rate limiting configuration |
-| **Non-Root User** | Confirms container runs as non-privileged user |
-| **Custom Port** | Tests custom port configuration |
+| Test                      | Description                                                         |
+| ------------------------- | ------------------------------------------------------------------- |
+| **Image Build**           | Verifies the Docker image builds successfully                       |
+| **Docker Default Config** | Tests app binding to 0.0.0.0, Docker exposing to localhost          |
+| **Security Check**        | Verifies app-level security block (when overriding Docker defaults) |
+| **Network Exposure**      | Tests full network port mapping                                     |
+| **Rate Limiting**         | Verifies rate limiting configuration                                |
+| **Non-Root User**         | Confirms container runs as non-privileged user                      |
+| **Custom Port**           | Tests custom port configuration                                     |
 
 ### Running Individual Tests
 
@@ -103,6 +103,7 @@ docker build -f containers/Dockerfile -t spec-workflow-mcp .
 ### Build Arguments
 
 The image is built in two stages:
+
 1. **Builder stage**: Installs dependencies and builds the TypeScript application
 2. **Runtime stage**: Creates a minimal production image with only necessary files
 
@@ -188,26 +189,28 @@ docker-compose up --build
 
 ### Environment Variables
 
-| Variable | Default (Docker) | Description |
-|----------|------------------|-------------|
-| `DASHBOARD_PORT` | `5000` | Port on which the dashboard runs |
-| `DASHBOARD_HOST` | `127.0.0.1` | Host IP for port binding (`0.0.0.0` for network access) |
-| `SPEC_WORKFLOW_PATH` | `/workspace` | Path to the project directory (inside container) |
-| `SPEC_WORKFLOW_BIND_ADDRESS` | `0.0.0.0` | IP address to bind to inside container (Docker requires 0.0.0.0 for port forwarding) |
-| `SPEC_WORKFLOW_ALLOW_EXTERNAL_ACCESS` | `true` | Set to true in Docker (external access controlled by port mapping) |
-| `SPEC_WORKFLOW_RATE_LIMIT_ENABLED` | `true` | Enable/disable rate limiting |
-| `SPEC_WORKFLOW_CORS_ENABLED` | `true` | Enable/disable CORS |
+| Variable                              | Default (Docker) | Description                                                                          |
+| ------------------------------------- | ---------------- | ------------------------------------------------------------------------------------ |
+| `DASHBOARD_PORT`                      | `5000`           | Port on which the dashboard runs                                                     |
+| `DASHBOARD_HOST`                      | `127.0.0.1`      | Host IP for port binding (`0.0.0.0` for network access)                              |
+| `SPEC_WORKFLOW_PATH`                  | `/workspace`     | Path to the project directory (inside container)                                     |
+| `SPEC_WORKFLOW_BIND_ADDRESS`          | `0.0.0.0`        | IP address to bind to inside container (Docker requires 0.0.0.0 for port forwarding) |
+| `SPEC_WORKFLOW_ALLOW_EXTERNAL_ACCESS` | `true`           | Set to true in Docker (external access controlled by port mapping)                   |
+| `SPEC_WORKFLOW_RATE_LIMIT_ENABLED`    | `true`           | Enable/disable rate limiting                                                         |
+| `SPEC_WORKFLOW_CORS_ENABLED`          | `true`           | Enable/disable CORS                                                                  |
 
 ### Volume Mounts
 
 The dashboard requires access to the `.specflow` directory to function properly.
 
 **Example:**
+
 ```bash
 -v "/path/to/project/.specflow:/workspace/.specflow:rw"
 ```
 
 **Important Notes:**
+
 - The volume mount must be read-write (`:rw`) for the dashboard to function
 - Only the `.specflow` directory needs to be mounted
 - The directory will be created automatically if it doesn't exist
@@ -221,6 +224,7 @@ Map the container port to a host port:
 ```
 
 **Examples:**
+
 - Default: `-p 5000:5000`
 - Custom: `-p 8080:8080` (remember to set `DASHBOARD_PORT=8080`)
 
@@ -238,7 +242,7 @@ The default `docker-compose.yml` uses localhost-only port mapping:
 
 ```yaml
 ports:
-  - "127.0.0.1:5000:5000"  # Only accessible from host machine
+  - '127.0.0.1:5000:5000' # Only accessible from host machine
 ```
 
 Or with Docker CLI:
@@ -329,6 +333,7 @@ All API requests are logged to a structured JSON audit log for compliance and de
 **Log Location:** `<project>/.specflow/audit.log`
 
 **Log Format:**
+
 ```json
 {
   "timestamp": "2025-12-06T10:30:45.123Z",
@@ -345,6 +350,7 @@ All API requests are logged to a structured JSON audit log for compliance and de
 ```
 
 **Viewing Logs:**
+
 ```bash
 # View recent logs
 tail -f .specflow/audit.log
@@ -361,17 +367,18 @@ cat .specflow/audit.log | jq 'select(.result == "denied")'
 The dashboard does not include built-in authentication. For external access, use a reverse proxy:
 
 **Option 1: nginx with Basic Auth**
+
 ```nginx
 server {
     listen 443 ssl;
     server_name dashboard.example.com;
-    
+
     ssl_certificate /path/to/cert.pem;
     ssl_certificate_key /path/to/key.pem;
-    
+
     auth_basic "Dashboard Access";
     auth_basic_user_file /etc/nginx/.htpasswd;
-    
+
     location / {
         proxy_pass http://127.0.0.1:5000;
         proxy_http_version 1.1;
@@ -382,6 +389,7 @@ server {
 ```
 
 **Option 2: OAuth2 Proxy (for SSO)**
+
 ```bash
 oauth2-proxy \
   --upstream=http://127.0.0.1:5000 \
@@ -425,6 +433,7 @@ Use similar configuration with the appropriate MCP client settings. The MCP serv
 **Error:** `Bind for 0.0.0.0:5000 failed: port is already allocated`
 
 **Solution:** Use a different port:
+
 ```bash
 docker run -p 8080:8080 -e DASHBOARD_PORT=8080 ...
 # or with docker-compose
@@ -436,12 +445,14 @@ DASHBOARD_PORT=8080 docker-compose up
 **Error:** Permission issues with `.specflow` directory
 
 **Solutions:**
+
 - Ensure the directory has proper permissions: `chmod -R 755 .specflow`
 - On SELinux systems, add `:z` to the volume mount: `-v "./workspace/.specflow:/workspace/.specflow:rw,z"`
 
 #### 3. Dashboard Not Accessible
 
 **Check:**
+
 - Container is running: `docker ps`
 - Port is properly mapped: `docker port <container-id>`
 - Firewall allows connections on the port
@@ -452,6 +463,7 @@ DASHBOARD_PORT=8080 docker-compose up
 **Error:** Build fails with COPY or dependency errors
 
 **Solutions:**
+
 - Ensure you're building from the repository root: `docker build -f containers/Dockerfile -t spec-workflow-mcp .`
 - Check that all source files are present
 - Verify `package.json` and `package-lock.json` exist
@@ -459,12 +471,14 @@ DASHBOARD_PORT=8080 docker-compose up
 ### Viewing Logs
 
 #### Docker CLI
+
 ```bash
 docker logs <container-id>
 docker logs -f <container-id>  # Follow logs
 ```
 
 #### Docker Compose
+
 ```bash
 docker-compose logs
 docker-compose logs -f  # Follow logs
@@ -515,18 +529,19 @@ curl http://localhost:5000
 
 The Docker image implements enterprise-grade security controls:
 
-| Feature | Status | Description |
-|---------|--------|-------------|
-| **Non-root User** | ✅ Enabled | Runs as `node` user (UID 1000) |
-| **Rate Limiting** | ✅ Enabled | 120 req/min per client |
-| **Audit Logging** | ✅ Enabled | JSON logs with 30-day retention |
-| **Security Headers** | ✅ Enabled | XSS, clickjacking, MIME sniffing protection |
-| **CORS Protection** | ✅ Enabled | Localhost origins only by default |
-| **Localhost Binding** | ✅ Default | `127.0.0.1:5000:5000` in docker-compose |
-| **HTTPS/TLS** | ❌ Not built-in | Use reverse proxy (nginx/Apache) |
+| Feature                 | Status          | Description                                 |
+| ----------------------- | --------------- | ------------------------------------------- |
+| **Non-root User**       | ✅ Enabled      | Runs as `node` user (UID 1000)              |
+| **Rate Limiting**       | ✅ Enabled      | 120 req/min per client                      |
+| **Audit Logging**       | ✅ Enabled      | JSON logs with 30-day retention             |
+| **Security Headers**    | ✅ Enabled      | XSS, clickjacking, MIME sniffing protection |
+| **CORS Protection**     | ✅ Enabled      | Localhost origins only by default           |
+| **Localhost Binding**   | ✅ Default      | `127.0.0.1:5000:5000` in docker-compose     |
+| **HTTPS/TLS**           | ❌ Not built-in | Use reverse proxy (nginx/Apache)            |
 | **User Authentication** | ❌ Not built-in | Use reverse proxy with Basic Auth or OAuth2 |
 
 **Best Practices:**
+
 - Keep the base image updated: `docker pull node:24-alpine`
 - Use read-only volume mounts where possible (`:rw` required for `.specflow`)
 - For network access, always use a reverse proxy with TLS and authentication
@@ -538,7 +553,6 @@ The Docker image implements enterprise-grade security controls:
   - Multi-stage builds to minimize image size
   - Only production dependencies in final image
   - Alpine Linux for small footprint
-  
 - Monitor resource usage:
   ```bash
   docker stats <container-id>
@@ -554,6 +568,7 @@ The Docker image implements enterprise-grade security controls:
 ## Support
 
 If you encounter issues:
+
 1. Check the [Troubleshooting](#troubleshooting) section
 2. Review logs: `docker logs <container-id>`
 3. Open an issue on [GitHub](https://github.com/Pimzino/spec-workflow-mcp/issues)

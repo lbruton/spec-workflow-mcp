@@ -10,142 +10,169 @@ import { ApprovalEditorService } from './extension/services/ApprovalEditorServic
 import { ApprovalCommandService } from './extension/services/ApprovalCommandService';
 
 export function activate(context: vscode.ExtensionContext) {
-	console.log(localize('extension.active', 'Spec Workflow MCP extension is now active!'));
+  console.log(localize('extension.active', 'Spec Workflow MCP extension is now active!'));
 
-	// Create output channel for debugging
-	const outputChannel = vscode.window.createOutputChannel('Spec Workflow');
-	context.subscriptions.push(outputChannel);
-	outputChannel.appendLine(localize('logging.enabled', 'Spec Workflow MCP extension activated - logging enabled'));
+  // Create output channel for debugging
+  const outputChannel = vscode.window.createOutputChannel('Spec Workflow');
+  context.subscriptions.push(outputChannel);
+  outputChannel.appendLine(
+    localize('logging.enabled', 'Spec Workflow MCP extension activated - logging enabled'),
+  );
 
-	// Initialize services
-	const specWorkflowService = new SpecWorkflowService(outputChannel);
-	const fileWatcher = new FileWatcher();
-	const approvalEditorService = ApprovalEditorService.getInstance(specWorkflowService, context.extensionUri);
-	const approvalCommandService = ApprovalCommandService.getInstance(approvalEditorService, specWorkflowService, context.extensionUri);
-	
-	// Set up circular dependency
-	specWorkflowService.setApprovalEditorService(approvalEditorService);
+  // Initialize services
+  const specWorkflowService = new SpecWorkflowService(outputChannel);
+  const fileWatcher = new FileWatcher();
+  const approvalEditorService = ApprovalEditorService.getInstance(
+    specWorkflowService,
+    context.extensionUri,
+  );
+  const approvalCommandService = ApprovalCommandService.getInstance(
+    approvalEditorService,
+    specWorkflowService,
+    context.extensionUri,
+  );
 
-	// Create the sidebar provider
-	const sidebarProvider = new SidebarProvider(context.extensionUri, specWorkflowService, context, outputChannel);
+  // Set up circular dependency
+  specWorkflowService.setApprovalEditorService(approvalEditorService);
 
-	// Register the webview provider
-	context.subscriptions.push(
-		vscode.window.registerWebviewViewProvider(
-			SidebarProvider.viewType,
-			sidebarProvider,
-			{
-				webviewOptions: {
-					retainContextWhenHidden: true
-				}
-			}
-		)
-	);
+  // Create the sidebar provider
+  const sidebarProvider = new SidebarProvider(
+    context.extensionUri,
+    specWorkflowService,
+    context,
+    outputChannel,
+  );
 
-	// Register approval commands
-	approvalCommandService.registerCommands(context);
+  // Register the webview provider
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider(SidebarProvider.viewType, sidebarProvider, {
+      webviewOptions: {
+        retainContextWhenHidden: true,
+      },
+    }),
+  );
 
-	// Register commands
-	context.subscriptions.push(
-		vscode.commands.registerCommand('spec-workflow.openDashboard', () => {
-			vscode.commands.executeCommand('workbench.view.extension.spec-workflow');
-		})
-	);
+  // Register approval commands
+  approvalCommandService.registerCommands(context);
 
-	context.subscriptions.push(
-		vscode.commands.registerCommand('spec-workflow.refreshData', async () => {
-			// Trigger refresh through the sidebar provider
-			await specWorkflowService.refreshData();
-		})
-	);
+  // Register commands
+  context.subscriptions.push(
+    vscode.commands.registerCommand('spec-workflow.openDashboard', () => {
+      vscode.commands.executeCommand('workbench.view.extension.spec-workflow');
+    }),
+  );
 
-	context.subscriptions.push(
-		vscode.commands.registerCommand('spec-workflow.openSpec', async () => {
-			// Show quick pick for specs
-			try {
-				const specs = await specWorkflowService.getAllSpecs();
-				if (specs.length === 0) {
-					vscode.window.showInformationMessage(localize('openSpec.noSpecs', 'No specifications found'));
-					return;
-				}
+  context.subscriptions.push(
+    vscode.commands.registerCommand('spec-workflow.refreshData', async () => {
+      // Trigger refresh through the sidebar provider
+      await specWorkflowService.refreshData();
+    }),
+  );
 
-				const items = specs.map(spec => ({
-					label: spec.displayName,
-					description: spec.name,
-					detail: localize('openSpec.lastModified', 'Last modified: {0}', new Date(spec.lastModified).toLocaleDateString())
-				}));
+  context.subscriptions.push(
+    vscode.commands.registerCommand('spec-workflow.openSpec', async () => {
+      // Show quick pick for specs
+      try {
+        const specs = await specWorkflowService.getAllSpecs();
+        if (specs.length === 0) {
+          vscode.window.showInformationMessage(
+            localize('openSpec.noSpecs', 'No specifications found'),
+          );
+          return;
+        }
 
-				const selected = await vscode.window.showQuickPick(items, {
-					placeHolder: localize('openSpec.placeholder', 'Select a specification to open')
-				});
+        const items = specs.map((spec) => ({
+          label: spec.displayName,
+          description: spec.name,
+          detail: localize(
+            'openSpec.lastModified',
+            'Last modified: {0}',
+            new Date(spec.lastModified).toLocaleDateString(),
+          ),
+        }));
 
-				if (selected) {
-					// Open the spec directory or a specific document
-					const specPath = vscode.Uri.file(
-						context.workspaceState.get<string>('workspaceRoot') + 
-						`/.specflow/specs/${selected.description}`
-					);
-					vscode.commands.executeCommand('vscode.openFolder', specPath, true);
-				}
-			} catch (error) {
-				vscode.window.showErrorMessage(localize('openSpec.loadFailed', 'Failed to load specifications: {0}', (error as Error).message));
-			}
-		})
-	);
+        const selected = await vscode.window.showQuickPick(items, {
+          placeHolder: localize('openSpec.placeholder', 'Select a specification to open'),
+        });
 
-	// Listen for file changes and refresh data accordingly
-	context.subscriptions.push(
-		fileWatcher.onFileChanged(async (event) => {
-			console.log(`File ${event.type}: ${event.relativePath}`);
-			
-			const fileType = fileWatcher.getWatchedFileType(event.relativePath);
-			
-			// Auto-refresh sidebar when relevant files change
-			if (fileType) {
-				// Small delay to ensure file is fully written
-				setTimeout(() => {
-					vscode.commands.executeCommand('spec-workflow.refreshData');
-				}, 500);
-			}
-		})
-	);
+        if (selected) {
+          // Open the spec directory or a specific document
+          const specPath = vscode.Uri.file(
+            context.workspaceState.get<string>('workspaceRoot') +
+              `/.specflow/specs/${selected.description}`,
+          );
+          vscode.commands.executeCommand('vscode.openFolder', specPath, true);
+        }
+      } catch (error) {
+        vscode.window.showErrorMessage(
+          localize(
+            'openSpec.loadFailed',
+            'Failed to load specifications: {0}',
+            (error as Error).message,
+          ),
+        );
+      }
+    }),
+  );
 
-	// Register disposables
-	context.subscriptions.push(fileWatcher);
-	context.subscriptions.push(specWorkflowService);
+  // Listen for file changes and refresh data accordingly
+  context.subscriptions.push(
+    fileWatcher.onFileChanged(async (event) => {
+      console.log(`File ${event.type}: ${event.relativePath}`);
 
-	// Store workspace root for quick access
-	const workspaceFolders = vscode.workspace.workspaceFolders;
-	if (workspaceFolders && workspaceFolders.length > 0) {
-		context.workspaceState.update('workspaceRoot', workspaceFolders[0].uri.fsPath);
-	}
+      const fileType = fileWatcher.getWatchedFileType(event.relativePath);
 
-	// Listen for workspace folder changes
-	context.subscriptions.push(
-		vscode.workspace.onDidChangeWorkspaceFolders(() => {
-			const folders = vscode.workspace.workspaceFolders;
-			if (folders && folders.length > 0) {
-				context.workspaceState.update('workspaceRoot', folders[0].uri.fsPath);
-			}
-		})
-	);
+      // Auto-refresh sidebar when relevant files change
+      if (fileType) {
+        // Small delay to ensure file is fully written
+        setTimeout(() => {
+          vscode.commands.executeCommand('spec-workflow.refreshData');
+        }, 500);
+      }
+    }),
+  );
 
-	// Show welcome message for first-time users
-	const hasShownWelcome = context.globalState.get<boolean>('hasShownWelcome', false);
-	if (!hasShownWelcome) {
-		const openSidebar = localize('welcome.openSidebar', 'Open Sidebar');
-		vscode.window.showInformationMessage(
-			localize('welcome.message', 'Spec Workflow MCP is now active! Open the sidebar to get started.'),
-			openSidebar
-		).then(selection => {
-			if (selection === openSidebar) {
-				vscode.commands.executeCommand('workbench.view.extension.spec-workflow');
-			}
-		});
-		context.globalState.update('hasShownWelcome', true);
-	}
+  // Register disposables
+  context.subscriptions.push(fileWatcher);
+  context.subscriptions.push(specWorkflowService);
+
+  // Store workspace root for quick access
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+  if (workspaceFolders && workspaceFolders.length > 0) {
+    context.workspaceState.update('workspaceRoot', workspaceFolders[0].uri.fsPath);
+  }
+
+  // Listen for workspace folder changes
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeWorkspaceFolders(() => {
+      const folders = vscode.workspace.workspaceFolders;
+      if (folders && folders.length > 0) {
+        context.workspaceState.update('workspaceRoot', folders[0].uri.fsPath);
+      }
+    }),
+  );
+
+  // Show welcome message for first-time users
+  const hasShownWelcome = context.globalState.get<boolean>('hasShownWelcome', false);
+  if (!hasShownWelcome) {
+    const openSidebar = localize('welcome.openSidebar', 'Open Sidebar');
+    vscode.window
+      .showInformationMessage(
+        localize(
+          'welcome.message',
+          'Spec Workflow MCP is now active! Open the sidebar to get started.',
+        ),
+        openSidebar,
+      )
+      .then((selection) => {
+        if (selection === openSidebar) {
+          vscode.commands.executeCommand('workbench.view.extension.spec-workflow');
+        }
+      });
+    context.globalState.update('hasShownWelcome', true);
+  }
 }
 
 export function deactivate() {
-	console.log(localize('extension.deactivated', 'Spec Workflow MCP extension deactivated'));
+  console.log(localize('extension.deactivated', 'Spec Workflow MCP extension deactivated'));
 }

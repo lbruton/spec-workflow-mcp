@@ -4,19 +4,19 @@ MCP server plugin for spec-driven development with a real-time web dashboard. Po
 
 ## Quick Reference
 
-| Field | Value |
-|-------|-------|
-| Package | `@lbruton/specflow` |
-| Version | `3.6.2` |
-| Upstream | [Pimzino/spec-workflow-mcp](https://github.com/Pimzino/spec-workflow-mcp) |
-| Origin | [lbruton/specflow](https://github.com/lbruton/specflow) |
-| Branch | `main` (PR required, signed commits, status checks) |
-| Skills source | `specflow/skills/` in the repo (users copy → `~/.claude/skills/`) |
-| Commands source | `specflow/commands/` in the repo (users copy → `~/.claude/commands/`) |
-| MCP install | User-level `~/.claude/settings.json` → `npx -y @lbruton/specflow@latest .` |
-| Dashboard port | 5051 |
-| Dashboard service | `com.specflow.dashboard` (launchd) |
-| Issue prefix | `SWF` |
+| Field             | Value                                                                      |
+| ----------------- | -------------------------------------------------------------------------- |
+| Package           | `@lbruton/specflow`                                                        |
+| Version           | `3.6.2`                                                                    |
+| Upstream          | [Pimzino/spec-workflow-mcp](https://github.com/Pimzino/spec-workflow-mcp)  |
+| Origin            | [lbruton/specflow](https://github.com/lbruton/specflow)                    |
+| Branch            | `main` (PR required, signed commits, status checks)                        |
+| Skills source     | `specflow/skills/` in the repo (users copy → `~/.claude/skills/`)          |
+| Commands source   | `specflow/commands/` in the repo (users copy → `~/.claude/commands/`)      |
+| MCP install       | User-level `~/.claude/settings.json` → `npx -y @lbruton/specflow@latest .` |
+| Dashboard port    | 5051                                                                       |
+| Dashboard service | `com.specflow.dashboard` (launchd)                                         |
+| Issue prefix      | `SWF`                                                                      |
 
 ## DocVault — Project Documentation
 
@@ -34,10 +34,10 @@ When making changes that affect documented behavior, run `/vault-update` before 
 
 **Two completely separate distribution channels — do not confuse them:**
 
-| Channel | What ships | How users get it | Where it lives in the repo |
-|---|---|---|---|
-| **npm package** `@lbruton/specflow` | MCP server + dashboard (compiled TypeScript) | `npx -y @lbruton/specflow@latest .` in user-level settings.json | `src/` → built into `dist/` → published to npm |
-| **GitHub repo direct download** | Skills + slash commands (markdown files) | Clone/zip the repo, copy `skills/` and `commands/` into `~/.claude/` | `specflow/skills/` and `specflow/commands/` (top-level) |
+| Channel                             | What ships                                   | How users get it                                                     | Where it lives in the repo                              |
+| ----------------------------------- | -------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------- |
+| **npm package** `@lbruton/specflow` | MCP server + dashboard (compiled TypeScript) | `npx -y @lbruton/specflow@latest .` in user-level settings.json      | `src/` → built into `dist/` → published to npm          |
+| **GitHub repo direct download**     | Skills + slash commands (markdown files)     | Clone/zip the repo, copy `skills/` and `commands/` into `~/.claude/` | `specflow/skills/` and `specflow/commands/` (top-level) |
 
 **Skills and commands are NEVER in the npm package.** They are plain markdown that users install by copying. The MCP server and the skills are independent — installing one does not install the other. The README must instruct users to do both.
 
@@ -56,13 +56,14 @@ flowchart LR
 
 **Canonical locations (single source of truth — no duplicates):**
 
-| Location | Purpose |
-|---|---|
-| `~/.claude/skills/<name>/SKILL.md` | lbruton's daily-driver, where new skills are battle-tested first |
-| `specflow/skills/<name>/SKILL.md` | **The shipped copy.** This is what users download from GitHub. |
-| `specflow/commands/<name>.md` | Shipped slash-command definitions (same model — users copy into `~/.claude/commands/`) |
+| Location                           | Purpose                                                                                |
+| ---------------------------------- | -------------------------------------------------------------------------------------- |
+| `~/.claude/skills/<name>/SKILL.md` | lbruton's daily-driver, where new skills are battle-tested first                       |
+| `specflow/skills/<name>/SKILL.md`  | **The shipped copy.** This is what users download from GitHub.                         |
+| `specflow/commands/<name>.md`      | Shipped slash-command definitions (same model — users copy into `~/.claude/commands/`) |
 
 **Hard rules:**
+
 - There is NO `plugin/` directory. If you see one, it's an orphan from before the 2026-04-07 reconciliation — delete it, do not edit it.
 - There is NO `.claude-plugin/` directory. Removed in v3.6.0 (PR #12) — `marketplace.json` referenced the dead `plugin/` source. If it reappears, delete it.
 - There is NO marketplace directory under `~/.claude/plugins/marketplaces/`. If one exists, it's stale — delete it.
@@ -85,13 +86,14 @@ DocVault/specflow/
 ```
 
 **Config:** `.specflow/config.json` in each project root points to DocVault:
+
 ```json
 { "project": "StakTrakr", "docvault": "../DocVault", "issue_prefix": "STAK" }
 ```
 
 **Path resolution:** `PathUtils.getWorkflowRoot()` reads config.json and returns DocVault path. All callers resolve automatically.
 
-**Key modules:** `config-loader.ts` (read/validate config), `migration.ts` (one-time copy from local .specflow/ to DocVault), `index-updater.ts` (_Index.md lifecycle)
+**Key modules:** `config-loader.ts` (read/validate config), `migration.ts` (one-time copy from local .specflow/ to DocVault), `index-updater.ts` (\_Index.md lifecycle)
 
 ## Source Structure
 
@@ -121,6 +123,7 @@ commands/          # Shipped slash-command definitions — users copy to ~/.clau
 ## Steering Documents
 
 Project-level guidance lives in `DocVault/specflow/{project}/steering/`:
+
 - `product.md` — vision, target users, principles, success metrics
 - `tech.md` — stack decisions, architecture rationale, known limitations
 - `structure.md` — directory layout, naming conventions, module boundaries
@@ -162,11 +165,11 @@ src/markdown/templates/{name}.md        ← CANONICAL SOURCE (specflow git repo)
 
 ### The three directories — DO NOT confuse them
 
-| Directory | What it is | Editable? |
-|---|---|---|
-| `specflow/src/markdown/templates/` | **Canonical source** in the specflow git repo. Compiled into `dist/` and shipped via npm. | **YES — edit here, or use `/publish-templates` to write here from a battle-tested source.** |
+| Directory                                              | What it is                                                                                                                                                                                                                                                                               | Editable?                                                                                      |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `specflow/src/markdown/templates/`                     | **Canonical source** in the specflow git repo. Compiled into `dist/` and shipped via npm.                                                                                                                                                                                                | **YES — edit here, or use `/publish-templates` to write here from a battle-tested source.**    |
 | `DocVault/Projects/SpecFlow/Templates/{name}-guide.md` | **KB snapshot** — human-readable mirror with prose explanation, frontmatter, and a regenerated codeblock. Lives in the DocVault Obsidian vault. Each page declares `canonical_source: src/markdown/templates/...` in its own frontmatter and has a "Canonical Source" section saying so. | **NO — regenerated by `/publish-templates`. Hand-edits silently overwritten on next publish.** |
-| `DocVault/specflow/{project}/templates/{name}.md` | **Runtime cache** for the MCP server. Refreshed from the npm-bundled package on every MCP boot. Per-project, but typically identical to the global. | **NO — overwritten on every boot. Pointless to edit.** |
+| `DocVault/specflow/{project}/templates/{name}.md`      | **Runtime cache** for the MCP server. Refreshed from the npm-bundled package on every MCP boot. Per-project, but typically identical to the global.                                                                                                                                      | **NO — overwritten on every boot. Pointless to edit.**                                         |
 
 The third directory (`DocVault/specflow/{project}/templates/`) is also where **project overrides** would live if a project legitimately needs to extend the global template. Overrides should be ADDITIVE only — never duplicate global content. Currently only StakTrakr has legitimate overrides. See `DocVault/Projects/SpecFlow/recovered-templates-2026-04-07/` for the audit history.
 
@@ -177,6 +180,7 @@ The third directory (`DocVault/specflow/{project}/templates/`) is also where **p
 **To inspect a template:** read `src/markdown/templates/{name}.md` directly, or read the matching guide page in DocVault Obsidian for the human-readable explanation.
 
 **Never:**
+
 - Edit `DocVault/Projects/SpecFlow/Templates/{name}-guide.md` codeblocks by hand (regenerated)
 - Edit `DocVault/specflow/{project}/templates/{name}.md` (runtime cache)
 - Treat the DocVault Templates folder as a "source" — it's a published mirror
@@ -246,6 +250,7 @@ The promotion flow is intentionally manual. After a skill has been battle-tested
 The same flow applies to slash commands in `commands/`. There is no build step, no compile, no npm involvement. Skills and commands ship as raw markdown.
 
 **Anti-patterns to avoid:**
+
 - Editing `specflow/skills/<name>/SKILL.md` directly without testing at user level first — you'll ship something that broke in the first session.
 - Symlinking user-level → repo copy. They must be separate files so user-level can iterate freely.
 - Looking for a `plugin/` directory. There isn't one. If your search returns one, it's an orphan and should be deleted, not edited.
@@ -285,6 +290,7 @@ After `npm publish`, before telling the user it's done:
 ## Gotcha: Version Bump Checklist
 
 When bumping `package.json` version, also update:
+
 1. `CLAUDE.md` Quick Reference table (Version field)
 2. Run `npm run build` to propagate to `dist/`
 

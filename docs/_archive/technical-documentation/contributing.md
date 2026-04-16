@@ -5,6 +5,7 @@
 ## 🚀 Quick Start for Contributors
 
 ### 1. Setup Development Environment
+
 ```bash
 # Fork and clone the repository
 git clone https://github.com/your-username/spec-workflow-mcp.git
@@ -23,6 +24,7 @@ npm run build
 ```
 
 ### 2. Development Workflow
+
 ```bash
 # Start MCP server in development mode
 npm run dev
@@ -40,26 +42,31 @@ npm run dev:dashboard
 ### Areas Where We Need Help
 
 **🔧 Core Features**
+
 - New MCP tools and functionality
 - Performance optimizations
 - Cross-platform compatibility improvements
 
 **📱 Dashboard & UI**
+
 - New dashboard features
 - UI/UX improvements
 - Accessibility enhancements
 
 **📚 Documentation**
+
 - Code examples and tutorials
 - API documentation improvements
 - Translation to other languages
 
 **🧪 Testing**
+
 - Unit test coverage
-- Integration test scenarios  
+- Integration test scenarios
 - Manual testing on different platforms
 
 **🐛 Bug Fixes**
+
 - Reported issues in GitHub
 - Edge cases and error handling
 - Performance bottlenecks
@@ -67,60 +74,77 @@ npm run dev:dashboard
 ## 📋 Contribution Types
 
 ### 1. Bug Reports
+
 **Before Creating an Issue**:
+
 - Search existing issues first
 - Try the [troubleshooting guide](troubleshooting.md)
 - Test with the latest version
 
 **Good Bug Report Template**:
+
 ```markdown
 ## Bug Description
+
 Brief description of the issue
 
 ## Environment
+
 - OS: [Windows 11 / macOS 14 / Ubuntu 22.04]
 - Node.js: [version]
 - MCP Client: [Claude Desktop / Cursor / etc.]
 
 ## Steps to Reproduce
+
 1. Step one
 2. Step two
 3. Step three
 
 ## Expected Behavior
+
 What should happen
 
-## Actual Behavior  
+## Actual Behavior
+
 What actually happens
 
 ## Additional Context
+
 - Error messages
 - Screenshots
 - Logs
 ```
 
 ### 2. Feature Requests
+
 **Good Feature Request Template**:
+
 ```markdown
 ## Feature Description
+
 Clear description of the proposed feature
 
 ## Problem It Solves
+
 What problem does this address?
 
 ## Proposed Solution
+
 How should it work?
 
 ## Alternatives Considered
+
 Other approaches you've considered
 
 ## Implementation Ideas
+
 Any thoughts on how to implement this
 ```
 
 ### 3. Code Contributions
 
 #### Pull Request Process
+
 1. **Fork** the repository
 2. **Create** a feature branch: `git checkout -b feature/my-feature`
 3. **Make** your changes following our coding standards
@@ -129,27 +153,33 @@ Any thoughts on how to implement this
 6. **Submit** a pull request with clear description
 
 #### Pull Request Template
+
 ```markdown
 ## Description
+
 Brief description of changes
 
 ## Type of Change
+
 - [ ] Bug fix
-- [ ] New feature  
+- [ ] New feature
 - [ ] Breaking change
 - [ ] Documentation update
 
 ## Testing
+
 - [ ] Unit tests pass
 - [ ] Manual testing completed
 - [ ] Cross-platform tested (if applicable)
 
 ## Documentation
+
 - [ ] Code is documented
 - [ ] README updated (if needed)
 - [ ] API docs updated (if needed)
 
 ## Checklist
+
 - [ ] Code follows style guidelines
 - [ ] Self-review completed
 - [ ] No merge conflicts
@@ -160,6 +190,7 @@ Brief description of changes
 ### TypeScript Guidelines
 
 **File Organization**:
+
 ```typescript
 // 1. External library imports
 import { Tool } from '@modelcontextprotocol/sdk/types.js';
@@ -186,22 +217,20 @@ export class MyClass {
 ```
 
 **Function Structure**:
+
 ```typescript
 /**
  * Brief description of what the function does
  * @param param1 Description of parameter
- * @param param2 Description of parameter  
+ * @param param2 Description of parameter
  * @returns Description of return value
  */
-export async function myFunction(
-  param1: string,
-  param2: number
-): Promise<MyReturnType> {
+export async function myFunction(param1: string, param2: number): Promise<MyReturnType> {
   // Input validation
   if (!param1) {
     throw new Error('param1 is required');
   }
-  
+
   try {
     // Main logic
     const result = await doSomething(param1, param2);
@@ -214,6 +243,7 @@ export async function myFunction(
 ```
 
 **Error Handling Pattern**:
+
 ```typescript
 // MCP Tool error handling
 export async function myToolHandler(args: any, context: ToolContext): Promise<ToolResponse> {
@@ -224,18 +254,18 @@ export async function myToolHandler(args: any, context: ToolContext): Promise<To
       return {
         success: false,
         message: 'requiredParam is required',
-        nextSteps: ['Provide the required parameter']
+        nextSteps: ['Provide the required parameter'],
       };
     }
-    
+
     // Implementation
     const result = await doWork(requiredParam);
-    
+
     return {
       success: true,
       message: 'Operation completed successfully',
       data: result,
-      nextSteps: ['Next recommended action']
+      nextSteps: ['Next recommended action'],
     };
   } catch (error: any) {
     return {
@@ -244,8 +274,8 @@ export async function myToolHandler(args: any, context: ToolContext): Promise<To
       nextSteps: [
         'Check input parameters',
         'Verify file permissions',
-        'Try again or contact support'
-      ]
+        'Try again or contact support',
+      ],
     };
   }
 }
@@ -254,6 +284,7 @@ export async function myToolHandler(args: any, context: ToolContext): Promise<To
 ### React Component Guidelines
 
 **Component Structure**:
+
 ```typescript
 // src/dashboard_frontend/src/components/MyComponent.tsx
 import React, { useState, useEffect } from 'react';
@@ -264,22 +295,22 @@ interface MyComponentProps {
   className?: string;
 }
 
-export default function MyComponent({ 
-  data, 
-  onAction, 
-  className = '' 
+export default function MyComponent({
+  data,
+  onAction,
+  className = ''
 }: MyComponentProps) {
   const [localState, setLocalState] = useState<StateType>({});
-  
+
   useEffect(() => {
     // Side effects
   }, [data]);
-  
+
   const handleClick = (item: DataType) => {
     // Event handlers
     onAction(item);
   };
-  
+
   return (
     <div className={`base-styles ${className}`}>
       {data.map(item => (
@@ -293,6 +324,7 @@ export default function MyComponent({
 ```
 
 **Styling Guidelines**:
+
 ```typescript
 // Use Tailwind CSS classes
 <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
@@ -313,7 +345,7 @@ kebab-case.ts         ✅ Good
 PascalCase.ts         ❌ Avoid
 snake_case.ts         ❌ Avoid
 
-// Directories  
+// Directories
 kebab-case/           ✅ Good
 PascalCase/          ❌ Avoid (except React components)
 snake_case/          ❌ Avoid
@@ -332,6 +364,7 @@ myTool.ts            ❌ Avoid
 ### Manual Testing Checklist
 
 **Before Submitting PR**:
+
 - [ ] MCP server starts without errors
 - [ ] Dashboard loads and displays data
 - [ ] WebSocket connections work
@@ -340,6 +373,7 @@ myTool.ts            ❌ Avoid
 - [ ] Cross-platform compatibility (if applicable)
 
 **Test Scenarios**:
+
 ```bash
 # 1. Basic MCP server functionality
 npm run dev
@@ -366,6 +400,7 @@ node dist/index.js --dashboard
 ### Future Testing Framework
 
 **Unit Tests** (planned):
+
 ```typescript
 // Example test structure
 describe('PathUtils', () => {
@@ -374,7 +409,7 @@ describe('PathUtils', () => {
       const result = PathUtils.getSpecPath('/project', 'my-spec');
       expect(result).toBe('/project/.specflow/specs/my-spec');
     });
-    
+
     it('should handle special characters', () => {
       const result = PathUtils.getSpecPath('/project', 'user-auth');
       expect(result).toContain('user-auth');
@@ -388,34 +423,36 @@ describe('PathUtils', () => {
 ### Code Documentation
 
 **JSDoc Comments**:
-```typescript
+
+````typescript
 /**
  * Creates a new specification document following the workflow sequence
- * 
+ *
  * @param projectPath - Absolute path to the project root
- * @param specName - Feature name in kebab-case (e.g., 'user-authentication')  
+ * @param specName - Feature name in kebab-case (e.g., 'user-authentication')
  * @param document - Which document to create: 'requirements' | 'design' | 'tasks'
  * @param content - Complete markdown content for the document
  * @returns Promise resolving to tool response with file path and next steps
- * 
+ *
  * @example
  * ```typescript
  * const response = await createSpecDoc({
  *   projectPath: '/my/project',
- *   specName: 'user-auth', 
+ *   specName: 'user-auth',
  *   document: 'requirements',
  *   content: '# Requirements\n\n...'
  * });
  * ```
- * 
+ *
  * @throws {Error} When workflow order is violated (e.g., creating design before requirements)
  */
 export async function createSpecDoc(...): Promise<ToolResponse> {
   // Implementation
 }
-```
+````
 
 **README Updates**:
+
 - Update main README.md for user-facing changes
 - Update technical documentation for developer changes
 - Include code examples for new features
@@ -423,6 +460,7 @@ export async function createSpecDoc(...): Promise<ToolResponse> {
 ### API Documentation
 
 **MCP Tool Documentation**:
+
 ```typescript
 export const myNewToolTool: Tool = {
   name: 'my-new-tool',
@@ -439,7 +477,7 @@ When to use this tool and how it fits in the workflow.
 Concrete example of how to use this tool.`,
   inputSchema: {
     // JSON Schema
-  }
+  },
 };
 ```
 
@@ -452,7 +490,7 @@ Concrete example of how to use this tool.`,
 main                    # Stable release code
 develop                 # Integration branch for features
 
-# Feature branches  
+# Feature branches
 feature/add-new-tool   # New features
 bugfix/fix-approval    # Bug fixes
 docs/update-api        # Documentation updates
@@ -465,7 +503,7 @@ chore/update-deps      # Maintenance tasks
 # Format: type(scope): description
 
 feat(tools): add new spec validation tool
-fix(dashboard): resolve WebSocket connection issues  
+fix(dashboard): resolve WebSocket connection issues
 docs(api): update MCP tool documentation
 chore(deps): update TypeScript to 5.3.0
 refactor(parser): simplify task parsing logic
@@ -477,11 +515,12 @@ refactor(parser): simplify task parsing logic
 ### Release Process
 
 **Version Bumping**:
+
 ```bash
 # Patch release (bug fixes)
 npm version patch
 
-# Minor release (new features)  
+# Minor release (new features)
 npm version minor
 
 # Major release (breaking changes)
@@ -489,9 +528,10 @@ npm version major
 ```
 
 **Pre-release Checklist**:
+
 - [ ] All tests pass
 - [ ] Documentation updated
-- [ ] CHANGELOG.md updated  
+- [ ] CHANGELOG.md updated
 - [ ] Version bumped
 - [ ] Build successful
 - [ ] Manual testing completed
@@ -501,12 +541,14 @@ npm version major
 ### Code of Conduct
 
 **Our Standards**:
+
 - **Be Respectful** - Treat everyone with respect and kindness
 - **Be Inclusive** - Welcome contributors from all backgrounds
 - **Be Constructive** - Provide helpful feedback and suggestions
 - **Be Patient** - Remember that everyone is learning
 
 **Unacceptable Behavior**:
+
 - Harassment or discrimination
 - Trolling or inflammatory comments
 - Personal attacks
@@ -515,6 +557,7 @@ npm version major
 ### Getting Help
 
 **For Contributors**:
+
 1. **Read this guide** and linked documentation
 2. **Search existing issues** and discussions
 3. **Ask in GitHub Discussions** for general questions
@@ -522,6 +565,7 @@ npm version major
 5. **Join community channels** (if available)
 
 **For Maintainers**:
+
 - Respond to issues and PRs promptly
 - Provide constructive feedback
 - Help newcomers get started
@@ -532,6 +576,7 @@ npm version major
 ### Contributors
 
 Contributors are recognized in:
+
 - GitHub contributors list
 - CHANGELOG.md for significant contributions
 - README.md acknowledgments section
@@ -539,8 +584,9 @@ Contributors are recognized in:
 ### Types of Contributions
 
 **All contributions are valued**:
+
 - 💻 **Code** - Features, bug fixes, improvements
-- 📖 **Documentation** - Guides, examples, translations  
+- 📖 **Documentation** - Guides, examples, translations
 - 🐛 **Testing** - Bug reports, test cases, QA
 - 💡 **Ideas** - Feature requests, design feedback
 - 🎨 **Design** - UI/UX improvements, icons, graphics

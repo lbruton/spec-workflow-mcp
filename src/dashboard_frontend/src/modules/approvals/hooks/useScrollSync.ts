@@ -20,7 +20,7 @@ export interface ScrollSyncHandlers {
  * Uses proportional scroll sync based on scroll percentage.
  */
 export function useScrollSync(
-  options: ScrollSyncOptions = {}
+  options: ScrollSyncOptions = {},
 ): ScrollSyncRefs & ScrollSyncHandlers & { isEnabled: boolean } {
   const { enabled = true, throttleMs = 16 } = options; // ~60fps default
 
@@ -39,19 +39,22 @@ export function useScrollSync(
     };
   }, []);
 
-  const syncScroll = useCallback((source: HTMLDivElement, target: HTMLDivElement) => {
-    if (!enabled) return;
+  const syncScroll = useCallback(
+    (source: HTMLDivElement, target: HTMLDivElement) => {
+      if (!enabled) return;
 
-    const sourceScrollHeight = source.scrollHeight - source.clientHeight;
-    const targetScrollHeight = target.scrollHeight - target.clientHeight;
+      const sourceScrollHeight = source.scrollHeight - source.clientHeight;
+      const targetScrollHeight = target.scrollHeight - target.clientHeight;
 
-    // Avoid division by zero
-    if (sourceScrollHeight <= 0 || targetScrollHeight <= 0) return;
+      // Avoid division by zero
+      if (sourceScrollHeight <= 0 || targetScrollHeight <= 0) return;
 
-    // Calculate scroll percentage and apply to target
-    const scrollPercentage = source.scrollTop / sourceScrollHeight;
-    target.scrollTop = scrollPercentage * targetScrollHeight;
-  }, [enabled]);
+      // Calculate scroll percentage and apply to target
+      const scrollPercentage = source.scrollTop / sourceScrollHeight;
+      target.scrollTop = scrollPercentage * targetScrollHeight;
+    },
+    [enabled],
+  );
 
   const handleLeftScroll = useCallback(() => {
     if (!enabled) return;

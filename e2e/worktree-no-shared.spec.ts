@@ -5,9 +5,14 @@ import { RegisteredProject, WorktreeHarness } from './helpers/worktree-harness';
 const DASHBOARD_API_BASE_URL = 'http://127.0.0.1:5084';
 
 function getProjectByPathSuffix(projects: RegisteredProject[], suffix: string): RegisteredProject {
-  const project = projects.find((entry) => entry.projectPath.endsWith(`/${suffix}`) || entry.projectPath.endsWith(`\\${suffix}`));
+  const project = projects.find(
+    (entry) =>
+      entry.projectPath.endsWith(`/${suffix}`) || entry.projectPath.endsWith(`\\${suffix}`),
+  );
   if (!project) {
-    throw new Error(`Project with path suffix "${suffix}" was not found in: ${JSON.stringify(projects, null, 2)}`);
+    throw new Error(
+      `Project with path suffix "${suffix}" was not found in: ${JSON.stringify(projects, null, 2)}`,
+    );
   }
   return project;
 }
@@ -55,7 +60,7 @@ test.describe.serial('No-shared worktree dashboard separation', () => {
     harness = new WorktreeHarness({
       serverRoot: process.cwd(),
       dashboardApiBaseUrl: DASHBOARD_API_BASE_URL,
-      specWorkflowHome
+      specWorkflowHome,
     });
 
     await harness.setup();
@@ -71,7 +76,9 @@ test.describe.serial('No-shared worktree dashboard separation', () => {
 
   // With --no-shared-worktree-specs, each worktree has its own projectId.
   // Expect 2 separate dropdown items (no merging).
-  test('shows separate worktree projects in dropdown without aggregated main project', async ({ page }) => {
+  test('shows separate worktree projects in dropdown without aggregated main project', async ({
+    page,
+  }) => {
     const projectA = getProjectByPathSuffix(registeredProjects, 'wt-a');
     const projectB = getProjectByPathSuffix(registeredProjects, 'wt-b');
 
@@ -117,13 +124,21 @@ test.describe.serial('No-shared worktree dashboard separation', () => {
     await page.getByRole('link', { name: /^Approvals$/i }).click();
     await expect(page.getByTestId('approval-item-approval-wt-a')).toBeVisible({ timeout: 15000 });
     await expect(page.getByTestId('approval-item-approval-wt-b')).toHaveCount(0);
-    await page.getByTestId('approval-item-approval-wt-a').getByRole('button', { name: /review/i }).first().click();
+    await page
+      .getByTestId('approval-item-approval-wt-a')
+      .getByRole('button', { name: /review/i })
+      .first()
+      .click();
     await expect(page.getByText(/source\s*=\s*"wt-a"/i)).toBeVisible({ timeout: 15000 });
 
     await selectProject(page, projectB.projectId);
     await expect(page.getByTestId('approval-item-approval-wt-b')).toBeVisible({ timeout: 15000 });
     await expect(page.getByTestId('approval-item-approval-wt-a')).toHaveCount(0);
-    await page.getByTestId('approval-item-approval-wt-b').getByRole('button', { name: /review/i }).first().click();
+    await page
+      .getByTestId('approval-item-approval-wt-b')
+      .getByRole('button', { name: /review/i })
+      .first()
+      .click();
     await expect(page.getByText(/source\s*=\s*"wt-b"/i)).toBeVisible({ timeout: 15000 });
   });
 });

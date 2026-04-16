@@ -19,7 +19,7 @@ _Last updated: 2026-04-06_
 - [[SWF-75]]: Create /vault-reconcile skill for DocVault index maintenance [p2]
 - [[SWF-76]]: Create /incident skill for structured workflow incident reporting [p2]
 - [[SWF-78]]: Add wikilink formatting to /wrap session digests saved to DocVault [p2]
-- [[SWF-81]]: Generate _Index.md when specs are created or archived [p2]
+- [[SWF-81]]: Generate \_Index.md when specs are created or archived [p2]
 - [[SWF-85]]: Centralized templates still reference legacy .spec-workflow paths [p2]
 - [[SWF-73]]: Dashboard: add personal site link and GitHub sponsor button [p3]
 - [[SWF-74]]: Verify dashboard notification sounds work through NPM reverse proxy [p3]
@@ -93,7 +93,7 @@ _Last updated: 2026-04-06_
 - [[SWF-60]]: Version bump + npm publish after SWF-58 template inversion is validated
 - [[SWF-61]]: Prime prompt does not write prime log or use established prime template
 - [[SWF-62]]: Retire /handoff skill — merge into /wrap --handoff
-- [[SWF-63]]: DocVault Index Tree — hierarchical _Index.md + master INDEX.md + shrink CLAUDE.md
+- [[SWF-63]]: DocVault Index Tree — hierarchical \_Index.md + master INDEX.md + shrink CLAUDE.md
 - [[SWF-64]]: YouTube transcript extraction skill (out of scope, closed)
 - [[SWF-65]]: Simplify distribution — deprecate marketplace, standardize on npm + git clone
 - [[SWF-66]]: Do not show worktree sessions as separate projects in dashboard

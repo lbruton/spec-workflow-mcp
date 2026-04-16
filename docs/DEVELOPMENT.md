@@ -33,6 +33,7 @@ npm install
 ```
 
 This installs:
+
 - MCP SDK
 - TypeScript and build tools
 - Express for dashboard server
@@ -51,15 +52,15 @@ This compiles TypeScript files to JavaScript in the `dist/` directory.
 
 ### Core Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start in development mode with auto-reload |
-| `npm run build` | Build production bundle |
-| `npm start` | Run production server |
-| `npm test` | Run test suite |
-| `npm run clean` | Remove build artifacts |
-| `npm run lint` | Run code linter |
-| `npm run format` | Format code with Prettier |
+| Command          | Description                                |
+| ---------------- | ------------------------------------------ |
+| `npm run dev`    | Start in development mode with auto-reload |
+| `npm run build`  | Build production bundle                    |
+| `npm start`      | Run production server                      |
+| `npm test`       | Run test suite                             |
+| `npm run clean`  | Remove build artifacts                     |
+| `npm run lint`   | Run code linter                            |
+| `npm run format` | Format code with Prettier                  |
 
 ### Development Mode
 
@@ -68,6 +69,7 @@ npm run dev
 ```
 
 Features:
+
 - Auto-recompilation on file changes
 - Hot reload for dashboard
 - Detailed error messages
@@ -80,6 +82,7 @@ npm run clean && npm run build
 ```
 
 Optimizations:
+
 - Minified JavaScript
 - Optimized bundle size
 - Production error handling
@@ -122,26 +125,32 @@ Client (AI) ↔ MCP Protocol ↔ Server ↔ File System
 ### Key Components
 
 #### 1. MCP Server (`src/index.ts`)
+
 - Handles MCP protocol communication
 - Processes tool requests
 - Manages project state
 - File system operations
 
 #### 2. Dashboard Server (`src/server.ts`)
+
 - Serves web dashboard
 - WebSocket connections
 - Real-time updates
 - HTTP API endpoints
 
 #### 3. Tools (`src/tools/`)
+
 Each tool is a separate module:
+
 - Input validation
 - Business logic
 - File operations
 - Response formatting
 
 #### 4. Prompts (`src/prompts/`)
+
 Template strings for:
+
 - Document generation
 - Workflow guidance
 - Error messages
@@ -164,9 +173,9 @@ export const myNewTool: Tool = {
     type: 'object',
     properties: {
       param1: { type: 'string', description: 'Parameter description' },
-      param2: { type: 'number', optional: true }
+      param2: { type: 'number', optional: true },
     },
-    required: ['param1']
+    required: ['param1'],
   },
   handler: async (params) => {
     // Tool implementation
@@ -176,9 +185,9 @@ export const myNewTool: Tool = {
 
     return {
       success: true,
-      data: 'Tool response'
+      data: 'Tool response',
     };
-  }
+  },
 };
 ```
 
@@ -212,10 +221,14 @@ server.registerTool(myNewTool);
 ```javascript
 document.getElementById('new-action').addEventListener('click', () => {
   // Feature logic
-  ws.send(JSON.stringify({
-    type: 'new-action',
-    data: { /* ... */ }
-  }));
+  ws.send(
+    JSON.stringify({
+      type: 'new-action',
+      data: {
+        /* ... */
+      },
+    }),
+  );
 });
 ```
 
@@ -260,7 +273,7 @@ import { myTool } from './my-tool';
 describe('myTool', () => {
   it('should process input correctly', async () => {
     const result = await myTool.handler({
-      param1: 'test'
+      param1: 'test',
     });
 
     expect(result.success).toBe(true);
@@ -269,7 +282,7 @@ describe('myTool', () => {
 
   it('should handle errors', async () => {
     const result = await myTool.handler({
-      param1: null
+      param1: null,
     });
 
     expect(result.success).toBe(false);
@@ -397,6 +410,7 @@ Follow conventional commits:
 - `chore:` Maintenance
 
 Examples:
+
 ```
 feat: add approval revision workflow
 fix: resolve dashboard WebSocket reconnection issue
@@ -416,11 +430,13 @@ docs: update configuration guide
 ### NPM Package
 
 1. **Update version**:
+
    ```bash
    npm version patch|minor|major
    ```
 
 2. **Build package**:
+
    ```bash
    npm run build
    ```
@@ -435,6 +451,7 @@ docs: update configuration guide
 1. **Update extension version** in `vscode-extension/package.json`
 
 2. **Build extension**:
+
    ```bash
    cd vscode-extension
    npm run package
@@ -490,11 +507,11 @@ if (safePath.includes('..')) {
 
 ### Common Build Errors
 
-| Error | Solution |
-|-------|----------|
-| TypeScript errors | Run `npm run build` to see detailed errors |
-| Module not found | Check imports and run `npm install` |
-| Port already in use | Change port or kill existing process |
+| Error                       | Solution                                    |
+| --------------------------- | ------------------------------------------- |
+| TypeScript errors           | Run `npm run build` to see detailed errors  |
+| Module not found            | Check imports and run `npm install`         |
+| Port already in use         | Change port or kill existing process        |
 | WebSocket connection failed | Check server is running and port is correct |
 
 ### Development Tips

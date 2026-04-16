@@ -5,6 +5,7 @@
 ## Быстрая диагностика
 
 ### Проверка установки
+
 ```bash
 # Проверьте доступность npm пакета
 npx -y @pimzino/spec-workflow-mcp@latest --help
@@ -17,6 +18,7 @@ ls -la .specflow  # или 'dir .specflow' на Windows
 ```
 
 ### Проверка сервисов
+
 ```bash
 # Тест сервера MCP
 npx -y @pimzino/spec-workflow-mcp@latest /path/to/project
@@ -38,6 +40,7 @@ netstat -an | findstr :3000  # Windows
 **Ошибка**: `npm ERR! 404 Not Found - @pimzino/spec-workflow-mcp@latest`
 
 **Решения**:
+
 1. Проверьте подключение к интернету
 2. Очистите кэш npm:
    ```bash
@@ -58,6 +61,7 @@ netstat -an | findstr :3000  # Windows
 **Ошибка**: `EACCES: permission denied`
 
 **Решения**:
+
 1. **macOS/Linux**: Используйте правильные разрешения npm:
    ```bash
    npm config set prefix ~/.npm-global
@@ -79,6 +83,7 @@ netstat -an | findstr :3000  # Windows
 **Ошибка**: `Failed to start MCP server`
 
 **Решения**:
+
 1. Проверьте версию Node.js:
    ```bash
    node --version  # Должна быть 18.0 или выше
@@ -104,6 +109,7 @@ netstat -an | findstr :3000  # Windows
 **Решения**:
 
 1. **Claude Desktop**: Проверьте конфигурационный файл:
+
    ```json
    {
      "mcpServers": {
@@ -116,6 +122,7 @@ netstat -an | findstr :3000  # Windows
    ```
 
 2. **Claude Code CLI**: Проверьте настройку:
+
    ```bash
    claude mcp list  # Проверьте, указан ли spec-workflow
    claude mcp remove spec-workflow  # Удалите если существует
@@ -131,6 +138,7 @@ netstat -an | findstr :3000  # Windows
 **Ошибка**: `Tool 'spec-workflow' not found`
 
 **Решения**:
+
 1. Полностью перезапустите ваш AI инструмент
 2. Проверьте, что сервер MCP запущен (ищите процесс)
 3. Проверьте правильность сохранения конфигурации
@@ -143,6 +151,7 @@ netstat -an | findstr :3000  # Windows
 **Ошибка**: `Cannot connect to dashboard` или пустая страница
 
 **Решения**:
+
 1. Проверьте, что панель управления запущена:
    ```bash
    npx -y @pimzino/spec-workflow-mcp@latest /path --dashboard
@@ -160,11 +169,13 @@ netstat -an | findstr :3000  # Windows
 **Ошибка**: `Error: listen EADDRINUSE: address already in use :::3000`
 
 **Решения**:
+
 1. Используйте другой порт:
    ```bash
    npx -y @pimzino/spec-workflow-mcp@latest /path --dashboard --port 3456
    ```
 2. Найдите и завершите процесс, использующий порт:
+
    ```bash
    # macOS/Linux
    lsof -i :3000
@@ -174,6 +185,7 @@ netstat -an | findstr :3000  # Windows
    netstat -ano | findstr :3000
    taskkill /PID [PID] /F
    ```
+
 3. Используйте эфемерный порт (пропустите флаг --port):
    ```bash
    npx -y @pimzino/spec-workflow-mcp@latest /path --dashboard
@@ -184,6 +196,7 @@ netstat -an | findstr :3000  # Windows
 **Ошибка**: `WebSocket connection lost` или обновления в реальном времени не работают
 
 **Решения**:
+
 1. Обновите страницу браузера
 2. Проверьте, не блокирует ли брандмауэр WebSocket
 3. Проверьте, что панель управления и сервер MCP запущены из одного проекта
@@ -195,6 +208,7 @@ netstat -an | findstr :3000  # Windows
 **Симптомы**: Изменения не отражаются в реальном времени
 
 **Решения**:
+
 1. Жесткое обновление браузера (Ctrl+Shift+R или Cmd+Shift+R)
 2. Очистите кэш браузера
 3. Проверьте статус соединения WebSocket (должен показывать зеленый)
@@ -212,6 +226,7 @@ netstat -an | findstr :3000  # Windows
 **Ошибка**: Нет уведомлений об утверждении на панели управления
 
 **Решения**:
+
 1. Убедитесь, что панель управления запущена вместе с сервером MCP:
    ```bash
    # Запустите оба отдельно
@@ -231,6 +246,7 @@ netstat -an | findstr :3000  # Windows
 **Ошибка**: Кнопки утверждения не работают
 
 **Решения**:
+
 1. Проверьте консоль браузера на JavaScript ошибки
 2. Проверьте, что вы на правильной странице спецификации
 3. Убедитесь, что документ имеет статус ожидающего утверждения
@@ -243,6 +259,7 @@ netstat -an | findstr :3000  # Windows
 **Ошибка**: Документы спецификаций не появляются в файловой системе
 
 **Решения**:
+
 1. Проверьте разрешения на запись:
    ```bash
    touch .specflow/test.txt
@@ -262,6 +279,7 @@ netstat -an | findstr :3000  # Windows
 **Ошибка**: `EACCES` или `Permission denied` при создании спецификаций
 
 **Решения**:
+
 1. Исправьте разрешения каталога:
    ```bash
    chmod -R 755 .specflow  # macOS/Linux
@@ -280,6 +298,7 @@ netstat -an | findstr :3000  # Windows
 **Ошибка**: Значок Spec Workflow не появляется на панели активности
 
 **Решения**:
+
 1. Проверьте установку расширения:
    - Откройте расширения (Ctrl+Shift+X)
    - Найдите "Spec Workflow MCP"
@@ -295,6 +314,7 @@ netstat -an | findstr :3000  # Windows
 **Ошибка**: Команды не выполняются или показывают ошибки
 
 **Решения**:
+
 1. Откройте папку проекта, содержащую `.specflow`
 2. Проверьте, что VSCode использует правильное рабочее пространство
 3. Просмотрите журналы расширения для конкретных ошибок
@@ -311,6 +331,7 @@ netstat -an | findstr :3000  # Windows
 **Ошибка**: Настройки в config.toml не применяются
 
 **Решения**:
+
 1. Проверьте синтаксис TOML:
    ```bash
    # Установите валидатор TOML
@@ -321,6 +342,7 @@ netstat -an | findstr :3000  # Windows
    - По умолчанию: `.specflow/config.toml`
    - Пользовательский: Используйте флаг `--config`
 3. Убедитесь в отсутствии синтаксических ошибок:
+
    ```toml
    # Правильно
    port = 3000
@@ -336,7 +358,9 @@ netstat -an | findstr :3000  # Windows
 **Ошибка**: Флаги типа `--port` игнорируются
 
 **Решения**:
+
 1. Проверьте порядок аргументов:
+
    ```bash
    # Правильно
    npx -y @pimzino/spec-workflow-mcp@latest /path --dashboard --port 3000
@@ -344,6 +368,7 @@ netstat -an | findstr :3000  # Windows
    # Неправильно
    npx -y @pimzino/spec-workflow-mcp@latest --dashboard /path --port 3000
    ```
+
 2. Убедитесь, что значения флагов действительны:
    - Порт: 1024-65535
    - Язык: en, ja, zh, es, pt, de, fr, ru, it, ko, ar
@@ -356,6 +381,7 @@ netstat -an | findstr :3000  # Windows
 **Симптомы**: Панель управления или инструменты отвечают медленно
 
 **Решения**:
+
 1. Проверьте системные ресурсы:
    ```bash
    # Использование CPU и памяти
@@ -377,6 +403,7 @@ netstat -an | findstr :3000  # Windows
 ### Высокое использование памяти
 
 **Решения**:
+
 1. Периодически перезапускайте сервисы
 2. Ограничьте частоту обновления панели управления:
    ```json
@@ -391,6 +418,7 @@ netstat -an | findstr :3000  # Windows
 ### За корпоративным прокси
 
 **Решения**:
+
 1. Настройте прокси npm:
    ```bash
    npm config set proxy http://proxy.company.com:8080
@@ -405,6 +433,7 @@ netstat -an | findstr :3000  # Windows
 ### Брандмауэр блокирует соединения
 
 **Решения**:
+
 1. Разрешите Node.js через брандмауэр
 2. Используйте localhost вместо 0.0.0.0
 3. Настройте правила для конкретных портов
@@ -415,9 +444,11 @@ netstat -an | findstr :3000  # Windows
 ### Windows
 
 #### Проблемы формата пути
+
 **Ошибка**: `Invalid path` или путь не найден
 
 **Решения**:
+
 ```bash
 # Используйте прямые слэши
 npx -y @pimzino/spec-workflow-mcp@latest C:/Users/name/project
@@ -427,9 +458,11 @@ npx -y @pimzino/spec-workflow-mcp@latest "C:\\Users\\name\\project"
 ```
 
 #### Политика выполнения PowerShell
+
 **Ошибка**: `cannot be loaded because running scripts is disabled`
 
 **Решения**:
+
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
@@ -437,9 +470,11 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ### macOS
 
 #### Блокировка Gatekeeper
+
 **Ошибка**: `cannot be opened because the developer cannot be verified`
 
 **Решения**:
+
 1. System Preferences → Security & Privacy → Allow
 2. Или удалите карантин:
    ```bash
@@ -449,9 +484,11 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ### Linux
 
 #### Отсутствующие зависимости
+
 **Ошибка**: `shared library not found`
 
 **Решения**:
+
 ```bash
 # Ubuntu/Debian
 sudo apt-get update
@@ -468,6 +505,7 @@ sudo yum groupinstall "Development Tools"
 При сообщении о проблемах включите:
 
 1. **Информация о системе**:
+
    ```bash
    node --version
    npm --version

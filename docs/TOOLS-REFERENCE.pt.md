@@ -25,11 +25,13 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 **Retorna**: Guia em markdown explicando o fluxo de trabalho completo
 
 **Exemplo de Uso**:
+
 ```
 "Mostre-me o guia de fluxo de trabalho de especificações"
 ```
 
 **Resposta Contém**:
+
 - Visão geral do fluxo de trabalho
 - Processo passo a passo
 - Melhores práticas
@@ -44,11 +46,13 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 **Retorna**: Guia em markdown para criação de documentos de direcionamento
 
 **Exemplo de Uso**:
+
 ```
 "Mostre-me como criar documentos de direcionamento"
 ```
 
 **Resposta Contém**:
+
 - Tipos de documentos de direcionamento
 - Processo de criação
 - Diretrizes de conteúdo
@@ -62,14 +66,15 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 
 **Parâmetros**:
 
-| Parâmetro | Tipo | Obrigatório | Descrição |
-|-----------|------|----------|-------------|
-| specName | string | Sim | Nome da especificação (kebab-case) |
-| docType | string | Sim | Tipo: "requirements", "design" ou "tasks" |
-| content | string | Sim | Conteúdo markdown do documento |
-| revision | boolean | Não | Se esta é uma revisão (padrão: false) |
+| Parâmetro | Tipo    | Obrigatório | Descrição                                 |
+| --------- | ------- | ----------- | ----------------------------------------- |
+| specName  | string  | Sim         | Nome da especificação (kebab-case)        |
+| docType   | string  | Sim         | Tipo: "requirements", "design" ou "tasks" |
+| content   | string  | Sim         | Conteúdo markdown do documento            |
+| revision  | boolean | Não         | Se esta é uma revisão (padrão: false)     |
 
 **Exemplo de Uso**:
+
 ```typescript
 {
   specName: "user-authentication",
@@ -80,6 +85,7 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 ```
 
 **Retorna**:
+
 ```typescript
 {
   success: true,
@@ -90,6 +96,7 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 ```
 
 **Notas**:
+
 - Cria diretório de especificação se não existir
 - Solicita aprovação automaticamente para novos documentos
 - Valida formato markdown
@@ -104,28 +111,30 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 **Retorna**: Array de resumos de especificações
 
 **Estrutura de Resposta**:
+
 ```typescript
 [
   {
-    name: "user-authentication",
-    status: "in-progress",
+    name: 'user-authentication',
+    status: 'in-progress',
     progress: 45,
     documents: {
-      requirements: "approved",
-      design: "pending-approval",
-      tasks: "not-created"
+      requirements: 'approved',
+      design: 'pending-approval',
+      tasks: 'not-created',
     },
     taskStats: {
       total: 15,
       completed: 7,
       inProgress: 1,
-      pending: 7
-    }
-  }
-]
+      pending: 7,
+    },
+  },
+];
 ```
 
 **Exemplo de Uso**:
+
 ```
 "Liste todas as minhas especificações"
 ```
@@ -136,13 +145,14 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 
 **Parâmetros**:
 
-| Parâmetro | Tipo | Obrigatório | Descrição |
-|-----------|------|----------|-------------|
-| specName | string | Sim | Nome da especificação para verificar |
+| Parâmetro | Tipo   | Obrigatório | Descrição                            |
+| --------- | ------ | ----------- | ------------------------------------ |
+| specName  | string | Sim         | Nome da especificação para verificar |
 
 **Retorna**: Status detalhado da especificação
 
 **Estrutura de Resposta**:
+
 ```typescript
 {
   exists: true,
@@ -175,6 +185,7 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 ```
 
 **Exemplo de Uso**:
+
 ```
 "Mostre-me o status da especificação user-authentication"
 ```
@@ -185,17 +196,18 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 
 **Parâmetros**:
 
-| Parâmetro | Tipo | Obrigatório | Descrição |
-|-----------|------|----------|-------------|
-| specName | string | Sim | Nome da especificação |
-| action | string | Sim | Ação: "update", "complete", "list", "progress" |
-| taskId | string | Às vezes | ID da tarefa (obrigatório para update/complete) |
-| status | string | Não | Novo status: "pending", "in-progress", "completed" |
-| notes | string | Não | Notas adicionais para a tarefa |
+| Parâmetro | Tipo   | Obrigatório | Descrição                                          |
+| --------- | ------ | ----------- | -------------------------------------------------- |
+| specName  | string | Sim         | Nome da especificação                              |
+| action    | string | Sim         | Ação: "update", "complete", "list", "progress"     |
+| taskId    | string | Às vezes    | ID da tarefa (obrigatório para update/complete)    |
+| status    | string | Não         | Novo status: "pending", "in-progress", "completed" |
+| notes     | string | Não         | Notas adicionais para a tarefa                     |
 
 **Ações**:
 
 1. **Atualizar Status da Tarefa**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -207,6 +219,7 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 ```
 
 2. **Completar Tarefa**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -216,6 +229,7 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 ```
 
 3. **Listar Tarefas**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -224,6 +238,7 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 ```
 
 4. **Obter Progresso**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -244,6 +259,7 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 **Retorna**: Objeto contendo todos os templates
 
 **Estrutura de Resposta**:
+
 ```typescript
 {
   requirements: "# Template de Requisitos\n\n## Visão Geral\n...",
@@ -256,6 +272,7 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 ```
 
 **Exemplo de Uso**:
+
 ```
 "Obtenha todos os templates de documento"
 ```
@@ -266,20 +283,22 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 
 **Parâmetros**:
 
-| Parâmetro | Tipo | Obrigatório | Descrição |
-|-----------|------|----------|-------------|
-| docType | string | Não | Documento específico: "product", "tech", "structure" ou "all" |
+| Parâmetro | Tipo   | Obrigatório | Descrição                                                     |
+| --------- | ------ | ----------- | ------------------------------------------------------------- |
+| docType   | string | Não         | Documento específico: "product", "tech", "structure" ou "all" |
 
 **Retorna**: Conteúdo do documento de direcionamento
 
 **Exemplo de Uso**:
+
 ```typescript
 {
-  docType: "tech"  // Retorna apenas direcionamento técnico
+  docType: 'tech', // Retorna apenas direcionamento técnico
 }
 ```
 
 **Estrutura de Resposta**:
+
 ```typescript
 {
   product: "# Direcionamento de Produto\n\n## Visão\n...",
@@ -294,14 +313,15 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 
 **Parâmetros**:
 
-| Parâmetro | Tipo | Obrigatório | Descrição |
-|-----------|------|----------|-------------|
-| specName | string | Sim | Nome da especificação |
-| includeContent | boolean | Não | Incluir conteúdo do documento (padrão: true) |
+| Parâmetro      | Tipo    | Obrigatório | Descrição                                    |
+| -------------- | ------- | ----------- | -------------------------------------------- |
+| specName       | string  | Sim         | Nome da especificação                        |
+| includeContent | boolean | Não         | Incluir conteúdo do documento (padrão: true) |
 
 **Retorna**: Contexto completo da especificação
 
 **Estrutura de Resposta**:
+
 ```typescript
 {
   name: "user-authentication",
@@ -333,6 +353,7 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 ```
 
 **Exemplo de Uso**:
+
 ```
 "Obtenha contexto completo para a especificação user-authentication"
 ```
@@ -345,12 +366,13 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 
 **Parâmetros**:
 
-| Parâmetro | Tipo | Obrigatório | Descrição |
-|-----------|------|----------|-------------|
-| docType | string | Sim | Tipo: "product", "tech" ou "structure" |
-| content | string | Sim | Conteúdo markdown do documento |
+| Parâmetro | Tipo   | Obrigatório | Descrição                              |
+| --------- | ------ | ----------- | -------------------------------------- |
+| docType   | string | Sim         | Tipo: "product", "tech" ou "structure" |
+| content   | string | Sim         | Conteúdo markdown do documento         |
 
 **Exemplo de Uso**:
+
 ```typescript
 {
   docType: "product",
@@ -359,6 +381,7 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 ```
 
 **Retorna**:
+
 ```typescript
 {
   success: true,
@@ -368,6 +391,7 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 ```
 
 **Notas**:
+
 - Cria diretório de direcionamento se necessário
 - Sobrescreve documentos de direcionamento existentes
 - Não requer aprovação para documentos de direcionamento
@@ -381,14 +405,15 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 
 **Parâmetros**:
 
-| Parâmetro | Tipo | Obrigatório | Descrição |
-|-----------|------|----------|-------------|
-| specName | string | Sim | Nome da especificação |
-| docType | string | Sim | Tipo de documento para aprovar |
-| documentId | string | Sim | ID único para rastreamento |
-| content | string | Sim | Conteúdo do documento para revisão |
+| Parâmetro  | Tipo   | Obrigatório | Descrição                          |
+| ---------- | ------ | ----------- | ---------------------------------- |
+| specName   | string | Sim         | Nome da especificação              |
+| docType    | string | Sim         | Tipo de documento para aprovar     |
+| documentId | string | Sim         | ID único para rastreamento         |
+| content    | string | Sim         | Conteúdo do documento para revisão |
 
 **Exemplo de Uso**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -399,6 +424,7 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 ```
 
 **Retorna**:
+
 ```typescript
 {
   success: true,
@@ -413,12 +439,13 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 
 **Parâmetros**:
 
-| Parâmetro | Tipo | Obrigatório | Descrição |
-|-----------|------|----------|-------------|
-| specName | string | Sim | Nome da especificação |
-| documentId | string | Sim | ID do documento para verificar |
+| Parâmetro  | Tipo   | Obrigatório | Descrição                      |
+| ---------- | ------ | ----------- | ------------------------------ |
+| specName   | string | Sim         | Nome da especificação          |
+| documentId | string | Sim         | ID do documento para verificar |
 
 **Retorna**:
+
 ```typescript
 {
   exists: true,
@@ -430,6 +457,7 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 ```
 
 **Exemplo de Uso**:
+
 ```
 "Verifique o status de aprovação para requisitos user-auth"
 ```
@@ -440,12 +468,13 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 
 **Parâmetros**:
 
-| Parâmetro | Tipo | Obrigatório | Descrição |
-|-----------|------|----------|-------------|
-| specName | string | Sim | Nome da especificação |
-| documentId | string | Sim | ID do documento para remover |
+| Parâmetro  | Tipo   | Obrigatório | Descrição                    |
+| ---------- | ------ | ----------- | ---------------------------- |
+| specName   | string | Sim         | Nome da especificação        |
+| documentId | string | Sim         | ID do documento para remover |
 
 **Retorna**:
+
 ```typescript
 {
   success: true,
@@ -454,6 +483,7 @@ Spec Workflow MCP fornece ferramentas especializadas para desenvolvimento estrut
 ```
 
 **Exemplo de Uso**:
+
 ```
 "Limpe aprovações concluídas para user-auth"
 ```
@@ -539,6 +569,7 @@ Para adicionar novas ferramentas:
 5. Adicione às exportações
 
 Estrutura de exemplo:
+
 ```typescript
 export const customTool = {
   name: 'custom-tool',
@@ -548,7 +579,7 @@ export const customTool = {
   },
   handler: async (params) => {
     // Implementação
-  }
+  },
 };
 ```
 

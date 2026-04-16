@@ -125,13 +125,13 @@ export function LogsPage({
     entries: ImplementationLogEntry[],
     tasks: Set<string>,
     sort: SortOption,
-    order: SortOrder
+    order: SortOrder,
   ) => {
     let filtered = [...entries];
 
     // Filter by selected tasks
     if (tasks.size > 0) {
-      filtered = filtered.filter(e => tasks.has(e.taskId));
+      filtered = filtered.filter((e) => tasks.has(e.taskId));
     }
 
     // Sort
@@ -161,7 +161,7 @@ export function LogsPage({
 
   // Get unique task IDs for filter pills
   const uniqueTasks = logsData
-    ? Array.from(new Set(logsData.entries.map(e => e.taskId))).sort()
+    ? Array.from(new Set(logsData.entries.map((e) => e.taskId))).sort()
     : [];
 
   const toggleTaskFilter = (taskId: string) => {
@@ -188,9 +188,7 @@ export function LogsPage({
       {/* Header */}
       <div>
         <h2 className="text-2xl font-bold">{t('logs.title')}</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          {t('logs.subtitle')}
-        </p>
+        <p className="text-sm text-muted-foreground mt-1">{t('logs.subtitle')}</p>
       </div>
 
       {/* Controls */}
@@ -266,7 +264,8 @@ export function LogsPage({
                 : 'bg-muted text-muted-foreground hover:bg-muted-foreground/20'
             }`}
           >
-            {t('logs.sort.linesAdded')} {sortBy === 'linesAdded' && (sortOrder === 'asc' ? '↑' : '↓')}
+            {t('logs.sort.linesAdded')}{' '}
+            {sortBy === 'linesAdded' && (sortOrder === 'asc' ? '↑' : '↓')}
           </button>
           <button
             onClick={() => toggleSort('filesChanged')}
@@ -276,7 +275,8 @@ export function LogsPage({
                 : 'bg-muted text-muted-foreground hover:bg-muted-foreground/20'
             }`}
           >
-            {t('logs.sort.filesChanged')} {sortBy === 'filesChanged' && (sortOrder === 'asc' ? '↑' : '↓')}
+            {t('logs.sort.filesChanged')}{' '}
+            {sortBy === 'filesChanged' && (sortOrder === 'asc' ? '↑' : '↓')}
           </button>
         </div>
       </div>
@@ -305,9 +305,7 @@ export function LogsPage({
       {!isLoading && selectedSpec && filteredEntries.length === 0 && (
         <Card>
           <CardContent className="p-8 text-center text-muted-foreground">
-            {searchQuery
-              ? t('logs.noSearchResults')
-              : t('logs.noLogs')}
+            {searchQuery ? t('logs.noSearchResults') : t('logs.noLogs')}
           </CardContent>
         </Card>
       )}

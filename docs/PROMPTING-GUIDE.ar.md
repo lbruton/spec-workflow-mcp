@@ -19,16 +19,19 @@
 ### إنشاء مواصفة أساسية
 
 #### طلب بسيط
+
 ```
 "Create a spec for user authentication"
 ```
 
 سينشئ الذكاء الاصطناعي:
+
 - مستند المتطلبات
 - مستند التصميم (بعد الموافقة)
 - تفصيل المهام (بعد الموافقة على التصميم)
 
 #### طلب مفصل
+
 ```
 "Create a spec called payment-processing with:
 - Credit card payments via Stripe
@@ -39,6 +42,7 @@
 ```
 
 #### من وثائق موجودة
+
 ```
 "Create a spec from the PRD in @product-requirements.md"
 ```
@@ -50,6 +54,7 @@
 ### إنشاء مواصفة متقدمة
 
 #### مع قيود تقنية
+
 ```
 "Create a spec for real-time notifications that:
 - Uses WebSockets for live updates
@@ -60,6 +65,7 @@
 ```
 
 #### مع معايير القبول
+
 ```
 "Create a spec for search functionality with these acceptance criteria:
 - Results appear within 200ms
@@ -70,6 +76,7 @@
 ```
 
 #### مواصفة خدمة مصغرة
+
 ```
 "Create a spec for an inventory microservice that:
 - Exposes REST API
@@ -84,6 +91,7 @@
 ### السرد والحالة
 
 #### الحصول على نظرة عامة
+
 ```
 "List all my specs"
 "Show me all specs and their progress"
@@ -92,6 +100,7 @@
 ```
 
 #### حالة محددة
+
 ```
 "Show the status of the user-auth spec"
 "What's the progress on payment-processing?"
@@ -100,6 +109,7 @@
 ```
 
 #### التصفية
+
 ```
 "Show me specs that are over 50% complete"
 "List specs waiting for my approval"
@@ -110,6 +120,7 @@
 ### إدارة المستندات
 
 #### عرض المستندات
+
 ```
 "Show me the requirements for user-auth"
 "Display the design document for payments"
@@ -118,6 +129,7 @@
 ```
 
 #### تحديث المستندات
+
 ```
 "Update the user-auth requirements to include 2FA"
 "Revise the payment design to use Stripe Connect"
@@ -130,6 +142,7 @@
 ### المهام الفردية
 
 #### التنفيذ الأساسي
+
 ```
 "Implement task 1.2 from user-auth"
 "Complete task 2.1.3 in the payment spec"
@@ -137,6 +150,7 @@
 ```
 
 #### مع السياق
+
 ```
 "Implement task 1.2 from user-auth using TypeScript and Express"
 "Complete the database migration task using Prisma"
@@ -146,6 +160,7 @@
 ### التنفيذ الجماعي
 
 #### حسب القسم
+
 ```
 "Implement all database tasks from user-auth"
 "Complete all frontend tasks in the dashboard spec"
@@ -153,6 +168,7 @@
 ```
 
 #### حسب الأولوية
+
 ```
 "Implement all critical tasks first"
 "Complete the MVP tasks from user-profile"
@@ -160,6 +176,7 @@
 ```
 
 #### متسلسل
+
 ```
 "Implement tasks 1.1 through 1.5 from user-auth"
 "Complete all subtasks under section 2"
@@ -169,6 +186,7 @@
 ### استراتيجيات التنفيذ
 
 #### مدفوع بالاختبار
+
 ```
 "For task 1.2, write tests first then implement"
 "Implement task 2.1 with full test coverage"
@@ -176,6 +194,7 @@
 ```
 
 #### مع التوثيق
+
 ```
 "Implement task 1.3 and document the API"
 "Complete the authentication task with inline comments"
@@ -187,6 +206,7 @@
 ### إنشاء التوجيه
 
 #### مجموعة كاملة
+
 ```
 "Create steering documents for my e-commerce project"
 "Set up steering for a SaaS application"
@@ -194,6 +214,7 @@
 ```
 
 #### مستندات فردية
+
 ```
 "Create a product steering document focusing on user experience"
 "Create technical steering for a microservices architecture"
@@ -201,6 +222,7 @@
 ```
 
 #### من السياق
+
 ```
 "Create steering documents based on @project-brief.md"
 "Generate steering from our technical decisions in @architecture.md"
@@ -219,6 +241,7 @@
 ### طلب الملاحظات
 
 #### مع مخاوف محددة
+
 ```
 "Request approval for user-auth requirements - particularly check the security section"
 "Ask for review of the payment design - focus on the error handling"
@@ -226,6 +249,7 @@
 ```
 
 #### طلبات المراجعة
+
 ```
 "The requirements need more detail on:
 - Error handling scenarios
@@ -237,6 +261,7 @@ Please revise and resubmit"
 ### قرارات الموافقة
 
 #### الموافقة
+
 ```
 "Approve the user-auth requirements"
 "The design looks good, approve it"
@@ -244,6 +269,7 @@ Please revise and resubmit"
 ```
 
 #### طلب التغييرات
+
 ```
 "Request changes to the requirements:
 - Add multi-tenant support
@@ -252,6 +278,7 @@ Please revise and resubmit"
 ```
 
 #### الرفض
+
 ```
 "Reject the current design - we need to use event-driven architecture instead"
 "Start over with the requirements - the scope is too broad"
@@ -262,6 +289,7 @@ Please revise and resubmit"
 ### الإبلاغ عن الأخطاء
 
 #### تقرير مفصل
+
 ```
 "Create a bug report:
 Title: Login fails with special characters
@@ -273,6 +301,7 @@ Environment: Production"
 ```
 
 #### من سجلات الأخطاء
+
 ```
 "Create a bug report from this error: [paste stack trace]"
 "Document this bug from the Sentry alert: [link]"
@@ -281,6 +310,7 @@ Environment: Production"
 ### حل الأخطاء
 
 #### التحقيق
+
 ```
 "Investigate the root cause of bug #45"
 "Analyze why the payment webhook is failing"
@@ -288,6 +318,7 @@ Environment: Production"
 ```
 
 #### تنفيذ الإصلاح
+
 ```
 "Create a fix for bug #45 in user authentication"
 "Implement a solution for the payment timeout issue"
@@ -305,11 +336,13 @@ Environment: Production"
 الذكاء الاصطناعي لديه وصول إلى تعليمات تحديث المهام الشاملة من خلال أمر refresh-tasks. ببساطة أبلغ الذكاء الاصطناعي عن تغييراتك:
 
 #### تحديث المهام الأساسي
+
 ```
 "The requirements have been updated. Please refresh tasks.md to align with the current requirements.md and design.md."
 ```
 
 #### تحديث المهام المفصل مع السياق
+
 ```
 "I've updated the spec with the following changes:
 - Removed the reporting module
@@ -324,6 +357,7 @@ Please refresh tasks.md following the task refresh process:
 ```
 
 #### تغيير البنية يتطلب الترحيل
+
 ```
 "We're switching from REST API to GraphQL. Several REST endpoints are already implemented. Please update tasks.md with:
 1. All completed REST work preserved
@@ -365,22 +399,26 @@ Please refresh tasks.md following the task refresh process:
 ### أمثلة على السيناريوهات
 
 #### إزالة ميزة
+
 ```
 "We've decided to remove the reporting module from the spec. Update tasks.md accordingly."
 ```
 
 السلوك المتوقع للذكاء الاصطناعي:
+
 - الاحتفاظ بجميع مهام التقارير المكتملة بحالة [x]
 - الاحتفاظ بجميع مهام التقارير قيد التنفيذ بحالة [-]
 - إزالة مهام التقارير المعلقة [ ] فقط
 - إضافة ملاحظة: "_ملاحظة: تمت إزالة ميزة التقارير من المواصفة ولكن تم الحفاظ على العمل المكتمل_"
 
 #### تغيير البنية مع العمل المكتمل
+
 ```
 "We're switching from MongoDB to PostgreSQL. Update the pending database tasks. Note that we've already implemented MongoDB schemas and connection logic."
 ```
 
 السلوك المتوقع للذكاء الاصطناعي:
+
 - الحفاظ على جميع مهام MongoDB المكتملة تمامًا كما هي مكتوبة
 - الحفاظ على جميع مهام MongoDB قيد التنفيذ تمامًا كما هي مكتوبة
 - إضافة مهام ترحيل جديدة مباشرة بعد عمل MongoDB المكتمل:
@@ -394,11 +432,13 @@ Please refresh tasks.md following the task refresh process:
 - الحفاظ على تسلسل ترقيم المهام
 
 #### إضافة ميزة
+
 ```
 "Add social login to the authentication spec. The requirements and design have been updated."
 ```
 
 السلوك المتوقع للذكاء الاصطناعي:
+
 - تحليل بنية المهام الحالية لنقطة الإدراج المنطقية
 - إضافة مهام تسجيل الدخول الاجتماعي الجديدة بترقيم مناسب
 - الإشارة إلى المتطلبات المحددة لتسجيل الدخول الاجتماعي
@@ -410,11 +450,13 @@ Please refresh tasks.md following the task refresh process:
 عندما تؤثر تغييرات البنية على الكود المنفذ بالفعل:
 
 #### ترحيل REST إلى GraphQL
+
 ```
 "We're changing from REST to GraphQL. Several REST endpoints are already implemented."
 ```
 
 إضافات المهام المتوقعة:
+
 - الحفاظ على مهام نقاط نهاية REST المكتملة
 - إضافة مهام تعريف مخطط GraphQL
 - إضافة مهام تنفيذ المحلل
@@ -423,11 +465,13 @@ Please refresh tasks.md following the task refresh process:
 - إضافة مهام التنظيف لإزالة نقاط نهاية REST بعد التحقق من GraphQL
 
 #### تقسيم Monolith إلى Microservices
+
 ```
 "We're splitting the monolithic user service into separate auth and profile services."
 ```
 
 إضافات المهام المتوقعة:
+
 - الحفاظ على مهام الخدمة الأحادية المكتملة
 - إضافة مهام فصل الخدمة
 - إضافة مهام الاتصال بين الخدمات
@@ -456,16 +500,19 @@ Please refresh tasks.md following the task refresh process:
 عند إبلاغ الذكاء الاصطناعي عن تغييرات المواصفة:
 
 #### كن محددًا حول التغييرات والتأثير
+
 ```
 "The payment processing requirements have changed. Stripe is now required instead of PayPal. We've already implemented PayPal webhook handlers. Please update tasks.md to reflect this change, including migration tasks."
 ```
 
 #### وفر السياق للحفظ والترحيل
+
 ```
 "Although we're moving from MongoDB to PostgreSQL, keep all completed MongoDB tasks since that work is already done. Add migration tasks to transition the implemented MongoDB code to PostgreSQL."
 ```
 
 #### اطلب التحقق
+
 ```
 "After updating tasks.md, confirm that all requirements in requirements.md have corresponding tasks, migration paths exist for architecture changes, and that no pending tasks exist for removed features."
 ```
@@ -497,6 +544,7 @@ Please refresh tasks.md following the task refresh process:
 ### سير عمل متعدد المواصفات
 
 #### مواصفات مرتبطة
+
 ```
 "Create a spec for admin-dashboard that integrates with:
 - user-management spec
@@ -505,6 +553,7 @@ Please refresh tasks.md following the task refresh process:
 ```
 
 #### تبعيات المواصفات
+
 ```
 "Create a spec for notifications that depends on:
 - user-auth being complete
@@ -515,6 +564,7 @@ Please refresh tasks.md following the task refresh process:
 ### التطوير التدريجي
 
 #### MVP أولاً
+
 ```
 "Create an MVP spec for user-profiles with just:
 - Basic profile creation
@@ -524,6 +574,7 @@ Please refresh tasks.md following the task refresh process:
 ```
 
 #### مواصفات التحسين
+
 ```
 "Create an enhancement spec for user-auth adding:
 - Social login (Google, GitHub)
@@ -535,6 +586,7 @@ Please refresh tasks.md following the task refresh process:
 ### سيناريوهات معقدة
 
 #### مواصفات الترحيل
+
 ```
 "Create a spec for migrating from MongoDB to PostgreSQL:
 - Document current schema
@@ -544,6 +596,7 @@ Please refresh tasks.md following the task refresh process:
 ```
 
 #### مواصفات إعادة الهيكلة
+
 ```
 "Create a refactoring spec to:
 - Split the monolith into services
@@ -553,6 +606,7 @@ Please refresh tasks.md following the task refresh process:
 ```
 
 #### مواصفات الأداء
+
 ```
 "Create a performance optimization spec:
 - Profile current bottlenecks
@@ -564,6 +618,7 @@ Please refresh tasks.md following the task refresh process:
 ## تركيبات سير العمل
 
 ### تدفق ميزة كامل
+
 ```
 1. "Create steering documents for the project"
 2. "Create a spec for user authentication"
@@ -576,6 +631,7 @@ Please refresh tasks.md following the task refresh process:
 ```
 
 ### التطوير المتوازي
+
 ```
 "While I review the requirements, start drafting the API design"
 "Create specs for both frontend and backend in parallel"
@@ -583,6 +639,7 @@ Please refresh tasks.md following the task refresh process:
 ```
 
 ### التحسين التكراري
+
 ```
 1. "Create initial spec for search"
 2. "Implement basic search (tasks 1-3)"
@@ -594,6 +651,7 @@ Please refresh tasks.md following the task refresh process:
 ## أوامر واعية بالسياق
 
 ### استخدام سياق المشروع
+
 ```
 "Create a spec that follows our existing patterns"
 "Implement this task consistent with our codebase"
@@ -601,6 +659,7 @@ Please refresh tasks.md following the task refresh process:
 ```
 
 ### الإشارة إلى مواصفات أخرى
+
 ```
 "Create a spec similar to user-auth but for admin authentication"
 "Use the same design patterns as in the payment spec"
@@ -608,6 +667,7 @@ Please refresh tasks.md following the task refresh process:
 ```
 
 ### البناء على العمل السابق
+
 ```
 "Extend the user-auth spec to include team management"
 "Add GraphQL support to the existing REST API spec"
@@ -617,28 +677,34 @@ Please refresh tasks.md following the task refresh process:
 ## نصائح للأوامر الفعالة
 
 ### كن محددًا
+
 ❌ **غامض**: "Create a login spec"
 ✅ **محدد**: "Create a spec for email/password login with 2FA, remember me, and password reset"
 
 ### وفر السياق
+
 ❌ **بدون سياق**: "Implement the task"
 ✅ **مع السياق**: "Implement task 1.2 using our existing Express middleware and PostgreSQL database"
 
 ### ضع توقعات واضحة
+
 ❌ **غير واضح**: "Make it better"
 ✅ **واضح**: "Improve the design to handle 10x current traffic with response times under 200ms"
 
 ### استخدم الطلبات التدريجية
+
 ❌ **كثير جدًا**: "Create 5 specs and implement everything"
 ✅ **تدريجي**: "Create the user-auth spec first, then we'll review before moving to the next"
 
 ### الإشارة إلى العمل الموجود
+
 ❌ **البدء من جديد**: "Create a new payment system"
 ✅ **البناء على**: "Enhance our payment spec to add subscription billing"
 
 ## مكتبة الأنماط الشائعة
 
 ### عمليات CRUD
+
 ```
 "Create a spec for CRUD operations on products including:
 - Create with validation
@@ -648,6 +714,7 @@ Please refresh tasks.md following the task refresh process:
 ```
 
 ### المصادقة والتفويض
+
 ```
 "Create an auth spec with:
 - JWT-based authentication
@@ -658,6 +725,7 @@ Please refresh tasks.md following the task refresh process:
 ```
 
 ### ميزات الوقت الفعلي
+
 ```
 "Create a spec for real-time chat:
 - WebSocket connections
@@ -668,6 +736,7 @@ Please refresh tasks.md following the task refresh process:
 ```
 
 ### إدارة الملفات
+
 ```
 "Create a file upload spec:
 - Chunked uploads for large files
@@ -678,6 +747,7 @@ Please refresh tasks.md following the task refresh process:
 ```
 
 ### التحليلات والتقارير
+
 ```
 "Create an analytics spec:
 - Event tracking
@@ -690,6 +760,7 @@ Please refresh tasks.md following the task refresh process:
 ## أوامر استكشاف الأخطاء وإصلاحها
 
 ### عندما تسوء الأمور
+
 ```
 "Why is this spec not showing up?"
 "Debug why the task isn't completing"
@@ -698,6 +769,7 @@ Please refresh tasks.md following the task refresh process:
 ```
 
 ### الخروج من المأزق
+
 ```
 "What should I do next?"
 "Show me what's blocking progress"

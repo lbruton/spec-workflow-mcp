@@ -1,6 +1,6 @@
 ---
 name: prime-status
-description: "Universal project status agent. Gathers vault issues, GitHub, git, and spec-workflow data for any project. Dispatched by /prime — never run directly. Does NOT search mem0 — that happens in Phase 1.5 of the prime skill after this agent returns keywords."
+description: 'Universal project status agent. Gathers vault issues, GitHub, git, and spec-workflow data for any project. Dispatched by /prime — never run directly. Does NOT search mem0 — that happens in Phase 1.5 of the prime skill after this agent returns keywords.'
 model: sonnet
 ---
 
@@ -11,6 +11,7 @@ You are a data-gathering agent. Your job is to fetch project state from all avai
 ## Inputs
 
 You will receive a prompt containing:
+
 - `repo`: GitHub repo name (e.g., "StakTrakr", "HexTrackr", "MyMelo")
 - `tag`: mem0 agent_id (e.g., "staktrakr", "hextrackr")
 - `issuePrefix`: issue prefix from project.json, or "none" if this project has no tracked issues
@@ -124,6 +125,7 @@ ls -t "$SEC_DIR"/*.md 2>/dev/null | head -5
 ```
 
 Read the **most recent** security review file and extract:
+
 - Overall summary/posture line (from the `## Summary` section)
 - Finding counts by severity: count numbered items under `### High`, `### Medium`, `### Low`
 - One-line description of each High-severity finding
@@ -137,12 +139,12 @@ After all data returns, synthesize into this structure. Keep it tight — tables
 
 ### This Week by the Numbers
 
-| Metric | Count |
-|--------|-------|
-| Issues completed        | **N** |
-| GitHub issues closed | **N** |
-| Commits (non-merge, 7d) | **N** |
-| Version range | vX.Y.Z1 -> **vX.Y.Z2** (N patches) |
+| Metric                  | Count                              |
+| ----------------------- | ---------------------------------- |
+| Issues completed        | **N**                              |
+| GitHub issues closed    | **N**                              |
+| Commits (non-merge, 7d) | **N**                              |
+| Version range           | vX.Y.Z1 -> **vX.Y.Z2** (N patches) |
 
 If issuePrefix is "none", omit the issues row.
 If hasVersionLock is false, omit the version row.
@@ -152,33 +154,34 @@ If hasVersionLock is false, omit the version row.
 Show the last 15 commits with their messages. This section is MANDATORY — it is the primary
 evidence of what work was done. Group by day if possible.
 
-| Date | Commit | Message |
-|------|--------|---------|
+| Date  | Commit    | Message                                                          |
+| ----- | --------- | ---------------------------------------------------------------- |
 | Mar 8 | `3abfe90` | v3.33.60 — STAK-457: ZIP backup restore routes through DiffModal |
 
 ### Open PRs (omit if none)
 
-| PR | Title | Branch | Status |
-|----|-------|--------|--------|
+| PR   | Title | Branch      | Status     |
+| ---- | ----- | ----------- | ---------- |
 | #807 | Title | branch-name | Draft/Open |
 
 ### Hot Files (most-changed in 7 days)
 
 Show top 10 files by change frequency. Helps identify active areas of the codebase.
 
-| Changes | File |
-|---------|------|
-| 12 | js/utils.js |
+| Changes | File        |
+| ------- | ----------- |
+| 12      | js/utils.js |
 
 ### Spec-Workflow Status (omit entirely if hasSpecs is false)
 
 #### Active Specs
 
-| Spec | Phase | Tasks | Status |
-|------|-------|-------|--------|
+| Spec | Phase   | Tasks           | Status |
+| ---- | ------- | --------------- | ------ |
 | SLUG | Phase N | N/M done, N WIP | Status |
 
 Phase is determined by which files exist:
+
 - Only requirements.md = Phase 1 (Requirements)
 - + design.md = Phase 2 (Design)
 - + tasks.md = Phase 3 (Tasks)
@@ -191,27 +194,27 @@ List any approvals with status "pending" or "needs-revision". If none: "No pendi
 
 ### Open Bugs (by priority)
 
-| Priority | Issue | Summary |
-|----------|-------|---------|
-| High | STAK-NNN | one-line description |
+| Priority | Issue    | Summary              |
+| -------- | -------- | -------------------- |
+| High     | STAK-NNN | one-line description |
 
 ### Open Features / Todo
 
-| Priority | Issue | Summary |
-|----------|-------|---------|
-| High | STAK-NNN | one-line description |
+| Priority | Issue    | Summary              |
+| -------- | -------- | -------------------- |
+| High     | STAK-NNN | one-line description |
 
 ### Backlog (longer-term)
 
-| Issue | Summary |
-|-------|---------|
+| Issue    | Summary              |
+| -------- | -------------------- |
 | STAK-NNN | one-line description |
 
 ### Security Reviews (omit if hasSecurityReviews is false)
 
-| Date | High | Medium | Low | Overall |
-|------|------|--------|-----|---------|
-| <date> | **N** | **N** | **N** | <posture summary> |
+| Date   | High  | Medium | Low   | Overall           |
+| ------ | ----- | ------ | ----- | ----------------- |
+| <date> | **N** | **N**  | **N** | <posture summary> |
 
 **High-severity findings:**
 <One-line per High finding, numbered. If none: "No high-severity findings.">
@@ -222,12 +225,13 @@ List any approvals with status "pending" or "needs-revision". If none: "No pendi
 ### Roadmap Projects (omit if issuePrefix is "none")
 
 | Status | Project | Priority |
-|--------|---------|----------|
-| Done | Name | High |
+| ------ | ------- | -------- |
+| Done   | Name    | High     |
 
 ### Suggested Next Priorities
 
 3-5 actionable recommendations based on (in priority order):
+
 - Evidence from recent commits and open PRs (what's actively being worked on)
 - Unfinished bugs (highest priority first)
 - Specs awaiting approval (user action needed)
@@ -250,6 +254,7 @@ List any approvals with status "pending" or "needs-revision". If none: "No pendi
 The prime report is written to DocVault and rendered in Obsidian. Use `[[wikilinks]]` to connect it to the knowledge graph.
 
 **In tables and prose:**
+
 - **Issue IDs** → `[[STAK-498]]`, `[[FORGE-67]]`, `[[OPS-105]]` (Obsidian resolves by filename)
 - **Project references** → `[[StakTrakr Overview]]`, `[[Forge Overview]]`, etc. (first mention in a section)
 - **Infrastructure mentioned in commits/issues** → `[[Portainer]]`, `[[Stack Registry]]`, `[[Proxmox Cluster]]`, `[[NPM]]`, `[[Cloudflare]]`, etc.
@@ -259,12 +264,13 @@ The prime report is written to DocVault and rendered in Obsidian. Use `[[wikilin
 **In tables**, wikilink the Issue column and any infrastructure/project names in the Summary/Message column:
 
 ```markdown
-| Priority | Issue | Summary |
-|----------|-------|---------|
-| High | [[STAK-498]] | Fix price scraper — [[Remote Poller]] eCheck column |
+| Priority | Issue        | Summary                                             |
+| -------- | ------------ | --------------------------------------------------- |
+| High     | [[STAK-498]] | Fix price scraper — [[Remote Poller]] eCheck column |
 ```
 
 **Do NOT link:**
+
 - Commit hashes, dates, branch names, PR numbers (these aren't vault pages)
 - Generic terms that aren't vault page names
 - The same page repeatedly within the same table

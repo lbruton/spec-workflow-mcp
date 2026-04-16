@@ -6,7 +6,7 @@ type VSCodeTheme = 'light' | 'dark' | 'high-contrast';
  * Custom hook to detect and track VS Code theme changes
  * VS Code automatically adds theme classes to the body element:
  * - 'vscode-light' for light themes
- * - 'vscode-dark' for dark themes  
+ * - 'vscode-dark' for dark themes
  * - 'vscode-high-contrast' for high contrast themes
  */
 export function useVSCodeTheme(): VSCodeTheme {
@@ -50,7 +50,7 @@ export function useVSCodeTheme(): VSCodeTheme {
     // Start observing body class changes
     observer.observe(document.body, {
       attributes: true,
-      attributeFilter: ['class']
+      attributeFilter: ['class'],
     });
 
     // Cleanup observer on unmount

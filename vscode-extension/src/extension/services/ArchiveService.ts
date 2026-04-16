@@ -70,10 +70,12 @@ export class ArchiveService {
       // Ensure archive directory structure exists
       await fs.mkdir(this.getArchiveSpecsPath(), { recursive: true });
       this.logger.log(`ArchiveService: Created archive directory structure`);
-      
+
       // Move the entire spec directory to archive
       await fs.rename(activeSpecPath, archiveSpecPath);
-      this.logger.log(`ArchiveService: Successfully moved spec from ${activeSpecPath} to ${archiveSpecPath}`);
+      this.logger.log(
+        `ArchiveService: Successfully moved spec from ${activeSpecPath} to ${archiveSpecPath}`,
+      );
     } catch (error: any) {
       this.logger.error(`ArchiveService: Failed to archive spec '${specName}':`, error);
       throw new Error(`Failed to archive spec '${specName}': ${error.message}`);
@@ -112,10 +114,12 @@ export class ArchiveService {
       const activeSpecsDir = path.dirname(activeSpecPath);
       await fs.mkdir(activeSpecsDir, { recursive: true });
       this.logger.log(`ArchiveService: Created active specs directory structure`);
-      
+
       // Move the entire spec directory back to active
       await fs.rename(archiveSpecPath, activeSpecPath);
-      this.logger.log(`ArchiveService: Successfully moved spec from ${archiveSpecPath} to ${activeSpecPath}`);
+      this.logger.log(
+        `ArchiveService: Successfully moved spec from ${archiveSpecPath} to ${activeSpecPath}`,
+      );
     } catch (error: any) {
       this.logger.error(`ArchiveService: Failed to unarchive spec '${specName}':`, error);
       throw new Error(`Failed to unarchive spec '${specName}': ${error.message}`);
@@ -171,9 +175,7 @@ export class ArchiveService {
       const archiveSpecsPath = this.getArchiveSpecsPath();
       await fs.access(archiveSpecsPath);
       const entries = await fs.readdir(archiveSpecsPath, { withFileTypes: true });
-      return entries
-        .filter(entry => entry.isDirectory())
-        .map(entry => entry.name);
+      return entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name);
     } catch {
       // Archive directory doesn't exist yet
       return [];

@@ -12,7 +12,7 @@ import {
   AuditLogger,
   AuditLogEntry,
   getCorsConfig,
-  createSecurityHeadersMiddleware
+  createSecurityHeadersMiddleware,
 } from '../security-utils.js';
 import { SecurityConfig } from '../../types.js';
 
@@ -128,10 +128,10 @@ describe('security-utils', () => {
     it('should merge user config with defaults', () => {
       const userConfig: Partial<SecurityConfig> = {
         rateLimitPerMinute: 100,
-        auditLogEnabled: false
+        auditLogEnabled: false,
       };
       const config = getSecurityConfig(userConfig);
-      
+
       expect(config.rateLimitPerMinute).toBe(100);
       expect(config.auditLogEnabled).toBe(false);
       // Other defaults preserved
@@ -146,7 +146,7 @@ describe('security-utils', () => {
         auditLogEnabled: false,
         auditLogRetentionDays: 7,
         corsEnabled: false,
-        allowedOrigins: ['http://custom:3000']
+        allowedOrigins: ['http://custom:3000'],
       };
       const config = getSecurityConfig(fullConfig);
       expect(config).toEqual(fullConfig);
@@ -160,7 +160,7 @@ describe('security-utils', () => {
       vi.useFakeTimers();
       rateLimiter = new RateLimiter({
         ...DEFAULT_SECURITY_CONFIG,
-        rateLimitPerMinute: 3 // Low limit for testing
+        rateLimitPerMinute: 3, // Low limit for testing
       });
     });
 
@@ -222,7 +222,7 @@ describe('security-utils', () => {
       const disabledLimiter = new RateLimiter({
         ...DEFAULT_SECURITY_CONFIG,
         rateLimitEnabled: false,
-        rateLimitPerMinute: 1
+        rateLimitPerMinute: 1,
       });
 
       // Make many requests
@@ -236,7 +236,7 @@ describe('security-utils', () => {
     it('should return false when CORS is disabled', () => {
       const config: SecurityConfig = {
         ...DEFAULT_SECURITY_CONFIG,
-        corsEnabled: false
+        corsEnabled: false,
       };
       expect(getCorsConfig(config)).toBe(false);
     });
@@ -244,10 +244,10 @@ describe('security-utils', () => {
     it('should return config object when CORS is enabled', () => {
       const config: SecurityConfig = {
         ...DEFAULT_SECURITY_CONFIG,
-        corsEnabled: true
+        corsEnabled: true,
       };
       const corsConfig = getCorsConfig(config);
-      
+
       expect(corsConfig).not.toBe(false);
       expect(typeof corsConfig).toBe('object');
       expect(corsConfig).toHaveProperty('origin');
@@ -258,13 +258,13 @@ describe('security-utils', () => {
     it('should allow requests with no origin', () => {
       const config: SecurityConfig = {
         ...DEFAULT_SECURITY_CONFIG,
-        corsEnabled: true
+        corsEnabled: true,
       };
       const corsConfig = getCorsConfig(config) as any;
-      
+
       const callback = vi.fn();
       corsConfig.origin('', callback);
-      
+
       expect(callback).toHaveBeenCalledWith(null, true);
     });
 
@@ -272,13 +272,13 @@ describe('security-utils', () => {
       const config: SecurityConfig = {
         ...DEFAULT_SECURITY_CONFIG,
         corsEnabled: true,
-        allowedOrigins: ['http://localhost:5000', 'http://custom:3000']
+        allowedOrigins: ['http://localhost:5000', 'http://custom:3000'],
       };
       const corsConfig = getCorsConfig(config) as any;
-      
+
       const callback = vi.fn();
       corsConfig.origin('http://localhost:5000', callback);
-      
+
       expect(callback).toHaveBeenCalledWith(null, true);
     });
 
@@ -286,13 +286,13 @@ describe('security-utils', () => {
       const config: SecurityConfig = {
         ...DEFAULT_SECURITY_CONFIG,
         corsEnabled: true,
-        allowedOrigins: ['http://localhost:5000']
+        allowedOrigins: ['http://localhost:5000'],
       };
       const corsConfig = getCorsConfig(config) as any;
-      
+
       const callback = vi.fn();
       corsConfig.origin('http://malicious:8080', callback);
-      
+
       expect(callback).toHaveBeenCalledWith(expect.any(Error));
     });
   });
@@ -305,13 +305,13 @@ describe('security-utils', () => {
 
     it('should set security headers on reply', async () => {
       const middleware = createSecurityHeadersMiddleware();
-      
+
       const headers: Record<string, string> = {};
       const mockReply = {
         header: vi.fn((name: string, value: string) => {
           headers[name] = value;
           return mockReply;
-        })
+        }),
       };
       const mockRequest = {};
 
@@ -320,7 +320,10 @@ describe('security-utils', () => {
       expect(mockReply.header).toHaveBeenCalledWith('X-Content-Type-Options', 'nosniff');
       expect(mockReply.header).toHaveBeenCalledWith('X-Frame-Options', 'SAMEORIGIN');
       expect(mockReply.header).toHaveBeenCalledWith('X-XSS-Protection', '1; mode=block');
-      expect(mockReply.header).toHaveBeenCalledWith('Referrer-Policy', 'strict-origin-when-cross-origin');
+      expect(mockReply.header).toHaveBeenCalledWith(
+        'Referrer-Policy',
+        'strict-origin-when-cross-origin',
+      );
       expect(mockReply.header).toHaveBeenCalledWith('Content-Security-Policy', expect.any(String));
     });
   });
@@ -346,7 +349,7 @@ describe('security-utils', () => {
       const logger = new AuditLogger({
         ...DEFAULT_SECURITY_CONFIG,
         auditLogEnabled: false,
-        auditLogPath: logPath
+        auditLogPath: logPath,
       });
 
       await logger.log({
@@ -354,7 +357,7 @@ describe('security-utils', () => {
         actor: '127.0.0.1',
         action: 'GET /api/test',
         resource: '/api/test',
-        result: 'success'
+        result: 'success',
       });
 
       // File should not exist since logging is disabled
@@ -364,7 +367,7 @@ describe('security-utils', () => {
     it('should initialize without throwing when disabled', async () => {
       const logger = new AuditLogger({
         ...DEFAULT_SECURITY_CONFIG,
-        auditLogEnabled: false
+        auditLogEnabled: false,
       });
 
       await expect(logger.initialize()).resolves.not.toThrow();
@@ -376,7 +379,7 @@ describe('security-utils', () => {
       const logger = new AuditLogger({
         ...DEFAULT_SECURITY_CONFIG,
         auditLogEnabled: true,
-        auditLogPath: logPath
+        auditLogPath: logPath,
       });
 
       await logger.initialize();
@@ -391,7 +394,7 @@ describe('security-utils', () => {
       const logger = new AuditLogger({
         ...DEFAULT_SECURITY_CONFIG,
         auditLogEnabled: true,
-        auditLogPath: logPath
+        auditLogPath: logPath,
       });
 
       await logger.initialize();
@@ -404,8 +407,8 @@ describe('security-utils', () => {
         result: 'success',
         details: {
           statusCode: 201,
-          duration: 45
-        }
+          duration: 45,
+        },
       };
 
       await logger.log(entry);
@@ -428,7 +431,7 @@ describe('security-utils', () => {
       const logger = new AuditLogger({
         ...DEFAULT_SECURITY_CONFIG,
         auditLogEnabled: true,
-        auditLogPath: logPath
+        auditLogPath: logPath,
       });
 
       await logger.initialize();
@@ -439,7 +442,7 @@ describe('security-utils', () => {
         actor: '127.0.0.1',
         action: 'GET /api/projects',
         resource: '/api/projects',
-        result: 'success'
+        result: 'success',
       });
 
       await logger.log({
@@ -447,7 +450,7 @@ describe('security-utils', () => {
         actor: '127.0.0.1',
         action: 'POST /api/specs',
         resource: '/api/specs',
-        result: 'success'
+        result: 'success',
       });
 
       await logger.log({
@@ -455,7 +458,7 @@ describe('security-utils', () => {
         actor: '10.0.0.5',
         action: 'DELETE /api/specs/test',
         resource: '/api/specs/test',
-        result: 'denied'
+        result: 'denied',
       });
 
       // Read and verify all entries
@@ -479,7 +482,7 @@ describe('security-utils', () => {
       const logger = new AuditLogger({
         ...DEFAULT_SECURITY_CONFIG,
         auditLogEnabled: true,
-        auditLogPath: logPath
+        auditLogPath: logPath,
       });
 
       await logger.initialize();
@@ -490,7 +493,7 @@ describe('security-utils', () => {
         actor: '127.0.0.1',
         action: 'GET /api/test',
         resource: '/api/test',
-        result: 'success'
+        result: 'success',
       });
 
       await logger.log({
@@ -498,7 +501,7 @@ describe('security-utils', () => {
         actor: '127.0.0.1',
         action: 'GET /api/error',
         resource: '/api/error',
-        result: 'failure'
+        result: 'failure',
       });
 
       await logger.log({
@@ -506,7 +509,7 @@ describe('security-utils', () => {
         actor: '127.0.0.1',
         action: 'GET /api/protected',
         resource: '/api/protected',
-        result: 'denied'
+        result: 'denied',
       });
 
       const logContent = await fs.readFile(logPath, 'utf-8');
@@ -519,11 +522,14 @@ describe('security-utils', () => {
 
     it('should use workspace root path when auditLogPath not specified', async () => {
       const workspaceRoot = testDir;
-      const logger = new AuditLogger({
-        ...DEFAULT_SECURITY_CONFIG,
-        auditLogEnabled: true
-        // No auditLogPath specified
-      }, workspaceRoot);
+      const logger = new AuditLogger(
+        {
+          ...DEFAULT_SECURITY_CONFIG,
+          auditLogEnabled: true,
+          // No auditLogPath specified
+        },
+        workspaceRoot,
+      );
 
       await logger.initialize();
 
@@ -532,7 +538,7 @@ describe('security-utils', () => {
         actor: '127.0.0.1',
         action: 'GET /test',
         resource: '/test',
-        result: 'success'
+        result: 'success',
       });
 
       // Should have created log at workspaceRoot/.specflow/audit.log
@@ -548,7 +554,7 @@ describe('security-utils', () => {
       const logger = new AuditLogger({
         ...DEFAULT_SECURITY_CONFIG,
         auditLogEnabled: true,
-        auditLogPath: logPath
+        auditLogPath: logPath,
       });
 
       await logger.initialize();
@@ -563,8 +569,8 @@ describe('security-utils', () => {
           statusCode: 200,
           duration: 123,
           userAgent: 'Mozilla/5.0 Test Browser',
-          customField: 'custom-value'
-        }
+          customField: 'custom-value',
+        },
       });
 
       const logContent = await fs.readFile(logPath, 'utf-8');
@@ -581,7 +587,7 @@ describe('security-utils', () => {
       it('should return a middleware function', () => {
         const logger = new AuditLogger({
           ...DEFAULT_SECURITY_CONFIG,
-          auditLogEnabled: true
+          auditLogEnabled: true,
         });
 
         const middleware = logger.middleware();
@@ -593,7 +599,7 @@ describe('security-utils', () => {
         const logger = new AuditLogger({
           ...DEFAULT_SECURITY_CONFIG,
           auditLogEnabled: true,
-          auditLogPath: logPath
+          auditLogPath: logPath,
         });
 
         await logger.initialize();
@@ -605,7 +611,7 @@ describe('security-utils', () => {
           statusCode: 200,
           then: vi.fn((onFulfilled: Function, _onRejected: Function) => {
             thenCallback = onFulfilled;
-          })
+          }),
         };
 
         const mockRequest = {
@@ -613,8 +619,8 @@ describe('security-utils', () => {
           method: 'GET',
           url: '/api/projects/list',
           headers: {
-            'user-agent': 'Test Agent/1.0'
-          }
+            'user-agent': 'Test Agent/1.0',
+          },
         };
 
         await middleware(mockRequest as any, mockReply as any);
@@ -625,9 +631,9 @@ describe('security-utils', () => {
 
         // Trigger the then callback to actually log
         await thenCallback!();
-        
+
         // Wait for async log write to complete
-        await new Promise(resolve => setTimeout(resolve, 50));
+        await new Promise((resolve) => setTimeout(resolve, 50));
 
         // Verify log was written
         const logContent = await fs.readFile(logPath, 'utf-8');
@@ -646,7 +652,7 @@ describe('security-utils', () => {
         const logger = new AuditLogger({
           ...DEFAULT_SECURITY_CONFIG,
           auditLogEnabled: true,
-          auditLogPath: logPath
+          auditLogPath: logPath,
         });
 
         await logger.initialize();
@@ -658,19 +664,19 @@ describe('security-utils', () => {
           statusCode: 401,
           then: vi.fn((onFulfilled: Function, _onRejected: Function) => {
             thenCallback = onFulfilled;
-          })
+          }),
         };
 
         const mockRequest = {
           ip: '192.168.1.1',
           method: 'GET',
           url: '/api/admin',
-          headers: {}
+          headers: {},
         };
 
         await middleware(mockRequest as any, mockReply as any);
         await thenCallback!();
-        await new Promise(resolve => setTimeout(resolve, 50));
+        await new Promise((resolve) => setTimeout(resolve, 50));
 
         const logContent = await fs.readFile(logPath, 'utf-8');
         const entry = JSON.parse(logContent.trim());
@@ -683,7 +689,7 @@ describe('security-utils', () => {
         const logger = new AuditLogger({
           ...DEFAULT_SECURITY_CONFIG,
           auditLogEnabled: true,
-          auditLogPath: logPath
+          auditLogPath: logPath,
         });
 
         await logger.initialize();
@@ -695,19 +701,19 @@ describe('security-utils', () => {
           statusCode: 403,
           then: vi.fn((onFulfilled: Function, _onRejected: Function) => {
             thenCallback = onFulfilled;
-          })
+          }),
         };
 
         const mockRequest = {
           ip: '192.168.1.1',
           method: 'DELETE',
           url: '/api/protected-resource',
-          headers: {}
+          headers: {},
         };
 
         await middleware(mockRequest as any, mockReply as any);
         await thenCallback!();
-        await new Promise(resolve => setTimeout(resolve, 50));
+        await new Promise((resolve) => setTimeout(resolve, 50));
 
         const logContent = await fs.readFile(logPath, 'utf-8');
         const entry = JSON.parse(logContent.trim());
@@ -720,7 +726,7 @@ describe('security-utils', () => {
         const logger = new AuditLogger({
           ...DEFAULT_SECURITY_CONFIG,
           auditLogEnabled: true,
-          auditLogPath: logPath
+          auditLogPath: logPath,
         });
 
         await logger.initialize();
@@ -732,19 +738,19 @@ describe('security-utils', () => {
           statusCode: 500,
           then: vi.fn((onFulfilled: Function, _onRejected: Function) => {
             thenCallback = onFulfilled;
-          })
+          }),
         };
 
         const mockRequest = {
           ip: '127.0.0.1',
           method: 'POST',
           url: '/api/specs',
-          headers: {}
+          headers: {},
         };
 
         await middleware(mockRequest as any, mockReply as any);
         await thenCallback!();
-        await new Promise(resolve => setTimeout(resolve, 50));
+        await new Promise((resolve) => setTimeout(resolve, 50));
 
         const logContent = await fs.readFile(logPath, 'utf-8');
         const entry = JSON.parse(logContent.trim());
@@ -757,7 +763,7 @@ describe('security-utils', () => {
         const logger = new AuditLogger({
           ...DEFAULT_SECURITY_CONFIG,
           auditLogEnabled: true,
-          auditLogPath: logPath
+          auditLogPath: logPath,
         });
 
         await logger.initialize();
@@ -769,19 +775,19 @@ describe('security-utils', () => {
           statusCode: 200,
           then: vi.fn((onFulfilled: Function, _onRejected: Function) => {
             thenCallback = onFulfilled;
-          })
+          }),
         };
 
         const mockRequest = {
           // No ip property
           method: 'GET',
           url: '/api/test',
-          headers: {}
+          headers: {},
         };
 
         await middleware(mockRequest as any, mockReply as any);
         await thenCallback!();
-        await new Promise(resolve => setTimeout(resolve, 50));
+        await new Promise((resolve) => setTimeout(resolve, 50));
 
         const logContent = await fs.readFile(logPath, 'utf-8');
         const entry = JSON.parse(logContent.trim());
@@ -791,4 +797,3 @@ describe('security-utils', () => {
     });
   });
 });
-

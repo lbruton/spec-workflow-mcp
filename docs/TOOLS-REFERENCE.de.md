@@ -25,11 +25,13 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 **Rückgabe**: Markdown-Guide, der den vollständigen Workflow erklärt
 
 **Verwendungsbeispiel**:
+
 ```
 "Zeige mir den Spec Workflow-Guide"
 ```
 
 **Antwort enthält**:
+
 - Workflow-Überblick
 - Schritt-für-Schritt-Prozess
 - Best Practices
@@ -44,11 +46,13 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 **Rückgabe**: Markdown-Guide für Steering-Dokumenterstellung
 
 **Verwendungsbeispiel**:
+
 ```
 "Zeige mir, wie man Steering-Dokumente erstellt"
 ```
 
 **Antwort enthält**:
+
 - Steering-Dokumenttypen
 - Erstellungsprozess
 - Inhaltsrichtlinien
@@ -62,14 +66,15 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 
 **Parameter**:
 
-| Parameter | Typ | Erforderlich | Beschreibung |
-|-----------|-----|--------------|--------------|
-| specName | string | Ja | Name der Spec (kebab-case) |
-| docType | string | Ja | Typ: "requirements", "design" oder "tasks" |
-| content | string | Ja | Markdown-Inhalt des Dokuments |
-| revision | boolean | Nein | Ob dies eine Revision ist (Standard: false) |
+| Parameter | Typ     | Erforderlich | Beschreibung                                |
+| --------- | ------- | ------------ | ------------------------------------------- |
+| specName  | string  | Ja           | Name der Spec (kebab-case)                  |
+| docType   | string  | Ja           | Typ: "requirements", "design" oder "tasks"  |
+| content   | string  | Ja           | Markdown-Inhalt des Dokuments               |
+| revision  | boolean | Nein         | Ob dies eine Revision ist (Standard: false) |
 
 **Verwendungsbeispiel**:
+
 ```typescript
 {
   specName: "user-authentication",
@@ -80,6 +85,7 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 ```
 
 **Rückgabe**:
+
 ```typescript
 {
   success: true,
@@ -90,6 +96,7 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 ```
 
 **Hinweise**:
+
 - Erstellt Spec-Verzeichnis falls es nicht existiert
 - Fordert automatisch Freigabe für neue Dokumente an
 - Validiert Markdown-Format
@@ -104,28 +111,30 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 **Rückgabe**: Array von Spec-Zusammenfassungen
 
 **Antwortstruktur**:
+
 ```typescript
 [
   {
-    name: "user-authentication",
-    status: "in-progress",
+    name: 'user-authentication',
+    status: 'in-progress',
     progress: 45,
     documents: {
-      requirements: "approved",
-      design: "pending-approval",
-      tasks: "not-created"
+      requirements: 'approved',
+      design: 'pending-approval',
+      tasks: 'not-created',
     },
     taskStats: {
       total: 15,
       completed: 7,
       inProgress: 1,
-      pending: 7
-    }
-  }
-]
+      pending: 7,
+    },
+  },
+];
 ```
 
 **Verwendungsbeispiel**:
+
 ```
 "Liste alle meine Specs auf"
 ```
@@ -136,13 +145,14 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 
 **Parameter**:
 
-| Parameter | Typ | Erforderlich | Beschreibung |
-|-----------|-----|--------------|--------------|
-| specName | string | Ja | Name der zu prüfenden Spec |
+| Parameter | Typ    | Erforderlich | Beschreibung               |
+| --------- | ------ | ------------ | -------------------------- |
+| specName  | string | Ja           | Name der zu prüfenden Spec |
 
 **Rückgabe**: Detaillierter Spec-Status
 
 **Antwortstruktur**:
+
 ```typescript
 {
   exists: true,
@@ -175,6 +185,7 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 ```
 
 **Verwendungsbeispiel**:
+
 ```
 "Zeige mir den Status der user-authentication Spec"
 ```
@@ -185,17 +196,18 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 
 **Parameter**:
 
-| Parameter | Typ | Erforderlich | Beschreibung |
-|-----------|-----|--------------|--------------|
-| specName | string | Ja | Name der Spec |
-| action | string | Ja | Aktion: "update", "complete", "list", "progress" |
-| taskId | string | Manchmal | Aufgaben-ID (erforderlich für update/complete) |
-| status | string | Nein | Neuer Status: "pending", "in-progress", "completed" |
-| notes | string | Nein | Zusätzliche Notizen für die Aufgabe |
+| Parameter | Typ    | Erforderlich | Beschreibung                                        |
+| --------- | ------ | ------------ | --------------------------------------------------- |
+| specName  | string | Ja           | Name der Spec                                       |
+| action    | string | Ja           | Aktion: "update", "complete", "list", "progress"    |
+| taskId    | string | Manchmal     | Aufgaben-ID (erforderlich für update/complete)      |
+| status    | string | Nein         | Neuer Status: "pending", "in-progress", "completed" |
+| notes     | string | Nein         | Zusätzliche Notizen für die Aufgabe                 |
 
 **Aktionen**:
 
 1. **Aufgabenstatus aktualisieren**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -207,6 +219,7 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 ```
 
 2. **Aufgabe abschließen**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -216,6 +229,7 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 ```
 
 3. **Aufgaben auflisten**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -224,6 +238,7 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 ```
 
 4. **Fortschritt erhalten**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -244,6 +259,7 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 **Rückgabe**: Objekt mit allen Templates
 
 **Antwortstruktur**:
+
 ```typescript
 {
   requirements: "# Anforderungs-Template\n\n## Überblick\n...",
@@ -256,6 +272,7 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 ```
 
 **Verwendungsbeispiel**:
+
 ```
 "Hole alle Dokumenttemplates"
 ```
@@ -266,20 +283,22 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 
 **Parameter**:
 
-| Parameter | Typ | Erforderlich | Beschreibung |
-|-----------|-----|--------------|--------------|
-| docType | string | Nein | Spezifisches Dok: "product", "tech", "structure" oder "all" |
+| Parameter | Typ    | Erforderlich | Beschreibung                                                |
+| --------- | ------ | ------------ | ----------------------------------------------------------- |
+| docType   | string | Nein         | Spezifisches Dok: "product", "tech", "structure" oder "all" |
 
 **Rückgabe**: Steering-Dokumentinhalt
 
 **Verwendungsbeispiel**:
+
 ```typescript
 {
-  docType: "tech"  // Gibt nur Technical Steering zurück
+  docType: 'tech', // Gibt nur Technical Steering zurück
 }
 ```
 
 **Antwortstruktur**:
+
 ```typescript
 {
   product: "# Product Steering\n\n## Vision\n...",
@@ -294,14 +313,15 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 
 **Parameter**:
 
-| Parameter | Typ | Erforderlich | Beschreibung |
-|-----------|-----|--------------|--------------|
-| specName | string | Ja | Name der Spec |
-| includeContent | boolean | Nein | Dokumentinhalt einschließen (Standard: true) |
+| Parameter      | Typ     | Erforderlich | Beschreibung                                 |
+| -------------- | ------- | ------------ | -------------------------------------------- |
+| specName       | string  | Ja           | Name der Spec                                |
+| includeContent | boolean | Nein         | Dokumentinhalt einschließen (Standard: true) |
 
 **Rückgabe**: Vollständiger Spec-Kontext
 
 **Antwortstruktur**:
+
 ```typescript
 {
   name: "user-authentication",
@@ -333,6 +353,7 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 ```
 
 **Verwendungsbeispiel**:
+
 ```
 "Hole vollständigen Kontext für user-authentication Spec"
 ```
@@ -345,12 +366,13 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 
 **Parameter**:
 
-| Parameter | Typ | Erforderlich | Beschreibung |
-|-----------|-----|--------------|--------------|
-| docType | string | Ja | Typ: "product", "tech" oder "structure" |
-| content | string | Ja | Markdown-Inhalt des Dokuments |
+| Parameter | Typ    | Erforderlich | Beschreibung                            |
+| --------- | ------ | ------------ | --------------------------------------- |
+| docType   | string | Ja           | Typ: "product", "tech" oder "structure" |
+| content   | string | Ja           | Markdown-Inhalt des Dokuments           |
 
 **Verwendungsbeispiel**:
+
 ```typescript
 {
   docType: "product",
@@ -359,6 +381,7 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 ```
 
 **Rückgabe**:
+
 ```typescript
 {
   success: true,
@@ -368,6 +391,7 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 ```
 
 **Hinweise**:
+
 - Erstellt Steering-Verzeichnis falls nötig
 - Überschreibt bestehende Steering-Dokumente
 - Keine Freigabe für Steering-Dokumente erforderlich
@@ -381,14 +405,15 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 
 **Parameter**:
 
-| Parameter | Typ | Erforderlich | Beschreibung |
-|-----------|-----|--------------|--------------|
-| specName | string | Ja | Name der Spec |
-| docType | string | Ja | Freizugebender Dokumenttyp |
-| documentId | string | Ja | Eindeutige ID für Tracking |
-| content | string | Ja | Dokumentinhalt zur Überprüfung |
+| Parameter  | Typ    | Erforderlich | Beschreibung                   |
+| ---------- | ------ | ------------ | ------------------------------ |
+| specName   | string | Ja           | Name der Spec                  |
+| docType    | string | Ja           | Freizugebender Dokumenttyp     |
+| documentId | string | Ja           | Eindeutige ID für Tracking     |
+| content    | string | Ja           | Dokumentinhalt zur Überprüfung |
 
 **Verwendungsbeispiel**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -399,6 +424,7 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 ```
 
 **Rückgabe**:
+
 ```typescript
 {
   success: true,
@@ -413,12 +439,13 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 
 **Parameter**:
 
-| Parameter | Typ | Erforderlich | Beschreibung |
-|-----------|-----|--------------|--------------|
-| specName | string | Ja | Name der Spec |
-| documentId | string | Ja | Zu prüfende Dokument-ID |
+| Parameter  | Typ    | Erforderlich | Beschreibung            |
+| ---------- | ------ | ------------ | ----------------------- |
+| specName   | string | Ja           | Name der Spec           |
+| documentId | string | Ja           | Zu prüfende Dokument-ID |
 
 **Rückgabe**:
+
 ```typescript
 {
   exists: true,
@@ -430,6 +457,7 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 ```
 
 **Verwendungsbeispiel**:
+
 ```
 "Prüfe Freigabestatus für user-auth Anforderungen"
 ```
@@ -440,12 +468,13 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 
 **Parameter**:
 
-| Parameter | Typ | Erforderlich | Beschreibung |
-|-----------|-----|--------------|--------------|
-| specName | string | Ja | Name der Spec |
-| documentId | string | Ja | Zu entfernende Dokument-ID |
+| Parameter  | Typ    | Erforderlich | Beschreibung               |
+| ---------- | ------ | ------------ | -------------------------- |
+| specName   | string | Ja           | Name der Spec              |
+| documentId | string | Ja           | Zu entfernende Dokument-ID |
 
 **Rückgabe**:
+
 ```typescript
 {
   success: true,
@@ -454,6 +483,7 @@ Spec Workflow MCP bietet spezialisierte Tools für strukturierte Softwareentwick
 ```
 
 **Verwendungsbeispiel**:
+
 ```
 "Räume abgeschlossene Freigaben für user-auth auf"
 ```

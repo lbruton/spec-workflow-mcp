@@ -17,31 +17,32 @@ Call when resuming work on a spec or checking overall completion status. Shows w
     properties: {
       projectPath: {
         type: 'string',
-        description: 'Absolute path to the project root (optional - uses server context path if not provided)'
+        description:
+          'Absolute path to the project root (optional - uses server context path if not provided)',
       },
       specName: {
         type: 'string',
-        description: 'Name of the specification'
-      }
+        description: 'Name of the specification',
+      },
     },
-    required: ['specName']
+    required: ['specName'],
   },
   annotations: {
     title: 'Spec Status',
     readOnlyHint: true,
-  }
+  },
 };
 
 export async function specStatusHandler(args: any, context: ToolContext): Promise<ToolResponse> {
   const { specName } = args;
-  
+
   // Use context projectPath as default, allow override via args
   const projectPath = args.projectPath || context.projectPath;
-  
+
   if (!projectPath) {
     return {
       success: false,
-      message: 'Project path is required but not provided in context or arguments'
+      message: 'Project path is required but not provided in context or arguments',
     };
   }
 
@@ -50,7 +51,7 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
     const translatedPath = PathUtils.translatePath(projectPath);
     const parser = new SpecParser(translatedPath);
     const spec = await parser.getSpec(specName);
-    
+
     if (!spec) {
       return {
         success: false,
@@ -58,15 +59,15 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
         nextSteps: [
           'Check spec name',
           'Use spec-list tool to search available specs',
-          'Create spec with create-spec-doc'
-        ]
+          'Create spec with create-spec-doc',
+        ],
       };
     }
 
     // Determine current phase and overall status
     let currentPhase = 'not-started';
     let overallStatus = 'not-started';
-    
+
     if (spec.phases.discovery.exists && !spec.phases.discovery.approved) {
       currentPhase = 'discovery';
       overallStatus = 'discovery-in-progress';
@@ -85,7 +86,11 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
     } else if (spec.taskProgress && spec.taskProgress.pending > 0) {
       currentPhase = 'implementation';
       overallStatus = 'implementing';
-    } else if (spec.taskProgress && spec.taskProgress.total > 0 && spec.taskProgress.completed === spec.taskProgress.total) {
+    } else if (
+      spec.taskProgress &&
+      spec.taskProgress.total > 0 &&
+      spec.taskProgress.completed === spec.taskProgress.total
+    ) {
       currentPhase = 'post-implementation';
       overallStatus = 'post-implementation';
     } else {
@@ -108,7 +113,9 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
           const convContent = await fsPromises.readFile(convPath, 'utf-8');
           conventions = JSON.parse(convContent);
           break;
-        } catch { /* try next */ }
+        } catch {
+          /* try next */
+        }
       }
     } catch {
       // No conventions file — use generic defaults
@@ -118,23 +125,39 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
     const phaseDetails = [
       {
         name: 'Discovery',
-        status: spec.phases.discovery.exists ? (spec.phases.discovery.approved ? 'approved' : 'created') : 'missing',
-        lastModified: spec.phases.discovery.lastModified
+        status: spec.phases.discovery.exists
+          ? spec.phases.discovery.approved
+            ? 'approved'
+            : 'created'
+          : 'missing',
+        lastModified: spec.phases.discovery.lastModified,
       },
       {
         name: 'Requirements',
-        status: spec.phases.requirements.exists ? (spec.phases.requirements.approved ? 'approved' : 'created') : 'missing',
-        lastModified: spec.phases.requirements.lastModified
+        status: spec.phases.requirements.exists
+          ? spec.phases.requirements.approved
+            ? 'approved'
+            : 'created'
+          : 'missing',
+        lastModified: spec.phases.requirements.lastModified,
       },
       {
         name: 'Design',
-        status: spec.phases.design.exists ? (spec.phases.design.approved ? 'approved' : 'created') : 'missing',
-        lastModified: spec.phases.design.lastModified
+        status: spec.phases.design.exists
+          ? spec.phases.design.approved
+            ? 'approved'
+            : 'created'
+          : 'missing',
+        lastModified: spec.phases.design.lastModified,
       },
       {
         name: 'Tasks',
-        status: spec.phases.tasks.exists ? (spec.phases.tasks.approved ? 'approved' : 'created') : 'missing',
-        lastModified: spec.phases.tasks.lastModified
+        status: spec.phases.tasks.exists
+          ? spec.phases.tasks.approved
+            ? 'approved'
+            : 'created'
+          : 'missing',
+        lastModified: spec.phases.tasks.lastModified,
       },
       {
         name: 'Readiness Gate',
@@ -145,41 +168,47 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
             : spec.phases.readinessReport.exists
               ? 'created'
               : 'pending',
-        lastModified: spec.phases.readinessReport.lastModified
+        lastModified: spec.phases.readinessReport.lastModified,
       },
       {
         name: 'Implementation',
         status: spec.phases.implementation.exists ? 'in-progress' : 'not-started',
-        progress: spec.taskProgress
+        progress: spec.taskProgress,
       },
       {
         name: 'Post-Implementation',
         status: currentPhase === 'post-implementation' ? 'action-required' : 'not-started',
-        checklist: currentPhase === 'post-implementation' ? (() => {
-          const items = ['DocVault updated (/vault-update)'];
+        checklist:
+          currentPhase === 'post-implementation'
+            ? (() => {
+                const items = ['DocVault updated (/vault-update)'];
 
-          // Dynamic test item based on conventions
-          const testItem = conventions?.testing?.command
-            ? `Tests run (${conventions.testing.command})`
-            : 'Project test suite run';
-          items.push(testItem);
+                // Dynamic test item based on conventions
+                const testItem = conventions?.testing?.command
+                  ? `Tests run (${conventions.testing.command})`
+                  : 'Project test suite run';
+                items.push(testItem);
 
-          // Conditional version bump
-          if (conventions?.versioning?.hasVersionLock) {
-            items.push('Version bumped');
-          }
+                // Conditional version bump
+                if (conventions?.versioning?.hasVersionLock) {
+                  items.push('Version bumped');
+                }
 
-          // Conditional changelog
-          if (conventions?.changelog?.hasChangelog || conventions?.changelog?.docvaultFallback) {
-            items.push('Changelog updated');
-          }
+                // Conditional changelog
+                if (
+                  conventions?.changelog?.hasChangelog ||
+                  conventions?.changelog?.docvaultFallback
+                ) {
+                  items.push('Changelog updated');
+                }
 
-          items.push('Vault issues closed (mark Done)');
-          items.push('GitHub issues closed (gh issue close)');
-          items.push('Spec archived');
-          return items;
-        })() : undefined
-      }
+                items.push('Vault issues closed (mark Done)');
+                items.push('GitHub issues closed (gh issue close)');
+                items.push('Spec archived');
+                return items;
+              })()
+            : undefined,
+      },
     ];
 
     // Next steps based on current phase
@@ -212,7 +241,9 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
         nextSteps.push('Cross-validate requirements.md + design.md + tasks.md for consistency');
         nextSteps.push(`Create: ${wr}/specs/${specName}/readiness-report.md`);
         nextSteps.push('Submit readiness-report.md for dashboard approval (NOT tasks.md)');
-        nextSteps.push('Dashboard options: Approve (PASS), Concerns (proceed with risks), Reject (fix and re-run)');
+        nextSteps.push(
+          'Dashboard options: Approve (PASS), Concerns (proceed with risks), Reject (fix and re-run)',
+        );
         break;
       case 'implementation':
         if (spec.taskProgress && spec.taskProgress.pending > 0) {
@@ -233,7 +264,9 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
           ? `3. Run project test suite (${conventions.testing.command})`
           : '3. Run project test suite';
         nextSteps.push(testStep);
-        nextSteps.push('4. CLOSE all linked vault issues (mark status as Done in the issue markdown file)');
+        nextSteps.push(
+          '4. CLOSE all linked vault issues (mark status as Done in the issue markdown file)',
+        );
         nextSteps.push('5. CLOSE the linked GitHub issue if one exists (gh issue close)');
         nextSteps.push('6. Archive the spec after all issues are closed');
         break;
@@ -248,14 +281,14 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
       const tasksContent = await fs.readFile(tasksFile, 'utf-8');
       const parseResult = parseTasksFromMarkdown(tasksContent);
       const completedTasks = parseResult.tasks
-        .filter(t => t.status === 'completed')
-        .map(t => t.id);
+        .filter((t) => t.status === 'completed')
+        .map((t) => t.id);
 
       if (completedTasks.length > 0) {
         const logManager = new ImplementationLogManager(specPath);
         const allLogs = await logManager.getAllLogs();
-        const loggedTaskIds = new Set(allLogs.map(l => l.taskId));
-        unloggedTasks = completedTasks.filter(id => !loggedTaskIds.has(id));
+        const loggedTaskIds = new Set(allLogs.map((l) => l.taskId));
+        unloggedTasks = completedTasks.filter((id) => !loggedTaskIds.has(id));
       }
     } catch {
       // If we can't read tasks or logs, skip the audit silently
@@ -265,7 +298,7 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
     if (unloggedTasks.length > 0) {
       nextSteps.unshift(
         `⚠️ UNLOGGED TASKS: ${unloggedTasks.length} task(s) marked [x] without implementation logs: ${unloggedTasks.join(', ')}`,
-        'Run log-implementation for each unlogged task BEFORE considering them complete'
+        'Run log-implementation for each unlogged task BEFORE considering them complete',
       );
     }
 
@@ -283,19 +316,18 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
         taskProgress: spec.taskProgress || {
           total: 0,
           completed: 0,
-          pending: 0
+          pending: 0,
         },
-        unloggedTasks: unloggedTasks.length > 0 ? unloggedTasks : undefined
+        unloggedTasks: unloggedTasks.length > 0 ? unloggedTasks : undefined,
       },
       nextSteps,
       projectContext: {
         projectPath,
         workflowRoot: PathUtils.getWorkflowRoot(projectPath),
         currentPhase,
-        dashboardUrl: context.dashboardUrl
-      }
+        dashboardUrl: context.dashboardUrl,
+      },
     };
-    
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     return {
@@ -304,8 +336,8 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
       nextSteps: [
         'Check if the specification exists',
         'Verify the project path',
-        'Use spec-list tool to see available specifications'
-      ]
+        'Use spec-list tool to see available specifications',
+      ],
     };
   }
 }

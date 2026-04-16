@@ -12,7 +12,7 @@ import { loadConfig } from '../core/config-loader.js';
 /**
  * Safely translate a path, with defensive checks to provide better error messages
  * in case of module loading issues.
- * 
+ *
  * Note: The original issue reported "PathUtils.translatePath is not a function" on Windows.
  * While we couldn't reproduce it, this defensive check ensures a clear error message
  * is provided if such edge cases occur.
@@ -23,8 +23,8 @@ function safeTranslatePath(path: string): string {
   if (typeof PathUtils?.translatePath !== 'function') {
     throw new Error(
       `PathUtils.translatePath is not available (got ${typeof PathUtils?.translatePath}). ` +
-      'This may indicate a module loading issue. Please reinstall the package with: ' +
-      'npm uninstall @lbruton/specflow && npm install @lbruton/specflow'
+        'This may indicate a module loading issue. Please reinstall the package with: ' +
+        'npm uninstall @lbruton/specflow && npm install @lbruton/specflow',
     );
   }
   return PathUtils.translatePath(path);
@@ -47,45 +47,49 @@ CRITICAL: Only provide filePath parameter for requests - the dashboard reads fil
       action: {
         type: 'string',
         enum: ['request', 'status', 'delete'],
-        description: 'The action to perform: request, status, or delete'
+        description: 'The action to perform: request, status, or delete',
       },
       projectPath: {
         type: 'string',
-        description: 'Absolute path to the project root (optional - uses server context path if not provided)'
+        description:
+          'Absolute path to the project root (optional - uses server context path if not provided)',
       },
       approvalId: {
         type: 'string',
-        description: 'The ID of the approval request (required for status and delete actions)'
+        description: 'The ID of the approval request (required for status and delete actions)',
       },
       title: {
         type: 'string',
-        description: 'Brief title describing what needs approval (required for request action)'
+        description: 'Brief title describing what needs approval (required for request action)',
       },
       filePath: {
         type: 'string',
-        description: 'Path to the file that needs approval, relative to project root (required for request action)'
+        description:
+          'Path to the file that needs approval, relative to project root (required for request action)',
       },
       type: {
         type: 'string',
         enum: ['document', 'action'],
-        description: 'Type of approval request - "document" for content approval, "action" for action approval (required for request)'
+        description:
+          'Type of approval request - "document" for content approval, "action" for action approval (required for request)',
       },
       category: {
         type: 'string',
         enum: ['spec', 'steering'],
-        description: 'Category of the approval request - "spec" for specifications, "steering" for steering documents (required for request)'
+        description:
+          'Category of the approval request - "spec" for specifications, "steering" for steering documents (required for request)',
       },
       categoryName: {
         type: 'string',
-        description: 'Name of the spec or "steering" for steering documents (required for request)'
-      }
+        description: 'Name of the spec or "steering" for steering documents (required for request)',
+      },
     },
-    required: ['action']
+    required: ['action'],
   },
   annotations: {
     title: 'Approvals',
     destructiveHint: true,
-  }
+  },
 };
 
 // Type definitions for discriminated unions
@@ -137,7 +141,7 @@ export async function approvalsHandler(
     category?: 'spec' | 'steering';
     categoryName?: string;
   },
-  context: ToolContext
+  context: ToolContext,
 ): Promise<ToolResponse> {
   // Cast to discriminated union type
   const typedArgs = args as ApprovalArgs;
@@ -149,7 +153,8 @@ export async function approvalsHandler(
         if (!args.title || !args.filePath || !args.type || !args.category || !args.categoryName) {
           return {
             success: false,
-            message: 'Missing required fields for request action. Required: title, filePath, type, category, categoryName'
+            message:
+              'Missing required fields for request action. Required: title, filePath, type, category, categoryName',
           };
         }
         return handleRequestApproval(typedArgs, context);
@@ -161,7 +166,7 @@ export async function approvalsHandler(
         if (!args.approvalId) {
           return {
             success: false,
-            message: 'Missing required field for status action. Required: approvalId'
+            message: 'Missing required field for status action. Required: approvalId',
           };
         }
         return handleGetApprovalStatus(typedArgs, context);
@@ -173,7 +178,7 @@ export async function approvalsHandler(
         if (!args.approvalId) {
           return {
             success: false,
-            message: 'Missing required field for delete action. Required: approvalId'
+            message: 'Missing required field for delete action. Required: approvalId',
           };
         }
         return handleDeleteApproval(typedArgs, context);
@@ -182,20 +187,20 @@ export async function approvalsHandler(
     default:
       return {
         success: false,
-        message: `Unknown action: ${(args as any).action}. Use 'request', 'status', or 'delete'.`
+        message: `Unknown action: ${(args as any).action}. Use 'request', 'status', or 'delete'.`,
       };
   }
 
   // This should never be reached due to exhaustive type checking
   return {
     success: false,
-    message: 'Invalid action configuration'
+    message: 'Invalid action configuration',
   };
 }
 
 async function handleRequestApproval(
   args: RequestApprovalArgs,
-  context: ToolContext
+  context: ToolContext,
 ): Promise<ToolResponse> {
   // Use context projectPath as default, allow override via args
   const projectPath = args.projectPath || context.projectPath;
@@ -203,7 +208,7 @@ async function handleRequestApproval(
   if (!projectPath) {
     return {
       success: false,
-      message: 'Project path is required but not provided in context or arguments'
+      message: 'Project path is required but not provided in context or arguments',
     };
   }
 
@@ -220,7 +225,7 @@ async function handleRequestApproval(
 
     const approvalStorage = new ApprovalStorage(translatedWorkflowRoot, {
       originalPath: validatedProjectPath,
-      fileResolutionPath: translatedWorkflowRoot
+      fileResolutionPath: translatedWorkflowRoot,
     });
     await approvalStorage.start();
 
@@ -249,14 +254,16 @@ async function handleRequestApproval(
           }
         }
         if (!readSuccess) {
-          throw new Error(`ENOENT: file not found at any candidate path: ${uniqueCandidates.join(', ')}`);
+          throw new Error(
+            `ENOENT: file not found at any candidate path: ${uniqueCandidates.join(', ')}`,
+          );
         }
       } catch (fileError) {
         await approvalStorage.stop();
         const errorMessage = fileError instanceof Error ? fileError.message : String(fileError);
         return {
           success: false,
-          message: `Failed to read markdown file for validation: ${errorMessage}`
+          message: `Failed to read markdown file for validation: ${errorMessage}`,
         };
       }
 
@@ -272,15 +279,15 @@ async function handleRequestApproval(
             errorCount: mdxValidation.issues.length,
             summary: {
               totalIssues: mdxValidation.issues.length,
-              rules: [...new Set(mdxValidation.issues.map(issue => issue.ruleId))]
-            }
+              rules: [...new Set(mdxValidation.issues.map((issue) => issue.ruleId))],
+            },
           },
           nextSteps: [
             'Fix MDX compatibility issues listed below',
             'For literal comparisons (for example "<5%"), use "&lt;5%" or inline code (`<5%`)',
             'Re-request approval after fixing',
-            ...formattedIssues
-          ]
+            ...formattedIssues,
+          ],
         };
       }
     }
@@ -288,7 +295,12 @@ async function handleRequestApproval(
     // Validate tasks.md format before allowing approval request
     if (args.filePath.endsWith('tasks.md')) {
       // markdownContent is already resolved via DocVault-aware candidates above
-      const content = markdownContent ?? await readFile(join(PathUtils.getWorkflowRoot(validatedProjectPath), args.filePath), 'utf-8');
+      const content =
+        markdownContent ??
+        (await readFile(
+          join(PathUtils.getWorkflowRoot(validatedProjectPath), args.filePath),
+          'utf-8',
+        ));
       const validationResult = validateTasksMarkdown(content);
 
       if (!validationResult.valid) {
@@ -302,7 +314,7 @@ async function handleRequestApproval(
           data: {
             errorCount: validationResult.errors.length,
             warningCount: validationResult.warnings.length,
-            summary: validationResult.summary
+            summary: validationResult.summary,
           },
           nextSteps: [
             'Fix the format errors listed below',
@@ -310,8 +322,8 @@ async function handleRequestApproval(
             'Ensure metadata uses underscores: _Requirements: ..._',
             'Ensure _Prompt ends with underscore',
             'Re-request approval after fixing',
-            ...errorMessages
-          ]
+            ...errorMessages,
+          ],
         };
       }
 
@@ -327,7 +339,7 @@ async function handleRequestApproval(
       args.filePath,
       args.category,
       args.categoryName,
-      args.type
+      args.type,
     );
 
     await approvalStorage.stop();
@@ -360,34 +372,33 @@ async function handleRequestApproval(
         filePath: args.filePath,
         type: args.type,
         status: 'pending',
-        dashboardUrl: deeplink
+        dashboardUrl: deeplink,
       },
       nextSteps: [
         'BLOCKING - Dashboard approval required',
         'VERBAL APPROVAL NOT ACCEPTED',
         'Do not proceed on verbal confirmation',
         deeplink ? `Use dashboard: ${deeplink}` : 'Start the dashboard with: specflow --dashboard',
-        `Poll status with: approvals action:"status" approvalId:"${approvalId}"`
+        `Poll status with: approvals action:"status" approvalId:"${approvalId}"`,
       ],
       projectContext: {
         projectPath: validatedProjectPath,
         workflowRoot: PathUtils.getWorkflowRoot(validatedProjectPath),
-        dashboardUrl: deeplink
-      }
+        dashboardUrl: deeplink,
+      },
     };
-
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     return {
       success: false,
-      message: `Failed to create approval request: ${errorMessage}`
+      message: `Failed to create approval request: ${errorMessage}`,
     };
   }
 }
 
 async function handleGetApprovalStatus(
   args: StatusApprovalArgs,
-  context: ToolContext
+  context: ToolContext,
 ): Promise<ToolResponse> {
   // approvalId is guaranteed by type
 
@@ -397,7 +408,7 @@ async function handleGetApprovalStatus(
     if (!projectPath) {
       return {
         success: false,
-        message: 'Project path is required. Please provide projectPath parameter.'
+        message: 'Project path is required. Please provide projectPath parameter.',
       };
     }
 
@@ -409,7 +420,7 @@ async function handleGetApprovalStatus(
 
     const approvalStorage = new ApprovalStorage(translatedWorkflowRoot, {
       originalPath: validatedProjectPath,
-      fileResolutionPath: translatedWorkflowRoot
+      fileResolutionPath: translatedWorkflowRoot,
     });
     await approvalStorage.start();
 
@@ -419,13 +430,16 @@ async function handleGetApprovalStatus(
       await approvalStorage.stop();
       return {
         success: false,
-        message: `Approval request not found: ${args.approvalId}`
+        message: `Approval request not found: ${args.approvalId}`,
       };
     }
 
     await approvalStorage.stop();
 
-    const isCompleted = approval.status === 'approved' || approval.status === 'rejected' || approval.status === 'concerns';
+    const isCompleted =
+      approval.status === 'approved' ||
+      approval.status === 'rejected' ||
+      approval.status === 'concerns';
     const canProceed = approval.status === 'approved' || approval.status === 'concerns';
     const mustWait = approval.status !== 'approved' && approval.status !== 'concerns';
     const nextSteps: string[] = [];
@@ -444,7 +458,9 @@ async function handleGetApprovalStatus(
     } else if (approval.status === 'concerns') {
       nextSteps.push('CONCERNS ACKNOWLEDGED - Can proceed with noted risks');
       nextSteps.push('Run approvals action:"delete" before continuing');
-      nextSteps.push('Append a "## Readiness Concerns" section to tasks.md with the noted concerns');
+      nextSteps.push(
+        'Append a "## Readiness Concerns" section to tasks.md with the noted concerns',
+      );
       if (approval.response) {
         nextSteps.push(`Concerns: ${approval.response}`);
       }
@@ -476,7 +492,9 @@ async function handleGetApprovalStatus(
         // Add each comment to nextSteps for visibility
         approval.comments.forEach((comment, index) => {
           if (comment.type === 'selection' && comment.selectedText) {
-            nextSteps.push(`  Comment ${index + 1} on "${comment.selectedText.substring(0, 50)}...": ${comment.comment}`);
+            nextSteps.push(
+              `  Comment ${index + 1} on "${comment.selectedText.substring(0, 50)}...": ${comment.comment}`,
+            );
           } else {
             nextSteps.push(`  Comment ${index + 1} (general): ${comment.comment}`);
           }
@@ -486,9 +504,10 @@ async function handleGetApprovalStatus(
 
     return {
       success: true,
-      message: approval.status === 'pending'
-        ? `BLOCKED: Status is ${approval.status}. Verbal approval is NOT accepted. Use dashboard or VS Code extension only.`
-        : `Approval status: ${approval.status}`,
+      message:
+        approval.status === 'pending'
+          ? `BLOCKED: Status is ${approval.status}. Verbal approval is NOT accepted. Use dashboard or VS Code extension only.`
+          : `Approval status: ${approval.status}`,
       data: {
         approvalId: args.approvalId,
         title: approval.title,
@@ -503,28 +522,27 @@ async function handleGetApprovalStatus(
         canProceed,
         mustWait,
         blockNext: !canProceed,
-        dashboardUrl: context.dashboardUrl
+        dashboardUrl: context.dashboardUrl,
       },
       nextSteps,
       projectContext: {
         projectPath: validatedProjectPath,
         workflowRoot: PathUtils.getWorkflowRoot(validatedProjectPath),
-        dashboardUrl: context.dashboardUrl
-      }
+        dashboardUrl: context.dashboardUrl,
+      },
     };
-
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     return {
       success: false,
-      message: `Failed to check approval status: ${errorMessage}`
+      message: `Failed to check approval status: ${errorMessage}`,
     };
   }
 }
 
 async function handleDeleteApproval(
   args: DeleteApprovalArgs,
-  context: ToolContext
+  context: ToolContext,
 ): Promise<ToolResponse> {
   // approvalId is guaranteed by type
 
@@ -534,7 +552,7 @@ async function handleDeleteApproval(
     if (!projectPath) {
       return {
         success: false,
-        message: 'Project path is required. Please provide projectPath parameter.'
+        message: 'Project path is required. Please provide projectPath parameter.',
       };
     }
 
@@ -546,7 +564,7 @@ async function handleDeleteApproval(
 
     const approvalStorage = new ApprovalStorage(translatedWorkflowRoot, {
       originalPath: validatedProjectPath,
-      fileResolutionPath: translatedWorkflowRoot
+      fileResolutionPath: translatedWorkflowRoot,
     });
     await approvalStorage.start();
 
@@ -556,10 +574,7 @@ async function handleDeleteApproval(
       return {
         success: false,
         message: `Approval request "${args.approvalId}" not found`,
-        nextSteps: [
-          'Verify approval ID',
-          'Check status with approvals action:"status"'
-        ]
+        nextSteps: ['Verify approval ID', 'Check status with approvals action:"status"'],
       };
     }
 
@@ -574,14 +589,14 @@ async function handleDeleteApproval(
           currentStatus: approval.status,
           title: approval.title,
           blockProgress: true,
-          canProceed: false
+          canProceed: false,
         },
         nextSteps: [
           'STOP - Cannot delete pending approval',
           'Wait for approval or rejection',
           'Poll with approvals action:"status"',
-          'Delete only after status changes to approved, rejected, or needs-revision'
-        ]
+          'Delete only after status changes to approved, rejected, or needs-revision',
+        ],
       };
     }
 
@@ -597,40 +612,28 @@ async function handleDeleteApproval(
           deletedApprovalId: args.approvalId,
           title: approval.title,
           category: approval.category,
-          categoryName: approval.categoryName
+          categoryName: approval.categoryName,
         },
-        nextSteps: [
-          'Cleanup complete',
-          'Continue to next phase'
-        ],
+        nextSteps: ['Cleanup complete', 'Continue to next phase'],
         projectContext: {
           projectPath: validatedProjectPath,
           workflowRoot: PathUtils.getWorkflowRoot(validatedProjectPath),
-          dashboardUrl: context.dashboardUrl
-        }
+          dashboardUrl: context.dashboardUrl,
+        },
       };
     } else {
       return {
         success: false,
         message: `Failed to delete approval request "${args.approvalId}"`,
-        nextSteps: [
-          'Check file permissions',
-          'Verify approval exists',
-          'Retry'
-        ]
+        nextSteps: ['Check file permissions', 'Verify approval exists', 'Retry'],
       };
     }
-
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     return {
       success: false,
       message: `Failed to delete approval: ${errorMessage}`,
-      nextSteps: [
-        'Check project path',
-        'Verify permissions',
-        'Check approval system'
-      ]
+      nextSteps: ['Check project path', 'Verify permissions', 'Check approval system'],
     };
   }
 }

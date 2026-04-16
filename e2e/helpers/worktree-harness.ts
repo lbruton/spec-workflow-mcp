@@ -40,7 +40,7 @@ function buildApprovalPayload(params: {
     status: 'pending',
     createdAt: new Date().toISOString(),
     category: 'spec',
-    categoryName: params.categoryName
+    categoryName: params.categoryName,
   };
 }
 
@@ -48,13 +48,13 @@ async function runCommand(
   command: string,
   args: string[],
   cwd: string,
-  env?: NodeJS.ProcessEnv
+  env?: NodeJS.ProcessEnv,
 ): Promise<CommandResult> {
   return await new Promise((resolve, reject) => {
     const child = spawn(command, args, {
       cwd,
       env: env ?? process.env,
-      stdio: ['ignore', 'pipe', 'pipe']
+      stdio: ['ignore', 'pipe', 'pipe'],
     });
 
     let stdout = '';
@@ -116,7 +116,7 @@ export class WorktreeHarness {
   getWorktreePaths() {
     return {
       wtAPath: this.wtAPath,
-      wtBPath: this.wtBPath
+      wtBPath: this.wtBPath,
     };
   }
 
@@ -139,8 +139,16 @@ export class WorktreeHarness {
     await runCommand(GIT_CMD, ['add', 'README.md'], this.repoRoot);
     await runCommand(GIT_CMD, ['commit', '-m', 'Initial commit'], this.repoRoot);
 
-    await runCommand(GIT_CMD, ['worktree', 'add', '-b', 'wt-a-branch', this.wtAPath], this.repoRoot);
-    await runCommand(GIT_CMD, ['worktree', 'add', '-b', 'wt-b-branch', this.wtBPath], this.repoRoot);
+    await runCommand(
+      GIT_CMD,
+      ['worktree', 'add', '-b', 'wt-a-branch', this.wtAPath],
+      this.repoRoot,
+    );
+    await runCommand(
+      GIT_CMD,
+      ['worktree', 'add', '-b', 'wt-b-branch', this.wtBPath],
+      this.repoRoot,
+    );
 
     this.repoRoot = await realpath(this.repoRoot);
     this.wtAPath = await realpath(this.wtAPath);
@@ -152,7 +160,11 @@ export class WorktreeHarness {
 
   private async seedWorktreeA(): Promise<void> {
     await mkdir(join(this.wtAPath, 'src'), { recursive: true });
-    await writeFile(join(this.wtAPath, 'src', 'service-a.ts'), 'export const source = "wt-a";\n', 'utf-8');
+    await writeFile(
+      join(this.wtAPath, 'src', 'service-a.ts'),
+      'export const source = "wt-a";\n',
+      'utf-8',
+    );
 
     const specDir = join(this.wtAPath, '.specflow', 'specs', 'spec-a');
     const approvalsDir = join(this.wtAPath, '.specflow', 'approvals', 'spec-a');
@@ -164,14 +176,22 @@ export class WorktreeHarness {
       id: 'approval-wt-a',
       title: 'Requirements: Spec A',
       filePath: 'src/service-a.ts',
-      categoryName: 'spec-a'
+      categoryName: 'spec-a',
     });
-    await writeFile(join(approvalsDir, 'approval-wt-a.json'), JSON.stringify(approval, null, 2), 'utf-8');
+    await writeFile(
+      join(approvalsDir, 'approval-wt-a.json'),
+      JSON.stringify(approval, null, 2),
+      'utf-8',
+    );
   }
 
   private async seedWorktreeB(): Promise<void> {
     await mkdir(join(this.wtBPath, 'src'), { recursive: true });
-    await writeFile(join(this.wtBPath, 'src', 'service-b.ts'), 'export const source = "wt-b";\n', 'utf-8');
+    await writeFile(
+      join(this.wtBPath, 'src', 'service-b.ts'),
+      'export const source = "wt-b";\n',
+      'utf-8',
+    );
 
     const specDir = join(this.wtBPath, '.specflow', 'specs', 'spec-b');
     const approvalsDir = join(this.wtBPath, '.specflow', 'approvals', 'spec-b');
@@ -183,9 +203,13 @@ export class WorktreeHarness {
       id: 'approval-wt-b',
       title: 'Requirements: Spec B',
       filePath: 'src/service-b.ts',
-      categoryName: 'spec-b'
+      categoryName: 'spec-b',
     });
-    await writeFile(join(approvalsDir, 'approval-wt-b.json'), JSON.stringify(approval, null, 2), 'utf-8');
+    await writeFile(
+      join(approvalsDir, 'approval-wt-b.json'),
+      JSON.stringify(approval, null, 2),
+      'utf-8',
+    );
   }
 
   async startMcpServers(): Promise<void> {
@@ -195,18 +219,14 @@ export class WorktreeHarness {
   }
 
   private async startMcpForPath(projectPath: string): Promise<void> {
-    const child = spawn(
-      NPM_CMD,
-      ['run', 'dev', '--', projectPath, '--no-shared-worktree-specs'],
-      {
-        cwd: this.options.serverRoot,
-        env: {
-          ...process.env,
-          SPEC_WORKFLOW_HOME: this.options.specWorkflowHome
-        },
-        stdio: ['pipe', 'pipe', 'pipe']
-      }
-    );
+    const child = spawn(NPM_CMD, ['run', 'dev', '--', projectPath, '--no-shared-worktree-specs'], {
+      cwd: this.options.serverRoot,
+      env: {
+        ...process.env,
+        SPEC_WORKFLOW_HOME: this.options.specWorkflowHome,
+      },
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
 
     const appendLog = (chunk: Buffer, source: 'stdout' | 'stderr') => {
       this.mcpLogs.push(`[${source}] ${chunk.toString().trimEnd()}`);
@@ -233,7 +253,7 @@ export class WorktreeHarness {
       try {
         const response = await fetch(url);
         if (response.ok) {
-          const body = await response.json() as RegisteredProject[];
+          const body = (await response.json()) as RegisteredProject[];
           lastBody = JSON.stringify(body);
           const worktreeProjects = body.filter((project) => {
             return project.projectPath === this.wtAPath || project.projectPath === this.wtBPath;
@@ -252,8 +272,8 @@ export class WorktreeHarness {
 
     throw new Error(
       `Timed out waiting for ${expectedCount} MCP projects.\n` +
-      `Last /api/projects/list payload: ${lastBody}\n` +
-      `Recent MCP logs:\n${this.getCapturedLogs()}`
+        `Last /api/projects/list payload: ${lastBody}\n` +
+        `Recent MCP logs:\n${this.getCapturedLogs()}`,
     );
   }
 

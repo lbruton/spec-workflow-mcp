@@ -22,7 +22,7 @@ describe('mdx-validator', () => {
       '```md',
       '- Code block: <5%',
       '```',
-      ''
+      '',
     ].join('\n');
 
     const result = await validateMarkdownForMdx(content);
@@ -38,12 +38,10 @@ describe('mdx-validator', () => {
         column: 18,
         ruleId: 'mdx-compile-error',
         message: 'Unexpected character',
-        severity: 'error'
-      }
+        severity: 'error',
+      },
     ]);
 
-    expect(formatted).toEqual([
-      'Line 12:18 [mdx-compile-error] Unexpected character'
-    ]);
+    expect(formatted).toEqual(['Line 12:18 [mdx-compile-error] Unexpected character']);
   });
 });

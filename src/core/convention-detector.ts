@@ -77,7 +77,10 @@ async function detectTesting(projectPath: string): Promise<ProjectConventions['t
 
   // Vitest
   const vitestConfigs = [
-    'vitest.config.ts', 'vitest.config.js', 'vitest.config.mts', 'vitest.config.mjs',
+    'vitest.config.ts',
+    'vitest.config.js',
+    'vitest.config.mts',
+    'vitest.config.mjs',
   ];
   const vitestConfig = await findFirstFile(projectPath, vitestConfigs);
   if (vitestConfig) {
@@ -89,7 +92,11 @@ async function detectTesting(projectPath: string): Promise<ProjectConventions['t
   // Jest (only if vitest not found)
   if (!framework) {
     const jestConfigs = [
-      'jest.config.ts', 'jest.config.js', 'jest.config.mjs', 'jest.config.cjs', 'jest.config.json',
+      'jest.config.ts',
+      'jest.config.js',
+      'jest.config.mjs',
+      'jest.config.cjs',
+      'jest.config.json',
     ];
     const jestConfig = await findFirstFile(projectPath, jestConfigs);
     if (jestConfig) {
@@ -130,7 +137,13 @@ async function detectTesting(projectPath: string): Promise<ProjectConventions['t
 
   // Mocha (check package.json devDependencies or config files)
   if (!framework) {
-    const mochaConfigs = ['.mocharc.yml', '.mocharc.yaml', '.mocharc.js', '.mocharc.json', '.mocharc.cjs'];
+    const mochaConfigs = [
+      '.mocharc.yml',
+      '.mocharc.yaml',
+      '.mocharc.js',
+      '.mocharc.json',
+      '.mocharc.cjs',
+    ];
     const mochaConfig = await findFirstFile(projectPath, mochaConfigs);
     if (mochaConfig) {
       framework = 'mocha';
@@ -179,7 +192,7 @@ async function detectTesting(projectPath: string): Promise<ProjectConventions['t
       // Count runbook sections for the command hint
       try {
         const entries = await readdir(runbookDir);
-        const sections = entries.filter(e => !e.startsWith('.')).length;
+        const sections = entries.filter((e) => !e.startsWith('.')).length;
         command = `/bb-test sections=${sections}`;
       } catch {
         command = '/bb-test';
@@ -197,12 +210,7 @@ async function detectTesting(projectPath: string): Promise<ProjectConventions['t
 
   // --- Test directory detection ---
   if (!testDir) {
-    const testDirCandidates = [
-      'src/__tests__',
-      'tests/',
-      'test/',
-      '__tests__/',
-    ];
+    const testDirCandidates = ['src/__tests__', 'tests/', 'test/', '__tests__/'];
     for (const candidate of testDirCandidates) {
       const candidatePath = join(projectPath, candidate.replace(/\/$/, ''));
       if (await isDirectory(candidatePath)) {
@@ -333,7 +341,10 @@ export async function detectConventions(projectPath: string): Promise<ProjectCon
  * When DocVault is configured: writes to DocVault specflow root.
  * Otherwise: writes to local `.specflow/`.
  */
-export async function writeConventions(projectPath: string, conventions: ProjectConventions): Promise<void> {
+export async function writeConventions(
+  projectPath: string,
+  conventions: ProjectConventions,
+): Promise<void> {
   // Use DocVault workflow root when configured, otherwise local .specflow/
   const dir = PathUtils.isDocVaultConfigured()
     ? PathUtils.getWorkflowRoot(projectPath)

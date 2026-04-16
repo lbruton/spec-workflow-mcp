@@ -44,9 +44,9 @@ function validatePort(port: number): boolean {
 function validateConfig(config: any): { valid: boolean; error?: string } {
   if (config.port !== undefined) {
     if (!validatePort(config.port)) {
-      return { 
-        valid: false, 
-        error: `Invalid port: ${config.port}. Port must be between 1024 and 65535.` 
+      return {
+        valid: false,
+        error: `Invalid port: ${config.port}. Port must be between 1024 and 65535.`,
       };
     }
   }
@@ -54,21 +54,21 @@ function validateConfig(config: any): { valid: boolean; error?: string } {
   if (config.projectDir !== undefined && typeof config.projectDir !== 'string') {
     return {
       valid: false,
-      error: `Invalid projectDir: must be a string.`
+      error: `Invalid projectDir: must be a string.`,
     };
   }
 
   if (config.dashboardOnly !== undefined && typeof config.dashboardOnly !== 'boolean') {
-    return { 
-      valid: false, 
-      error: `Invalid dashboardOnly: must be a boolean.` 
+    return {
+      valid: false,
+      error: `Invalid dashboardOnly: must be a boolean.`,
     };
   }
 
   if (config.lang !== undefined && typeof config.lang !== 'string') {
-    return { 
-      valid: false, 
-      error: `Invalid lang: must be a string.` 
+    return {
+      valid: false,
+      error: `Invalid lang: must be a string.`,
     };
   }
 
@@ -76,22 +76,26 @@ function validateConfig(config: any): { valid: boolean; error?: string } {
   if (config.bindAddress !== undefined && typeof config.bindAddress !== 'string') {
     return {
       valid: false,
-      error: `Invalid bindAddress: must be a valid IP address string.`
+      error: `Invalid bindAddress: must be a valid IP address string.`,
     };
   }
 
   if (config.allowExternalAccess !== undefined && typeof config.allowExternalAccess !== 'boolean') {
     return {
       valid: false,
-      error: `Invalid allowExternalAccess: must be a boolean.`
+      error: `Invalid allowExternalAccess: must be a boolean.`,
     };
   }
 
   // Network security validation: if binding to non-localhost address, require explicit allowExternalAccess
-  if (config.bindAddress !== undefined && !isLocalhostAddress(config.bindAddress) && !config.allowExternalAccess) {
+  if (
+    config.bindAddress !== undefined &&
+    !isLocalhostAddress(config.bindAddress) &&
+    !config.allowExternalAccess
+  ) {
     return {
       valid: false,
-      error: `Network security: binding to '${config.bindAddress}' (non-localhost) requires explicit allowExternalAccess = true. This exposes your dashboard to network access.`
+      error: `Network security: binding to '${config.bindAddress}' (non-localhost) requires explicit allowExternalAccess = true. This exposes your dashboard to network access.`,
     };
   }
 
@@ -99,17 +103,23 @@ function validateConfig(config: any): { valid: boolean; error?: string } {
   if (config.security !== undefined) {
     const sec = config.security;
 
-    if (sec.rateLimitPerMinute !== undefined && (typeof sec.rateLimitPerMinute !== 'number' || sec.rateLimitPerMinute < 1)) {
+    if (
+      sec.rateLimitPerMinute !== undefined &&
+      (typeof sec.rateLimitPerMinute !== 'number' || sec.rateLimitPerMinute < 1)
+    ) {
       return {
         valid: false,
-        error: `Invalid security.rateLimitPerMinute: must be a positive number.`
+        error: `Invalid security.rateLimitPerMinute: must be a positive number.`,
       };
     }
 
-    if (sec.auditLogRetentionDays !== undefined && (typeof sec.auditLogRetentionDays !== 'number' || sec.auditLogRetentionDays < 1)) {
+    if (
+      sec.auditLogRetentionDays !== undefined &&
+      (typeof sec.auditLogRetentionDays !== 'number' || sec.auditLogRetentionDays < 1)
+    ) {
       return {
         valid: false,
-        error: `Invalid security.auditLogRetentionDays: must be a positive number.`
+        error: `Invalid security.auditLogRetentionDays: must be a positive number.`,
       };
     }
   }
@@ -120,12 +130,12 @@ function validateConfig(config: any): { valid: boolean; error?: string } {
 export function loadConfigFromPath(configPath: string): ConfigLoadResult {
   try {
     const expandedPath = expandTilde(configPath);
-    
+
     if (!fs.existsSync(expandedPath)) {
-      return { 
-        config: null, 
+      return {
+        config: null,
         configPath: expandedPath,
-        error: `Config file not found: ${expandedPath}`
+        error: `Config file not found: ${expandedPath}`,
       };
     }
 
@@ -134,19 +144,19 @@ export function loadConfigFromPath(configPath: string): ConfigLoadResult {
 
     const validation = validateConfig(parsedConfig);
     if (!validation.valid) {
-      return { 
-        config: null, 
-        configPath: expandedPath, 
-        error: validation.error 
+      return {
+        config: null,
+        configPath: expandedPath,
+        error: validation.error,
       };
     }
 
     const config: SpecWorkflowConfig = {};
-    
+
     if (parsedConfig.projectDir !== undefined) {
       config.projectDir = expandTilde(parsedConfig.projectDir);
     }
-    
+
     if (parsedConfig.port !== undefined) {
       config.port = parsedConfig.port;
     }
@@ -162,7 +172,7 @@ export function loadConfigFromPath(configPath: string): ConfigLoadResult {
     if (parsedConfig.dashboardOnly !== undefined) {
       config.dashboardOnly = parsedConfig.dashboardOnly;
     }
-    
+
     if (parsedConfig.lang !== undefined) {
       config.lang = parsedConfig.lang;
     }
@@ -171,22 +181,22 @@ export function loadConfigFromPath(configPath: string): ConfigLoadResult {
       config.security = parsedConfig.security;
     }
 
-    return { 
-      config, 
-      configPath: expandedPath 
+    return {
+      config,
+      configPath: expandedPath,
     };
   } catch (error) {
     if (error instanceof Error) {
-      return { 
-        config: null, 
-        configPath: null, 
-        error: `Failed to load config file: ${error.message}` 
+      return {
+        config: null,
+        configPath: null,
+        error: `Failed to load config file: ${error.message}`,
       };
     }
-    return { 
-      config: null, 
-      configPath: null, 
-      error: 'Failed to load config file: Unknown error' 
+    return {
+      config: null,
+      configPath: null,
+      error: 'Failed to load config file: Unknown error',
     };
   }
 }
@@ -196,40 +206,40 @@ export function loadConfigFile(projectDir: string, customConfigPath?: string): C
   if (customConfigPath) {
     return loadConfigFromPath(customConfigPath);
   }
-  
+
   // Otherwise, look for default config in project directory
   try {
     const expandedDir = expandTilde(projectDir);
     const configDir = path.join(expandedDir, '.specflow');
     const configPath = path.join(configDir, 'config.toml');
-    
+
     if (!fs.existsSync(configPath)) {
-      return { 
-        config: null, 
-        configPath: null 
+      return {
+        config: null,
+        configPath: null,
       };
     }
-    
+
     return loadConfigFromPath(configPath);
   } catch (error) {
     if (error instanceof Error) {
-      return { 
-        config: null, 
-        configPath: null, 
-        error: `Failed to load config file: ${error.message}` 
+      return {
+        config: null,
+        configPath: null,
+        error: `Failed to load config file: ${error.message}`,
       };
     }
-    return { 
-      config: null, 
-      configPath: null, 
-      error: 'Failed to load config file: Unknown error' 
+    return {
+      config: null,
+      configPath: null,
+      error: 'Failed to load config file: Unknown error',
     };
   }
 }
 
 export function mergeConfigs(
   fileConfig: SpecWorkflowConfig | null,
-  cliArgs: Partial<SpecWorkflowConfig>
+  cliArgs: Partial<SpecWorkflowConfig>,
 ): SpecWorkflowConfig {
   const merged: SpecWorkflowConfig = {};
 
@@ -237,7 +247,7 @@ export function mergeConfigs(
     Object.assign(merged, fileConfig);
   }
 
-  Object.keys(cliArgs).forEach(key => {
+  Object.keys(cliArgs).forEach((key) => {
     const value = cliArgs[key as keyof SpecWorkflowConfig];
     if (value !== undefined) {
       (merged as any)[key] = value;

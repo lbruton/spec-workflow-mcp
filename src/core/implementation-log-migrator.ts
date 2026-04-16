@@ -36,8 +36,9 @@ export class ImplementationLogMigrator {
   private generateFileName(entry: ImplementationLogEntry): string {
     const sanitizedTaskId = this.sanitizeTaskId(entry.taskId);
     const dateObj = new Date(entry.timestamp);
-    const timestamp = dateObj.toISOString().replace(/[:.]/g, '').split('T')[0] +
-                      dateObj.toISOString().split('T')[1].replace(/[:.Z]/g, '').substring(0, 6);
+    const timestamp =
+      dateObj.toISOString().replace(/[:.]/g, '').split('T')[0] +
+      dateObj.toISOString().split('T')[1].replace(/[:.Z]/g, '').substring(0, 6);
     const idPrefix = entry.id.substring(0, 8);
     return `task-${sanitizedTaskId}_${timestamp}_${idPrefix}.md`;
   }
@@ -62,7 +63,7 @@ export class ImplementationLogMigrator {
     // Files
     markdown += `## Files Modified\n`;
     if (entry.filesModified.length > 0) {
-      entry.filesModified.forEach(file => {
+      entry.filesModified.forEach((file) => {
         markdown += `- ${file}\n`;
       });
     } else {
@@ -72,7 +73,7 @@ export class ImplementationLogMigrator {
 
     markdown += `## Files Created\n`;
     if (entry.filesCreated.length > 0) {
-      entry.filesCreated.forEach(file => {
+      entry.filesCreated.forEach((file) => {
         markdown += `- ${file}\n`;
       });
     } else {
@@ -83,7 +84,12 @@ export class ImplementationLogMigrator {
     // Artifacts
     markdown += `---\n\n## Artifacts\n\n`;
 
-    if (!entry.artifacts || Object.keys(entry.artifacts).every(key => !entry.artifacts[key as keyof typeof entry.artifacts]?.length)) {
+    if (
+      !entry.artifacts ||
+      Object.keys(entry.artifacts).every(
+        (key) => !entry.artifacts[key as keyof typeof entry.artifacts]?.length,
+      )
+    ) {
       markdown += `_No artifacts recorded_\n`;
       return markdown;
     }
@@ -91,7 +97,7 @@ export class ImplementationLogMigrator {
     // API Endpoints
     if (entry.artifacts.apiEndpoints && entry.artifacts.apiEndpoints.length > 0) {
       markdown += `### API Endpoints\n\n`;
-      entry.artifacts.apiEndpoints.forEach(api => {
+      entry.artifacts.apiEndpoints.forEach((api) => {
         markdown += `#### ${api.method} ${api.path}\n`;
         markdown += `- **Purpose:** ${api.purpose}\n`;
         markdown += `- **Location:** ${api.location}\n`;
@@ -104,13 +110,14 @@ export class ImplementationLogMigrator {
     // Components
     if (entry.artifacts.components && entry.artifacts.components.length > 0) {
       markdown += `### Components\n\n`;
-      entry.artifacts.components.forEach(comp => {
+      entry.artifacts.components.forEach((comp) => {
         markdown += `#### ${comp.name}\n`;
         markdown += `- **Type:** ${comp.type}\n`;
         markdown += `- **Purpose:** ${comp.purpose}\n`;
         markdown += `- **Location:** ${comp.location}\n`;
         if (comp.props) markdown += `- **Props:** ${comp.props}\n`;
-        if (comp.exports && comp.exports.length > 0) markdown += `- **Exports:** ${comp.exports.join(', ')}\n`;
+        if (comp.exports && comp.exports.length > 0)
+          markdown += `- **Exports:** ${comp.exports.join(', ')}\n`;
         markdown += `\n`;
       });
     }
@@ -118,7 +125,7 @@ export class ImplementationLogMigrator {
     // Functions
     if (entry.artifacts.functions && entry.artifacts.functions.length > 0) {
       markdown += `### Functions\n\n`;
-      entry.artifacts.functions.forEach(func => {
+      entry.artifacts.functions.forEach((func) => {
         markdown += `#### ${func.name}\n`;
         markdown += `- **Purpose:** ${func.purpose}\n`;
         markdown += `- **Location:** ${func.location}\n`;
@@ -131,11 +138,12 @@ export class ImplementationLogMigrator {
     // Classes
     if (entry.artifacts.classes && entry.artifacts.classes.length > 0) {
       markdown += `### Classes\n\n`;
-      entry.artifacts.classes.forEach(cls => {
+      entry.artifacts.classes.forEach((cls) => {
         markdown += `#### ${cls.name}\n`;
         markdown += `- **Purpose:** ${cls.purpose}\n`;
         markdown += `- **Location:** ${cls.location}\n`;
-        if (cls.methods && cls.methods.length > 0) markdown += `- **Methods:** ${cls.methods.join(', ')}\n`;
+        if (cls.methods && cls.methods.length > 0)
+          markdown += `- **Methods:** ${cls.methods.join(', ')}\n`;
         markdown += `- **Exported:** ${cls.isExported ? 'Yes' : 'No'}\n`;
         markdown += `\n`;
       });
@@ -144,7 +152,7 @@ export class ImplementationLogMigrator {
     // Integrations
     if (entry.artifacts.integrations && entry.artifacts.integrations.length > 0) {
       markdown += `### Integrations\n\n`;
-      entry.artifacts.integrations.forEach(intg => {
+      entry.artifacts.integrations.forEach((intg) => {
         markdown += `#### Integration\n`;
         markdown += `- **Description:** ${intg.description}\n`;
         markdown += `- **Frontend Component:** ${intg.frontendComponent}\n`;
@@ -160,7 +168,10 @@ export class ImplementationLogMigrator {
   /**
    * Migrate a single JSON file to markdown files
    */
-  private async migrateJsonFile(jsonPath: string, outputDir: string): Promise<{ success: boolean; count: number; error?: string }> {
+  private async migrateJsonFile(
+    jsonPath: string,
+    outputDir: string,
+  ): Promise<{ success: boolean; count: number; error?: string }> {
     try {
       // Read the JSON file
       const content = await fs.readFile(jsonPath, 'utf-8');
@@ -207,7 +218,7 @@ export class ImplementationLogMigrator {
       totalSpecs: 0,
       migratedSpecs: 0,
       totalEntries: 0,
-      errors: [] as Array<{ spec: string; error: string }>
+      errors: [] as Array<{ spec: string; error: string }>,
     };
 
     try {
@@ -219,7 +230,7 @@ export class ImplementationLogMigrator {
 
       // List all spec directories
       const entries = await fs.readdir(specsDir, { withFileTypes: true });
-      const specDirs = entries.filter(e => e.isDirectory());
+      const specDirs = entries.filter((e) => e.isDirectory());
 
       result.totalSpecs = specDirs.length;
 
@@ -252,7 +263,7 @@ export class ImplementationLogMigrator {
         } else {
           result.errors.push({
             spec: specDir.name,
-            error: migrationResult.error || 'Unknown error'
+            error: migrationResult.error || 'Unknown error',
           });
         }
       }
@@ -267,7 +278,7 @@ export class ImplementationLogMigrator {
 
       if (result.errors.length > 0) {
         this.log('Errors encountered:');
-        result.errors.forEach(err => {
+        result.errors.forEach((err) => {
           this.log(`  - ${err.spec}: ${err.error}`);
         });
       }
@@ -278,7 +289,7 @@ export class ImplementationLogMigrator {
       this.log(`Fatal error during migration: ${errorMsg}`);
       result.errors.push({
         spec: 'migration-process',
-        error: errorMsg
+        error: errorMsg,
       });
     }
 

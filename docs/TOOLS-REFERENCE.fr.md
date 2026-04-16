@@ -25,11 +25,13 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 **Retourne** : Guide markdown expliquant le workflow complet
 
 **Exemple d'Utilisation** :
+
 ```
 "Montrer le guide du workflow de spec"
 ```
 
 **La Réponse Contient** :
+
 - Vue d'ensemble du workflow
 - Processus étape par étape
 - Meilleures pratiques
@@ -44,11 +46,13 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 **Retourne** : Guide markdown pour la création de documents de direction
 
 **Exemple d'Utilisation** :
+
 ```
 "Montrer comment créer des documents de direction"
 ```
 
 **La Réponse Contient** :
+
 - Types de documents de direction
 - Processus de création
 - Directives de contenu
@@ -62,14 +66,15 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 
 **Paramètres** :
 
-| Paramètre | Type | Requis | Description |
-|-----------|------|----------|-------------|
-| specName | string | Oui | Nom de la spec (kebab-case) |
-| docType | string | Oui | Type : "requirements", "design", ou "tasks" |
-| content | string | Oui | Contenu markdown du document |
-| revision | boolean | Non | Si c'est une révision (défaut : false) |
+| Paramètre | Type    | Requis | Description                                 |
+| --------- | ------- | ------ | ------------------------------------------- |
+| specName  | string  | Oui    | Nom de la spec (kebab-case)                 |
+| docType   | string  | Oui    | Type : "requirements", "design", ou "tasks" |
+| content   | string  | Oui    | Contenu markdown du document                |
+| revision  | boolean | Non    | Si c'est une révision (défaut : false)      |
 
 **Exemple d'Utilisation** :
+
 ```typescript
 {
   specName: "user-authentication",
@@ -80,6 +85,7 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 ```
 
 **Retourne** :
+
 ```typescript
 {
   success: true,
@@ -90,6 +96,7 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 ```
 
 **Notes** :
+
 - Crée le répertoire de spec s'il n'existe pas
 - Demande automatiquement l'approbation pour les nouveaux documents
 - Valide le format markdown
@@ -104,28 +111,30 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 **Retourne** : Tableau de résumés de spec
 
 **Structure de Réponse** :
+
 ```typescript
 [
   {
-    name: "user-authentication",
-    status: "in-progress",
+    name: 'user-authentication',
+    status: 'in-progress',
     progress: 45,
     documents: {
-      requirements: "approved",
-      design: "pending-approval",
-      tasks: "not-created"
+      requirements: 'approved',
+      design: 'pending-approval',
+      tasks: 'not-created',
     },
     taskStats: {
       total: 15,
       completed: 7,
       inProgress: 1,
-      pending: 7
-    }
-  }
-]
+      pending: 7,
+    },
+  },
+];
 ```
 
 **Exemple d'Utilisation** :
+
 ```
 "Lister toutes mes specs"
 ```
@@ -136,13 +145,14 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 
 **Paramètres** :
 
-| Paramètre | Type | Requis | Description |
-|-----------|------|----------|-------------|
-| specName | string | Oui | Nom de la spec à vérifier |
+| Paramètre | Type   | Requis | Description               |
+| --------- | ------ | ------ | ------------------------- |
+| specName  | string | Oui    | Nom de la spec à vérifier |
 
 **Retourne** : Statut détaillé de la spec
 
 **Structure de Réponse** :
+
 ```typescript
 {
   exists: true,
@@ -175,6 +185,7 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 ```
 
 **Exemple d'Utilisation** :
+
 ```
 "Montrer le statut de la spec user-authentication"
 ```
@@ -185,17 +196,18 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 
 **Paramètres** :
 
-| Paramètre | Type | Requis | Description |
-|-----------|------|----------|-------------|
-| specName | string | Oui | Nom de la spec |
-| action | string | Oui | Action : "update", "complete", "list", "progress" |
-| taskId | string | Parfois | ID de tâche (requis pour update/complete) |
-| status | string | Non | Nouveau statut : "pending", "in-progress", "completed" |
-| notes | string | Non | Notes additionnelles pour la tâche |
+| Paramètre | Type   | Requis  | Description                                            |
+| --------- | ------ | ------- | ------------------------------------------------------ |
+| specName  | string | Oui     | Nom de la spec                                         |
+| action    | string | Oui     | Action : "update", "complete", "list", "progress"      |
+| taskId    | string | Parfois | ID de tâche (requis pour update/complete)              |
+| status    | string | Non     | Nouveau statut : "pending", "in-progress", "completed" |
+| notes     | string | Non     | Notes additionnelles pour la tâche                     |
 
 **Actions** :
 
 1. **Mettre à Jour le Statut de Tâche** :
+
 ```typescript
 {
   specName: "user-auth",
@@ -207,6 +219,7 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 ```
 
 2. **Compléter une Tâche** :
+
 ```typescript
 {
   specName: "user-auth",
@@ -216,6 +229,7 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 ```
 
 3. **Lister les Tâches** :
+
 ```typescript
 {
   specName: "user-auth",
@@ -224,6 +238,7 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 ```
 
 4. **Obtenir la Progression** :
+
 ```typescript
 {
   specName: "user-auth",
@@ -244,6 +259,7 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 **Retourne** : Objet contenant tous les templates
 
 **Structure de Réponse** :
+
 ```typescript
 {
   requirements: "# Template d'Exigences\n\n## Vue d'ensemble\n...",
@@ -256,6 +272,7 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 ```
 
 **Exemple d'Utilisation** :
+
 ```
 "Obtenir tous les templates de documents"
 ```
@@ -266,20 +283,22 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 
 **Paramètres** :
 
-| Paramètre | Type | Requis | Description |
-|-----------|------|----------|-------------|
-| docType | string | Non | Doc spécifique : "product", "tech", "structure", ou "all" |
+| Paramètre | Type   | Requis | Description                                               |
+| --------- | ------ | ------ | --------------------------------------------------------- |
+| docType   | string | Non    | Doc spécifique : "product", "tech", "structure", ou "all" |
 
 **Retourne** : Contenu du document de direction
 
 **Exemple d'Utilisation** :
+
 ```typescript
 {
-  docType: "tech"  // Retourne uniquement la direction technique
+  docType: 'tech', // Retourne uniquement la direction technique
 }
 ```
 
 **Structure de Réponse** :
+
 ```typescript
 {
   product: "# Direction Produit\n\n## Vision\n...",
@@ -294,14 +313,15 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 
 **Paramètres** :
 
-| Paramètre | Type | Requis | Description |
-|-----------|------|----------|-------------|
-| specName | string | Oui | Nom de la spec |
-| includeContent | boolean | Non | Inclure le contenu du document (défaut : true) |
+| Paramètre      | Type    | Requis | Description                                    |
+| -------------- | ------- | ------ | ---------------------------------------------- |
+| specName       | string  | Oui    | Nom de la spec                                 |
+| includeContent | boolean | Non    | Inclure le contenu du document (défaut : true) |
 
 **Retourne** : Contexte complet de la spec
 
 **Structure de Réponse** :
+
 ```typescript
 {
   name: "user-authentication",
@@ -333,6 +353,7 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 ```
 
 **Exemple d'Utilisation** :
+
 ```
 "Obtenir le contexte complet pour la spec user-authentication"
 ```
@@ -345,12 +366,13 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 
 **Paramètres** :
 
-| Paramètre | Type | Requis | Description |
-|-----------|------|----------|-------------|
-| docType | string | Oui | Type : "product", "tech", ou "structure" |
-| content | string | Oui | Contenu markdown du document |
+| Paramètre | Type   | Requis | Description                              |
+| --------- | ------ | ------ | ---------------------------------------- |
+| docType   | string | Oui    | Type : "product", "tech", ou "structure" |
+| content   | string | Oui    | Contenu markdown du document             |
 
 **Exemple d'Utilisation** :
+
 ```typescript
 {
   docType: "product",
@@ -359,6 +381,7 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 ```
 
 **Retourne** :
+
 ```typescript
 {
   success: true,
@@ -368,6 +391,7 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 ```
 
 **Notes** :
+
 - Crée le répertoire de direction si nécessaire
 - Écrase les documents de direction existants
 - Aucune approbation requise pour les docs de direction
@@ -381,14 +405,15 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 
 **Paramètres** :
 
-| Paramètre | Type | Requis | Description |
-|-----------|------|----------|-------------|
-| specName | string | Oui | Nom de la spec |
-| docType | string | Oui | Type de document à approuver |
-| documentId | string | Oui | ID unique pour le suivi |
-| content | string | Oui | Contenu du document pour révision |
+| Paramètre  | Type   | Requis | Description                       |
+| ---------- | ------ | ------ | --------------------------------- |
+| specName   | string | Oui    | Nom de la spec                    |
+| docType    | string | Oui    | Type de document à approuver      |
+| documentId | string | Oui    | ID unique pour le suivi           |
+| content    | string | Oui    | Contenu du document pour révision |
 
 **Exemple d'Utilisation** :
+
 ```typescript
 {
   specName: "user-auth",
@@ -399,6 +424,7 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 ```
 
 **Retourne** :
+
 ```typescript
 {
   success: true,
@@ -413,12 +439,13 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 
 **Paramètres** :
 
-| Paramètre | Type | Requis | Description |
-|-----------|------|----------|-------------|
-| specName | string | Oui | Nom de la spec |
-| documentId | string | Oui | ID du document à vérifier |
+| Paramètre  | Type   | Requis | Description               |
+| ---------- | ------ | ------ | ------------------------- |
+| specName   | string | Oui    | Nom de la spec            |
+| documentId | string | Oui    | ID du document à vérifier |
 
 **Retourne** :
+
 ```typescript
 {
   exists: true,
@@ -430,6 +457,7 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 ```
 
 **Exemple d'Utilisation** :
+
 ```
 "Vérifier le statut d'approbation pour les exigences user-auth"
 ```
@@ -440,12 +468,13 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 
 **Paramètres** :
 
-| Paramètre | Type | Requis | Description |
-|-----------|------|----------|-------------|
-| specName | string | Oui | Nom de la spec |
-| documentId | string | Oui | ID du document à supprimer |
+| Paramètre  | Type   | Requis | Description                |
+| ---------- | ------ | ------ | -------------------------- |
+| specName   | string | Oui    | Nom de la spec             |
+| documentId | string | Oui    | ID du document à supprimer |
 
 **Retourne** :
+
 ```typescript
 {
   success: true,
@@ -454,6 +483,7 @@ Spec Workflow MCP fournit des outils spécialisés pour le développement logici
 ```
 
 **Exemple d'Utilisation** :
+
 ```
 "Nettoyer les approbations complétées pour user-auth"
 ```
@@ -539,6 +569,7 @@ Pour ajouter de nouveaux outils :
 5. Ajouter aux exports
 
 Exemple de structure :
+
 ```typescript
 export const customTool = {
   name: 'custom-tool',
@@ -548,7 +579,7 @@ export const customTool = {
   },
   handler: async (params) => {
     // Implémentation
-  }
+  },
 };
 ```
 

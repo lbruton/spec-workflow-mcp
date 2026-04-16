@@ -6,24 +6,25 @@ import { PathUtils } from '../core/path-utils.js';
 const prompt: Prompt = {
   name: 'create-steering-doc',
   title: 'Create Steering Document',
-  description: 'Guide for creating project steering documents (product, tech, structure) directly in the file system. These provide high-level project guidance.',
+  description:
+    'Guide for creating project steering documents (product, tech, structure) directly in the file system. These provide high-level project guidance.',
   arguments: [
     {
       name: 'docType',
       description: 'Type of steering document: product, tech, or structure',
-      required: true
+      required: true,
     },
     {
       name: 'scope',
       description: 'Scope of the steering document (e.g., frontend, backend, full-stack)',
-      required: false
-    }
-  ]
+      required: false,
+    },
+  ],
 };
 
 async function handler(args: Record<string, any>, context: ToolContext): Promise<PromptMessage[]> {
   const { docType, scope } = args;
-  
+
   if (!docType) {
     throw new Error('docType is a required argument');
   }
@@ -81,9 +82,9 @@ ${context.dashboardUrl ? `- Dashboard: ${context.dashboardUrl}` : ''}
 - Provide clear guidance for future development
 - Templates are automatically updated on server start
 
-Please read the ${docType} template and create a comprehensive steering document at the specified path.`
-      }
-    }
+Please read the ${docType} template and create a comprehensive steering document at the specified path.`,
+      },
+    },
   ];
 
   return messages;
@@ -91,5 +92,5 @@ Please read the ${docType} template and create a comprehensive steering document
 
 export const createSteeringDocPrompt: PromptDefinition = {
   prompt,
-  handler
+  handler,
 };

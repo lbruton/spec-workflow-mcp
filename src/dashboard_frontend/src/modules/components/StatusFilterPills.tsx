@@ -11,7 +11,11 @@ interface StatusFilterPillsProps {
   };
 }
 
-export function StatusFilterPills({ currentFilter, onFilterChange, taskCounts }: StatusFilterPillsProps) {
+export function StatusFilterPills({
+  currentFilter,
+  onFilterChange,
+  taskCounts,
+}: StatusFilterPillsProps) {
   const { t } = useTranslation();
   const totalTasks = taskCounts.pending + taskCounts.inProgress + taskCounts.completed;
 
@@ -59,7 +63,7 @@ export function StatusFilterPills({ currentFilter, onFilterChange, taskCounts }:
       activeText: 'text-[var(--text-primary)]',
       hoverBg: 'hover:bg-[var(--surface-raised)]',
       dotColor: 'bg-green-500',
-    }
+    },
   ];
 
   return (
@@ -81,11 +85,11 @@ export function StatusFilterPills({ currentFilter, onFilterChange, taskCounts }:
             <span className={`w-2 h-2 rounded-full ${option.dotColor}`} />
             <span className="font-medium">{option.label}</span>
             {option.count > 0 && (
-              <span className={`px-1.5 py-0.5 text-xs rounded-md min-w-[20px] text-center font-mono tabular-nums ${
-                isActive
-                  ? 'bg-[var(--surface-base)]'
-                  : 'bg-[var(--surface-base)]'
-              }`}>
+              <span
+                className={`px-1.5 py-0.5 text-xs rounded-md min-w-[20px] text-center font-mono tabular-nums ${
+                  isActive ? 'bg-[var(--surface-base)]' : 'bg-[var(--surface-base)]'
+                }`}
+              >
                 {option.count}
               </span>
             )}

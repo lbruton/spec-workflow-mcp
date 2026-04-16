@@ -37,10 +37,7 @@ function indexSkeleton(heading: string): string {
  * Ensure an _Index.md file exists in the given directory.
  * If it already exists, this is a no-op (idempotent).
  */
-export async function ensureIndexExists(
-  dirPath: string,
-  heading: string,
-): Promise<void> {
+export async function ensureIndexExists(dirPath: string, heading: string): Promise<void> {
   const indexPath = join(dirPath, '_Index.md');
   const existing = await safeRead(indexPath);
   if (existing !== null) return;
@@ -86,10 +83,7 @@ export async function addSpecToIndex(
  * Remove a spec entry from the specs/_Index.md.
  * If the file doesn't exist or the spec isn't listed, this is a no-op.
  */
-export async function removeSpecFromIndex(
-  config: ResolvedConfig,
-  specName: string,
-): Promise<void> {
+export async function removeSpecFromIndex(config: ResolvedConfig, specName: string): Promise<void> {
   const specsDir = join(config.specflowRoot, 'specs');
   const indexPath = join(specsDir, '_Index.md');
 

@@ -41,38 +41,36 @@ export class CommentModalService {
       {
         enableScripts: true,
         retainContextWhenHidden: true,
-        localResourceRoots: [
-          vscode.Uri.joinPath(this.extensionUri, 'webview-dist')
-        ]
-      }
+        localResourceRoots: [vscode.Uri.joinPath(this.extensionUri, 'webview-dist')],
+      },
     );
 
     // Set webview HTML content
-    this.currentPanel.webview.html = await this.getWebviewContent(options.selectedText, options.existingComment);
+    this.currentPanel.webview.html = await this.getWebviewContent(
+      options.selectedText,
+      options.existingComment,
+    );
 
     // Handle messages from webview
-    this.currentPanel.webview.onDidReceiveMessage(
-      async (message) => {
-        switch (message.command) {
-          case 'save':
-            if (message.comment && message.color) {
-              try {
-                const color = hexToColorObject(message.color);
-                await options.onSave(message.comment, color);
-                this.currentPanel?.dispose();
-                vscode.window.showInformationMessage('💬 Comment added successfully');
-              } catch (error) {
-                vscode.window.showErrorMessage(`Failed to add comment: ${error}`);
-              }
+    this.currentPanel.webview.onDidReceiveMessage(async (message) => {
+      switch (message.command) {
+        case 'save':
+          if (message.comment && message.color) {
+            try {
+              const color = hexToColorObject(message.color);
+              await options.onSave(message.comment, color);
+              this.currentPanel?.dispose();
+              vscode.window.showInformationMessage('💬 Comment added successfully');
+            } catch (error) {
+              vscode.window.showErrorMessage(`Failed to add comment: ${error}`);
             }
-            break;
-          case 'cancel':
-            this.currentPanel?.dispose();
-            break;
-        }
-      },
-      undefined
-    );
+          }
+          break;
+        case 'cancel':
+          this.currentPanel?.dispose();
+          break;
+      }
+    }, undefined);
 
     // Clean up when panel is disposed
     this.currentPanel.onDidDispose(() => {
@@ -83,15 +81,18 @@ export class CommentModalService {
     this.currentPanel.reveal();
   }
 
-  private async getWebviewContent(selectedText: string, existingComment?: ApprovalComment): Promise<string> {
+  private async getWebviewContent(
+    selectedText: string,
+    existingComment?: ApprovalComment,
+  ): Promise<string> {
     const webviewDistUri = this.currentPanel!.webview.asWebviewUri(
-      vscode.Uri.joinPath(this.extensionUri, 'webview-dist')
+      vscode.Uri.joinPath(this.extensionUri, 'webview-dist'),
     );
 
     // Read the built HTML file
     const htmlPath = vscode.Uri.joinPath(this.extensionUri, 'webview-dist', 'comment-modal.html');
     let htmlContent: string;
-    
+
     try {
       const htmlBytes = await vscode.workspace.fs.readFile(htmlPath);
       htmlContent = new TextDecoder().decode(htmlBytes);
@@ -115,13 +116,17 @@ export class CommentModalService {
           existingComment: ${existingComment ? JSON.stringify(existingComment) : 'null'}
         };
       </script>`;
-    
+
     htmlContent = htmlContent.replace('</head>', `${stateScript}</head>`);
 
     return htmlContent;
   }
 
-  private getFallbackContent(selectedText: string, webviewDistUri: vscode.Uri, existingComment?: ApprovalComment): string {
+  private getFallbackContent(
+    selectedText: string,
+    webviewDistUri: vscode.Uri,
+    existingComment?: ApprovalComment,
+  ): string {
     return `<!DOCTYPE html>
       <html lang="en">
       <head>
@@ -157,5 +162,4 @@ export class CommentModalService {
       </body>
       </html>`;
   }
-
 }

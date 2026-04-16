@@ -1,19 +1,8 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import {
-  mkdtempSync,
-  mkdirSync,
-  writeFileSync,
-  rmSync,
-  readFileSync,
-  existsSync,
-} from 'fs';
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
-import {
-  ensureIndexExists,
-  addSpecToIndex,
-  removeSpecFromIndex,
-} from '../index-updater.js';
+import { ensureIndexExists, addSpecToIndex, removeSpecFromIndex } from '../index-updater.js';
 import type { ResolvedConfig } from '../config-loader.js';
 
 function makeConfig(specflowRoot: string): ResolvedConfig {
@@ -168,8 +157,6 @@ describe('removeSpecFromIndex', () => {
 
     const config = makeConfig(specflowRoot);
     // Should not throw
-    await expect(
-      removeSpecFromIndex(config, 'SWF-1-auth'),
-    ).resolves.toBeUndefined();
+    await expect(removeSpecFromIndex(config, 'SWF-1-auth')).resolves.toBeUndefined();
   });
 });

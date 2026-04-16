@@ -14,7 +14,7 @@ interface CancelMessage {
   command: 'cancel';
 }
 
-// Type for webview communication  
+// Type for webview communication
 // type WebviewMessage = SaveCommentMessage | CancelMessage;
 
 // Extend the existing VSCode API interface
@@ -39,7 +39,7 @@ declare global {
 const vscode = window.acquireVsCodeApi?.();
 
 function CommentModalApp() {
-  // Get initial data from webview  
+  // Get initial data from webview
   const selectedText = window.initialState?.selectedText || i18n.t('commentModal.noTextSelected');
   const existingComment = window.initialState?.existingComment || null;
 
@@ -47,14 +47,14 @@ function CommentModalApp() {
     const message: SaveCommentMessage = {
       command: 'save',
       comment,
-      color
+      color,
     };
     vscode?.postMessage(message);
   };
 
   const handleCancel = () => {
     const message: CancelMessage = {
-      command: 'cancel'
+      command: 'cancel',
     };
     vscode?.postMessage(message);
   };

@@ -43,11 +43,7 @@ const colorMap = {
   tests: 'text-teal-500',
 };
 
-export function ArtifactSection({
-  type,
-  artifacts,
-  className = '',
-}: ArtifactSectionProps) {
+export function ArtifactSection({ type, artifacts, className = '' }: ArtifactSectionProps) {
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -111,10 +107,14 @@ function renderApiEndpoints(endpoints: ApiEndpoint[], t: any) {
       </div>
       <div className="text-xs text-muted-foreground mt-1">{api.purpose}</div>
       {api.requestFormat && (
-        <div className="text-xs text-muted-foreground">{t('logs.artifacts.request')} {api.requestFormat}</div>
+        <div className="text-xs text-muted-foreground">
+          {t('logs.artifacts.request')} {api.requestFormat}
+        </div>
       )}
       {api.responseFormat && (
-        <div className="text-xs text-muted-foreground">{t('logs.artifacts.response')} {api.responseFormat}</div>
+        <div className="text-xs text-muted-foreground">
+          {t('logs.artifacts.response')} {api.responseFormat}
+        </div>
       )}
       <div className="text-xs text-gray-500 mt-1 font-mono">{api.location}</div>
     </div>
@@ -129,7 +129,9 @@ function renderComponents(components: ComponentInfo[], t: any) {
       </div>
       <div className="text-xs text-muted-foreground mt-1">{comp.purpose}</div>
       {comp.props && (
-        <div className="text-xs text-muted-foreground">{t('logs.artifacts.props')} {comp.props}</div>
+        <div className="text-xs text-muted-foreground">
+          {t('logs.artifacts.props')} {comp.props}
+        </div>
       )}
       {comp.exports && comp.exports.length > 0 && (
         <div className="text-xs text-muted-foreground">
@@ -145,7 +147,10 @@ function renderFunctions(functions: FunctionInfo[], t: any) {
   return functions.map((func, idx) => (
     <div key={idx} className="text-sm">
       <div className="font-semibold">
-        {func.name} {func.isExported && <span className="text-xs text-green-600">{t('logs.artifacts.exported')}</span>}
+        {func.name}{' '}
+        {func.isExported && (
+          <span className="text-xs text-green-600">{t('logs.artifacts.exported')}</span>
+        )}
       </div>
       <div className="text-xs text-muted-foreground mt-1">{func.purpose}</div>
       {func.signature && (
@@ -162,7 +167,10 @@ function renderClasses(classes: ClassInfo[], t: any) {
   return classes.map((cls, idx) => (
     <div key={idx} className="text-sm">
       <div className="font-semibold">
-        {cls.name} {cls.isExported && <span className="text-xs text-green-600">{t('logs.artifacts.exported')}</span>}
+        {cls.name}{' '}
+        {cls.isExported && (
+          <span className="text-xs text-green-600">{t('logs.artifacts.exported')}</span>
+        )}
       </div>
       <div className="text-xs text-muted-foreground mt-1">{cls.purpose}</div>
       {cls.methods && cls.methods.length > 0 && (
@@ -182,8 +190,12 @@ function renderIntegrations(integrations: Integration[], t: any) {
       <div className="text-xs text-muted-foreground mt-1">
         {t('logs.artifacts.frontend')} {intg.frontendComponent}
       </div>
-      <div className="text-xs text-muted-foreground">{t('logs.artifacts.backend')} {intg.backendEndpoint}</div>
-      <div className="text-xs text-muted-foreground">{t('logs.artifacts.dataFlow')} {intg.dataFlow}</div>
+      <div className="text-xs text-muted-foreground">
+        {t('logs.artifacts.backend')} {intg.backendEndpoint}
+      </div>
+      <div className="text-xs text-muted-foreground">
+        {t('logs.artifacts.dataFlow')} {intg.dataFlow}
+      </div>
     </div>
   ));
 }
@@ -193,25 +205,40 @@ function renderTests(tests: TestInfo[], t: any) {
     <div key={idx} className="text-sm">
       <div className="font-semibold">
         {test.name}
-        <span className={`ml-2 text-xs px-1.5 py-0.5 rounded font-medium ${
-          test.status === 'passed' ? 'bg-green-100 text-green-700' :
-          test.status === 'failed' ? 'bg-red-100 text-red-700' :
-          'bg-yellow-100 text-yellow-700'
-        }`}>
+        <span
+          className={`ml-2 text-xs px-1.5 py-0.5 rounded font-medium ${
+            test.status === 'passed'
+              ? 'bg-green-100 text-green-700'
+              : test.status === 'failed'
+                ? 'bg-red-100 text-red-700'
+                : 'bg-yellow-100 text-yellow-700'
+          }`}
+        >
           {test.status}
         </span>
       </div>
       <div className="text-xs text-muted-foreground mt-1">
-        {test.type} ({test.framework}) — {t('logs.artifacts.testResults', { passed: test.passed, failed: test.failed, total: test.total })}
+        {test.type} ({test.framework}) —{' '}
+        {t('logs.artifacts.testResults', {
+          passed: test.passed,
+          failed: test.failed,
+          total: test.total,
+        })}
       </div>
       {test.duration && (
-        <div className="text-xs text-muted-foreground">{t('logs.artifacts.duration')} {test.duration}</div>
+        <div className="text-xs text-muted-foreground">
+          {t('logs.artifacts.duration')} {test.duration}
+        </div>
       )}
       {test.coveragePercent !== undefined && (
-        <div className="text-xs text-muted-foreground">{t('logs.artifacts.coverage')} {test.coveragePercent}%</div>
+        <div className="text-xs text-muted-foreground">
+          {t('logs.artifacts.coverage')} {test.coveragePercent}%
+        </div>
       )}
       {test.userStories && test.userStories.length > 0 && (
-        <div className="text-xs text-muted-foreground">{t('logs.artifacts.userStories')} {test.userStories.join(', ')}</div>
+        <div className="text-xs text-muted-foreground">
+          {t('logs.artifacts.userStories')} {test.userStories.join(', ')}
+        </div>
       )}
       <div className="text-xs text-gray-500 mt-1 font-mono">{test.location}</div>
     </div>

@@ -20,12 +20,12 @@ export interface SecurityConfig {
   // Rate limiting configuration
   rateLimitEnabled: boolean;
   rateLimitPerMinute: number; // Requests per minute per client
-  
+
   // Audit logging configuration
   auditLogEnabled: boolean;
   auditLogPath?: string; // Path for audit logs
   auditLogRetentionDays: number;
-  
+
   // CORS configuration
   corsEnabled: boolean;
   allowedOrigins: string[]; // List of allowed origins for CORS
@@ -83,11 +83,10 @@ export interface SpecData {
 
 export interface PhaseStatus {
   exists: boolean;
-  approved?: boolean; // Optional for backwards compatibility  
+  approved?: boolean; // Optional for backwards compatibility
   lastModified?: string;
   content?: string;
 }
-
 
 export interface SteeringStatus {
   exists: boolean;
@@ -129,53 +128,53 @@ export interface ImplementationLogEntry {
   };
   artifacts: {
     apiEndpoints?: Array<{
-      method: string;           // GET, POST, PUT, DELETE, PATCH
-      path: string;             // /api/specs/:name/logs
-      purpose: string;          // What this endpoint does
-      requestFormat?: string;   // Request body/params format or example
-      responseFormat?: string;  // Response format or example
-      location: string;         // File path and line number (e.g., "src/server.ts:245")
+      method: string; // GET, POST, PUT, DELETE, PATCH
+      path: string; // /api/specs/:name/logs
+      purpose: string; // What this endpoint does
+      requestFormat?: string; // Request body/params format or example
+      responseFormat?: string; // Response format or example
+      location: string; // File path and line number (e.g., "src/server.ts:245")
     }>;
     components?: Array<{
-      name: string;             // ComponentName
-      type: string;             // "React", "Vue", "Svelte", etc.
-      purpose: string;          // What the component does
-      location: string;         // File path
-      props?: string;           // Props interface or signature
-      exports?: string[];       // What it exports
+      name: string; // ComponentName
+      type: string; // "React", "Vue", "Svelte", etc.
+      purpose: string; // What the component does
+      location: string; // File path
+      props?: string; // Props interface or signature
+      exports?: string[]; // What it exports
     }>;
     functions?: Array<{
-      name: string;             // Function/method name
-      purpose: string;          // What it does
-      location: string;         // File path and line
-      signature?: string;       // Function signature
-      isExported: boolean;      // Can it be imported?
+      name: string; // Function/method name
+      purpose: string; // What it does
+      location: string; // File path and line
+      signature?: string; // Function signature
+      isExported: boolean; // Can it be imported?
     }>;
     classes?: Array<{
-      name: string;             // Class name
-      purpose: string;          // What it does
-      location: string;         // File path
-      methods?: string[];       // Public methods
+      name: string; // Class name
+      purpose: string; // What it does
+      location: string; // File path
+      methods?: string[]; // Public methods
       isExported: boolean;
     }>;
     integrations?: Array<{
-      description: string;      // How frontend connects to backend
+      description: string; // How frontend connects to backend
       frontendComponent: string; // Which component
-      backendEndpoint: string;  // Which API endpoint
-      dataFlow: string;         // How data flows
+      backendEndpoint: string; // Which API endpoint
+      dataFlow: string; // How data flows
     }>;
     tests?: Array<{
-      name: string;              // Test suite or file name
-      type: string;              // unit | integration | e2e | smoke | acceptance
-      framework: string;         // playwright | vitest | jest | cypress | manual
-      location: string;          // File path
-      status: string;            // passed | failed | skipped
-      passed: number;            // Passing test count
-      failed: number;            // Failing test count
-      total: number;             // Total test count
-      duration?: string;         // Execution time (e.g., "4.2s")
-      coveragePercent?: number;  // Code coverage percentage
-      userStories?: string[];    // Linked requirement IDs from spec
+      name: string; // Test suite or file name
+      type: string; // unit | integration | e2e | smoke | acceptance
+      framework: string; // playwright | vitest | jest | cypress | manual
+      location: string; // File path
+      status: string; // passed | failed | skipped
+      passed: number; // Passing test count
+      failed: number; // Failing test count
+      total: number; // Total test count
+      duration?: string; // Execution time (e.g., "4.2s")
+      coveragePercent?: number; // Code coverage percentage
+      userStories?: string[]; // Linked requirement IDs from spec
     }>;
   };
 }
@@ -201,7 +200,7 @@ export interface ToolResponse {
 // MCP-compliant response format (matches CallToolResult from MCP SDK)
 export interface MCPToolResponse {
   content: Array<{
-    type: "text";
+    type: 'text';
     text: string;
   }>;
   isError?: boolean;
@@ -211,10 +210,12 @@ export interface MCPToolResponse {
 // Helper function to convert ToolResponse to MCP format
 export function toMCPResponse(response: ToolResponse, isError: boolean = false): MCPToolResponse {
   return {
-    content: [{
-      type: "text",
-      text: encode(response)
-    }],
-    isError
+    content: [
+      {
+        type: 'text',
+        text: encode(response),
+      },
+    ],
+    isError,
   };
 }

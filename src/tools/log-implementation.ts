@@ -255,93 +255,103 @@ Task: "Implemented logs dashboard with real-time updates"
     properties: {
       projectPath: {
         type: 'string',
-        description: 'Absolute path to the project root (optional - uses server context path if not provided)'
+        description:
+          'Absolute path to the project root (optional - uses server context path if not provided)',
       },
       specName: {
         type: 'string',
-        description: 'Name of the specification'
+        description: 'Name of the specification',
       },
       taskId: {
         type: 'string',
-        description: 'Task ID (e.g., "1", "1.2", "3.1.4")'
+        description: 'Task ID (e.g., "1", "1.2", "3.1.4")',
       },
       summary: {
         type: 'string',
-        description: 'Brief summary of what was implemented'
+        description: 'Brief summary of what was implemented',
       },
       filesModified: {
         type: 'array',
         items: { type: 'string' },
-        description: 'List of files that were modified'
+        description: 'List of files that were modified',
       },
       filesCreated: {
         type: 'array',
         items: { type: 'string' },
-        description: 'List of files that were created'
+        description: 'List of files that were created',
       },
       statistics: {
         type: 'object',
         properties: {
           linesAdded: {
             type: 'number',
-            description: 'Number of lines added'
+            description: 'Number of lines added',
           },
           linesRemoved: {
             type: 'number',
-            description: 'Number of lines removed'
-          }
+            description: 'Number of lines removed',
+          },
         },
         required: ['linesAdded', 'linesRemoved'],
-        description: 'Code statistics for the implementation'
+        description: 'Code statistics for the implementation',
       },
       artifacts: {
         type: 'object',
-        description: 'REQUIRED: Structured data about implemented artifacts (APIs, components, functions, classes, integrations). See tool description for detailed format.',
+        description:
+          'REQUIRED: Structured data about implemented artifacts (APIs, components, functions, classes, integrations). See tool description for detailed format.',
         properties: {
           apiEndpoints: {
             type: 'array',
             description: 'API endpoints created or modified',
-            items: { type: 'object' }
+            items: { type: 'object' },
           },
           components: {
             type: 'array',
             description: 'Reusable UI components created',
-            items: { type: 'object' }
+            items: { type: 'object' },
           },
           functions: {
             type: 'array',
             description: 'Utility functions or methods created',
-            items: { type: 'object' }
+            items: { type: 'object' },
           },
           classes: {
             type: 'array',
             description: 'Classes created',
-            items: { type: 'object' }
+            items: { type: 'object' },
           },
           integrations: {
             type: 'array',
             description: 'Frontend-backend integration patterns',
-            items: { type: 'object' }
+            items: { type: 'object' },
           },
           tests: {
             type: 'array',
             description: 'Tests written and run for this task (must include execution results)',
-            items: { type: 'object' }
-          }
-        }
-      }
+            items: { type: 'object' },
+          },
+        },
+      },
     },
-    required: ['specName', 'taskId', 'summary', 'filesModified', 'filesCreated', 'statistics', 'artifacts']
+    required: [
+      'specName',
+      'taskId',
+      'summary',
+      'filesModified',
+      'filesCreated',
+      'statistics',
+      'artifacts',
+    ],
   },
   annotations: {
     title: 'Log Implementation',
     destructiveHint: true,
-  }
+  },
 };
 
 export async function logImplementationHandler(
   args: any,
-  context: ToolContext
+  context: ToolContext,
 ): Promise<ToolResponse> {
   const {
     specName,
@@ -350,16 +360,16 @@ export async function logImplementationHandler(
     filesModified = [],
     filesCreated = [],
     statistics,
-    artifacts
+    artifacts,
   } = args;
-  
+
   // Use context projectPath as default, allow override via args
   const projectPath = args.projectPath || context.projectPath;
-  
+
   if (!projectPath) {
     return {
       success: false,
-      message: 'Project path is required but not provided in context or arguments'
+      message: 'Project path is required but not provided in context or arguments',
     };
   }
 
@@ -368,13 +378,14 @@ export async function logImplementationHandler(
     if (!artifacts) {
       return {
         success: false,
-        message: 'Artifacts field is REQUIRED. See tool description for detailed artifact format and examples.',
+        message:
+          'Artifacts field is REQUIRED. See tool description for detailed artifact format and examples.',
         nextSteps: [
           'Review the log-implementation tool description for artifact structure',
           'Document all API endpoints, components, functions, classes, integrations, and tests',
           'Provide structured artifact data before calling this tool',
-          'Ensure artifacts contains at least one of: apiEndpoints, components, functions, classes, integrations, or tests'
-        ]
+          'Ensure artifacts contains at least one of: apiEndpoints, components, functions, classes, integrations, or tests',
+        ],
       };
     }
 
@@ -386,7 +397,7 @@ export async function logImplementationHandler(
       const { promises: fs } = await import('fs');
       const tasksContent = await fs.readFile(tasksFile, 'utf-8');
       const parseResult = parseTasksFromMarkdown(tasksContent);
-      const taskExists = parseResult.tasks.some(t => t.id === taskId);
+      const taskExists = parseResult.tasks.some((t) => t.id === taskId);
 
       if (!taskExists) {
         return {
@@ -395,8 +406,8 @@ export async function logImplementationHandler(
           nextSteps: [
             `Check the task ID in the spec's tasks.md`,
             'Verify the spec name is correct',
-            'Use spec-status to see available tasks'
-          ]
+            'Use spec-status to see available tasks',
+          ],
         };
       }
     } catch (parseError) {
@@ -406,8 +417,8 @@ export async function logImplementationHandler(
         nextSteps: [
           `Check that the spec's tasks.md exists (use spec-status to verify)`,
           'Verify the tasks file is valid markdown',
-          'Use spec-status to diagnose issues'
-        ]
+          'Use spec-status to diagnose issues',
+        ],
       };
     }
 
@@ -423,9 +434,9 @@ export async function logImplementationHandler(
       statistics: {
         linesAdded: statistics.linesAdded || 0,
         linesRemoved: statistics.linesRemoved || 0,
-        filesChanged: (filesModified?.length || 0) + (filesCreated?.length || 0)
+        filesChanged: (filesModified?.length || 0) + (filesCreated?.length || 0),
       },
-      artifacts
+      artifacts,
     };
 
     const createdEntry = await logManager.addLogEntry(logEntry);
@@ -440,19 +451,19 @@ export async function logImplementationHandler(
         entryId: createdEntry.id,
         entry: createdEntry,
         taskStats,
-        dashboardUrl: `${context.dashboardUrl}/logs?spec=${encodeURIComponent(specName)}&task=${taskId}`
+        dashboardUrl: `${context.dashboardUrl}/logs?spec=${encodeURIComponent(specName)}&task=${taskId}`,
       },
       nextSteps: [
         'Mark task as completed in tasks.md by changing [-] to [x]',
         'View implementation log in dashboard under Logs tab',
-        'Continue with next pending task'
+        'Continue with next pending task',
       ],
       projectContext: {
         projectPath,
         workflowRoot: PathUtils.getWorkflowRoot(projectPath),
         specName,
-        dashboardUrl: context.dashboardUrl
-      }
+        dashboardUrl: context.dashboardUrl,
+      },
     };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
@@ -462,8 +473,8 @@ export async function logImplementationHandler(
       nextSteps: [
         'Verify all required parameters are provided',
         'Check that the spec and task exist',
-        'View dashboard logs to see previous entries'
-      ]
+        'View dashboard logs to see previous entries',
+      ],
     };
   }
 }

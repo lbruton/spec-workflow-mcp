@@ -33,6 +33,7 @@ npm install
 ```
 
 Cela installe :
+
 - SDK MCP
 - TypeScript et outils de compilation
 - Express pour le serveur de tableau de bord
@@ -51,15 +52,15 @@ Cela compile les fichiers TypeScript en JavaScript dans le répertoire `dist/`.
 
 ### Commandes principales
 
-| Commande | Description |
-|---------|-------------|
-| `npm run dev` | Démarrer en mode développement avec rechargement automatique |
-| `npm run build` | Compiler le bundle de production |
-| `npm start` | Exécuter le serveur de production |
-| `npm test` | Exécuter la suite de tests |
-| `npm run clean` | Supprimer les artefacts de compilation |
-| `npm run lint` | Exécuter le linter de code |
-| `npm run format` | Formater le code avec Prettier |
+| Commande         | Description                                                  |
+| ---------------- | ------------------------------------------------------------ |
+| `npm run dev`    | Démarrer en mode développement avec rechargement automatique |
+| `npm run build`  | Compiler le bundle de production                             |
+| `npm start`      | Exécuter le serveur de production                            |
+| `npm test`       | Exécuter la suite de tests                                   |
+| `npm run clean`  | Supprimer les artefacts de compilation                       |
+| `npm run lint`   | Exécuter le linter de code                                   |
+| `npm run format` | Formater le code avec Prettier                               |
 
 ### Mode développement
 
@@ -68,6 +69,7 @@ npm run dev
 ```
 
 Fonctionnalités :
+
 - Recompilation automatique lors des modifications de fichiers
 - Rechargement à chaud pour le tableau de bord
 - Messages d'erreur détaillés
@@ -80,6 +82,7 @@ npm run clean && npm run build
 ```
 
 Optimisations :
+
 - JavaScript minifié
 - Taille de bundle optimisée
 - Gestion d'erreur de production
@@ -122,26 +125,32 @@ Client (IA) ↔ Protocole MCP ↔ Serveur ↔ Système de fichiers
 ### Composants clés
 
 #### 1. Serveur MCP (`src/index.ts`)
+
 - Gère la communication du protocole MCP
 - Traite les requêtes d'outils
 - Gère l'état du projet
 - Opérations sur le système de fichiers
 
 #### 2. Serveur de tableau de bord (`src/server.ts`)
+
 - Sert le tableau de bord web
 - Connexions WebSocket
 - Mises à jour en temps réel
 - Points de terminaison API HTTP
 
 #### 3. Outils (`src/tools/`)
+
 Chaque outil est un module séparé :
+
 - Validation des entrées
 - Logique métier
 - Opérations sur les fichiers
 - Formatage des réponses
 
 #### 4. Prompts (`src/prompts/`)
+
 Chaînes de modèles pour :
+
 - Génération de documents
 - Guidance du flux de travail
 - Messages d'erreur
@@ -159,14 +168,14 @@ import { Tool } from '@anthropic/mcp-sdk';
 
 export const myNewTool: Tool = {
   name: 'my-new-tool',
-  description: 'Description de ce que fait l\'outil',
+  description: "Description de ce que fait l'outil",
   parameters: {
     type: 'object',
     properties: {
       param1: { type: 'string', description: 'Description du paramètre' },
-      param2: { type: 'number', optional: true }
+      param2: { type: 'number', optional: true },
     },
-    required: ['param1']
+    required: ['param1'],
   },
   handler: async (params) => {
     // Implémentation de l'outil
@@ -176,9 +185,9 @@ export const myNewTool: Tool = {
 
     return {
       success: true,
-      data: 'Réponse de l\'outil'
+      data: "Réponse de l'outil",
     };
-  }
+  },
 };
 ```
 
@@ -212,10 +221,14 @@ server.registerTool(myNewTool);
 ```javascript
 document.getElementById('new-action').addEventListener('click', () => {
   // Logique de la fonctionnalité
-  ws.send(JSON.stringify({
-    type: 'new-action',
-    data: { /* ... */ }
-  }));
+  ws.send(
+    JSON.stringify({
+      type: 'new-action',
+      data: {
+        /* ... */
+      },
+    }),
+  );
 });
 ```
 
@@ -258,9 +271,9 @@ import { describe, it, expect } from 'vitest';
 import { myTool } from './my-tool';
 
 describe('myTool', () => {
-  it('devrait traiter l\'entrée correctement', async () => {
+  it("devrait traiter l'entrée correctement", async () => {
     const result = await myTool.handler({
-      param1: 'test'
+      param1: 'test',
     });
 
     expect(result.success).toBe(true);
@@ -269,7 +282,7 @@ describe('myTool', () => {
 
   it('devrait gérer les erreurs', async () => {
     const result = await myTool.handler({
-      param1: null
+      param1: null,
     });
 
     expect(result.success).toBe(false);
@@ -332,7 +345,7 @@ console.error('[DEBUG]', 'Outil appelé :', toolName, params);
 
 ```javascript
 console.log('Message WebSocket :', message);
-console.log('Mise à jour d\'état :', newState);
+console.log("Mise à jour d'état :", newState);
 ```
 
 ## Style de code et normes
@@ -397,6 +410,7 @@ Suivre les commits conventionnels :
 - `chore:` Maintenance
 
 Exemples :
+
 ```
 feat: ajouter le flux de travail de révision d'approbation
 fix: résoudre le problème de reconnexion WebSocket du tableau de bord
@@ -416,11 +430,13 @@ docs: mettre à jour le guide de configuration
 ### Package NPM
 
 1. **Mettre à jour la version** :
+
    ```bash
    npm version patch|minor|major
    ```
 
 2. **Compiler le package** :
+
    ```bash
    npm run build
    ```
@@ -435,6 +451,7 @@ docs: mettre à jour le guide de configuration
 1. **Mettre à jour la version de l'extension** dans `vscode-extension/package.json`
 
 2. **Compiler l'extension** :
+
    ```bash
    cd vscode-extension
    npm run package
@@ -490,11 +507,11 @@ if (safePath.includes('..')) {
 
 ### Erreurs de compilation courantes
 
-| Erreur | Solution |
-|-------|----------|
-| Erreurs TypeScript | Exécuter `npm run build` pour voir les erreurs détaillées |
-| Module introuvable | Vérifier les imports et exécuter `npm install` |
-| Port déjà utilisé | Changer le port ou tuer le processus existant |
+| Erreur                       | Solution                                                                    |
+| ---------------------------- | --------------------------------------------------------------------------- |
+| Erreurs TypeScript           | Exécuter `npm run build` pour voir les erreurs détaillées                   |
+| Module introuvable           | Vérifier les imports et exécuter `npm install`                              |
+| Port déjà utilisé            | Changer le port ou tuer le processus existant                               |
 | Échec de connexion WebSocket | Vérifier que le serveur est en cours d'exécution et que le port est correct |
 
 ### Conseils de développement

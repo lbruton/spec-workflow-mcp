@@ -12,10 +12,10 @@ npx -y @pimzino/spec-workflow-mcp@latest [project-path] [options]
 
 ### 可用选项
 
-| 选项 | 描述 | 示例 |
-|--------|-------------|---------|
-| `--help` | 显示详细使用信息 | `npx -y @pimzino/spec-workflow-mcp@latest --help` |
-| `--dashboard` | 运行纯仪表板模式（默认端口：5000） | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard` |
+| 选项              | 描述                               | 示例                                                               |
+| ----------------- | ---------------------------------- | ------------------------------------------------------------------ |
+| `--help`          | 显示详细使用信息                   | `npx -y @pimzino/spec-workflow-mcp@latest --help`                  |
+| `--dashboard`     | 运行纯仪表板模式（默认端口：5000） | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard`             |
 | `--port <number>` | 指定自定义仪表板端口（1024-65535） | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080` |
 
 ### 重要说明
@@ -29,12 +29,14 @@ npx -y @pimzino/spec-workflow-mcp@latest [project-path] [options]
 ### 典型工作流程
 
 1. **启动仪表板**（首先执行此操作，仅一次）：
+
 ```bash
 # 使用默认端口 5000
 npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 ```
 
 2. **启动 MCP 服务器**（每个项目一个，在单独的终端中）：
+
 ```bash
 # 项目 1
 npx -y @pimzino/spec-workflow-mcp@latest ~/projects/app1
@@ -63,11 +65,12 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 覆盖默认的全局状态目录（`~/.specflow-mcp`）。这对于 `$HOME` 为只读的沙盒环境很有用。
 
-| 变量 | 默认值 | 描述 |
-|----------|---------|-------------|
+| 变量                 | 默认值            | 描述               |
+| -------------------- | ----------------- | ------------------ |
 | `SPEC_WORKFLOW_HOME` | `~/.specflow-mcp` | 全局状态文件的目录 |
 
 **存储在此目录中的文件：**
+
 - `activeProjects.json` - 项目注册表
 - `activeSession.json` - 仪表板会话信息
 - `settings.json` - 全局设置
@@ -98,6 +101,7 @@ SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@la
 ## 仪表板会话管理
 
 仪表板将其会话信息存储在 `~/.specflow-mcp/activeSession.json`（如果设置了 `$SPEC_WORKFLOW_HOME`，则为 `$SPEC_WORKFLOW_HOME/activeSession.json`）中。此文件：
+
 - 强制实施单一仪表板实例
 - 允许 MCP 服务器发现正在运行的仪表板
 - 在仪表板停止时自动清理
@@ -177,12 +181,12 @@ debounceMs = 300
 
 #### 基本设置
 
-| 选项 | 类型 | 默认值 | 描述 |
-|--------|------|---------|-------------|
-| `projectDir` | string | 当前目录 | 项目目录路径 |
-| `port` | number | 临时端口 | 仪表板端口（1024-65535） |
-| `dashboardOnly` | boolean | false | 运行仪表板而不运行 MCP 服务器 |
-| `lang` | string | "en" | 界面语言 |
+| 选项            | 类型    | 默认值   | 描述                          |
+| --------------- | ------- | -------- | ----------------------------- |
+| `projectDir`    | string  | 当前目录 | 项目目录路径                  |
+| `port`          | number  | 临时端口 | 仪表板端口（1024-65535）      |
+| `dashboardOnly` | boolean | false    | 运行仪表板而不运行 MCP 服务器 |
+| `lang`          | string  | "en"     | 界面语言                      |
 
 > **注意**：`autoStartDashboard` 选项在 v2.0.0 中已移除。仪表板现在使用统一的多项目模式，可通过 `--dashboard` 标志访问。
 
@@ -203,11 +207,13 @@ debounceMs = 300
 ### 创建自定义配置
 
 1. 复制示例配置：
+
 ```bash
 cp .specflow/config.example.toml .specflow/config.toml
 ```
 
 2. 编辑配置：
+
 ```toml
 # 我的项目配置
 projectDir = "/Users/myname/projects/myapp"
@@ -216,6 +222,7 @@ lang = "en"
 ```
 
 3. 使用配置：
+
 ```bash
 # 自动使用 .specflow/config.toml
 npx -y @pimzino/spec-workflow-mcp@latest
@@ -262,6 +269,7 @@ verboseLogging = true
 ```
 
 用法：
+
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest --config dev-config.toml
 ```
@@ -280,6 +288,7 @@ verboseLogging = false
 ```
 
 用法：
+
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ```
@@ -293,6 +302,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ### 临时端口
 
 当未指定端口时，系统会自动选择可用的临时端口。建议用于：
+
 - 开发环境
 - 多个同时项目
 - 避免端口冲突
@@ -300,6 +310,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ### 固定端口
 
 在以下情况下使用固定端口：
+
 - 需要一致的 URL 以便书签
 - 与其他工具集成
 - 使用共享配置的团队协作
@@ -367,11 +378,13 @@ VSCode 扩展有自己的设置：
 ### 配置未加载
 
 1. **检查文件位置：**
+
    ```bash
    ls -la .specflow/config.toml
    ```
 
 2. **验证 TOML 语法：**
+
    ```bash
    # 安装 toml CLI 工具
    npm install -g @iarna/toml
@@ -388,12 +401,12 @@ VSCode 扩展有自己的设置：
 
 ### 常见问题
 
-| 问题 | 解决方案 |
-|-------|----------|
-| 端口已被使用 | 使用不同端口或省略以使用临时端口 |
-| 找不到配置文件 | 检查路径，必要时使用绝对路径 |
-| 无效的 TOML 语法 | 使用 TOML 检查器验证 |
-| 设置未应用 | 检查配置优先级 |
+| 问题             | 解决方案                         |
+| ---------------- | -------------------------------- |
+| 端口已被使用     | 使用不同端口或省略以使用临时端口 |
+| 找不到配置文件   | 检查路径，必要时使用绝对路径     |
+| 无效的 TOML 语法 | 使用 TOML 检查器验证             |
+| 设置未应用       | 检查配置优先级                   |
 
 ## 最佳实践
 

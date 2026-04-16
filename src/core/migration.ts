@@ -25,11 +25,11 @@ export interface MigrationResult {
  * Note: `user-templates/` is renamed to `templates/` in DocVault.
  */
 const MIGRATION_MAP: Record<string, string> = {
-  'steering': 'steering',
-  'specs': 'specs',
+  steering: 'steering',
+  specs: 'specs',
   'user-templates': 'templates',
-  'approvals': 'approvals',
-  'archive': 'archive',
+  approvals: 'approvals',
+  archive: 'archive',
 };
 
 /**

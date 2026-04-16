@@ -38,16 +38,18 @@ function Content() {
       setLoading(true);
       const response = await fetch('/api/jobs');
       const data = await response.json();
-      setJobs(data.map((job: AutomationJob) => ({
-        id: job.id,
-        name: job.name,
-        type: job.type,
-        enabled: job.enabled,
-        daysOld: job.config.daysOld,
-        schedule: job.schedule,
-        lastRun: job.lastRun,
-        nextRun: job.nextRun
-      })));
+      setJobs(
+        data.map((job: AutomationJob) => ({
+          id: job.id,
+          name: job.name,
+          type: job.type,
+          enabled: job.enabled,
+          daysOld: job.config.daysOld,
+          schedule: job.schedule,
+          lastRun: job.lastRun,
+          nextRun: job.nextRun,
+        })),
+      );
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load jobs');
@@ -65,11 +67,11 @@ function Content() {
       const response = await fetch(`/api/jobs/${jobId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ enabled: !enabled })
+        body: JSON.stringify({ enabled: !enabled }),
       });
 
       if (response.ok) {
-        setJobs(jobs.map(j => j.id === jobId ? { ...j, enabled: !j.enabled } : j));
+        setJobs(jobs.map((j) => (j.id === jobId ? { ...j, enabled: !j.enabled } : j)));
         setError(null);
       } else {
         setError('Failed to update job');
@@ -81,13 +83,13 @@ function Content() {
 
   const handleRunJob = async (jobId: string) => {
     try {
-      setRunning(prev => ({ ...prev, [jobId]: true }));
+      setRunning((prev) => ({ ...prev, [jobId]: true }));
       const response = await fetch(`/api/jobs/${jobId}/run`, { method: 'POST' });
       const result = await response.json();
 
       if (response.ok) {
         // Update last run time
-        setJobs(jobs.map(j => j.id === jobId ? { ...j, lastRun: result.startTime } : j));
+        setJobs(jobs.map((j) => (j.id === jobId ? { ...j, lastRun: result.startTime } : j)));
         setError(null);
       } else {
         setError(result.error || 'Failed to run job');
@@ -95,7 +97,7 @@ function Content() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to run job');
     } finally {
-      setRunning(prev => ({ ...prev, [jobId]: false }));
+      setRunning((prev) => ({ ...prev, [jobId]: false }));
     }
   };
 
@@ -113,8 +115,8 @@ function Content() {
             name: formJob.name,
             enabled: formJob.enabled,
             config: formJob.config,
-            schedule: formJob.schedule
-          })
+            schedule: formJob.schedule,
+          }),
         });
 
         if (response.ok) {
@@ -131,7 +133,7 @@ function Content() {
         const response = await fetch('/api/jobs', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formJob)
+          body: JSON.stringify(formJob),
         });
 
         if (response.ok) {
@@ -157,7 +159,7 @@ function Content() {
       const response = await fetch(`/api/jobs/${jobToDelete}`, { method: 'DELETE' });
 
       if (response.ok) {
-        setJobs(jobs.filter(j => j.id !== jobToDelete));
+        setJobs(jobs.filter((j) => j.id !== jobToDelete));
         setJobToDelete(null);
         setShowDeleteModal(false);
         setError(null);
@@ -173,7 +175,7 @@ function Content() {
     const typeMap: Record<string, string> = {
       'cleanup-approvals': 'Cleanup Approvals',
       'cleanup-specs': 'Cleanup Specs',
-      'cleanup-archived-specs': 'Cleanup Archived Specs'
+      'cleanup-archived-specs': 'Cleanup Archived Specs',
     };
     return typeMap[type] || type;
   };
@@ -214,7 +216,10 @@ function Content() {
               {t('settings.title', 'Settings')}
             </h1>
             <p className="text-[var(--text-secondary)]">
-              {t('settings.description', 'Manage automated cleanup jobs that run across all connected projects')}
+              {t(
+                'settings.description',
+                'Manage automated cleanup jobs that run across all connected projects',
+              )}
             </p>
           </div>
         </div>
@@ -247,7 +252,9 @@ function Content() {
           className="w-full px-6 py-4 flex items-center justify-between hover:bg-[var(--surface-hover)] transition-colors"
         >
           <div className="flex items-center gap-4 flex-1 text-left">
-            <ChevronRightIcon className={`w-5 h-5 text-[var(--text-muted)] transition-transform ${expandedSections.has('automatedCleanup') ? 'rotate-90' : ''}`} />
+            <ChevronRightIcon
+              className={`w-5 h-5 text-[var(--text-muted)] transition-transform ${expandedSections.has('automatedCleanup') ? 'rotate-90' : ''}`}
+            />
             <div>
               <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                 {t('settings.section.automatedCleanup', 'Automated Cleanup')}
@@ -260,7 +267,10 @@ function Content() {
         {expandedSections.has('automatedCleanup') && (
           <div className="border-t border-[var(--border-default)] p-6 space-y-6">
             <p className="text-sm text-[var(--text-secondary)]">
-              {t('settings.section.automatedCleanupDesc', 'Automatically delete old approval records, specifications, and archived specifications based on a schedule. Configure cleanup jobs to run on a recurring basis across all connected projects.')}
+              {t(
+                'settings.section.automatedCleanupDesc',
+                'Automatically delete old approval records, specifications, and archived specifications based on a schedule. Configure cleanup jobs to run on a recurring basis across all connected projects.',
+              )}
             </p>
 
             {/* Add Job Button */}
@@ -280,8 +290,18 @@ function Content() {
             {!loading && jobs.length === 0 && (
               <div className="bg-[var(--surface-secondary)] rounded-lg border border-[var(--border-default)] p-8">
                 <div className="text-center">
-                  <svg className="w-12 h-12 text-[var(--text-muted)] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  <svg
+                    className="w-12 h-12 text-[var(--text-muted)] mx-auto mb-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
                   </svg>
                   <h3 className="text-lg font-medium text-[var(--text-primary)] mb-1">
                     {t('settings.noJobs', 'No automation jobs')}
@@ -306,119 +326,132 @@ function Content() {
             {!loading && jobs.length > 0 && (
               <div className="grid grid-cols-1 gap-4">
                 {jobs.map((job) => (
-          <div key={job.id} className="bg-[var(--surface-panel)] rounded-lg border border-[var(--border-default)] overflow-hidden">
-            <div className="p-6">
-              <div className="flex items-start justify-between mb-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-4 mb-2">
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)]">{job.name}</h3>
-                  <span className="px-2 py-1 bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] text-xs font-medium rounded-md">
-                    {getJobTypeLabel(job.type)}
-                  </span>
-                </div>
-                <p className="text-sm text-[var(--text-secondary)] mb-4">
-                  {t('settings.jobDescription', 'Delete records older than {{days}} days on schedule: {{schedule}}', {
-                    days: job.daysOld,
-                    schedule: job.schedule
-                  })}
-                </p>
+                  <div
+                    key={job.id}
+                    className="bg-[var(--surface-panel)] rounded-lg border border-[var(--border-default)] overflow-hidden"
+                  >
+                    <div className="p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-4 mb-2">
+                            <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                              {job.name}
+                            </h3>
+                            <span className="px-2 py-1 bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] text-xs font-medium rounded-md">
+                              {getJobTypeLabel(job.type)}
+                            </span>
+                          </div>
+                          <p className="text-sm text-[var(--text-secondary)] mb-4">
+                            {t(
+                              'settings.jobDescription',
+                              'Delete records older than {{days}} days on schedule: {{schedule}}',
+                              {
+                                days: job.daysOld,
+                                schedule: job.schedule,
+                              },
+                            )}
+                          </p>
 
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <label className="text-xs font-medium text-[var(--text-muted)] block mb-1">
-                      {t('settings.lastRun', 'Last Run')}
-                    </label>
-                    <p className="text-sm text-[var(--text-primary)]">{formatLastRun(job.lastRun)}</p>
+                          <div className="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                              <label className="text-xs font-medium text-[var(--text-muted)] block mb-1">
+                                {t('settings.lastRun', 'Last Run')}
+                              </label>
+                              <p className="text-sm text-[var(--text-primary)]">
+                                {formatLastRun(job.lastRun)}
+                              </p>
+                            </div>
+                            <div>
+                              <label className="text-xs font-medium text-[var(--text-muted)] block mb-1">
+                                {t('settings.schedule', 'Schedule')}
+                              </label>
+                              <p className="text-sm text-[var(--text-primary)] font-mono">
+                                {job.schedule}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Expand/Collapse and Toggle */}
+                        <div className="flex flex-col gap-2 ml-4 items-end">
+                          <button
+                            type="button"
+                            onClick={() => toggleJobExpanded(job.id)}
+                            className="flex items-center gap-1 text-sm text-[var(--accent-primary)] hover:underline"
+                          >
+                            {expandedJobs.has(job.id) ? (
+                              <ChevronDownIcon className="w-4 h-4" />
+                            ) : (
+                              <ChevronRightIcon className="w-4 h-4" />
+                            )}
+                            History
+                          </button>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={job.enabled}
+                              onChange={() => handleToggleJob(job.id, job.enabled)}
+                              className="w-5 h-5 rounded-md accent-[var(--accent-primary)]"
+                            />
+                            <span className="text-sm font-medium text-[var(--text-secondary)]">
+                              {job.enabled ? 'Enabled' : 'Disabled'}
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-2 pt-4 border-t border-[var(--border-default)]">
+                      <button
+                        onClick={() => handleRunJob(job.id)}
+                        disabled={running[job.id] || !job.enabled}
+                        className="flex-1 px-3 py-2 bg-[var(--status-success-bg)] hover:opacity-80 text-[var(--status-success)] text-sm font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {running[job.id] ? (
+                          <>
+                            <span className="inline-block mr-2 animate-spin">⟳</span>
+                            {t('settings.running', 'Running...')}
+                          </>
+                        ) : (
+                          t('settings.runNow', 'Run Now')
+                        )}
+                      </button>
+                      <button
+                        onClick={() => {
+                          const fullJob = {
+                            id: job.id,
+                            name: job.name,
+                            type: job.type,
+                            enabled: job.enabled,
+                            config: { daysOld: job.daysOld },
+                            schedule: job.schedule,
+                            lastRun: job.lastRun,
+                            nextRun: job.nextRun,
+                            createdAt: new Date().toISOString(),
+                          };
+                          setEditingJob(fullJob);
+                          setShowFormModal(true);
+                        }}
+                        className="flex-1 px-3 py-2 bg-[var(--surface-secondary)] hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] text-sm font-medium rounded-md transition-colors"
+                      >
+                        {t('settings.edit', 'Edit')}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setJobToDelete(job.id);
+                          setShowDeleteModal(true);
+                        }}
+                        className="flex-1 px-3 py-2 bg-[var(--status-error-bg)] hover:opacity-80 text-[var(--status-error)] text-sm font-medium rounded-md transition-colors"
+                      >
+                        {t('settings.delete', 'Delete')}
+                      </button>
+                    </div>
+
+                    {/* Execution History */}
+                    <JobExecutionHistory jobId={job.id} isExpanded={expandedJobs.has(job.id)} />
                   </div>
-                  <div>
-                    <label className="text-xs font-medium text-[var(--text-muted)] block mb-1">
-                      {t('settings.schedule', 'Schedule')}
-                    </label>
-                    <p className="text-sm text-[var(--text-primary)] font-mono">{job.schedule}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Expand/Collapse and Toggle */}
-              <div className="flex flex-col gap-2 ml-4 items-end">
-                <button
-                  type="button"
-                  onClick={() => toggleJobExpanded(job.id)}
-                  className="flex items-center gap-1 text-sm text-[var(--accent-primary)] hover:underline"
-                >
-                  {expandedJobs.has(job.id) ? (
-                    <ChevronDownIcon className="w-4 h-4" />
-                  ) : (
-                    <ChevronRightIcon className="w-4 h-4" />
-                  )}
-                  History
-                </button>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={job.enabled}
-                    onChange={() => handleToggleJob(job.id, job.enabled)}
-                    className="w-5 h-5 rounded-md accent-[var(--accent-primary)]"
-                  />
-                  <span className="text-sm font-medium text-[var(--text-secondary)]">
-                    {job.enabled ? 'Enabled' : 'Disabled'}
-                  </span>
-                </label>
-              </div>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-2 pt-4 border-t border-[var(--border-default)]">
-              <button
-                onClick={() => handleRunJob(job.id)}
-                disabled={running[job.id] || !job.enabled}
-                className="flex-1 px-3 py-2 bg-[var(--status-success-bg)] hover:opacity-80 text-[var(--status-success)] text-sm font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {running[job.id] ? (
-                  <>
-                    <span className="inline-block mr-2 animate-spin">⟳</span>
-                    {t('settings.running', 'Running...')}
-                  </>
-                ) : (
-                  t('settings.runNow', 'Run Now')
-                )}
-              </button>
-              <button
-                onClick={() => {
-                  const fullJob = {
-                    id: job.id,
-                    name: job.name,
-                    type: job.type,
-                    enabled: job.enabled,
-                    config: { daysOld: job.daysOld },
-                    schedule: job.schedule,
-                    lastRun: job.lastRun,
-                    nextRun: job.nextRun,
-                    createdAt: new Date().toISOString()
-                  };
-                  setEditingJob(fullJob);
-                  setShowFormModal(true);
-                }}
-                className="flex-1 px-3 py-2 bg-[var(--surface-secondary)] hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] text-sm font-medium rounded-md transition-colors"
-              >
-                {t('settings.edit', 'Edit')}
-              </button>
-              <button
-                onClick={() => {
-                  setJobToDelete(job.id);
-                  setShowDeleteModal(true);
-                }}
-                className="flex-1 px-3 py-2 bg-[var(--status-error-bg)] hover:opacity-80 text-[var(--status-error)] text-sm font-medium rounded-md transition-colors"
-              >
-                {t('settings.delete', 'Delete')}
-              </button>
-            </div>
-
-            {/* Execution History */}
-            <JobExecutionHistory jobId={job.id} isExpanded={expandedJobs.has(job.id)} />
-          </div>
-        ))}
+                ))}
               </div>
             )}
           </div>
@@ -445,7 +478,10 @@ function Content() {
               {t('settings.deleteJob', 'Delete Job')}
             </h2>
             <p className="text-[var(--text-secondary)] mb-6">
-              {t('settings.deleteConfirm', 'Are you sure you want to delete this automation job? This action cannot be undone.')}
+              {t(
+                'settings.deleteConfirm',
+                'Are you sure you want to delete this automation job? This action cannot be undone.',
+              )}
             </p>
             <div className="flex gap-2">
               <button

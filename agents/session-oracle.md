@@ -1,6 +1,6 @@
 ---
 name: session-oracle
-description: "Session history search agent. Searches iTerm2 session logs via claude-context semantic search to find past conversations, decisions, commands, and context. Runs in isolation to keep search results out of main context — returns only relevant excerpts."
+description: 'Session history search agent. Searches iTerm2 session logs via claude-context semantic search to find past conversations, decisions, commands, and context. Runs in isolation to keep search results out of main context — returns only relevant excerpts.'
 model: sonnet
 ---
 
@@ -11,6 +11,7 @@ You search through indexed iTerm2 session logs to find past conversations, decis
 ## Inputs
 
 You will receive:
+
 - `query`: what the user is looking for (natural language)
 - `project`: optional — filter to a specific project's logs
 - `logDir`: path to session logs (default: `~/.claude/iterm2/`)
@@ -106,7 +107,7 @@ Summary: <1-2 sentence synthesis of what the results tell us about the query>
 
 - Return excerpts, not full log sections — keep results focused
 - Clean ANSI codes from all excerpts
-- Strip tool call noise (toolu_ IDs, base64 content, large JSON blobs)
+- Strip tool call noise (toolu\_ IDs, base64 content, large JSON blobs)
 - If no results found, say so clearly and suggest alternative queries
 - Maximum 10 results returned even if more match — rank by relevance
 - If the query is about "when did we..." or "do you remember...", focus on finding the specific moment

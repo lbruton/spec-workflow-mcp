@@ -6,19 +6,21 @@ import { PathUtils } from '../core/path-utils.js';
 const prompt: Prompt = {
   name: 'spec-status',
   title: 'Specification Status Overview',
-  description: 'Get comprehensive status overview of specification documents, tasks, and approval workflows. Useful for project tracking and progress reporting.',
+  description:
+    'Get comprehensive status overview of specification documents, tasks, and approval workflows. Useful for project tracking and progress reporting.',
   arguments: [
     {
       name: 'specName',
-      description: 'Feature name in kebab-case to get status for (optional - if not provided, shows all specs)',
-      required: false
+      description:
+        'Feature name in kebab-case to get status for (optional - if not provided, shows all specs)',
+      required: false,
     },
     {
       name: 'detailed',
       description: 'Show detailed status including task breakdown and approval history',
-      required: false
-    }
-  ]
+      required: false,
+    },
+  ],
 };
 
 async function handler(args: Record<string, any>, context: ToolContext): Promise<PromptMessage[]> {
@@ -42,13 +44,15 @@ ${specName ? `- Feature: ${specName}` : '- Scope: All specifications'}
 ${context.dashboardUrl ? `- Dashboard: ${context.dashboardUrl}` : ''}
 
 **Instructions:**
-${specName ? 
-  `1. Use the spec-status tool with specName "${specName}" to get status information
+${
+  specName
+    ? `1. Use the spec-status tool with specName "${specName}" to get status information
 2. If you need detailed task information, read the tasks.md file directly at ${workflowRoot}/specs/${specName}/tasks.md
-3. Check for any pending approvals using approvals tool with action:'status'` :
-  `1. List directory ${workflowRoot}/specs/ to see all specifications
+3. Check for any pending approvals using approvals tool with action:'status'`
+    : `1. List directory ${workflowRoot}/specs/ to see all specifications
 2. Use the spec-status tool to get status for each specification
-3. Provide a consolidated overview of project progress`}
+3. Provide a consolidated overview of project progress`
+}
 
 **Status Information Includes:**
 - **Document Status**: Which documents exist (requirements, design, tasks)
@@ -64,16 +68,20 @@ ${specName ?
 4. **Review**: Implementation complete, awaiting final approval
 5. **Complete**: All tasks complete and approved
 
-${detailed ? `**Detailed Information Includes:**
+${
+  detailed
+    ? `**Detailed Information Includes:**
 - Individual task breakdown with completion status
 - Approval request history and reviewer comments
 - File modification timestamps
 - Steering document references
-- Dependency tracking between specs` : ''}
+- Dependency tracking between specs`
+    : ''
+}
 
-Please provide a comprehensive status report that helps understand the current state and next steps.`
-      }
-    }
+Please provide a comprehensive status report that helps understand the current state and next steps.`,
+      },
+    },
   ];
 
   return messages;
@@ -81,5 +89,5 @@ Please provide a comprehensive status report that helps understand the current s
 
 export const specStatusPrompt: PromptDefinition = {
   prompt,
-  handler
+  handler,
 };

@@ -11,7 +11,10 @@ describe('ApprovalStorage path resolution', () => {
   let storage: ApprovalStorage;
 
   beforeEach(async () => {
-    tempDir = join(tmpdir(), `spec-workflow-approvals-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`);
+    tempDir = join(
+      tmpdir(),
+      `spec-workflow-approvals-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+    );
     workflowRootPath = join(tempDir, 'repo-main');
     workspacePath = join(tempDir, 'repo-feature-worktree');
 
@@ -20,7 +23,7 @@ describe('ApprovalStorage path resolution', () => {
 
     storage = new ApprovalStorage(workflowRootPath, {
       originalPath: workflowRootPath,
-      fileResolutionPath: workspacePath
+      fileResolutionPath: workspacePath,
     });
   });
 
@@ -47,7 +50,7 @@ describe('ApprovalStorage path resolution', () => {
       'Review feature',
       relativePath,
       'spec',
-      'test-spec'
+      'test-spec',
     );
 
     const snapshots = await storage.getSnapshots(approvalId);
@@ -66,7 +69,7 @@ describe('ApprovalStorage path resolution', () => {
       'Review requirements',
       relativePath,
       'spec',
-      'test-spec'
+      'test-spec',
     );
 
     const content = await storage.getCurrentFileContent(approvalId);
@@ -87,7 +90,7 @@ describe('ApprovalStorage path resolution', () => {
       'Review revision target',
       relativePath,
       'spec',
-      'test-spec'
+      'test-spec',
     );
 
     await storage.createRevision(approvalId, 'workspace-updated', 'needs update');

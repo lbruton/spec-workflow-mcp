@@ -20,6 +20,7 @@ El panel de control web es una aplicación web en tiempo real que proporciona ac
 ### Iniciar el Panel de Control
 
 #### Panel de Control Independiente
+
 ```bash
 # Usa puerto efímero
 npx -y @pimzino/spec-workflow-mcp@latest /ruta/a/proyecto --dashboard
@@ -29,6 +30,7 @@ npx -y @pimzino/spec-workflow-mcp@latest /ruta/a/proyecto --dashboard --port 300
 ```
 
 #### Con Servidor MCP
+
 ```bash
 # Ejecutar servidor MCP y panel de control por separado (recomendado)
 # Terminal 1: Iniciar panel de control
@@ -119,18 +121,19 @@ Acceso a orientación del proyecto:
 
 #### Atajos de Teclado
 
-| Atajo | Acción |
-|----------|--------|
+| Atajo     | Acción                            |
+| --------- | --------------------------------- |
 | `Alt + S` | Enfocar lista de especificaciones |
-| `Alt + T` | Ver tareas |
-| `Alt + R` | Ver requisitos |
-| `Alt + D` | Ver diseño |
-| `Alt + A` | Abrir diálogo de aprobación |
-| `Esc` | Cerrar diálogo |
+| `Alt + T` | Ver tareas                        |
+| `Alt + R` | Ver requisitos                    |
+| `Alt + D` | Ver diseño                        |
+| `Alt + A` | Abrir diálogo de aprobación       |
+| `Esc`     | Cerrar diálogo                    |
 
 #### Estructura de URL
 
 Enlaces directos a vistas específicas:
+
 - `/` - Panel de inicio
 - `/spec/{nombre}` - Especificación específica
 - `/spec/{nombre}/requirements` - Documento de requisitos
@@ -164,6 +167,7 @@ El panel usa WebSockets para actualizaciones en vivo:
 #### Configuración de Tema
 
 Alternar entre modos claro y oscuro:
+
 - Hacer clic en icono de tema en encabezado
 - Persiste entre sesiones
 - Respeta preferencia del sistema
@@ -171,11 +175,13 @@ Alternar entre modos claro y oscuro:
 #### Selección de Idioma
 
 Cambiar idioma de interfaz:
+
 1. Hacer clic en icono de configuración
 2. Seleccionar idioma del menú desplegable
 3. La interfaz se actualiza inmediatamente
 
 Idiomas compatibles:
+
 - English (en)
 - Japanese (ja)
 - Chinese (zh)
@@ -191,6 +197,7 @@ Idiomas compatibles:
 #### Opciones de Visualización
 
 Personalizar preferencias de vista:
+
 - Tarjetas de especificación compactas/expandidas
 - Mostrar/ocultar tareas completadas
 - Tamaño de fuente del documento
@@ -208,6 +215,7 @@ Instalar desde VSCode Marketplace:
 4. Recargar VSCode
 
 O vía línea de comandos:
+
 ```bash
 code --install-extension Pimzino.specflow-mcp
 ```
@@ -303,31 +311,31 @@ Configurar en configuración de VSCode:
 
 #### Descripciones de Configuración
 
-| Configuración | Descripción | Predeterminado |
-|---------|-------------|---------|
-| `language` | Idioma de interfaz | "en" |
-| `notifications.enabled` | Mostrar notificaciones | true |
-| `notifications.sound` | Reproducir alertas de sonido | true |
-| `notifications.volume` | Volumen de sonido (0-1) | 0.5 |
-| `archive.showInExplorer` | Mostrar especificaciones archivadas | true |
-| `tasks.autoRefresh` | Auto-actualizar tareas | true |
-| `tasks.refreshInterval` | Intervalo de actualización (ms) | 5000 |
-| `theme.followVSCode` | Coincidir tema de VSCode | true |
+| Configuración            | Descripción                         | Predeterminado |
+| ------------------------ | ----------------------------------- | -------------- |
+| `language`               | Idioma de interfaz                  | "en"           |
+| `notifications.enabled`  | Mostrar notificaciones              | true           |
+| `notifications.sound`    | Reproducir alertas de sonido        | true           |
+| `notifications.volume`   | Volumen de sonido (0-1)             | 0.5            |
+| `archive.showInExplorer` | Mostrar especificaciones archivadas | true           |
+| `tasks.autoRefresh`      | Auto-actualizar tareas              | true           |
+| `tasks.refreshInterval`  | Intervalo de actualización (ms)     | 5000           |
+| `theme.followVSCode`     | Coincidir tema de VSCode            | true           |
 
 ### Comandos de la Extensión
 
 Disponibles en Paleta de Comandos (Ctrl+Shift+P):
 
-| Comando | Descripción |
-|---------|-------------|
-| `Spec Workflow: Create Spec` | Iniciar nueva especificación |
-| `Spec Workflow: List Specs` | Mostrar todas las especificaciones |
-| `Spec Workflow: View Dashboard` | Abrir panel web |
-| `Spec Workflow: Archive Spec` | Mover a archivo |
-| `Spec Workflow: Restore Spec` | Restaurar desde archivo |
-| `Spec Workflow: Refresh` | Recargar datos de especificación |
-| `Spec Workflow: Show Steering` | Ver documentos de orientación |
-| `Spec Workflow: Export Spec` | Exportar a markdown |
+| Comando                         | Descripción                        |
+| ------------------------------- | ---------------------------------- |
+| `Spec Workflow: Create Spec`    | Iniciar nueva especificación       |
+| `Spec Workflow: List Specs`     | Mostrar todas las especificaciones |
+| `Spec Workflow: View Dashboard` | Abrir panel web                    |
+| `Spec Workflow: Archive Spec`   | Mover a archivo                    |
+| `Spec Workflow: Restore Spec`   | Restaurar desde archivo            |
+| `Spec Workflow: Refresh`        | Recargar datos de especificación   |
+| `Spec Workflow: Show Steering`  | Ver documentos de orientación      |
+| `Spec Workflow: Export Spec`    | Exportar a markdown                |
 
 ### Notificaciones de Sonido
 
@@ -339,6 +347,7 @@ La extensión incluye alertas de audio para:
 - **Actualizaciones** - Notificación suave
 
 Configurar en configuración:
+
 ```json
 {
   "specWorkflow.notifications.sound": true,
@@ -348,20 +357,20 @@ Configurar en configuración:
 
 ## Comparación de Características
 
-| Característica | Panel Web | Extensión VSCode |
-|---------|--------------|------------------|
-| Ver especificaciones | ✅ | ✅ |
-| Gestionar tareas | ✅ | ✅ |
-| Aprobaciones | ✅ | ✅ |
-| Actualizaciones en tiempo real | ✅ | ✅ |
-| Sistema de archivo | ❌ | ✅ |
-| Notificaciones de sonido | ❌ | ✅ |
-| Integración con editor | ❌ | ✅ |
-| Menús contextuales | ❌ | ✅ |
-| Atajos de teclado | Limitado | Completo |
-| Multi-proyecto | Manual | Automático |
-| Acceso sin conexión | ❌ | ✅ |
-| Opciones de exportación | Básico | Avanzado |
+| Característica                 | Panel Web | Extensión VSCode |
+| ------------------------------ | --------- | ---------------- |
+| Ver especificaciones           | ✅        | ✅               |
+| Gestionar tareas               | ✅        | ✅               |
+| Aprobaciones                   | ✅        | ✅               |
+| Actualizaciones en tiempo real | ✅        | ✅               |
+| Sistema de archivo             | ❌        | ✅               |
+| Notificaciones de sonido       | ❌        | ✅               |
+| Integración con editor         | ❌        | ✅               |
+| Menús contextuales             | ❌        | ✅               |
+| Atajos de teclado              | Limitado  | Completo         |
+| Multi-proyecto                 | Manual    | Automático       |
+| Acceso sin conexión            | ❌        | ✅               |
+| Opciones de exportación        | Básico    | Avanzado         |
 
 ## Elegir la Interfaz Correcta
 
@@ -447,6 +456,7 @@ El panel es responsivo:
 ### Extensión VSCode
 
 Hereda accesibilidad de VSCode:
+
 - Soporte de lector de pantalla
 - Navegación con teclado
 - Temas de alto contraste
@@ -480,27 +490,28 @@ Hereda accesibilidad de VSCode:
 
 ### Problemas del Panel
 
-| Problema | Solución |
-|-------|----------|
-| No carga | Verificar que el servidor esté ejecutándose, verificar URL |
-| Sin actualizaciones | Verificar conexión WebSocket, actualizar página |
-| Aprobación no funciona | Asegurar que panel y MCP estén conectados |
-| Estilo roto | Limpiar caché del navegador, verificar consola |
+| Problema               | Solución                                                   |
+| ---------------------- | ---------------------------------------------------------- |
+| No carga               | Verificar que el servidor esté ejecutándose, verificar URL |
+| Sin actualizaciones    | Verificar conexión WebSocket, actualizar página            |
+| Aprobación no funciona | Asegurar que panel y MCP estén conectados                  |
+| Estilo roto            | Limpiar caché del navegador, verificar consola             |
 
 ### Problemas de la Extensión
 
-| Problema | Solución |
-|-------|----------|
+| Problema                    | Solución                                          |
+| --------------------------- | ------------------------------------------------- |
 | No muestra especificaciones | Verificar que proyecto tenga directorio .specflow |
-| Comandos no funcionan | Recargar ventana de VSCode |
-| Sin notificaciones | Verificar configuración de extensión |
-| Archivo no visible | Habilitar en configuración |
+| Comandos no funcionan       | Recargar ventana de VSCode                        |
+| Sin notificaciones          | Verificar configuración de extensión              |
+| Archivo no visible          | Habilitar en configuración                        |
 
 ## Uso Avanzado
 
 ### URL Personalizada del Panel
 
 Configurar en múltiples terminales:
+
 ```bash
 # Terminal 1: Servidor MCP
 npx -y @pimzino/spec-workflow-mcp@latest /proyecto

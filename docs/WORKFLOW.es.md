@@ -27,6 +27,7 @@ Los documentos de orientación proporcionan guía de alto nivel que mantiene tu 
 Esto genera tres documentos clave:
 
 #### 1. Orientación de Producto (`steering/product.md`)
+
 - Visión y misión del producto
 - Usuarios objetivo y personas
 - Características principales y prioridades
@@ -34,6 +35,7 @@ Esto genera tres documentos clave:
 - No-objetivos y restricciones
 
 #### 2. Orientación Técnica (`steering/tech.md`)
+
 - Decisiones de arquitectura
 - Elecciones de stack tecnológico
 - Requisitos de rendimiento
@@ -41,6 +43,7 @@ Esto genera tres documentos clave:
 - Enfoque de escalabilidad
 
 #### 3. Orientación de Estructura (`steering/structure.md`)
+
 - Organización del proyecto
 - Convenciones de archivos y carpetas
 - Estándares de nomenclatura
@@ -69,6 +72,7 @@ Requisitos → Diseño → Tareas
 **Propósito**: Definir QUÉ necesita construirse
 
 **Contenidos**:
+
 - Descripción general de característica
 - Historias de usuario
 - Requisitos funcionales
@@ -77,6 +81,7 @@ Requisitos → Diseño → Tareas
 - Restricciones y suposiciones
 
 **Ejemplo de Creación**:
+
 ```
 "Crea requisitos para un sistema de notificaciones de usuario que soporte:
 - Notificaciones por email
@@ -91,6 +96,7 @@ Requisitos → Diseño → Tareas
 **Propósito**: Definir CÓMO se construirá
 
 **Contenidos**:
+
 - Arquitectura técnica
 - Diseño de componentes
 - Modelos de datos
@@ -105,6 +111,7 @@ Requisitos → Diseño → Tareas
 **Propósito**: Definir los PASOS para construirlo
 
 **Contenidos**:
+
 - Desglose jerárquico de tareas
 - Dependencias
 - Estimaciones de esfuerzo
@@ -112,6 +119,7 @@ Requisitos → Diseño → Tareas
 - Requisitos de prueba
 
 **Ejemplo de Estructura**:
+
 ```
 1.0 Configuración de Base de Datos
   1.1 Crear tablas de notificaciones
@@ -145,18 +153,21 @@ Requisitos → Diseño → Tareas
 ### Tomar Decisiones de Aprobación
 
 #### Cuándo Aprobar
+
 - Los requisitos están completos y claros
 - El diseño resuelve el problema establecido
 - Las tareas son lógicas y completas
 - Sin preocupaciones o brechas importantes
 
 #### Cuándo Solicitar Cambios
+
 - Detalles importantes faltantes
 - Especificaciones poco claras
 - Mejor enfoque disponible
 - Necesita alineación con estándares
 
 #### Cuándo Rechazar
+
 - Malentendido fundamental
 - Enfoque completamente incorrecto
 - Requiere replanteamiento completo
@@ -164,6 +175,7 @@ Requisitos → Diseño → Tareas
 ### Proporcionar Retroalimentación Efectiva
 
 Buena retroalimentación:
+
 ```
 "El flujo de autenticación debe usar tokens JWT en lugar de sesiones.
 Agrega limitación de tasa a los endpoints API.
@@ -171,6 +183,7 @@ Incluye manejo de errores para fallos de red."
 ```
 
 Mala retroalimentación:
+
 ```
 "Esto no se ve bien. Corrígelo."
 ```
@@ -180,7 +193,9 @@ Mala retroalimentación:
 ### Estrategia de Ejecución de Tareas
 
 #### Implementación Secuencial
+
 Mejor para tareas dependientes:
+
 ```
 "Implementa la tarea 1.1 de la especificación user-auth"
 "Ahora implementa la tarea 1.2"
@@ -188,13 +203,17 @@ Mejor para tareas dependientes:
 ```
 
 #### Implementación Paralela
+
 Para tareas independientes:
+
 ```
 "Implementa todas las tareas de UI de la especificación del panel mientras trabajo en el backend"
 ```
 
 #### Implementación Basada en Secciones
+
 Para agrupaciones lógicas:
+
 ```
 "Implementa todas las tareas de base de datos de la especificación de pagos"
 ```
@@ -202,6 +221,7 @@ Para agrupaciones lógicas:
 ### Seguimiento de Progreso
 
 Monitorear implementación a través de:
+
 - Vista de tareas del panel
 - Barras de progreso
 - Indicadores de estado
@@ -210,6 +230,7 @@ Monitorear implementación a través de:
 ### Manejo de Bloqueos
 
 Cuando estés bloqueado:
+
 1. Documentar el bloqueo
 2. Crear sub-tarea para resolución
 3. Moverse a tareas paralelas si es posible
@@ -222,11 +243,13 @@ Cuando estés bloqueado:
 Después de la implementación:
 
 1. **Pruebas Unitarias**
+
    ```
    "Crea pruebas unitarias para el servicio de notificaciones"
    ```
 
 2. **Pruebas de Integración**
+
    ```
    "Crea pruebas de integración para los endpoints API"
    ```
@@ -239,6 +262,7 @@ Después de la implementación:
 ### Actualizaciones de Documentación
 
 Mantener documentación actualizada:
+
 ```
 "Actualiza la documentación de API para los nuevos endpoints"
 "Agrega ejemplos de uso al README"
@@ -275,11 +299,13 @@ tu-proyecto/
 ### Convenciones de Nomenclatura
 
 **Nombres de Especificaciones**:
+
 - Usar kebab-case: `autenticacion-usuarios`
 - Ser descriptivo: `procesamiento-pagos` no `pagos`
 - Evitar versiones: `perfil-usuario` no `perfil-usuario-v2`
 
 **Nombres de Documentos**:
+
 - Siempre: `requirements.md`, `design.md`, `tasks.md`
 - Consistentes en todas las especificaciones
 
@@ -296,6 +322,7 @@ Para características en evolución:
 5. Construir sobre trabajo existente
 
 Ejemplo:
+
 ```
 "Crea una especificación de mejora para user-auth que agregue:
 - Login social (Google, Facebook)
@@ -306,16 +333,19 @@ Ejemplo:
 ### Flujo de Trabajo de Refactorización
 
 1. **Documentar Estado Actual**
+
    ```
    "Crea una especificación documentando el sistema de autenticación actual"
    ```
 
 2. **Diseñar Mejoras**
+
    ```
    "Diseña refactorización para mejorar rendimiento de autenticación"
    ```
 
 3. **Planear Migración**
+
    ```
    "Crea tareas de migración para la refactorización"
    ```
@@ -328,21 +358,25 @@ Ejemplo:
 ### Flujo de Trabajo de Resolución de Bugs
 
 1. **Reporte de Bug**
+
    ```
    "Crea reporte de bug para problema de timeout de login"
    ```
 
 2. **Investigación**
+
    ```
    "Investiga causa raíz del bug #45"
    ```
 
 3. **Diseño de Solución**
+
    ```
    "Diseña corrección para el problema de timeout"
    ```
 
 4. **Implementación**
+
    ```
    "Implementa la corrección del bug"
    ```
@@ -357,17 +391,20 @@ Ejemplo:
 ### 1. Mantener Granularidad de Especificaciones
 
 **Bueno**: Una especificación por característica
+
 - `autenticacion-usuarios`
 - `procesamiento-pagos`
 - `sistema-notificaciones`
 
 **Malo**: Especificaciones demasiado amplias
+
 - `sistema-backend`
 - `todas-las-caracteristicas`
 
 ### 2. Creación Secuencial de Documentos
 
 Siempre seguir el orden:
+
 1. Requisitos (qué)
 2. Diseño (cómo)
 3. Tareas (pasos)
@@ -384,6 +421,7 @@ Nunca saltarse adelante.
 ### 4. Mantener Especificaciones Actualizadas
 
 Cuando los requisitos cambien:
+
 ```
 "Actualiza los requisitos para user-auth para incluir soporte SSO"
 ```
@@ -391,6 +429,7 @@ Cuando los requisitos cambien:
 ### 5. Usar Terminología Consistente
 
 Mantener consistencia en:
+
 - Nombres de especificaciones
 - Nombres de componentes
 - Terminología de API
@@ -399,6 +438,7 @@ Mantener consistencia en:
 ### 6. Archivar Especificaciones Completadas
 
 Mantener espacio de trabajo limpio:
+
 ```
 "Archiva la especificación completada user-auth"
 ```
@@ -434,6 +474,7 @@ Mantener espacio de trabajo limpio:
 ### Especificaciones Demasiado Grandes
 
 **Solución**: Dividir en especificaciones más pequeñas
+
 ```
 "Divide la especificación de e-commerce en:
 - catalogo-productos
@@ -445,6 +486,7 @@ Mantener espacio de trabajo limpio:
 ### Requisitos Poco Claros
 
 **Solución**: Solicitar aclaración
+
 ```
 "Los requisitos necesitan más detalle sobre:
 - Roles y permisos de usuario
@@ -455,6 +497,7 @@ Mantener espacio de trabajo limpio:
 ### El Diseño No Coincide con Requisitos
 
 **Solución**: Solicitar revisión
+
 ```
 "El diseño no aborda el requisito de multi-tenancy.
 Por favor revisa para incluir aislamiento de tenants."

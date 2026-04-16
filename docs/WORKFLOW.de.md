@@ -27,6 +27,7 @@ Steering-Dokumente bieten hochrangige Leitlinien, die Ihr Projekt ausgerichtet u
 Dies generiert drei Schlüsseldokumente:
 
 #### 1. Product Steering (`steering/product.md`)
+
 - Produktvision und Mission
 - Zielbenutzer und Personas
 - Kernfunktionen und Prioritäten
@@ -34,6 +35,7 @@ Dies generiert drei Schlüsseldokumente:
 - Nicht-Ziele und Einschränkungen
 
 #### 2. Technical Steering (`steering/tech.md`)
+
 - Architekturentscheidungen
 - Technologie-Stack-Auswahl
 - Leistungsanforderungen
@@ -41,6 +43,7 @@ Dies generiert drei Schlüsseldokumente:
 - Skalierbarkeitsan­satz
 
 #### 3. Structure Steering (`steering/structure.md`)
+
 - Projektorganisation
 - Datei- und Ordnerkonventionen
 - Namensstandards
@@ -69,6 +72,7 @@ Anforderungen → Design → Aufgaben
 **Zweck**: Definieren WAS gebaut werden muss
 
 **Inhalt**:
+
 - Feature-Überblick
 - User Stories
 - Funktionale Anforderungen
@@ -77,6 +81,7 @@ Anforderungen → Design → Aufgaben
 - Einschränkungen und Annahmen
 
 **Erstellungsbeispiel**:
+
 ```
 "Erstelle Anforderungen für ein Benutzerbenachrichtigungssystem, das unterstützt:
 - E-Mail-Benachrichtigungen
@@ -91,6 +96,7 @@ Anforderungen → Design → Aufgaben
 **Zweck**: Definieren WIE es gebaut wird
 
 **Inhalt**:
+
 - Technische Architektur
 - Komponenten-Design
 - Datenmodelle
@@ -105,6 +111,7 @@ Anforderungen → Design → Aufgaben
 **Zweck**: Definieren der SCHRITTE zum Bauen
 
 **Inhalt**:
+
 - Hierarchische Aufgabenaufschlüsselung
 - Abhängigkeiten
 - Aufwandsschätzungen
@@ -112,6 +119,7 @@ Anforderungen → Design → Aufgaben
 - Testanforderungen
 
 **Strukturbeispiel**:
+
 ```
 1.0 Datenbank-Setup
   1.1 Benachrichtigungstabellen erstellen
@@ -145,18 +153,21 @@ Anforderungen → Design → Aufgaben
 ### Freigabeentscheidungen treffen
 
 #### Wann genehmigen
+
 - Anforderungen sind vollständig und klar
 - Design löst das festgelegte Problem
 - Aufgaben sind logisch und umfassend
 - Keine größeren Bedenken oder Lücken
 
 #### Wann Änderungen anfordern
+
 - Wichtige Details fehlen
 - Unklare Spezifikationen
 - Besserer Ansatz verfügbar
 - Benötigt Ausrichtung an Standards
 
 #### Wann ablehnen
+
 - Grundlegendes Missverständnis
 - Völlig falscher Ansatz
 - Erfordert komplettes Umdenken
@@ -164,6 +175,7 @@ Anforderungen → Design → Aufgaben
 ### Effektives Feedback geben
 
 Gutes Feedback:
+
 ```
 "Der Authentifizierungs-Flow sollte JWT-Tokens statt Sessions verwenden.
 Rate Limiting zu API-Endpunkten hinzufügen.
@@ -171,6 +183,7 @@ Fehlerbehandlung für Netzwerkausfälle einschließen."
 ```
 
 Schlechtes Feedback:
+
 ```
 "Das sieht nicht richtig aus. Repariere es."
 ```
@@ -180,7 +193,9 @@ Schlechtes Feedback:
 ### Aufgabenausführungsstrategie
 
 #### Sequenzielle Implementierung
+
 Am besten für abhängige Aufgaben:
+
 ```
 "Implementiere Aufgabe 1.1 aus user-auth Spec"
 "Implementiere jetzt Aufgabe 1.2"
@@ -188,13 +203,17 @@ Am besten für abhängige Aufgaben:
 ```
 
 #### Parallele Implementierung
+
 Für unabhängige Aufgaben:
+
 ```
 "Implementiere alle UI-Aufgaben aus der Dashboard-Spec, während ich am Backend arbeite"
 ```
 
 #### Abschnittsbasierte Implementierung
+
 Für logische Gruppierungen:
+
 ```
 "Implementiere alle Datenbankaufgaben aus der payment Spec"
 ```
@@ -202,6 +221,7 @@ Für logische Gruppierungen:
 ### Fortschrittsverfolgung
 
 Implementierung überwachen durch:
+
 - Dashboard-Aufgabenansicht
 - Fortschrittsbalken
 - Statusindikatoren
@@ -210,6 +230,7 @@ Implementierung überwachen durch:
 ### Blocker behandeln
 
 Wenn blockiert:
+
 1. Blocker dokumentieren
 2. Unteraufgabe für Lösung erstellen
 3. Zu parallelen Aufgaben wechseln wenn möglich
@@ -222,11 +243,13 @@ Wenn blockiert:
 Nach Implementierung:
 
 1. **Unit-Testing**
+
    ```
    "Erstelle Unit-Tests für den Benachrichtigungsdienst"
    ```
 
 2. **Integrationstests**
+
    ```
    "Erstelle Integrationstests für die API-Endpunkte"
    ```
@@ -239,6 +262,7 @@ Nach Implementierung:
 ### Dokumentationsaktualisierungen
 
 Dokumentation aktuell halten:
+
 ```
 "Aktualisiere die API-Dokumentation für die neuen Endpunkte"
 "Füge Verwendungsbeispiele zum README hinzu"
@@ -275,11 +299,13 @@ ihr-projekt/
 ### Namenskonventionen
 
 **Spec-Namen**:
+
 - kebab-case verwenden: `user-authentication`
 - Beschreibend sein: `payment-processing` nicht `payments`
 - Versionen vermeiden: `user-profile` nicht `user-profile-v2`
 
 **Dokumentnamen**:
+
 - Immer: `requirements.md`, `design.md`, `tasks.md`
 - Konsistent über alle Specs
 
@@ -296,6 +322,7 @@ Für sich entwickelnde Features:
 5. Auf bestehender Arbeit aufbauen
 
 Beispiel:
+
 ```
 "Erstelle eine Enhancement-Spec für user-auth, die hinzufügt:
 - Social Login (Google, Facebook)
@@ -306,16 +333,19 @@ Beispiel:
 ### Refactoring-Workflow
 
 1. **Aktuellen Zustand dokumentieren**
+
    ```
    "Erstelle eine Spec, die das aktuelle Authentifizierungssystem dokumentiert"
    ```
 
 2. **Verbesserungen entwerfen**
+
    ```
    "Entwerfe Refactoring zur Verbesserung der Authentifizierungsleistung"
    ```
 
 3. **Migration planen**
+
    ```
    "Erstelle Migrationsaufgaben für das Refactoring"
    ```
@@ -328,21 +358,25 @@ Beispiel:
 ### Bug-Lösungs-Workflow
 
 1. **Bug-Bericht**
+
    ```
    "Erstelle Fehlerbericht für Login-Timeout-Problem"
    ```
 
 2. **Untersuchung**
+
    ```
    "Untersuche Ursache von Bug #45"
    ```
 
 3. **Lösungs-Design**
+
    ```
    "Entwerfe Fix für das Timeout-Problem"
    ```
 
 4. **Implementierung**
+
    ```
    "Implementiere den Bug-Fix"
    ```
@@ -357,17 +391,20 @@ Beispiel:
 ### 1. Spec-Granularität beibehalten
 
 **Gut**: Eine Spec pro Feature
+
 - `user-authentication`
 - `payment-processing`
 - `notification-system`
 
 **Schlecht**: Zu breite Specs
+
 - `backend-system`
 - `all-features`
 
 ### 2. Sequenzielle Dokumenterstellung
 
 Immer der Reihenfolge folgen:
+
 1. Anforderungen (was)
 2. Design (wie)
 3. Aufgaben (Schritte)
@@ -384,6 +421,7 @@ Niemals vorauseilen.
 ### 4. Specs aktuell halten
 
 Wenn sich Anforderungen ändern:
+
 ```
 "Aktualisiere die Anforderungen für user-auth, um SSO-Unterstützung einzuschließen"
 ```
@@ -391,6 +429,7 @@ Wenn sich Anforderungen ändern:
 ### 5. Konsistente Terminologie verwenden
 
 Konsistenz aufrechterhalten über:
+
 - Spec-Namen
 - Komponentennamen
 - API-Terminologie
@@ -399,6 +438,7 @@ Konsistenz aufrechterhalten über:
 ### 6. Erledigte Specs archivieren
 
 Workspace sauber halten:
+
 ```
 "Archiviere die erledigte user-auth Spec"
 ```
@@ -434,6 +474,7 @@ Workspace sauber halten:
 ### Specs werden zu groß
 
 **Lösung**: In kleinere Specs aufteilen
+
 ```
 "Teile die E-Commerce-Spec auf in:
 - product-catalog
@@ -445,6 +486,7 @@ Workspace sauber halten:
 ### Unklare Anforderungen
 
 **Lösung**: Klärung anfordern
+
 ```
 "Die Anforderungen brauchen mehr Details zu:
 - Benutzerrollen und Berechtigungen
@@ -455,6 +497,7 @@ Workspace sauber halten:
 ### Design passt nicht zu Anforderungen
 
 **Lösung**: Revision anfordern
+
 ```
 "Das Design behandelt nicht die Multi-Tenancy-Anforderung.
 Bitte überarbeiten, um Tenant-Isolation einzuschließen."

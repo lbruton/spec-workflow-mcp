@@ -5,6 +5,7 @@
 ## 🚀 Development Setup
 
 ### Prerequisites
+
 ```bash
 # Required
 node >= 18.0.0
@@ -15,6 +16,7 @@ VS Code >= 1.74.0
 ```
 
 ### Initial Setup
+
 ```bash
 # Clone the repository
 git clone <repository-url>
@@ -33,11 +35,12 @@ npm run build
 ```
 
 ### Development Commands
+
 ```bash
 # Start MCP server in development mode
 npm run dev
 
-# Start dashboard in development mode  
+# Start dashboard in development mode
 npm run dev:dashboard
 
 # Build for production
@@ -55,6 +58,7 @@ npm test
 ### Adding a New MCP Tool
 
 #### 1. Create Tool Definition
+
 ```bash
 # Create new tool file
 touch src/tools/my-new-tool.ts
@@ -74,54 +78,46 @@ Clear instructions on when and how to use this tool.`,
   inputSchema: {
     type: 'object',
     properties: {
-      projectPath: { 
+      projectPath: {
         type: 'string',
-        description: 'Absolute path to the project root'
+        description: 'Absolute path to the project root',
       },
       // Add other parameters
       param1: {
         type: 'string',
-        description: 'Description of parameter'
-      }
+        description: 'Description of parameter',
+      },
     },
-    required: ['projectPath']
-  }
+    required: ['projectPath'],
+  },
 };
 
-export async function myNewToolHandler(
-  args: any, 
-  context: ToolContext
-): Promise<ToolResponse> {
+export async function myNewToolHandler(args: any, context: ToolContext): Promise<ToolResponse> {
   const { projectPath, param1 } = args;
 
   try {
     // Implementation here
-    
+
     return {
       success: true,
       message: 'Tool executed successfully',
       data: {
         // Response data
       },
-      nextSteps: [
-        'What user should do next',
-        'Additional guidance'
-      ]
+      nextSteps: ['What user should do next', 'Additional guidance'],
     };
   } catch (error: any) {
     return {
       success: false,
       message: `Tool failed: ${error.message}`,
-      nextSteps: [
-        'Check input parameters',
-        'Verify file permissions'
-      ]
+      nextSteps: ['Check input parameters', 'Verify file permissions'],
     };
   }
 }
 ```
 
 #### 2. Register Tool
+
 ```typescript
 // src/tools/index.ts
 import { myNewToolTool, myNewToolHandler } from './my-new-tool.js';
@@ -129,11 +125,15 @@ import { myNewToolTool, myNewToolHandler } from './my-new-tool.js';
 export function registerTools(): Tool[] {
   return [
     // ... existing tools
-    myNewToolTool
+    myNewToolTool,
   ];
 }
 
-export async function handleToolCall(name: string, args: any, context: ToolContext): Promise<MCPToolResponse> {
+export async function handleToolCall(
+  name: string,
+  args: any,
+  context: ToolContext,
+): Promise<MCPToolResponse> {
   switch (name) {
     // ... existing cases
     case 'my-new-tool':
@@ -144,6 +144,7 @@ export async function handleToolCall(name: string, args: any, context: ToolConte
 ```
 
 #### 3. Test the Tool
+
 ```bash
 # Start development server
 npm run dev
@@ -152,6 +153,7 @@ npm run dev
 ```
 
 #### 4. Add Documentation
+
 ```typescript
 // Update api-reference.md with tool documentation
 ```
@@ -159,6 +161,7 @@ npm run dev
 ### Modifying the Dashboard
 
 #### Frontend Development
+
 ```bash
 # Start dashboard development server
 npm run dev:dashboard
@@ -168,6 +171,7 @@ npm run dev:dashboard
 ```
 
 #### Adding a New Page
+
 ```typescript
 // src/dashboard_frontend/src/modules/pages/MyNewPage.tsx
 import React from 'react';
@@ -200,6 +204,7 @@ function App() {
 ```
 
 #### Adding Backend API Endpoint
+
 ```typescript
 // src/dashboard/multi-server.ts
 export class MultiProjectDashboardServer {
@@ -229,6 +234,7 @@ export class MultiProjectDashboardServer {
 ### Working with VS Code Extension
 
 #### Development Setup
+
 ```bash
 cd vscode-extension
 npm install
@@ -240,13 +246,14 @@ code .
 ```
 
 #### Extension Structure
+
 ```
 vscode-extension/
 ├── src/
 │   ├── extension.ts           # Main extension entry
 │   ├── extension/
 │   │   ├── providers/         # View providers
-│   │   ├── services/          # Business logic  
+│   │   ├── services/          # Business logic
 │   │   └── utils/            # Helper functions
 │   └── webview/              # Webview components
 ├── package.json              # Extension manifest
@@ -254,16 +261,14 @@ vscode-extension/
 ```
 
 #### Adding New Command
+
 ```typescript
 // src/extension.ts
 export function activate(context: vscode.ExtensionContext) {
-  const myCommand = vscode.commands.registerCommand(
-    'spec-workflow.myCommand',
-    async () => {
-      // Command implementation
-      vscode.window.showInformationMessage('My command executed!');
-    }
-  );
+  const myCommand = vscode.commands.registerCommand('spec-workflow.myCommand', async () => {
+    // Command implementation
+    vscode.window.showInformationMessage('My command executed!');
+  });
 
   context.subscriptions.push(myCommand);
 }
@@ -287,6 +292,7 @@ export function activate(context: vscode.ExtensionContext) {
 ## 🧪 Testing Strategy
 
 ### Unit Testing (Future)
+
 ```bash
 # Test structure (to be implemented)
 src/
@@ -297,6 +303,7 @@ src/
 ```
 
 ### Integration Testing
+
 ```bash
 # Manual testing workflow
 1. Start MCP server: npm run dev
@@ -306,6 +313,7 @@ src/
 ```
 
 ### Dashboard Testing
+
 ```bash
 # Start dashboard in development
 npm run dev:dashboard
@@ -320,6 +328,7 @@ npm run dev:dashboard
 ## 📁 Project Structure
 
 ### Core MCP Server
+
 ```
 src/
 ├── core/                     # Core business logic
@@ -349,6 +358,7 @@ src/
 ```
 
 ### Dashboard Frontend
+
 ```
 src/dashboard_frontend/src/
 ├── modules/
@@ -371,32 +381,34 @@ src/dashboard_frontend/src/
 ### Tool Development Guidelines
 
 #### 1. Input Validation
+
 ```typescript
 // Always validate inputs
 export async function myToolHandler(args: any, context: ToolContext): Promise<ToolResponse> {
   const { projectPath, requiredParam } = args;
-  
+
   if (!projectPath) {
     return {
       success: false,
       message: 'projectPath is required',
-      nextSteps: ['Provide absolute path to project root']
+      nextSteps: ['Provide absolute path to project root'],
     };
   }
-  
+
   if (!requiredParam) {
     return {
       success: false,
       message: 'requiredParam is required',
-      nextSteps: ['Provide required parameter']
+      nextSteps: ['Provide required parameter'],
     };
   }
-  
+
   // Continue with implementation
 }
 ```
 
 #### 2. Error Handling
+
 ```typescript
 try {
   // Tool implementation
@@ -407,20 +419,22 @@ try {
     nextSteps: [
       'Check input parameters',
       'Verify file permissions',
-      'Contact support if issue persists'
-    ]
+      'Contact support if issue persists',
+    ],
   };
 }
 ```
 
 #### 3. Consistent Response Format
+
 ```typescript
 interface ToolResponse {
   success: boolean;
-  message: string;           // Human-readable status
-  data?: any;               // Response data (optional)
-  nextSteps?: string[];     // What to do next (optional)
-  projectContext?: {        // Project context (optional)
+  message: string; // Human-readable status
+  data?: any; // Response data (optional)
+  nextSteps?: string[]; // What to do next (optional)
+  projectContext?: {
+    // Project context (optional)
     projectPath: string;
     workflowRoot: string;
     dashboardUrl?: string;
@@ -429,6 +443,7 @@ interface ToolResponse {
 ```
 
 #### 4. Path Handling
+
 ```typescript
 import { PathUtils } from '../core/path-utils.js';
 
@@ -440,6 +455,7 @@ const relativePath = PathUtils.toUnixPath(filePath);
 ### Dashboard Development
 
 #### 1. State Management
+
 ```typescript
 // Use React hooks for local state
 const [specs, setSpecs] = useState<SpecData[]>([]);
@@ -453,6 +469,7 @@ useEffect(() => {
 ```
 
 #### 2. API Integration
+
 ```typescript
 // src/dashboard_frontend/src/modules/api/api.tsx
 export const api = {
@@ -460,18 +477,19 @@ export const api = {
     const response = await fetch('/api/specs');
     return response.json();
   },
-  
+
   async updateSpec(specName: string, data: Partial<SpecData>): Promise<void> {
     await fetch(`/api/specs/${specName}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
-  }
+  },
 };
 ```
 
 #### 3. Component Structure
+
 ```typescript
 // Functional components with TypeScript
 interface MyComponentProps {
@@ -495,6 +513,7 @@ export default function MyComponent({ specs, onSpecUpdate }: MyComponentProps) {
 ## 🐛 Debugging
 
 ### MCP Server Debugging
+
 ```bash
 # Enable debug logging
 DEBUG=spec-workflow-mcp npm run dev
@@ -503,7 +522,8 @@ DEBUG=spec-workflow-mcp npm run dev
 # Use MCP client debug modes
 ```
 
-### Dashboard Debugging  
+### Dashboard Debugging
+
 ```bash
 # Browser DevTools
 # Check Network tab for API calls
@@ -512,6 +532,7 @@ DEBUG=spec-workflow-mcp npm run dev
 ```
 
 ### File System Issues
+
 ```bash
 # Check file permissions
 ls -la .specflow/
@@ -526,6 +547,7 @@ tree .specflow/
 ## 📦 Build and Deployment
 
 ### Building for Production
+
 ```bash
 # Clean previous builds
 npm run clean
@@ -538,6 +560,7 @@ ls -la dist/
 ```
 
 ### Publishing to NPM
+
 ```bash
 # Update version in package.json
 npm version patch|minor|major
@@ -548,6 +571,7 @@ npm publish
 ```
 
 ### VS Code Extension Publishing
+
 ```bash
 cd vscode-extension
 

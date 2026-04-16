@@ -14,12 +14,12 @@ describe('SpecWatcher Error Handling', () => {
     // Create a temporary test directory
     testDir = join(tmpdir(), `spec-workflow-test-${Date.now()}`);
     await fs.mkdir(testDir, { recursive: true });
-    
+
     // Create the workflow directory structure
     const workflowDir = join(testDir, '.specflow');
     const specsDir = join(workflowDir, 'specs');
     const steeringDir = join(workflowDir, 'steering');
-    
+
     await fs.mkdir(workflowDir, { recursive: true });
     await fs.mkdir(specsDir, { recursive: true });
     await fs.mkdir(steeringDir, { recursive: true });
@@ -39,7 +39,7 @@ describe('SpecWatcher Error Handling', () => {
     if (watcher) {
       await watcher.stop();
     }
-    
+
     // Clean up test directory
     try {
       await fs.rm(testDir, { recursive: true, force: true });
@@ -66,7 +66,7 @@ describe('SpecWatcher Error Handling', () => {
     await fs.writeFile(requirementsPath, '# Updated Requirements\n\nUpdated content');
 
     // Wait for file system events to propagate
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
     // Watcher should still be running (not crashed)
     expect(watcher).toBeDefined();
@@ -90,7 +90,7 @@ describe('SpecWatcher Error Handling', () => {
     await fs.writeFile(requirementsPath, '# Updated Requirements\n\nUpdated content');
 
     // Wait for file system events to propagate
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
     // Watcher should still be running despite the error
     expect(watcher).toBeDefined();
@@ -113,7 +113,7 @@ describe('SpecWatcher Error Handling', () => {
     await fs.writeFile(steeringPath, '# Product Steering\n\nSome guidance');
 
     // Wait for file system events to propagate
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
     // Should have received at least one event
     expect(steeringEvents.length).toBeGreaterThanOrEqual(0); // May be 0 or 1 depending on timing
@@ -133,15 +133,15 @@ describe('SpecWatcher Error Handling', () => {
     await watcher.start();
 
     const requirementsPath = join(testDir, '.specflow', 'specs', 'test-spec', 'requirements.md');
-    
+
     // Make multiple rapid changes
     for (let i = 0; i < 5; i++) {
       await fs.writeFile(requirementsPath, `# Updated Requirements ${i}\n\nUpdated content ${i}`);
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
     }
 
     // Wait for all events to propagate
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     // Watcher should still be running
     expect(watcher).toBeDefined();

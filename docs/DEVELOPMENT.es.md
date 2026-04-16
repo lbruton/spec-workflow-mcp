@@ -33,6 +33,7 @@ npm install
 ```
 
 Esto instala:
+
 - MCP SDK
 - TypeScript y herramientas de construcción
 - Express para servidor del panel
@@ -51,15 +52,15 @@ Esto compila archivos TypeScript a JavaScript en el directorio `dist/`.
 
 ### Comandos Principales
 
-| Comando | Descripción |
-|---------|-------------|
-| `npm run dev` | Iniciar en modo desarrollo con auto-recarga |
-| `npm run build` | Construir paquete de producción |
-| `npm start` | Ejecutar servidor de producción |
-| `npm test` | Ejecutar suite de pruebas |
-| `npm run clean` | Eliminar artefactos de construcción |
-| `npm run lint` | Ejecutar linter de código |
-| `npm run format` | Formatear código con Prettier |
+| Comando          | Descripción                                 |
+| ---------------- | ------------------------------------------- |
+| `npm run dev`    | Iniciar en modo desarrollo con auto-recarga |
+| `npm run build`  | Construir paquete de producción             |
+| `npm start`      | Ejecutar servidor de producción             |
+| `npm test`       | Ejecutar suite de pruebas                   |
+| `npm run clean`  | Eliminar artefactos de construcción         |
+| `npm run lint`   | Ejecutar linter de código                   |
+| `npm run format` | Formatear código con Prettier               |
 
 ### Modo de Desarrollo
 
@@ -68,6 +69,7 @@ npm run dev
 ```
 
 Características:
+
 - Auto-recompilación en cambios de archivo
 - Recarga en caliente para panel
 - Mensajes de error detallados
@@ -80,6 +82,7 @@ npm run clean && npm run build
 ```
 
 Optimizaciones:
+
 - JavaScript minificado
 - Tamaño de paquete optimizado
 - Manejo de errores de producción
@@ -122,26 +125,32 @@ Cliente (IA) ↔ Protocolo MCP ↔ Servidor ↔ Sistema de Archivos
 ### Componentes Clave
 
 #### 1. Servidor MCP (`src/index.ts`)
+
 - Maneja comunicación del protocolo MCP
 - Procesa solicitudes de herramientas
 - Gestiona estado del proyecto
 - Operaciones del sistema de archivos
 
 #### 2. Servidor del Panel (`src/server.ts`)
+
 - Sirve panel web
 - Conexiones WebSocket
 - Actualizaciones en tiempo real
 - Endpoints HTTP API
 
 #### 3. Herramientas (`src/tools/`)
+
 Cada herramienta es un módulo separado:
+
 - Validación de entrada
 - Lógica de negocio
 - Operaciones de archivos
 - Formateo de respuesta
 
 #### 4. Prompts (`src/prompts/`)
+
 Cadenas de plantilla para:
+
 - Generación de documentos
 - Guía de flujo de trabajo
 - Mensajes de error
@@ -164,9 +173,9 @@ export const myNewTool: Tool = {
     type: 'object',
     properties: {
       param1: { type: 'string', description: 'Descripción del parámetro' },
-      param2: { type: 'number', optional: true }
+      param2: { type: 'number', optional: true },
     },
-    required: ['param1']
+    required: ['param1'],
   },
   handler: async (params) => {
     // Implementación de la herramienta
@@ -176,9 +185,9 @@ export const myNewTool: Tool = {
 
     return {
       success: true,
-      data: 'Respuesta de la herramienta'
+      data: 'Respuesta de la herramienta',
     };
-  }
+  },
 };
 ```
 
@@ -212,10 +221,14 @@ server.registerTool(myNewTool);
 ```javascript
 document.getElementById('new-action').addEventListener('click', () => {
   // Lógica de la característica
-  ws.send(JSON.stringify({
-    type: 'new-action',
-    data: { /* ... */ }
-  }));
+  ws.send(
+    JSON.stringify({
+      type: 'new-action',
+      data: {
+        /* ... */
+      },
+    }),
+  );
 });
 ```
 
@@ -260,7 +273,7 @@ import { myTool } from './my-tool';
 describe('myTool', () => {
   it('debería procesar la entrada correctamente', async () => {
     const result = await myTool.handler({
-      param1: 'test'
+      param1: 'test',
     });
 
     expect(result.success).toBe(true);
@@ -269,7 +282,7 @@ describe('myTool', () => {
 
   it('debería manejar errores', async () => {
     const result = await myTool.handler({
-      param1: null
+      param1: null,
     });
 
     expect(result.success).toBe(false);
@@ -397,6 +410,7 @@ Seguir commits convencionales:
 - `chore:` Mantenimiento
 
 Ejemplos:
+
 ```
 feat: agregar flujo de trabajo de revisión de aprobación
 fix: resolver problema de reconexión WebSocket del panel
@@ -416,11 +430,13 @@ docs: actualizar guía de configuración
 ### Paquete NPM
 
 1. **Actualizar versión**:
+
    ```bash
    npm version patch|minor|major
    ```
 
 2. **Construir paquete**:
+
    ```bash
    npm run build
    ```
@@ -435,6 +451,7 @@ docs: actualizar guía de configuración
 1. **Actualizar versión de extensión** en `vscode-extension/package.json`
 
 2. **Construir extensión**:
+
    ```bash
    cd vscode-extension
    npm run package
@@ -490,11 +507,11 @@ if (safePath.includes('..')) {
 
 ### Errores Comunes de Construcción
 
-| Error | Solución |
-|-------|----------|
-| Errores de TypeScript | Ejecutar `npm run build` para ver errores detallados |
-| Módulo no encontrado | Verificar imports y ejecutar `npm install` |
-| Puerto ya en uso | Cambiar puerto o terminar proceso existente |
+| Error                      | Solución                                                             |
+| -------------------------- | -------------------------------------------------------------------- |
+| Errores de TypeScript      | Ejecutar `npm run build` para ver errores detallados                 |
+| Módulo no encontrado       | Verificar imports y ejecutar `npm install`                           |
+| Puerto ya en uso           | Cambiar puerto o terminar proceso existente                          |
 | Conexión WebSocket fallida | Verificar que el servidor esté ejecutándose y el puerto sea correcto |
 
 ### Consejos de Desarrollo

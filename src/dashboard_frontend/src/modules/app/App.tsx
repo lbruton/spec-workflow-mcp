@@ -55,7 +55,12 @@ function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
               title={t('nav.toggleSidebar', 'Toggle navigation sidebar')}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               </svg>
             </button>
 
@@ -64,7 +69,12 @@ function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
           </div>
 
           <div className="flex items-center gap-3">
-            <span className={`inline-block w-2.5 h-2.5 rounded-full ${connected ? 'bg-[var(--status-success)]' : 'bg-[var(--status-error)]'}`} title={connected ? t('connectionStatus.connected') : t('connectionStatus.disconnected')} />
+            <span
+              className={`inline-block w-2.5 h-2.5 rounded-full ${connected ? 'bg-[var(--status-success)]' : 'bg-[var(--status-error)]'}`}
+              title={
+                connected ? t('connectionStatus.connected') : t('connectionStatus.disconnected')
+              }
+            />
 
             {/* Desktop Controls */}
             <div className="hidden lg:flex items-center gap-3">
@@ -84,8 +94,18 @@ function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
               title={t('mobile.settings', 'Settings')}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
               </svg>
             </button>
           </div>
@@ -94,10 +114,7 @@ function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
 
       {/* Mobile/Tablet Slide-out Controls Menu */}
       {mobileMenuOpen && (
-        <div
-          className="fixed inset-0 z-50 lg:hidden"
-          onClick={closeMobileMenu}
-        >
+        <div className="fixed inset-0 z-50 lg:hidden" onClick={closeMobileMenu}>
           <div className="absolute inset-0 bg-black/50 transition-opacity" />
 
           <div
@@ -106,14 +123,21 @@ function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
           >
             <div className="flex flex-col h-full">
               <div className="flex items-center justify-between p-4 border-b border-[var(--border-default)]">
-                <div className="text-lg font-semibold text-[var(--text-primary)]">{t('mobile.settings', 'Settings')}</div>
+                <div className="text-lg font-semibold text-[var(--text-primary)]">
+                  {t('mobile.settings', 'Settings')}
+                </div>
                 <button
                   onClick={closeMobileMenu}
                   className="p-2 rounded-md text-[var(--text-muted)] hover:bg-[var(--surface-hover)] transition-colors"
                   aria-label={t('mobile.closeMenu')}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
@@ -121,28 +145,33 @@ function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
               {/* Controls Section */}
               <div className="flex-1 px-4 py-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-[var(--text-secondary)]">{t('mobile.notificationVolume')}</span>
+                  <span className="text-sm text-[var(--text-secondary)]">
+                    {t('mobile.notificationVolume')}
+                  </span>
                   <VolumeControl />
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-[var(--text-secondary)]">{t('language.select')}</span>
+                  <span className="text-sm text-[var(--text-secondary)]">
+                    {t('language.select')}
+                  </span>
                   <LanguageSelector className="w-32" />
                 </div>
 
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-[var(--text-secondary)]">{t('mobile.theme')}</span>
-                  <button onClick={toggleTheme} className="px-3 py-1.5 bg-[var(--surface-inset)] text-[var(--text-secondary)] rounded-md text-sm hover:bg-[var(--surface-hover)] transition-colors">
+                  <button
+                    onClick={toggleTheme}
+                    className="px-3 py-1.5 bg-[var(--surface-inset)] text-[var(--text-secondary)] rounded-md text-sm hover:bg-[var(--surface-hover)] transition-colors"
+                  >
                     {theme === 'dark' ? t('theme.dark') : t('theme.light')}
                   </button>
                 </div>
-
               </div>
             </div>
           </div>
         </div>
       )}
-
     </>
   );
 }
@@ -194,33 +223,36 @@ function AppInner() {
             <Header toggleSidebar={toggleSidebar} />
             <HighlightStyles />
             <main className="w-full px-6 py-6">
-            {currentProjectId ? (
-              <Routes>
-                <Route path="/" element={<DashboardStatistics />} />
-                <Route path="/steering" element={<SteeringPage />} />
-                <Route path="/specs" element={<SpecsPage />} />
-                <Route path="/specs/view" element={<SpecViewerPage />} />
-                <Route path="/tasks" element={<TasksPage />} />
-                <Route path="/logs" element={<LogsPage />} />
-                <Route path="/approvals" element={<ApprovalsPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            ) : (
-              <div className="flex items-center justify-center min-h-[60vh]">
-                <div className="text-center">
-                  <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
-                    No Projects Available
-                  </h2>
-                  <p className="text-[var(--text-secondary)] mb-6">
-                    Start MCP servers to see projects here.
-                  </p>
-                  <div className="text-sm text-[var(--text-muted)]">
-                    Run: <code className="px-2 py-1 bg-[var(--surface-inset)] rounded-md">npx @lbruton/spec-workflow-mcp /path/to/project</code>
+              {currentProjectId ? (
+                <Routes>
+                  <Route path="/" element={<DashboardStatistics />} />
+                  <Route path="/steering" element={<SteeringPage />} />
+                  <Route path="/specs" element={<SpecsPage />} />
+                  <Route path="/specs/view" element={<SpecViewerPage />} />
+                  <Route path="/tasks" element={<TasksPage />} />
+                  <Route path="/logs" element={<LogsPage />} />
+                  <Route path="/approvals" element={<ApprovalsPage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              ) : (
+                <div className="flex items-center justify-center min-h-[60vh]">
+                  <div className="text-center">
+                    <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
+                      No Projects Available
+                    </h2>
+                    <p className="text-[var(--text-secondary)] mb-6">
+                      Start MCP servers to see projects here.
+                    </p>
+                    <div className="text-sm text-[var(--text-muted)]">
+                      Run:{' '}
+                      <code className="px-2 py-1 bg-[var(--surface-inset)] rounded-md">
+                        npx @lbruton/spec-workflow-mcp /path/to/project
+                      </code>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
             </main>
           </div>
         </div>
@@ -250,5 +282,3 @@ export default function App() {
     </I18nErrorBoundary>
   );
 }
-
-

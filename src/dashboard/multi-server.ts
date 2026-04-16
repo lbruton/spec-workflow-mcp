@@ -1,4 +1,5 @@
 import fastify, { FastifyInstance } from 'fastify';
+import fastifyRateLimit from '@fastify/rate-limit';
 import fastifyStatic from '@fastify/static';
 import fastifyWebsocket from '@fastify/websocket';
 import fastifyCors from '@fastify/cors';
@@ -21,13 +22,26 @@ import {
   createSecurityHeadersMiddleware,
   getCorsConfig,
   isLocalhostAddress,
-  DEFAULT_SECURITY_CONFIG
+  DEFAULT_SECURITY_CONFIG,
 } from '../core/security-utils.js';
 import { SecurityConfig } from '../types.js';
 import { loadConfig } from '../core/config-loader.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+/**
+ * Validate that a user-provided path segment stays within the expected base directory.
+ * Prevents path traversal attacks (e.g., "../../etc/passwd").
+ */
+function ensureWithinBase(base: string, userSegment: string): string {
+  const full = resolve(join(base, userSegment));
+  if (!full.startsWith(resolve(base) + '/')) {
+    throw new Error('Path traversal detected');
+  }
+  return full;
+}
+
 
 interface WebSocketClient {
   socket: WebSocket;
@@ -78,7 +92,7 @@ export class MultiProjectDashboardServer {
     if (!isLocalhostAddress(this.bindAddress) && !this.allowExternalAccess) {
       throw new Error(
         `SECURITY ERROR: Binding to '${this.bindAddress}' (non-localhost) requires explicit allowExternalAccess=true. ` +
-        'This exposes your dashboard to network access. Use 127.0.0.1 for localhost-only access.'
+          'This exposes your dashboard to network access. Use 127.0.0.1 for localhost-only access.',
       );
     }
 
@@ -104,8 +118,12 @@ export class MultiProjectDashboardServer {
     // Display security status
     console.error('🔒 Security Configuration:');
     console.error(`   - Bind Address: ${this.bindAddress}`);
-    console.error(`   - Rate Limiting: ${this.securityConfig.rateLimitEnabled ? 'ENABLED ✓' : 'DISABLED ⚠️'}`);
-    console.error(`   - Audit Logging: ${this.securityConfig.auditLogEnabled ? 'ENABLED ✓' : 'DISABLED ⚠️'}`);
+    console.error(
+      `   - Rate Limiting: ${this.securityConfig.rateLimitEnabled ? 'ENABLED ✓' : 'DISABLED ⚠️'}`,
+    );
+    console.error(
+      `   - Audit Logging: ${this.securityConfig.auditLogEnabled ? 'ENABLED ✓' : 'DISABLED ⚠️'}`,
+    );
     console.error(`   - CORS: ${this.securityConfig.corsEnabled ? 'ENABLED ✓' : 'DISABLED ⚠️'}`);
     console.error(`   - Allowed Origins: ${this.securityConfig.allowedOrigins.join(', ')}`);
     console.error('');
@@ -135,6 +153,12 @@ export class MultiProjectDashboardServer {
 
     // Initialize job scheduler
     await this.jobScheduler.initialize();
+
+    // Register rate-limit plugin (CodeQL-recognized pattern)
+    await this.app.register(fastifyRateLimit, {
+      max: 100,
+      timeWindow: '1 minute',
+    });
 
     // Register CORS plugin if enabled
     const corsConfig = getCorsConfig(this.securityConfig);
@@ -188,7 +212,7 @@ export class MultiProjectDashboardServer {
           if (project) {
             Promise.all([
               project.parser.getAllSpecs(),
-              project.approvalStorage.getAllPendingApprovals()
+              project.approvalStorage.getAllPendingApprovals(),
             ])
               .then(([specs, approvals]) => {
                 socket.send(
@@ -196,7 +220,7 @@ export class MultiProjectDashboardServer {
                     type: 'initial',
                     projectId,
                     data: { specs, approvals },
-                  })
+                  }),
                 );
               })
               .catch((error) => {
@@ -206,16 +230,19 @@ export class MultiProjectDashboardServer {
         }
 
         // Send projects list
-        self.projectManager.getProjectsList().then(projects => {
-          socket.send(
-            JSON.stringify({
-              type: 'projects-update',
-              data: { projects }
-            })
-          );
-        }).catch(error => {
-          console.error('Error getting projects list for WebSocket:', error);
-        });
+        self.projectManager
+          .getProjectsList()
+          .then((projects) => {
+            socket.send(
+              JSON.stringify({
+                type: 'projects-update',
+                data: { projects },
+              }),
+            );
+          })
+          .catch((error) => {
+            console.error('Error getting projects list for WebSocket:', error);
+          });
 
         // Handle client disconnect
         const cleanup = () => {
@@ -240,7 +267,7 @@ export class MultiProjectDashboardServer {
               if (project) {
                 Promise.all([
                   project.parser.getAllSpecs(),
-                  project.approvalStorage.getAllPendingApprovals()
+                  project.approvalStorage.getAllPendingApprovals(),
                 ])
                   .then(([specs, approvals]) => {
                     socket.send(
@@ -248,7 +275,7 @@ export class MultiProjectDashboardServer {
                         type: 'initial',
                         projectId: msg.projectId,
                         data: { specs, approvals },
-                      })
+                      }),
                     );
                   })
                   .catch((error) => {
@@ -285,7 +312,7 @@ export class MultiProjectDashboardServer {
     // Start server with configured network binding
     await this.app.listen({
       port: this.actualPort,
-      host: this.bindAddress
+      host: this.bindAddress,
     });
 
     // Start WebSocket heartbeat monitoring
@@ -308,7 +335,7 @@ export class MultiProjectDashboardServer {
     this.projectManager.on('projects-update', (projects) => {
       this.broadcastToAll({
         type: 'projects-update',
-        data: { projects }
+        data: { projects },
       });
     });
 
@@ -333,7 +360,7 @@ export class MultiProjectDashboardServer {
             this.broadcastToProject(projectId, {
               type: 'spec-update',
               projectId,
-              data: { specs, archivedSpecs }
+              data: { specs, archivedSpecs },
             });
           }
         } catch (error) {
@@ -358,7 +385,7 @@ export class MultiProjectDashboardServer {
         this.broadcastToProject(projectId, {
           type: 'steering-update',
           projectId,
-          data: steeringStatus
+          data: steeringStatus,
         });
       } catch (error) {
         console.error('Error broadcasting steering changes:', error);
@@ -376,7 +403,7 @@ export class MultiProjectDashboardServer {
           this.broadcastToProject(projectId, {
             type: 'approval-update',
             projectId,
-            data: approvals
+            data: approvals,
           });
         }
       } catch (error) {
@@ -434,9 +461,9 @@ export class MultiProjectDashboardServer {
       return {
         projectId,
         projectName: project.projectName,
-        projectPath: project.originalProjectPath,  // Return original path for display
+        projectPath: project.originalProjectPath, // Return original path for display
         steering: steeringStatus,
-        version: this.packageVersion
+        version: this.packageVersion,
       };
     });
 
@@ -482,7 +509,7 @@ export class MultiProjectDashboardServer {
         return reply.code(404).send({ error: 'Project not found' });
       }
 
-      const specDir = join(project.projectPath, 'specs', name);
+      const specDir = ensureWithinBase(join(project.projectPath, 'specs'), name);
       const documents = ['discovery', 'requirements', 'design', 'tasks', 'readiness-report'];
       const result: Record<string, { content: string; lastModified: string } | null> = {};
 
@@ -493,7 +520,7 @@ export class MultiProjectDashboardServer {
           const stats = await fs.stat(docPath);
           result[doc] = {
             content,
-            lastModified: stats.mtime.toISOString()
+            lastModified: stats.mtime.toISOString(),
           };
         } catch {
           result[doc] = null;
@@ -512,7 +539,7 @@ export class MultiProjectDashboardServer {
       }
 
       // Use archive path instead of active specs path
-      const specDir = join(project.projectPath, 'archive', 'specs', name);
+      const specDir = ensureWithinBase(join(project.projectPath, 'archive', 'specs'), name);
       const documents = ['discovery', 'requirements', 'design', 'tasks', 'readiness-report'];
       const result: Record<string, { content: string; lastModified: string } | null> = {};
 
@@ -523,7 +550,7 @@ export class MultiProjectDashboardServer {
           const stats = await fs.stat(docPath);
           result[doc] = {
             content,
-            lastModified: stats.mtime.toISOString()
+            lastModified: stats.mtime.toISOString(),
           };
         } catch {
           result[doc] = null;
@@ -535,7 +562,11 @@ export class MultiProjectDashboardServer {
 
     // Save spec document
     this.app.put('/api/projects/:projectId/specs/:name/:document', async (request, reply) => {
-      const { projectId, name, document } = request.params as { projectId: string; name: string; document: string };
+      const { projectId, name, document } = request.params as {
+        projectId: string;
+        name: string;
+        document: string;
+      };
       const { content } = request.body as { content: string };
       const project = this.projectManager.getProject(projectId);
 
@@ -552,10 +583,11 @@ export class MultiProjectDashboardServer {
         return reply.code(400).send({ error: 'Content must be a string' });
       }
 
-      const docPath = join(project.projectPath, 'specs', name, `${document}.md`);
+      const safeSpecDir = ensureWithinBase(join(project.projectPath, 'specs'), name);
+      const docPath = join(safeSpecDir, `${document}.md`);
 
       try {
-        const specDir = join(project.projectPath, 'specs', name);
+        const specDir = safeSpecDir;
         await fs.mkdir(specDir, { recursive: true });
         await fs.writeFile(docPath, content, 'utf-8');
         return { success: true, message: 'Document saved successfully' };
@@ -624,6 +656,10 @@ export class MultiProjectDashboardServer {
 
         const candidateSet = new Set<string>();
         const p = approval.filePath;
+        // Reject path traversal attempts in stored file paths
+        if (p.includes('..')) {
+          return reply.code(400).send({ error: 'Invalid file path' });
+        }
         const isAbsolutePath = p.startsWith('/') || p.match(/^[A-Za-z]:[\\\/]/);
 
         if (!isAbsolutePath) {
@@ -665,7 +701,9 @@ export class MultiProjectDashboardServer {
         }
 
         if (content == null) {
-          return reply.code(500).send({ error: `Failed to read file at any known location for ${approval.filePath}` });
+          return reply
+            .code(500)
+            .send({ error: `Failed to read file at any known location for ${approval.filePath}` });
         }
 
         return { content, filePath: resolvedPath || approval.filePath };
@@ -677,7 +715,11 @@ export class MultiProjectDashboardServer {
     // Approval actions (approve, reject, needs-revision)
     this.app.post('/api/projects/:projectId/approvals/:id/:action', async (request, reply) => {
       try {
-        const { projectId, id, action } = request.params as { projectId: string; id: string; action: string };
+        const { projectId, id, action } = request.params as {
+          projectId: string;
+          id: string;
+          action: string;
+        };
 
         const { response, annotations, comments } = (request.body || {}) as {
           response: string;
@@ -696,11 +738,14 @@ export class MultiProjectDashboardServer {
         }
 
         // Convert action name to status value
-        const actionToStatus: Record<string, 'approved' | 'rejected' | 'needs-revision' | 'concerns'> = {
-          'approve': 'approved',
-          'reject': 'rejected',
+        const actionToStatus: Record<
+          string,
+          'approved' | 'rejected' | 'needs-revision' | 'concerns'
+        > = {
+          approve: 'approved',
+          reject: 'rejected',
           'needs-revision': 'needs-revision',
-          'concerns': 'concerns'
+          concerns: 'concerns',
         };
         const status = actionToStatus[action];
 
@@ -732,23 +777,23 @@ export class MultiProjectDashboardServer {
       const BATCH_SIZE_LIMIT = 100;
       if (ids.length > BATCH_SIZE_LIMIT) {
         return reply.code(400).send({
-          error: `Batch size exceeds limit. Maximum ${BATCH_SIZE_LIMIT} items allowed.`
+          error: `Batch size exceeds limit. Maximum ${BATCH_SIZE_LIMIT} items allowed.`,
         });
       }
 
       // Validate ID format
       const idPattern = /^[a-zA-Z0-9_-]+$/;
-      const invalidIds = ids.filter(id => !idPattern.test(id));
+      const invalidIds = ids.filter((id) => !idPattern.test(id));
       if (invalidIds.length > 0) {
         return reply.code(400).send({
-          error: `Invalid ID format: ${invalidIds.slice(0, 3).join(', ')}${invalidIds.length > 3 ? '...' : ''}`
+          error: `Invalid ID format: ${invalidIds.slice(0, 3).join(', ')}${invalidIds.length > 3 ? '...' : ''}`,
         });
       }
 
       // Process all undo operations with continue-on-error
       const results: { succeeded: string[]; failed: Array<{ id: string; error: string }> } = {
         succeeded: [],
-        failed: []
+        failed: [],
       };
 
       for (const id of ids) {
@@ -766,7 +811,7 @@ export class MultiProjectDashboardServer {
         this.broadcastToProject(projectId, {
           type: 'batch-approval-undo',
           ids: results.succeeded,
-          count: results.succeeded.length
+          count: results.succeeded.length,
         });
       }
 
@@ -774,7 +819,7 @@ export class MultiProjectDashboardServer {
         success: results.failed.length === 0,
         total: ids.length,
         succeeded: results.succeeded,
-        failed: results.failed
+        failed: results.failed,
       };
     });
 
@@ -795,7 +840,8 @@ export class MultiProjectDashboardServer {
       const validBatchActions = ['approve', 'reject'];
       if (!validBatchActions.includes(action)) {
         return reply.code(400).send({
-          error: 'Invalid batch action. Only "approve" and "reject" are allowed for batch operations.'
+          error:
+            'Invalid batch action. Only "approve" and "reject" are allowed for batch operations.',
         });
       }
 
@@ -808,22 +854,22 @@ export class MultiProjectDashboardServer {
       const BATCH_SIZE_LIMIT = 100;
       if (ids.length > BATCH_SIZE_LIMIT) {
         return reply.code(400).send({
-          error: `Batch size exceeds limit. Maximum ${BATCH_SIZE_LIMIT} items allowed.`
+          error: `Batch size exceeds limit. Maximum ${BATCH_SIZE_LIMIT} items allowed.`,
         });
       }
 
       // Validate ID format (PE recommendation - alphanumeric with hyphens/underscores)
       const idPattern = /^[a-zA-Z0-9_-]+$/;
-      const invalidIds = ids.filter(id => !idPattern.test(id));
+      const invalidIds = ids.filter((id) => !idPattern.test(id));
       if (invalidIds.length > 0) {
         return reply.code(400).send({
-          error: `Invalid ID format: ${invalidIds.slice(0, 3).join(', ')}${invalidIds.length > 3 ? '...' : ''}`
+          error: `Invalid ID format: ${invalidIds.slice(0, 3).join(', ')}${invalidIds.length > 3 ? '...' : ''}`,
         });
       }
 
       const actionToStatus: Record<string, 'approved' | 'rejected'> = {
-        'approve': 'approved',
-        'reject': 'rejected'
+        approve: 'approved',
+        reject: 'rejected',
       };
       const status = actionToStatus[action];
       const batchResponse = response || `Batch ${action}d`;
@@ -831,7 +877,7 @@ export class MultiProjectDashboardServer {
       // Process all approvals with continue-on-error (PE recommendation)
       const results: { succeeded: string[]; failed: Array<{ id: string; error: string }> } = {
         succeeded: [],
-        failed: []
+        failed: [],
       };
 
       // Debounce WebSocket broadcasts - collect all updates first (use results.succeeded)
@@ -851,7 +897,7 @@ export class MultiProjectDashboardServer {
           type: 'batch-approval-update',
           action: action,
           ids: results.succeeded,
-          count: results.succeeded.length
+          count: results.succeeded.length,
         });
       }
 
@@ -859,7 +905,7 @@ export class MultiProjectDashboardServer {
         success: results.failed.length === 0,
         total: ids.length,
         succeeded: results.succeeded,
-        failed: results.failed
+        failed: results.failed,
       };
     });
 
@@ -879,28 +925,35 @@ export class MultiProjectDashboardServer {
     });
 
     // Get specific snapshot version for an approval
-    this.app.get('/api/projects/:projectId/approvals/:id/snapshots/:version', async (request, reply) => {
-      const { projectId, id, version } = request.params as { projectId: string; id: string; version: string };
-      const project = this.projectManager.getProject(projectId);
-      if (!project) {
-        return reply.code(404).send({ error: 'Project not found' });
-      }
-      try {
-        const versionNum = parseInt(version, 10);
-        if (isNaN(versionNum)) {
-          return reply.code(400).send({ error: 'Invalid version number' });
+    this.app.get(
+      '/api/projects/:projectId/approvals/:id/snapshots/:version',
+      async (request, reply) => {
+        const { projectId, id, version } = request.params as {
+          projectId: string;
+          id: string;
+          version: string;
+        };
+        const project = this.projectManager.getProject(projectId);
+        if (!project) {
+          return reply.code(404).send({ error: 'Project not found' });
         }
+        try {
+          const versionNum = parseInt(version, 10);
+          if (isNaN(versionNum)) {
+            return reply.code(400).send({ error: 'Invalid version number' });
+          }
 
-        const snapshot = await project.approvalStorage.getSnapshot(id, versionNum);
-        if (!snapshot) {
-          return reply.code(404).send({ error: `Snapshot version ${version} not found` });
+          const snapshot = await project.approvalStorage.getSnapshot(id, versionNum);
+          if (!snapshot) {
+            return reply.code(404).send({ error: `Snapshot version ${version} not found` });
+          }
+
+          return snapshot;
+        } catch (error: any) {
+          return reply.code(500).send({ error: `Failed to get snapshot: ${error.message}` });
         }
-
-        return snapshot;
-      } catch (error: any) {
-        return reply.code(500).send({ error: `Failed to get snapshot: ${error.message}` });
-      }
-    });
+      },
+    );
 
     // Get diff between two versions or between version and current
     this.app.get('/api/projects/:projectId/approvals/:id/diff', async (request, reply) => {
@@ -968,19 +1021,19 @@ export class MultiProjectDashboardServer {
         return reply.code(400).send({ error: 'Invalid steering document name' });
       }
 
-      const docPath = join(project.projectPath, 'steering', `${name}.md`);
+      const docPath = ensureWithinBase(join(project.projectPath, 'steering'), `${name}.md`);
 
       try {
         const content = await readFile(docPath, 'utf-8');
         const stats = await fs.stat(docPath);
         return {
           content,
-          lastModified: stats.mtime.toISOString()
+          lastModified: stats.mtime.toISOString(),
         };
       } catch {
         return {
           content: '',
-          lastModified: new Date().toISOString()
+          lastModified: new Date().toISOString(),
         };
       }
     });
@@ -1004,15 +1057,16 @@ export class MultiProjectDashboardServer {
         return reply.code(400).send({ error: 'Content must be a string' });
       }
 
-      const steeringDir = join(project.projectPath, 'steering');
-      const docPath = join(steeringDir, `${name}.md`);
+      const docPath = ensureWithinBase(join(project.projectPath, 'steering'), `${name}.md`);
 
       try {
-        await fs.mkdir(steeringDir, { recursive: true });
+        await fs.mkdir(join(project.projectPath, 'steering'), { recursive: true });
         await fs.writeFile(docPath, content, 'utf-8');
         return { success: true, message: 'Steering document saved successfully' };
       } catch (error: any) {
-        return reply.code(500).send({ error: `Failed to save steering document: ${error.message}` });
+        return reply
+          .code(500)
+          .send({ error: `Failed to save steering document: ${error.message}` });
       }
     });
 
@@ -1031,7 +1085,8 @@ export class MultiProjectDashboardServer {
           return reply.code(404).send({ error: 'Spec or tasks not found' });
         }
 
-        const tasksPath = join(project.projectPath, 'specs', name, 'tasks.md');
+        const safeSpecDir = ensureWithinBase(join(project.projectPath, 'specs'), name);
+        const tasksPath = join(safeSpecDir, 'tasks.md');
         const tasksContent = await readFile(tasksPath, 'utf-8');
         const parseResult = parseTasksFromMarkdown(tasksContent);
 
@@ -1045,7 +1100,7 @@ export class MultiProjectDashboardServer {
           inProgress: parseResult.inProgressTask,
           progress: progress,
           taskList: parseResult.tasks,
-          lastModified: spec.phases.tasks.lastModified || spec.lastModified
+          lastModified: spec.phases.tasks.lastModified || spec.lastModified,
         };
       } catch (error: any) {
         return reply.code(500).send({ error: `Failed to get task progress: ${error.message}` });
@@ -1053,142 +1108,183 @@ export class MultiProjectDashboardServer {
     });
 
     // Update task status
-    this.app.put('/api/projects/:projectId/specs/:name/tasks/:taskId/status', async (request, reply) => {
-      const { projectId, name, taskId } = request.params as { projectId: string; name: string; taskId: string };
-      const { status } = request.body as { status: 'pending' | 'in-progress' | 'completed' };
-      const project = this.projectManager.getProject(projectId);
+    this.app.put(
+      '/api/projects/:projectId/specs/:name/tasks/:taskId/status',
+      async (request, reply) => {
+        const { projectId, name, taskId } = request.params as {
+          projectId: string;
+          name: string;
+          taskId: string;
+        };
+        const { status } = request.body as { status: 'pending' | 'in-progress' | 'completed' };
+        const project = this.projectManager.getProject(projectId);
 
-      if (!project) {
-        return reply.code(404).send({ error: 'Project not found' });
-      }
+        if (!project) {
+          return reply.code(404).send({ error: 'Project not found' });
+        }
 
-      if (!status || !['pending', 'in-progress', 'completed'].includes(status)) {
-        return reply.code(400).send({ error: 'Invalid status. Must be pending, in-progress, or completed' });
-      }
+        if (!status || !['pending', 'in-progress', 'completed'].includes(status)) {
+          return reply
+            .code(400)
+            .send({ error: 'Invalid status. Must be pending, in-progress, or completed' });
+        }
 
-      try {
-        const tasksPath = join(project.projectPath, 'specs', name, 'tasks.md');
-
-        let tasksContent: string;
         try {
-          tasksContent = await readFile(tasksPath, 'utf-8');
-        } catch (error: any) {
-          if (error.code === 'ENOENT') {
-            return reply.code(404).send({ error: 'Tasks file not found' });
+          const safeSpecDir = ensureWithinBase(join(project.projectPath, 'specs'), name);
+          const tasksPath = join(safeSpecDir, 'tasks.md');
+
+          let tasksContent: string;
+          try {
+            tasksContent = await readFile(tasksPath, 'utf-8');
+          } catch (error: any) {
+            if (error.code === 'ENOENT') {
+              return reply.code(404).send({ error: 'Tasks file not found' });
+            }
+            throw error;
           }
-          throw error;
-        }
 
-        const parseResult = parseTasksFromMarkdown(tasksContent);
-        const task = parseResult.tasks.find(t => t.id === taskId);
+          const parseResult = parseTasksFromMarkdown(tasksContent);
+          const task = parseResult.tasks.find((t) => t.id === taskId);
 
-        if (!task) {
-          return reply.code(404).send({ error: `Task ${taskId} not found` });
-        }
+          if (!task) {
+            return reply.code(404).send({ error: `Task ${taskId} not found` });
+          }
 
-        if (task.status === status) {
+          if (task.status === status) {
+            return {
+              success: true,
+              message: `Task ${taskId} already has status ${status}`,
+              task: { ...task, status },
+            };
+          }
+
+          const { updateTaskStatus } = await import('../core/task-parser.js');
+          const updatedContent = updateTaskStatus(tasksContent, taskId, status);
+
+          if (updatedContent === tasksContent) {
+            return reply
+              .code(500)
+              .send({ error: `Failed to update task ${taskId} in markdown content` });
+          }
+
+          await fs.writeFile(tasksPath, updatedContent, 'utf-8');
+
+          this.broadcastTaskUpdate(projectId, name);
+
           return {
             success: true,
-            message: `Task ${taskId} already has status ${status}`,
-            task: { ...task, status }
+            message: `Task ${taskId} status updated to ${status}`,
+            task: { ...task, status },
           };
+        } catch (error: any) {
+          return reply.code(500).send({ error: `Failed to update task status: ${error.message}` });
         }
-
-        const { updateTaskStatus } = await import('../core/task-parser.js');
-        const updatedContent = updateTaskStatus(tasksContent, taskId, status);
-
-        if (updatedContent === tasksContent) {
-          return reply.code(500).send({ error: `Failed to update task ${taskId} in markdown content` });
-        }
-
-        await fs.writeFile(tasksPath, updatedContent, 'utf-8');
-
-        this.broadcastTaskUpdate(projectId, name);
-
-        return {
-          success: true,
-          message: `Task ${taskId} status updated to ${status}`,
-          task: { ...task, status }
-        };
-      } catch (error: any) {
-        return reply.code(500).send({ error: `Failed to update task status: ${error.message}` });
-      }
-    });
+      },
+    );
 
     // Add implementation log entry
-    this.app.post('/api/projects/:projectId/specs/:name/implementation-log', async (request, reply) => {
-      const { projectId, name } = request.params as { projectId: string; name: string };
-      const project = this.projectManager.getProject(projectId);
-      if (!project) {
-        return reply.code(404).send({ error: 'Project not found' });
-      }
-
-      try {
-        const logData = request.body as any;
-
-        // Validate artifacts are provided
-        if (!logData.artifacts) {
-          return reply.code(400).send({ error: 'artifacts field is REQUIRED. Include apiEndpoints, components, functions, classes, or integrations in the artifacts object.' });
+    this.app.post(
+      '/api/projects/:projectId/specs/:name/implementation-log',
+      async (request, reply) => {
+        const { projectId, name } = request.params as { projectId: string; name: string };
+        const project = this.projectManager.getProject(projectId);
+        if (!project) {
+          return reply.code(404).send({ error: 'Project not found' });
         }
 
-        const specPath = join(project.projectPath, 'specs', name);
-        const logManager = new ImplementationLogManager(specPath);
-        const entry = await logManager.addLogEntry(logData);
+        try {
+          const logData = request.body as any;
 
-        await this.broadcastImplementationLogUpdate(projectId, name);
-        return entry;
-      } catch (error: any) {
-        return reply.code(500).send({ error: `Failed to add implementation log: ${error.message}` });
-      }
-    });
+          // Validate artifacts are provided
+          if (!logData.artifacts) {
+            return reply
+              .code(400)
+              .send({
+                error:
+                  'artifacts field is REQUIRED. Include apiEndpoints, components, functions, classes, or integrations in the artifacts object.',
+              });
+          }
+
+          const specPath = ensureWithinBase(join(project.projectPath, 'specs'), name);
+          const logManager = new ImplementationLogManager(specPath);
+          const entry = await logManager.addLogEntry(logData);
+
+          await this.broadcastImplementationLogUpdate(projectId, name);
+          return reply.type('application/json').send(entry);
+        } catch (error: any) {
+          return reply
+            .code(500)
+            .send({ error: `Failed to add implementation log: ${error.message}` });
+        }
+      },
+    );
 
     // Get implementation logs
-    this.app.get('/api/projects/:projectId/specs/:name/implementation-log', async (request, reply) => {
-      const { projectId, name } = request.params as { projectId: string; name: string };
-      const query = request.query as { taskId?: string; search?: string };
+    this.app.get(
+      '/api/projects/:projectId/specs/:name/implementation-log',
+      async (request, reply) => {
+        const { projectId, name } = request.params as { projectId: string; name: string };
+        const query = request.query as { taskId?: string; search?: string };
 
-      const project = this.projectManager.getProject(projectId);
-      if (!project) {
-        return reply.code(404).send({ error: 'Project not found' });
-      }
-
-      try {
-        const specPath = join(project.projectPath, 'specs', name);
-        const logManager = new ImplementationLogManager(specPath);
-        let logs = await logManager.getAllLogs();
-
-        if (query.taskId) {
-          logs = logs.filter(log => log.taskId === query.taskId);
-        }
-        if (query.search) {
-          logs = await logManager.searchLogs(query.search);
+        const project = this.projectManager.getProject(projectId);
+        if (!project) {
+          return reply.code(404).send({ error: 'Project not found' });
         }
 
-        return { entries: logs };
-      } catch (error: any) {
-        return reply.code(500).send({ error: `Failed to get implementation logs: ${error.message}` });
-      }
-    });
+        try {
+          const specPath = ensureWithinBase(join(project.projectPath, 'specs'), name);
+          const logManager = new ImplementationLogManager(specPath);
+          let logs = await logManager.getAllLogs();
+
+          if (query.taskId) {
+            logs = logs.filter((log) => log.taskId === query.taskId);
+          }
+          if (query.search) {
+            // Validate search input — only allow word chars, spaces, hyphens, dots, slashes
+            const searchStr = String(query.search).slice(0, 200);
+            if (!/^[\w\s\-./]+$/i.test(searchStr)) {
+              return reply.code(400).send({ error: 'Invalid search query characters' });
+            }
+            logs = await logManager.searchLogs(searchStr);
+          }
+
+          return { entries: logs };
+        } catch (error: any) {
+          return reply
+            .code(500)
+            .send({ error: `Failed to get implementation logs: ${error.message}` });
+        }
+      },
+    );
 
     // Get implementation log task stats
-    this.app.get('/api/projects/:projectId/specs/:name/implementation-log/task/:taskId/stats', async (request, reply) => {
-      const { projectId, name, taskId } = request.params as { projectId: string; name: string; taskId: string };
+    this.app.get(
+      '/api/projects/:projectId/specs/:name/implementation-log/task/:taskId/stats',
+      async (request, reply) => {
+        const { projectId, name, taskId } = request.params as {
+          projectId: string;
+          name: string;
+          taskId: string;
+        };
 
-      const project = this.projectManager.getProject(projectId);
-      if (!project) {
-        return reply.code(404).send({ error: 'Project not found' });
-      }
+        const project = this.projectManager.getProject(projectId);
+        if (!project) {
+          return reply.code(404).send({ error: 'Project not found' });
+        }
 
-      try {
-        const specPath = join(project.projectPath, 'specs', name);
-        const logManager = new ImplementationLogManager(specPath);
-        const stats = await logManager.getTaskStats(taskId);
+        try {
+          const specPath = ensureWithinBase(join(project.projectPath, 'specs'), name);
+          const logManager = new ImplementationLogManager(specPath);
+          const stats = await logManager.getTaskStats(taskId);
 
-        return stats;
-      } catch (error: any) {
-        return reply.code(500).send({ error: `Failed to get implementation log stats: ${error.message}` });
-      }
-    });
+          return stats;
+        } catch (error: any) {
+          return reply
+            .code(500)
+            .send({ error: `Failed to get implementation log stats: ${error.message}` });
+        }
+      },
+    );
 
     // Project-specific changelog endpoint
     this.app.get('/api/projects/:projectId/changelog/:version', async (request, reply) => {
@@ -1252,7 +1348,9 @@ export class MultiProjectDashboardServer {
       const job = request.body as any;
 
       if (!job.id || !job.name || !job.type || job.config === undefined || !job.schedule) {
-        return reply.code(400).send({ error: 'Missing required fields: id, name, type, config, schedule' });
+        return reply
+          .code(400)
+          .send({ error: 'Missing required fields: id, name, type, config, schedule' });
       }
 
       try {
@@ -1263,7 +1361,7 @@ export class MultiProjectDashboardServer {
           enabled: job.enabled !== false,
           config: job.config,
           schedule: job.schedule,
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         });
         return { success: true, message: 'Job created successfully' };
       } catch (error: any) {
@@ -1330,7 +1428,10 @@ export class MultiProjectDashboardServer {
       const { limit } = request.query as { limit?: string };
 
       try {
-        const history = await this.jobScheduler.getJobExecutionHistory(jobId, parseInt(limit || '50'));
+        const history = await this.jobScheduler.getJobExecutionHistory(
+          jobId,
+          parseInt(limit || '50'),
+        );
         return history;
       } catch (error: any) {
         return reply.code(500).send({ error: error.message });
@@ -1431,7 +1532,8 @@ export class MultiProjectDashboardServer {
       const project = this.projectManager.getProject(projectId);
       if (!project) return;
 
-      const tasksPath = join(project.projectPath, 'specs', specName, 'tasks.md');
+      const safeSpecDir = ensureWithinBase(join(project.projectPath, 'specs'), specName);
+      const tasksPath = join(safeSpecDir, 'tasks.md');
       const tasksContent = await readFile(tasksPath, 'utf-8');
       const parseResult = parseTasksFromMarkdown(tasksContent);
 
@@ -1442,20 +1544,23 @@ export class MultiProjectDashboardServer {
           specName,
           taskList: parseResult.tasks,
           summary: parseResult.summary,
-          inProgress: parseResult.inProgressTask
-        }
+          inProgress: parseResult.inProgressTask,
+        },
       });
     } catch (error) {
       console.error('Error broadcasting task update:', error);
     }
   }
 
-  private async broadcastImplementationLogUpdate(projectId: string, specName: string): Promise<void> {
+  private async broadcastImplementationLogUpdate(
+    projectId: string,
+    specName: string,
+  ): Promise<void> {
     try {
       const project = this.projectManager.getProject(projectId);
       if (!project) return;
 
-      const specPath = join(project.projectPath, 'specs', specName);
+      const specPath = ensureWithinBase(join(project.projectPath, 'specs'), specName);
       const logManager = new ImplementationLogManager(specPath);
       const logs = await logManager.getAllLogs();
 
@@ -1464,8 +1569,8 @@ export class MultiProjectDashboardServer {
         projectId,
         data: {
           specName,
-          entries: logs
-        }
+          entries: logs,
+        },
       });
     } catch (error) {
       console.error('Error broadcasting implementation log update:', error);

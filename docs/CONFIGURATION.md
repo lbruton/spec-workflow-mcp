@@ -12,12 +12,12 @@ npx -y @pimzino/spec-workflow-mcp@latest [project-path] [options]
 
 ### Available Options
 
-| Option | Description | Example |
-|--------|-------------|---------|
-| `--help` | Show comprehensive usage information | `npx -y @pimzino/spec-workflow-mcp@latest --help` |
-| `--dashboard` | Run dashboard-only mode (default port: 5000) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard` |
-| `--port <number>` | Specify custom dashboard port (1024-65535) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080` |
-| `--no-open` | Don't auto-open browser when starting dashboard | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard --no-open` |
+| Option                       | Description                                                               | Example                                                                          |
+| ---------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `--help`                     | Show comprehensive usage information                                      | `npx -y @pimzino/spec-workflow-mcp@latest --help`                                |
+| `--dashboard`                | Run dashboard-only mode (default port: 5000)                              | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard`                           |
+| `--port <number>`            | Specify custom dashboard port (1024-65535)                                | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080`               |
+| `--no-open`                  | Don't auto-open browser when starting dashboard                           | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard --no-open`                 |
 | `--no-shared-worktree-specs` | Disable shared `.specflow` in git worktrees (use workspace-local instead) | `npx -y @pimzino/spec-workflow-mcp@latest ~/worktree --no-shared-worktree-specs` |
 
 ### Important Notes
@@ -31,12 +31,14 @@ npx -y @pimzino/spec-workflow-mcp@latest [project-path] [options]
 ### Typical Workflow
 
 1. **Start the Dashboard** (do this first, only once):
+
 ```bash
 # Uses default port 5000
 npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 ```
 
 2. **Start MCP Servers** (one per project, in separate terminals):
+
 ```bash
 # Project 1
 npx -y @pimzino/spec-workflow-mcp@latest ~/projects/app1
@@ -65,11 +67,12 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 Override the default global state directory (`~/.specflow-mcp`). This is useful for sandboxed environments where `$HOME` is read-only.
 
-| Variable | Default | Description |
-|----------|---------|-------------|
+| Variable             | Default           | Description                      |
+| -------------------- | ----------------- | -------------------------------- |
 | `SPEC_WORKFLOW_HOME` | `~/.specflow-mcp` | Directory for global state files |
 
 **Files stored in this directory:**
+
 - `activeProjects.json` - Project registry
 - `activeSession.json` - Dashboard session info
 - `settings.json` - Global settings
@@ -101,8 +104,8 @@ SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@la
 
 Override the automatic git worktree detection. By default, when running in a git worktree, specs are stored in the main repository's `.specflow/` directory so all worktrees share the same specs.
 
-| Variable | Default | Description |
-|----------|---------|-------------|
+| Variable                    | Default         | Description                                |
+| --------------------------- | --------------- | ------------------------------------------ |
 | `SPEC_WORKFLOW_SHARED_ROOT` | (auto-detected) | Override the project root for spec storage |
 
 **Automatic behavior (no env var set):**
@@ -146,6 +149,7 @@ Git worktrees are fully supported with two operating modes:
 By default, all worktrees of a repository share the same `.specflow/` directory (stored in the main repo). However, each worktree registers as its own project in the dashboard with a distinct identity.
 
 **Dashboard behavior:**
+
 - Each worktree appears as a separate project in the project dropdown
 - Project names show `repo · worktree` format (e.g., `myproject · feature-auth`)
 - Approval file resolution prioritizes the worktree path, then falls back to shared workflow root
@@ -172,22 +176,24 @@ npx -y @pimzino/spec-workflow-mcp@latest ~/myproject-feature --no-shared-worktre
 ```
 
 **When to use isolated mode:**
+
 - Different worktrees have completely different feature scopes
 - You want to experiment with specs without affecting other worktrees
 - Team members working on different worktrees need independent spec histories
 
 **Comparison:**
 
-| Aspect | Default (Shared) | `--no-shared-worktree-specs` |
-|--------|------------------|------------------------------|
-| `.specflow/` location | Main repo | Each worktree |
-| Specs visible across worktrees | Yes | No |
-| Dashboard project identity | Separate per worktree | Separate per worktree |
-| Approval file resolution | Worktree → Main repo | Worktree only |
+| Aspect                         | Default (Shared)      | `--no-shared-worktree-specs` |
+| ------------------------------ | --------------------- | ---------------------------- |
+| `.specflow/` location          | Main repo             | Each worktree                |
+| Specs visible across worktrees | Yes                   | No                           |
+| Dashboard project identity     | Separate per worktree | Separate per worktree        |
+| Approval file resolution       | Worktree → Main repo  | Worktree only                |
 
 ## Dashboard Session Management
 
 The dashboard stores its session information in `~/.specflow-mcp/activeSession.json` (or `$SPEC_WORKFLOW_HOME/activeSession.json` if set). This file:
+
 - Enforces single dashboard instance
 - Allows MCP servers to discover the running dashboard
 - Automatically cleans up when dashboard stops
@@ -267,12 +273,12 @@ debounceMs = 300
 
 #### Basic Settings
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `projectDir` | string | Current directory | Project directory path |
-| `port` | number | Ephemeral | Dashboard port (1024-65535) |
-| `dashboardOnly` | boolean | false | Run dashboard without MCP server |
-| `lang` | string | "en" | Interface language |
+| Option          | Type    | Default           | Description                      |
+| --------------- | ------- | ----------------- | -------------------------------- |
+| `projectDir`    | string  | Current directory | Project directory path           |
+| `port`          | number  | Ephemeral         | Dashboard port (1024-65535)      |
+| `dashboardOnly` | boolean | false             | Run dashboard without MCP server |
+| `lang`          | string  | "en"              | Interface language               |
 
 > **Note**: The `autoStartDashboard` option was removed in v2.0.0. The dashboard now uses a unified multi-project mode accessible via `--dashboard` flag.
 
@@ -293,11 +299,13 @@ debounceMs = 300
 ### Creating a Custom Configuration
 
 1. Copy the example configuration:
+
 ```bash
 cp .specflow/config.example.toml .specflow/config.toml
 ```
 
 2. Edit the configuration:
+
 ```toml
 # My project configuration
 projectDir = "/Users/myname/projects/myapp"
@@ -306,6 +314,7 @@ lang = "en"
 ```
 
 3. Use the configuration:
+
 ```bash
 # Uses .specflow/config.toml automatically
 npx -y @pimzino/spec-workflow-mcp@latest
@@ -352,6 +361,7 @@ verboseLogging = true
 ```
 
 Usage:
+
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest --config dev-config.toml
 ```
@@ -370,6 +380,7 @@ verboseLogging = false
 ```
 
 Usage:
+
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ```
@@ -383,6 +394,7 @@ Ports must be between 1024 and 65535.
 ### Ephemeral Ports
 
 When no port is specified, the system automatically selects an available ephemeral port. This is recommended for:
+
 - Development environments
 - Multiple simultaneous projects
 - Avoiding port conflicts
@@ -390,6 +402,7 @@ When no port is specified, the system automatically selects an available ephemer
 ### Fixed Ports
 
 Use fixed ports when you need:
+
 - Consistent URLs for bookmarking
 - Integration with other tools
 - Team collaboration with shared configurations
@@ -457,11 +470,13 @@ The VSCode extension has its own settings:
 ### Configuration Not Loading
 
 1. **Check file location:**
+
    ```bash
    ls -la .specflow/config.toml
    ```
 
 2. **Validate TOML syntax:**
+
    ```bash
    # Install toml CLI tool
    npm install -g @iarna/toml
@@ -478,12 +493,12 @@ The VSCode extension has its own settings:
 
 ### Common Issues
 
-| Issue | Solution |
-|-------|----------|
-| Port already in use | Use different port or omit for ephemeral |
+| Issue                 | Solution                                   |
+| --------------------- | ------------------------------------------ |
+| Port already in use   | Use different port or omit for ephemeral   |
 | Config file not found | Check path and use absolute path if needed |
-| Invalid TOML syntax | Validate with TOML linter |
-| Settings not applying | Check configuration precedence |
+| Invalid TOML syntax   | Validate with TOML linter                  |
+| Settings not applying | Check configuration precedence             |
 
 ## Best Practices
 

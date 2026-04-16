@@ -42,14 +42,20 @@ function CustomCodeBlockRenderer({ code, language }: { code: string; language?: 
 
   return (
     <pre className="hljs bg-gray-50 dark:bg-gray-900 rounded-lg p-4 overflow-auto">
-      <code className={language ? `language-${language}` : ''}>
-        {code}
-      </code>
+      <code className={language ? `language-${language}` : ''}>{code}</code>
     </pre>
   );
 }
 // Plain text fallback code editor for unknown languages
-function PlainTextCodeEditor({ code, language, onChange }: { code: string; language: string; onChange: (code: string) => void }) {
+function PlainTextCodeEditor({
+  code,
+  language,
+  onChange,
+}: {
+  code: string;
+  language: string;
+  onChange: (code: string) => void;
+}) {
   return (
     <div className="my-4 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
       <div className="bg-gray-100 dark:bg-gray-800 px-3 py-1 text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
@@ -105,11 +111,13 @@ function SourceToggle() {
   );
 }
 
-
-
-
 // Status indicator component
-function StatusIndicator({ saving, saved, error, hasUnsavedChanges }: {
+function StatusIndicator({
+  saving,
+  saved,
+  error,
+  hasUnsavedChanges,
+}: {
   saving: boolean;
   saved: boolean;
   error?: string;
@@ -121,8 +129,19 @@ function StatusIndicator({ saving, saved, error, hasUnsavedChanges }: {
     return (
       <div className="flex items-center gap-1 text-blue-600 dark:text-blue-400">
         <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          ></circle>
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
         </svg>
         <span className="text-sm">{t('editor.markdown.saving')}</span>
       </div>
@@ -133,9 +152,16 @@ function StatusIndicator({ saving, saved, error, hasUnsavedChanges }: {
     return (
       <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+          />
         </svg>
-        <span className="text-sm">{t('editor.markdown.error')}: {error}</span>
+        <span className="text-sm">
+          {t('editor.markdown.error')}: {error}
+        </span>
       </div>
     );
   }
@@ -155,7 +181,12 @@ function StatusIndicator({ saving, saved, error, hasUnsavedChanges }: {
     return (
       <div className="flex items-center gap-1 text-orange-600 dark:text-orange-400">
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
         </svg>
         <span className="text-sm">{t('editor.markdown.unsavedChanges')}</span>
       </div>
@@ -209,12 +240,15 @@ export function MDXEditorWrapper({
   }, [saved, saving, localContent]);
 
   // Handle content change
-  const handleChange = useCallback((newContent: string) => {
-    // Mark this as an internal change so the effect doesn't reset lastSavedContent
-    isInternalChangeRef.current = true;
-    setLocalContent(newContent);
-    onChange?.(newContent);
-  }, [onChange]);
+  const handleChange = useCallback(
+    (newContent: string) => {
+      // Mark this as an internal change so the effect doesn't reset lastSavedContent
+      isInternalChangeRef.current = true;
+      setLocalContent(newContent);
+      onChange?.(newContent);
+    },
+    [onChange],
+  );
 
   // Handle keyboard shortcuts
   useEffect(() => {
@@ -240,8 +274,8 @@ export function MDXEditorWrapper({
       thematicBreakPlugin(),
       codeBlockPlugin({
         codeBlockEditorDescriptors: [
-          mermaidCodeBlockDescriptor,      // Mermaid diagrams (priority 1)
-          plainTextCodeBlockDescriptor,    // Fallback for all other languages (priority -10)
+          mermaidCodeBlockDescriptor, // Mermaid diagrams (priority 1)
+          plainTextCodeBlockDescriptor, // Fallback for all other languages (priority -10)
         ],
         defaultCodeBlockLanguage: 'text',
       }),
@@ -293,7 +327,7 @@ export function MDXEditorWrapper({
               <SourceToggle />
             </>
           ),
-        })
+        }),
       );
     }
 
@@ -310,10 +344,13 @@ export function MDXEditorWrapper({
   // Render source view mode
   if (mode === 'source') {
     return (
-      <div className={`mdx-editor-wrapper source-mode ${isDarkMode ? 'dark-theme' : ''} ${className}`} style={heightStyle}>
+      <div
+        className={`mdx-editor-wrapper source-mode ${isDarkMode ? 'dark-theme' : ''} ${className}`}
+        style={heightStyle}
+      >
         <div className="source-content">
-          <pre className="source-pre"><code>
-            {content}</code>
+          <pre className="source-pre">
+            <code>{content}</code>
           </pre>
         </div>
       </div>
@@ -323,7 +360,10 @@ export function MDXEditorWrapper({
   // Render view mode (read-only)
   if (mode === 'view') {
     return (
-      <div className={`mdx-editor-wrapper view-mode ${isDarkMode ? 'dark-theme' : ''} ${className}`} style={heightStyle}>
+      <div
+        className={`mdx-editor-wrapper view-mode ${isDarkMode ? 'dark-theme' : ''} ${className}`}
+        style={heightStyle}
+      >
         <MDXEditor
           ref={editorRef}
           markdown={content}
@@ -337,7 +377,10 @@ export function MDXEditorWrapper({
 
   // Render edit mode
   return (
-    <div className={`mdx-editor-wrapper edit-mode flex flex-col ${isDarkMode ? 'dark-theme' : ''} ${className}`} style={heightStyle}>
+    <div
+      className={`mdx-editor-wrapper edit-mode flex flex-col ${isDarkMode ? 'dark-theme' : ''} ${className}`}
+      style={heightStyle}
+    >
       {/* Editor Header */}
       <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-600">
         <div className="flex items-center gap-4">
@@ -380,11 +423,10 @@ export function MDXEditorWrapper({
       {/* Status Bar */}
       <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-600 text-xs text-gray-500 dark:text-gray-400">
         <div>
-          {t('editor.markdown.lines')}: {localContent.split('\n').length} | {t('editor.markdown.characters')}: {localContent.length}
+          {t('editor.markdown.lines')}: {localContent.split('\n').length} |{' '}
+          {t('editor.markdown.characters')}: {localContent.length}
         </div>
-        <div>
-          {t('editor.markdown.title')}
-        </div>
+        <div>{t('editor.markdown.title')}</div>
       </div>
     </div>
   );

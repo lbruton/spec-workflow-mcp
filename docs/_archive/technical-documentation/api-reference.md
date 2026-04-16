@@ -4,13 +4,13 @@
 
 ## 📋 Tool Categories
 
-| Category | Tools | Purpose |
-|----------|-------|---------|
-| **Workflow** | `spec-workflow-guide`, `steering-guide` | Provide workflow instructions |
-| **Content** | `create-spec-doc`, `create-steering-doc`, `get-template-context` | Create and template documents |
-| **Search** | `get-spec-context`, `get-steering-context`, `spec-list` | Find and load existing content |
-| **Status** | `spec-status`, `manage-tasks` | Track progress |
-| **Approval** | `request-approval`, `get-approval-status`, `delete-approval` | Manage approval workflow |
+| Category     | Tools                                                            | Purpose                        |
+| ------------ | ---------------------------------------------------------------- | ------------------------------ |
+| **Workflow** | `spec-workflow-guide`, `steering-guide`                          | Provide workflow instructions  |
+| **Content**  | `create-spec-doc`, `create-steering-doc`, `get-template-context` | Create and template documents  |
+| **Search**   | `get-spec-context`, `get-steering-context`, `spec-list`          | Find and load existing content |
+| **Status**   | `spec-status`, `manage-tasks`                                    | Track progress                 |
+| **Approval** | `request-approval`, `get-approval-status`, `delete-approval`     | Manage approval workflow       |
 
 ## 🔄 Workflow Tools
 
@@ -42,15 +42,18 @@
 ```
 
 **Workflow Sequence**:
+
 1. Requirements Phase → 2. Design Phase → 3. Tasks Phase → 4. Implementation Phase
 
 **Key Rules**:
+
 - ✅ Always use MCP tools, never manual document creation
 - ✅ Get explicit approval between each phase
 - ✅ Complete phases in sequence (no skipping)
 - ❌ Never proceed on verbal approval - dashboard/VS Code only
 
 **Planning Process Architecture**:
+
 - ✅ **Template-Based Structure**: Uses static templates from `/src/markdown/templates/`
 - ✅ **LLM-Powered Content Generation**: Connected LLM uses its built-in capabilities to fill templates
 - ✅ **LLM Built-in Knowledge**: LLM applies software engineering best practices using its training
@@ -59,28 +62,29 @@
 - ✅ **Human Review Required**: All LLM-generated content requires dashboard/VS Code approval
 
 **Content Generation Flow**:
+
 ```mermaid
 sequenceDiagram
     participant LLM as LLM (with built-in capabilities)
     participant MCP as MCP Server
     participant FS as File System
     participant WEB as Web Search (LLM built-in)
-    
+
     LLM->>MCP: get-template-context("requirements")
     MCP->>FS: Load requirements-template.md
     FS-->>MCP: Static template structure
     MCP-->>LLM: Template with placeholders
-    
+
     Note over LLM: LLM uses built-in knowledge & reasoning
     LLM->>WEB: Search for current best practices (if needed)
     WEB-->>LLM: Latest technology information
-    
+
     Note over LLM: LLM generates intelligent content using:<br/>- Template structure<br/>- Built-in knowledge<br/>- Web research<br/>- Project context
-    
+
     LLM->>MCP: create-spec-doc(intelligent_content)
     MCP->>FS: Save LLM-generated document
     MCP-->>LLM: Document created, approval required
-    
+
     Note over MCP: MCP server provides structure,<br/>LLM provides intelligence
 ```
 
@@ -108,8 +112,9 @@ sequenceDiagram
 ```
 
 **Steering Document Types**:
+
 - **product.md**: Product vision and requirements
-- **tech.md**: Technical standards and architecture decisions  
+- **tech.md**: Technical standards and architecture decisions
 - **structure.md**: Code organization and file structure
 
 ## 📝 Content Tools
@@ -125,7 +130,7 @@ sequenceDiagram
 {
   projectPath: "/absolute/path/to/project",
   specName: "user-authentication",     // kebab-case only
-  document: "requirements",            // "requirements" | "design" | "tasks" 
+  document: "requirements",            // "requirements" | "design" | "tasks"
   content: "# Requirements Document\n..." // Complete markdown content
 }
 
@@ -142,6 +147,7 @@ sequenceDiagram
 ```
 
 **Workflow Enforcement**:
+
 - ❌ Cannot create `design.md` without `requirements.md`
 - ❌ Cannot create `tasks.md` without `design.md`
 - ✅ Auto-creates `.specflow/specs/` directory structure
@@ -162,7 +168,7 @@ sequenceDiagram
   content: "# Product Vision\n..."     // Complete markdown content
 }
 
-// Response  
+// Response
 {
   success: true,
   message: "Created product.md at: .specflow/steering/product.md",
@@ -209,10 +215,10 @@ sequenceDiagram
 
 **Template Options**:
 
-| templateType | Available templates |
-|--------------|-------------------|
-| `spec` | `requirements`, `design`, `tasks` |
-| `steering` | `product`, `tech`, `structure` |
+| templateType | Available templates               |
+| ------------ | --------------------------------- |
+| `spec`       | `requirements`, `design`, `tasks` |
+| `steering`   | `product`, `tech`, `structure`    |
 
 ## 🔍 Search Tools
 
@@ -238,7 +244,7 @@ sequenceDiagram
     specName: "user-authentication",
     documents: {
       requirements: true,
-      design: true, 
+      design: true,
       tasks: false
     },
     sections: 2,
@@ -297,7 +303,7 @@ sequenceDiagram
   ]
 }
 
-// Response - No Documents  
+// Response - No Documents
 {
   success: true,
   message: "No steering documents found",
@@ -366,6 +372,7 @@ sequenceDiagram
 ```
 
 **Status Values**:
+
 - `not-started`: No documents created
 - `in-progress`: Some phases incomplete
 - `ready-for-implementation`: All phases approved
@@ -430,7 +437,7 @@ sequenceDiagram
 
 // Get specific task
 {
-  projectPath: "/absolute/path/to/project", 
+  projectPath: "/absolute/path/to/project",
   specName: "user-authentication",
   action: "get",
   taskId: "1.1"
@@ -439,7 +446,7 @@ sequenceDiagram
 // Update task status - CRITICAL SEQUENCE
 {
   projectPath: "/absolute/path/to/project",
-  specName: "user-authentication", 
+  specName: "user-authentication",
   action: "set-status",
   taskId: "1.1",
   status: "in-progress"        // "pending" | "in-progress" | "completed"
@@ -454,11 +461,13 @@ sequenceDiagram
 ```
 
 **Implementation Sequence**:
+
 1. `set-status` → `"in-progress"` BEFORE writing code
-2. Write and test the code  
+2. Write and test the code
 3. `set-status` → `"completed"` AFTER implementation
 
 **Response Examples**:
+
 ```typescript
 // List response
 {
@@ -485,14 +494,14 @@ sequenceDiagram
   message: "Next pending task found",
   data: {
     task: {
-      id: "1.2", 
+      id: "1.2",
       title: "Create authentication service",
       status: "pending"
     }
   },
   nextSteps: [
     "Set status to in-progress before starting",
-    "Implement the task",  
+    "Implement the task",
     "Set status to completed when done"
   ]
 }
@@ -515,7 +524,7 @@ sequenceDiagram
   title: "Requirements Document Review",
   filePath: ".specflow/specs/user-auth/requirements.md",  // Relative to project root
   type: "document",                    // "document" | "action"
-  category: "spec",                    // "spec" | "steering" 
+  category: "spec",                    // "spec" | "steering"
   categoryName: "user-auth"           // Spec name or "steering"
 }
 
@@ -532,13 +541,14 @@ sequenceDiagram
   },
   nextSteps: [
     "BLOCKING - Dashboard or VS Code extension approval required",
-    "VERBAL APPROVAL NOT ACCEPTED", 
+    "VERBAL APPROVAL NOT ACCEPTED",
     "Poll status with: get-approval-status \"user-auth-requirements-20241215-143022\""
   ]
 }
 ```
 
 **Critical Rules**:
+
 - ❌ **Never include document content** - only provide `filePath`
 - ❌ **Verbal approval not accepted** - dashboard/VS Code only
 - ✅ **Wait for explicit approval** before proceeding
@@ -552,7 +562,7 @@ sequenceDiagram
 **Usage**: Poll until approved or needs revision
 
 ```typescript
-// Parameters  
+// Parameters
 {
   projectPath: "/absolute/path/to/project",
   approvalId: "user-auth-requirements-20241215-143022"
@@ -572,7 +582,7 @@ sequenceDiagram
 
 // Response - Approved
 {
-  success: true,  
+  success: true,
   message: "Approval status retrieved",
   data: {
     status: "approved",
@@ -585,7 +595,7 @@ sequenceDiagram
 // Response - Needs Revision
 {
   success: true,
-  message: "Approval status retrieved", 
+  message: "Approval status retrieved",
   data: {
     status: "needs-revision",
     approvalId: "user-auth-requirements-20241215-143022",
@@ -601,9 +611,10 @@ sequenceDiagram
 ```
 
 **Status Values**:
+
 - `pending`: Awaiting user review
 - `approved`: Ready to proceed
-- `needs-revision`: Requires changes  
+- `needs-revision`: Requires changes
 - `rejected`: Not approved (rare)
 
 ---
@@ -649,6 +660,7 @@ sequenceDiagram
 ## 🔄 Common Usage Patterns
 
 ### Starting a New Spec
+
 ```typescript
 1. spec-workflow-guide()
 2. get-steering-context(projectPath)  // Optional
@@ -661,8 +673,9 @@ sequenceDiagram
 ```
 
 ### Implementing Tasks
+
 ```typescript
-1. get-spec-context(projectPath, specName)  
+1. get-spec-context(projectPath, specName)
 2. manage-tasks(projectPath, specName, "next-pending")
 3. manage-tasks(projectPath, specName, "set-status", taskId, "in-progress")
 4. // Write code

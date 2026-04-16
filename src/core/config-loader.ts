@@ -34,14 +34,12 @@ const ISSUE_PREFIX_RE = /^[A-Z0-9]+$/;
 
 function validateConfig(config: SpecflowConfig, projectPath: string): void {
   if (!config.project || !PROJECT_RE.test(config.project)) {
-    throw new Error(
-      `Invalid project name "${config.project}": must match ${PROJECT_RE.source}`
-    );
+    throw new Error(`Invalid project name "${config.project}": must match ${PROJECT_RE.source}`);
   }
 
   if (!config.issue_prefix || !ISSUE_PREFIX_RE.test(config.issue_prefix)) {
     throw new Error(
-      `Invalid issue_prefix "${config.issue_prefix}": must be non-empty uppercase alphanumeric (${ISSUE_PREFIX_RE.source})`
+      `Invalid issue_prefix "${config.issue_prefix}": must be non-empty uppercase alphanumeric (${ISSUE_PREFIX_RE.source})`,
     );
   }
 
@@ -50,25 +48,19 @@ function validateConfig(config: SpecflowConfig, projectPath: string): void {
   }
 }
 
-async function validateDocvaultPath(
-  docvaultAbsolute: string
-): Promise<void> {
+async function validateDocvaultPath(docvaultAbsolute: string): Promise<void> {
   // Existence check
   try {
     await access(docvaultAbsolute, constants.F_OK);
   } catch {
-    throw new Error(
-      `DocVault path does not exist: ${docvaultAbsolute}`
-    );
+    throw new Error(`DocVault path does not exist: ${docvaultAbsolute}`);
   }
 
   // Writable check
   try {
     await access(docvaultAbsolute, constants.W_OK);
   } catch {
-    throw new Error(
-      `DocVault path is not writable: ${docvaultAbsolute}`
-    );
+    throw new Error(`DocVault path is not writable: ${docvaultAbsolute}`);
   }
 }
 
@@ -76,17 +68,12 @@ async function validateDocvaultPath(
 // Path resolution (shared by load and create)
 // ---------------------------------------------------------------------------
 
-function resolvePaths(
-  config: SpecflowConfig,
-  projectPath: string
-): ResolvedConfig {
+function resolvePaths(config: SpecflowConfig, projectPath: string): ResolvedConfig {
   const docvaultAbsolute = resolve(projectPath, config.docvault);
 
   // Reject resolved paths that still contain ".."
   if (docvaultAbsolute.includes('..')) {
-    throw new Error(
-      `Resolved docvault path contains "..": ${docvaultAbsolute}`
-    );
+    throw new Error(`Resolved docvault path contains "..": ${docvaultAbsolute}`);
   }
 
   return {
@@ -105,7 +92,7 @@ function deriveProjectName(projectPath: string): string {
   const name = basename(resolve(projectPath));
   if (!PROJECT_RE.test(name)) {
     throw new Error(
-      `Cannot derive a valid project name from path "${projectPath}" (got "${name}")`
+      `Cannot derive a valid project name from path "${projectPath}" (got "${name}")`,
     );
   }
   return name;
@@ -117,16 +104,11 @@ async function detectDocvaultPath(projectPath: string): Promise<string> {
     await access(candidate, constants.F_OK);
     return '../DocVault';
   } catch {
-    throw new Error(
-      `Could not auto-detect DocVault: expected sibling directory at ${candidate}`
-    );
+    throw new Error(`Could not auto-detect DocVault: expected sibling directory at ${candidate}`);
   }
 }
 
-async function detectIssuePrefix(
-  projectPath: string,
-  projectName: string
-): Promise<string> {
+async function detectIssuePrefix(projectPath: string, projectName: string): Promise<string> {
   // Try .claude/project.json first
   const claudeProjectPath = join(projectPath, '.claude', 'project.json');
   try {
@@ -146,9 +128,7 @@ async function detectIssuePrefix(
   // Derive from project name: uppercase first 3-4 chars
   const upper = projectName.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
   if (upper.length === 0) {
-    throw new Error(
-      `Cannot derive issue_prefix from project name "${projectName}"`
-    );
+    throw new Error(`Cannot derive issue_prefix from project name "${projectName}"`);
   }
   return upper.length <= 4 ? upper : upper.slice(0, 4);
 }
@@ -161,9 +141,7 @@ async function detectIssuePrefix(
  * Read and validate an existing .specflow/config.json.
  * Throws on missing file, invalid JSON, or failed validation.
  */
-export async function loadConfig(
-  projectPath: string
-): Promise<ResolvedConfig> {
+export async function loadConfig(projectPath: string): Promise<ResolvedConfig> {
   const configPath = join(projectPath, '.specflow', 'config.json');
   const raw = await readFile(configPath, 'utf-8'); // throws ENOENT naturally
   let parsed: unknown;
@@ -186,9 +164,7 @@ export async function loadConfig(
  * Auto-detect values, write .specflow/config.json, and return resolved config.
  * Throws if DocVault sibling directory does not exist.
  */
-export async function createDefaultConfig(
-  projectPath: string
-): Promise<ResolvedConfig> {
+export async function createDefaultConfig(projectPath: string): Promise<ResolvedConfig> {
   const project = deriveProjectName(projectPath);
   const docvault = await detectDocvaultPath(projectPath);
   const issue_prefix = await detectIssuePrefix(projectPath, project);
@@ -216,16 +192,11 @@ export async function createDefaultConfig(
 /**
  * Load existing config, or create one with auto-detected defaults on ENOENT.
  */
-export async function loadOrCreateConfig(
-  projectPath: string
-): Promise<ResolvedConfig> {
+export async function loadOrCreateConfig(projectPath: string): Promise<ResolvedConfig> {
   try {
     return await loadConfig(projectPath);
   } catch (error: unknown) {
-    if (
-      error instanceof Error &&
-      (error as NodeJS.ErrnoException).code === 'ENOENT'
-    ) {
+    if (error instanceof Error && (error as NodeJS.ErrnoException).code === 'ENOENT') {
       return createDefaultConfig(projectPath);
     }
     throw error;

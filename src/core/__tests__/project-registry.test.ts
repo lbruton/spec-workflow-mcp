@@ -10,7 +10,10 @@ describe('ProjectRegistry worktree identity', () => {
   const originalEnv = { ...process.env };
 
   beforeEach(async () => {
-    tempDir = join(tmpdir(), `spec-workflow-registry-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`);
+    tempDir = join(
+      tmpdir(),
+      `spec-workflow-registry-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+    );
     await fs.mkdir(tempDir, { recursive: true });
     process.env[SPEC_WORKFLOW_HOME_ENV] = tempDir;
   });
@@ -29,7 +32,9 @@ describe('ProjectRegistry worktree identity', () => {
     const workspacePath = '/tmp/worktrees/feature-auth';
     const workflowRootPath = '/tmp/my-repo';
 
-    const projectId = await registry.registerProject(workspacePath, process.pid, { workflowRootPath });
+    const projectId = await registry.registerProject(workspacePath, process.pid, {
+      workflowRootPath,
+    });
     const entry = await registry.getProjectById(projectId);
 
     expect(entry).not.toBeNull();
@@ -42,8 +47,12 @@ describe('ProjectRegistry worktree identity', () => {
     const registry = new ProjectRegistry();
     const workflowRootPath = '/tmp/my-repo';
 
-    const projectIdA = await registry.registerProject('/tmp/worktrees/feature-a', process.pid, { workflowRootPath });
-    const projectIdB = await registry.registerProject('/tmp/worktrees/feature-b', process.pid + 1, { workflowRootPath });
+    const projectIdA = await registry.registerProject('/tmp/worktrees/feature-a', process.pid, {
+      workflowRootPath,
+    });
+    const projectIdB = await registry.registerProject('/tmp/worktrees/feature-b', process.pid + 1, {
+      workflowRootPath,
+    });
 
     expect(projectIdA).toBe(projectIdB);
   });
@@ -58,8 +67,8 @@ describe('ProjectRegistry worktree identity', () => {
         projectId,
         projectPath: workspacePath,
         projectName: 'my-repo',
-        instances: [{ pid: process.pid, registeredAt: new Date().toISOString() }]
-      }
+        instances: [{ pid: process.pid, registeredAt: new Date().toISOString() }],
+      },
     };
 
     await fs.writeFile(registryPath, JSON.stringify(legacyData, null, 2), 'utf-8');
@@ -78,9 +87,13 @@ describe('ProjectRegistry worktree identity', () => {
     const worktreePath = '/tmp/worktrees/feature-x';
 
     // Register main repo first
-    const mainId = await registry.registerProject(workflowRootPath, process.pid, { workflowRootPath });
+    const mainId = await registry.registerProject(workflowRootPath, process.pid, {
+      workflowRootPath,
+    });
     // Register a worktree with the same workflowRootPath
-    const wtId = await registry.registerProject(worktreePath, process.pid + 1, { workflowRootPath });
+    const wtId = await registry.registerProject(worktreePath, process.pid + 1, {
+      workflowRootPath,
+    });
 
     expect(mainId).toBe(wtId);
 
@@ -132,7 +145,7 @@ describe('ProjectRegistry worktree identity', () => {
         workflowRootPath,
         projectName: 'my-repo · feat-a',
         instances: [{ pid: 99990, registeredAt: new Date().toISOString() }],
-        worktrees: ['/tmp/worktrees/feat-a']
+        worktrees: ['/tmp/worktrees/feat-a'],
       },
       [legacyId2]: {
         projectId: legacyId2,
@@ -140,8 +153,8 @@ describe('ProjectRegistry worktree identity', () => {
         workflowRootPath,
         projectName: 'my-repo · feat-b',
         instances: [{ pid: 99991, registeredAt: new Date().toISOString() }],
-        worktrees: ['/tmp/worktrees/feat-b']
-      }
+        worktrees: ['/tmp/worktrees/feat-b'],
+      },
     };
 
     await fs.writeFile(registryPath, JSON.stringify(legacyData, null, 2), 'utf-8');
@@ -170,9 +183,9 @@ describe('ProjectRegistry worktree identity', () => {
         projectPath: workspacePath,
         workflowRootPath: workspacePath,
         projectName: 'my-repo',
-        instances: [{ pid: process.pid, registeredAt: new Date().toISOString() }]
+        instances: [{ pid: process.pid, registeredAt: new Date().toISOString() }],
         // No worktrees field
-      }
+      },
     };
 
     await fs.writeFile(registryPath, JSON.stringify(legacyData, null, 2), 'utf-8');
@@ -260,7 +273,7 @@ describe('ProjectRegistry worktree identity', () => {
         workflowRootPath: resolvedGitRoot,
         projectName: 'my-repo',
         instances: [{ pid: 99990, registeredAt: new Date().toISOString() }],
-        worktrees: []
+        worktrees: [],
       },
       [newId]: {
         projectId: newId,
@@ -268,8 +281,8 @@ describe('ProjectRegistry worktree identity', () => {
         workflowRootPath: resolvedDocvaultRoot,
         projectName: 'MyRepo',
         instances: [{ pid: 99991, registeredAt: new Date().toISOString() }],
-        worktrees: [resolvedGitRoot] // The git root is listed as a worktree
-      }
+        worktrees: [resolvedGitRoot], // The git root is listed as a worktree
+      },
     };
 
     await fs.writeFile(registryPath, JSON.stringify(data, null, 2), 'utf-8');

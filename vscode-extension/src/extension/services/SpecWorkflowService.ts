@@ -1,7 +1,16 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { SpecData, TaskProgressData, TaskInfo, ApprovalData, SteeringStatus, PhaseStatus, LogsData, ImplementationLogEntry } from '../types';
+import {
+  SpecData,
+  TaskProgressData,
+  TaskInfo,
+  ApprovalData,
+  SteeringStatus,
+  PhaseStatus,
+  LogsData,
+  ImplementationLogEntry,
+} from '../types';
 import { ApprovalEditorService } from './ApprovalEditorService';
 import { ArchiveService } from './ArchiveService';
 import { ImplementationLogService } from './ImplementationLogService';
@@ -109,7 +118,7 @@ export class SpecWorkflowService {
 
     const approvalsPattern = new vscode.RelativePattern(
       path.join(this.specWorkflowRoot, 'approvals'),
-      '**/*.json'
+      '**/*.json',
     );
 
     this.approvalWatcher = vscode.workspace.createFileSystemWatcher(approvalsPattern);
@@ -147,7 +156,7 @@ export class SpecWorkflowService {
 
     const tasksPattern = new vscode.RelativePattern(
       path.join(this.specWorkflowRoot, 'specs'),
-      '**/tasks.md'
+      '**/tasks.md',
     );
 
     this.taskWatcher = vscode.workspace.createFileSystemWatcher(tasksPattern);
@@ -174,15 +183,15 @@ export class SpecWorkflowService {
     // Normalize path separators
     const normalizedPath = filePath.replace(/\\/g, '/');
     const normalizedRoot = this.specWorkflowRoot.replace(/\\/g, '/');
-    
+
     // Look for pattern: .specflow/specs/{specName}/tasks.md
     const specsDir = path.join(normalizedRoot, 'specs').replace(/\\/g, '/');
-    
+
     if (normalizedPath.includes(specsDir) && normalizedPath.endsWith('/tasks.md')) {
       // Extract spec name from path like: /path/.specflow/specs/my-spec/tasks.md
       const relativePath = normalizedPath.substring(specsDir.length + 1); // +1 for the trailing slash
       const pathParts = relativePath.split('/');
-      
+
       if (pathParts.length >= 2 && pathParts[pathParts.length - 1] === 'tasks.md') {
         return pathParts[0]; // Return the spec name (first directory)
       }
@@ -205,7 +214,7 @@ export class SpecWorkflowService {
     this.logger.log('Setting up requirements watcher...');
     const requirementsPattern = new vscode.RelativePattern(
       path.join(this.specWorkflowRoot, 'specs'),
-      '**/requirements.md'
+      '**/requirements.md',
     );
 
     this.requirementsWatcher = vscode.workspace.createFileSystemWatcher(requirementsPattern);
@@ -238,7 +247,7 @@ export class SpecWorkflowService {
     this.logger.log('Setting up design watcher...');
     const designPattern = new vscode.RelativePattern(
       path.join(this.specWorkflowRoot, 'specs'),
-      '**/design.md'
+      '**/design.md',
     );
 
     this.designWatcher = vscode.workspace.createFileSystemWatcher(designPattern);
@@ -258,7 +267,7 @@ export class SpecWorkflowService {
   }
 
   private setupTasksDocWatcher() {
-    // Dispose existing watcher  
+    // Dispose existing watcher
     if (this.tasksDocWatcher) {
       this.tasksDocWatcher.dispose();
       this.tasksDocWatcher = null;
@@ -271,7 +280,7 @@ export class SpecWorkflowService {
     this.logger.log('Setting up tasks doc watcher...');
     const tasksDocPattern = new vscode.RelativePattern(
       path.join(this.specWorkflowRoot, 'specs'),
-      '**/tasks.md'
+      '**/tasks.md',
     );
 
     this.tasksDocWatcher = vscode.workspace.createFileSystemWatcher(tasksDocPattern);
@@ -304,7 +313,7 @@ export class SpecWorkflowService {
     this.logger.log('Setting up steering documents watcher...');
     const steeringDocsPattern = new vscode.RelativePattern(
       path.join(this.specWorkflowRoot, 'steering'),
-      '*.md'
+      '*.md',
     );
 
     this.steeringDocumentsWatcher = vscode.workspace.createFileSystemWatcher(steeringDocsPattern);
@@ -333,10 +342,7 @@ export class SpecWorkflowService {
       return;
     }
 
-    const specsPattern = new vscode.RelativePattern(
-      path.join(this.specWorkflowRoot, 'specs'),
-      '*'
-    );
+    const specsPattern = new vscode.RelativePattern(path.join(this.specWorkflowRoot, 'specs'), '*');
 
     this.specsWatcher = vscode.workspace.createFileSystemWatcher(specsPattern);
 
@@ -364,7 +370,7 @@ export class SpecWorkflowService {
 
     const archivePattern = new vscode.RelativePattern(
       path.join(this.specWorkflowRoot, 'archive', 'specs'),
-      '*'
+      '*',
     );
 
     this.archiveWatcher = vscode.workspace.createFileSystemWatcher(archivePattern);
@@ -389,18 +395,20 @@ export class SpecWorkflowService {
     // Normalize path separators
     const normalizedPath = filePath.replace(/\\/g, '/');
     const normalizedRoot = this.specWorkflowRoot.replace(/\\/g, '/');
-    
+
     // Look for pattern: .specflow/specs/{specName}/{document}.md
     const specsDir = path.join(normalizedRoot, 'specs').replace(/\\/g, '/');
-    
-    if (normalizedPath.includes(specsDir) && 
-        (normalizedPath.endsWith('/requirements.md') || 
-         normalizedPath.endsWith('/design.md') || 
-         normalizedPath.endsWith('/tasks.md'))) {
+
+    if (
+      normalizedPath.includes(specsDir) &&
+      (normalizedPath.endsWith('/requirements.md') ||
+        normalizedPath.endsWith('/design.md') ||
+        normalizedPath.endsWith('/tasks.md'))
+    ) {
       // Extract spec name from path like: /path/.specflow/specs/my-spec/requirements.md
       const relativePath = normalizedPath.substring(specsDir.length + 1); // +1 for the trailing slash
       const pathParts = relativePath.split('/');
-      
+
       if (pathParts.length >= 2) {
         return pathParts[0]; // Return the spec name (first directory)
       }
@@ -508,27 +516,33 @@ export class SpecWorkflowService {
   }
 
   async getAllActiveSpecs(): Promise<SpecData[]> {
-    if (!await this.ensureSpecWorkflowExists()) {
+    if (!(await this.ensureSpecWorkflowExists())) {
       this.logger.log('SpecWorkflow: No .specflow directory found');
       return [];
     }
 
     const specs: SpecData[] = [];
-    
+
     try {
       // First, try the standard structure: .specflow/specs/
       const specsDir = path.join(this.specWorkflowRoot!, 'specs');
       this.logger.log('SpecWorkflow: Checking specs directory:', specsDir);
-      
+
       try {
         await fs.access(specsDir);
         const entries = await fs.readdir(specsDir, { withFileTypes: true });
-        const specDirs = entries.filter(entry => entry.isDirectory());
-        this.logger.log('SpecWorkflow: Found spec directories in specs/:', specDirs.map(d => d.name));
-        
+        const specDirs = entries.filter((entry) => entry.isDirectory());
+        this.logger.log(
+          'SpecWorkflow: Found spec directories in specs/:',
+          specDirs.map((d) => d.name),
+        );
+
         for (const specDir of specDirs) {
           try {
-            const specData = await this.parseSpecDirectory(path.join(specsDir, specDir.name), specDir.name);
+            const specData = await this.parseSpecDirectory(
+              path.join(specsDir, specDir.name),
+              specDir.name,
+            );
             if (specData) {
               specs.push(specData);
             }
@@ -545,12 +559,16 @@ export class SpecWorkflowService {
         this.logger.log('SpecWorkflow: Checking root .specflow directory for specs');
         const entries = await fs.readdir(this.specWorkflowRoot!, { withFileTypes: true });
         const excludeDirs = new Set(['specs', 'steering', 'approvals', '.git', 'node_modules']);
-        const potentialSpecs = entries.filter(entry => 
-          entry.isDirectory() && !excludeDirs.has(entry.name) && !entry.name.startsWith('.')
+        const potentialSpecs = entries.filter(
+          (entry) =>
+            entry.isDirectory() && !excludeDirs.has(entry.name) && !entry.name.startsWith('.'),
         );
-        
-        this.logger.log('SpecWorkflow: Found potential spec directories in root:', potentialSpecs.map(d => d.name));
-        
+
+        this.logger.log(
+          'SpecWorkflow: Found potential spec directories in root:',
+          potentialSpecs.map((d) => d.name),
+        );
+
         for (const specDir of potentialSpecs) {
           try {
             const specPath = path.join(this.specWorkflowRoot!, specDir.name);
@@ -565,7 +583,9 @@ export class SpecWorkflowService {
       }
 
       this.logger.log(`SpecWorkflow: Found ${specs.length} total specs`);
-      return specs.sort((a, b) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime());
+      return specs.sort(
+        (a, b) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime(),
+      );
     } catch (error) {
       this.logger.error('Error reading specs:', error);
       return [];
@@ -577,14 +597,14 @@ export class SpecWorkflowService {
       requirements: await this.parsePhaseFile(path.join(specPath, 'requirements.md')),
       design: await this.parsePhaseFile(path.join(specPath, 'design.md')),
       tasks: await this.parsePhaseFile(path.join(specPath, 'tasks.md')),
-      implementation: { exists: false } // Implementation is not a file but a phase status
+      implementation: { exists: false }, // Implementation is not a file but a phase status
     };
 
     // Get the most recent modification time
     const timestamps = [phases.requirements, phases.design, phases.tasks]
-      .filter(phase => phase.exists && phase.lastModified)
-      .map(phase => new Date(phase.lastModified!).getTime());
-    
+      .filter((phase) => phase.exists && phase.lastModified)
+      .map((phase) => new Date(phase.lastModified!).getTime());
+
     if (timestamps.length === 0) {
       return null;
     }
@@ -600,7 +620,7 @@ export class SpecWorkflowService {
         taskProgress = {
           total: taskInfo.summary.total,
           completed: taskInfo.summary.completed,
-          pending: taskInfo.summary.total - taskInfo.summary.completed
+          pending: taskInfo.summary.total - taskInfo.summary.completed,
         };
       } catch (error) {
         this.logger.warn(`Failed to parse tasks for ${specName}:`, error);
@@ -613,7 +633,7 @@ export class SpecWorkflowService {
       createdAt,
       lastModified,
       phases,
-      taskProgress
+      taskProgress,
     };
   }
 
@@ -621,11 +641,11 @@ export class SpecWorkflowService {
     try {
       const stat = await fs.stat(filePath);
       const content = await fs.readFile(filePath, 'utf-8');
-      
+
       return {
         exists: true,
         lastModified: stat.mtime.toISOString(),
-        content
+        content,
       };
     } catch {
       return { exists: false };
@@ -635,37 +655,60 @@ export class SpecWorkflowService {
   private formatDisplayName(specName: string): string {
     return specName
       .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
   }
 
   async getTaskProgress(specName: string): Promise<TaskProgressData | null> {
-    if (!await this.ensureSpecWorkflowExists()) {
+    if (!(await this.ensureSpecWorkflowExists())) {
       return null;
     }
 
     try {
       const tasksPath = path.join(this.specWorkflowRoot!, 'specs', specName, 'tasks.md');
       const content = await fs.readFile(tasksPath, 'utf-8');
-      
+
       const taskInfo = this.parseTasksContent(content);
-      
+
       const taskProgressData = {
         specName,
         total: taskInfo.summary.total,
         completed: taskInfo.summary.completed,
-        progress: taskInfo.summary.total > 0 ? (taskInfo.summary.completed / taskInfo.summary.total) * 100 : 0,
+        progress:
+          taskInfo.summary.total > 0
+            ? (taskInfo.summary.completed / taskInfo.summary.total) * 100
+            : 0,
         taskList: taskInfo.tasks,
-        inProgress: taskInfo.inProgressTask
+        inProgress: taskInfo.inProgressTask,
       };
-      
+
       this.logger.separator('SpecWorkflowService.getTaskProgress');
       this.logger.log('Spec:', specName);
       this.logger.log('TaskProgressData taskList count:', taskProgressData.taskList.length);
-      this.logger.log('Sample task (2.2):', taskProgressData.taskList.find(t => t.id === '2.2'));
-      this.logger.log('All tasks with metadata:', taskProgressData.taskList.filter(t => 
-        t.requirements?.length || t.implementationDetails?.length || t.files?.length || t.purposes?.length || t.leverage || t.prompt
-      ).map(t => ({ id: t.id, hasPrompt: !!t.prompt, promptLength: t.prompt?.length, requirements: t.requirements, implementationDetails: t.implementationDetails })));      
+      this.logger.log(
+        'Sample task (2.2):',
+        taskProgressData.taskList.find((t) => t.id === '2.2'),
+      );
+      this.logger.log(
+        'All tasks with metadata:',
+        taskProgressData.taskList
+          .filter(
+            (t) =>
+              t.requirements?.length ||
+              t.implementationDetails?.length ||
+              t.files?.length ||
+              t.purposes?.length ||
+              t.leverage ||
+              t.prompt,
+          )
+          .map((t) => ({
+            id: t.id,
+            hasPrompt: !!t.prompt,
+            promptLength: t.prompt?.length,
+            requirements: t.requirements,
+            implementationDetails: t.implementationDetails,
+          })),
+      );
       return taskProgressData;
     } catch (error) {
       this.logger.error(`Failed to get task progress for ${specName}:`, error);
@@ -673,21 +716,21 @@ export class SpecWorkflowService {
     }
   }
 
-  private parseTasksContent(content: string): { 
-    tasks: TaskInfo[]; 
-    summary: { total: number; completed: number; }; 
+  private parseTasksContent(content: string): {
+    tasks: TaskInfo[];
+    summary: { total: number; completed: number };
     inProgressTask?: string;
   } {
     this.logger.separator('SpecWorkflowService.parseTasksContent');
     this.logger.log('Content length:', content.length);
-    
+
     const result = parseTasksFromMarkdown(content);
-    
+
     this.logger.log('Parser result summary:', result.summary);
     this.logger.log('Raw parsed tasks count:', result.tasks.length);
-    
+
     // Convert ParsedTask to TaskInfo for backward compatibility
-    const tasks: TaskInfo[] = result.tasks.map(task => ({
+    const tasks: TaskInfo[] = result.tasks.map((task) => ({
       id: task.id,
       description: task.description,
       status: task.status,
@@ -702,37 +745,46 @@ export class SpecWorkflowService {
       purposes: task.purposes,
       // Preserve parsed AI prompt for UI and copy functionality
       prompt: task.prompt,
-      inProgress: task.inProgress    }));
-    
-    this.logger.log('Tasks with prompts:', tasks.filter(t => t.prompt).map(t => ({
-      id: t.id,
-      promptLength: t.prompt?.length,
-      promptPreview: t.prompt?.substring(0, 50)
-    })));
-    this.logger.log('Converted tasks:', tasks.map(t => ({
-      id: t.id,
-      description: t.description,
-      hasRequirements: !!t.requirements?.length,
-      hasImplementationDetails: !!t.implementationDetails?.length,
-      hasFiles: !!t.files?.length,
-      hasPurposes: !!t.purposes?.length,
-      hasLeverage: !!t.leverage,
-      requirements: t.requirements,
-      implementationDetails: t.implementationDetails
-    })));
+      inProgress: task.inProgress,
+    }));
+
+    this.logger.log(
+      'Tasks with prompts:',
+      tasks
+        .filter((t) => t.prompt)
+        .map((t) => ({
+          id: t.id,
+          promptLength: t.prompt?.length,
+          promptPreview: t.prompt?.substring(0, 50),
+        })),
+    );
+    this.logger.log(
+      'Converted tasks:',
+      tasks.map((t) => ({
+        id: t.id,
+        description: t.description,
+        hasRequirements: !!t.requirements?.length,
+        hasImplementationDetails: !!t.implementationDetails?.length,
+        hasFiles: !!t.files?.length,
+        hasPurposes: !!t.purposes?.length,
+        hasLeverage: !!t.leverage,
+        requirements: t.requirements,
+        implementationDetails: t.implementationDetails,
+      })),
+    );
 
     return {
       tasks,
       summary: {
         total: result.summary.total,
-        completed: result.summary.completed
+        completed: result.summary.completed,
       },
-      inProgressTask: result.inProgressTask || undefined
+      inProgressTask: result.inProgressTask || undefined,
     };
   }
 
   async updateTaskStatus(specName: string, taskId: string, status: string): Promise<void> {
-    if (!await this.ensureSpecWorkflowExists()) {
+    if (!(await this.ensureSpecWorkflowExists())) {
       throw new Error('Spec workflow directory not found');
     }
 
@@ -742,11 +794,17 @@ export class SpecWorkflowService {
       const content = await fs.readFile(tasksPath, 'utf-8');
 
       // Use unified parser's update function
-      const updatedContent = updateTaskStatus(content, taskId, status as 'pending' | 'in-progress' | 'completed');
+      const updatedContent = updateTaskStatus(
+        content,
+        taskId,
+        status as 'pending' | 'in-progress' | 'completed',
+      );
 
       // Check if content actually changed
       if (updatedContent === content) {
-        this.logger.log(`Task ${taskId} status already ${status} or task not found in spec ${specName}`);
+        this.logger.log(
+          `Task ${taskId} status already ${status} or task not found in spec ${specName}`,
+        );
         return; // No-op if status is already correct or task doesn't exist
       }
 
@@ -758,7 +816,7 @@ export class SpecWorkflowService {
   }
 
   async saveDocument(specName: string, docType: string, content: string): Promise<void> {
-    if (!await this.ensureSpecWorkflowExists()) {
+    if (!(await this.ensureSpecWorkflowExists())) {
       throw new Error('Spec workflow directory not found');
     }
 
@@ -768,12 +826,12 @@ export class SpecWorkflowService {
     }
 
     const docPath = path.join(this.specWorkflowRoot!, 'specs', specName, `${docType}.md`);
-    
+
     try {
       // Ensure the spec directory exists
       const specDir = path.dirname(docPath);
       await fs.mkdir(specDir, { recursive: true });
-      
+
       await fs.writeFile(docPath, content, 'utf-8');
     } catch (error) {
       throw new Error(`Failed to save document: ${error}`);
@@ -781,7 +839,7 @@ export class SpecWorkflowService {
   }
 
   async getApprovals(): Promise<ApprovalData[]> {
-    if (!await this.ensureSpecWorkflowExists()) {
+    if (!(await this.ensureSpecWorkflowExists())) {
       return [];
     }
 
@@ -812,7 +870,10 @@ export class SpecWorkflowService {
                     const approval = JSON.parse(content);
                     approvals.push(approval);
                   } catch (error) {
-                    this.logger.warn(`Failed to parse approval ${file} in category ${categoryEntry.name}:`, error);
+                    this.logger.warn(
+                      `Failed to parse approval ${file} in category ${categoryEntry.name}:`,
+                      error,
+                    );
                   }
                 }
               }
@@ -844,7 +905,9 @@ export class SpecWorkflowService {
         this.logger.warn('Failed to read legacy approval files:', error);
       }
 
-      return approvals.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      return approvals.sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
     } catch (error) {
       this.logger.error('Error reading approvals:', error);
       return [];
@@ -854,7 +917,7 @@ export class SpecWorkflowService {
   async getApprovalCategories(): Promise<{ value: string; label: string; count: number }[]> {
     const approvals = await this.getApprovals();
     const categoryCounts = new Map<string, number>();
-    
+
     // Count approvals by categoryName
     for (const approval of approvals) {
       if (approval.status === 'pending' && approval.categoryName) {
@@ -862,34 +925,34 @@ export class SpecWorkflowService {
         categoryCounts.set(approval.categoryName, count + 1);
       }
     }
-    
+
     const categories: { value: string; label: string; count: number }[] = [
-      { value: 'all', label: 'All', count: approvals.filter(a => a.status === 'pending').length }
+      { value: 'all', label: 'All', count: approvals.filter((a) => a.status === 'pending').length },
     ];
-    
+
     // Add spec categories
     const specs = await this.getAllSpecs();
     for (const spec of specs) {
       const count = categoryCounts.get(spec.name) || 0;
       if (count > 0) {
-        categories.push({ 
-          value: spec.name, 
-          label: spec.displayName, 
-          count 
+        categories.push({
+          value: spec.name,
+          label: spec.displayName,
+          count,
         });
       }
     }
-    
+
     // Add steering category if it has approvals
     const steeringCount = categoryCounts.get('steering') || 0;
     if (steeringCount > 0) {
-      categories.push({ 
-        value: 'steering', 
-        label: 'Steering Documents', 
-        count: steeringCount 
+      categories.push({
+        value: 'steering',
+        label: 'Steering Documents',
+        count: steeringCount,
       });
     }
-    
+
     return categories;
   }
 
@@ -901,7 +964,12 @@ export class SpecWorkflowService {
     await this.updateApprovalStatus(id, 'rejected', response);
   }
 
-  async requestRevisionRequest(id: string, response: string, annotations?: string, comments?: any[]): Promise<void> {
+  async requestRevisionRequest(
+    id: string,
+    response: string,
+    annotations?: string,
+    comments?: any[],
+  ): Promise<void> {
     await this.updateApprovalStatus(id, 'needs-revision', response, annotations, comments);
   }
 
@@ -910,7 +978,7 @@ export class SpecWorkflowService {
    * Used for undo operations after batch approvals/rejections
    */
   async revertToPending(id: string): Promise<void> {
-    if (!await this.ensureSpecWorkflowExists()) {
+    if (!(await this.ensureSpecWorkflowExists())) {
       throw new Error('Spec workflow directory not found');
     }
 
@@ -941,7 +1009,7 @@ export class SpecWorkflowService {
   }
 
   async getApprovalContent(id: string): Promise<string | null> {
-    if (!await this.ensureSpecWorkflowExists()) {
+    if (!(await this.ensureSpecWorkflowExists())) {
       return null;
     }
 
@@ -1122,9 +1190,9 @@ export class SpecWorkflowService {
     status: 'approved' | 'rejected' | 'needs-revision',
     response: string,
     annotations?: string,
-    comments?: any[]
+    comments?: any[],
   ): Promise<void> {
-    if (!await this.ensureSpecWorkflowExists()) {
+    if (!(await this.ensureSpecWorkflowExists())) {
       throw new Error('Spec workflow directory not found');
     }
 
@@ -1156,20 +1224,18 @@ export class SpecWorkflowService {
     }
   }
 
-
-
   async getSteeringStatus(): Promise<SteeringStatus | null> {
-    if (!await this.ensureSpecWorkflowExists()) {
+    if (!(await this.ensureSpecWorkflowExists())) {
       return null;
     }
 
     try {
       const steeringDir = path.join(this.specWorkflowRoot!, 'steering');
-      
+
       const documents = {
         product: false,
         tech: false,
-        structure: false
+        structure: false,
       };
 
       let exists = false;
@@ -1181,7 +1247,7 @@ export class SpecWorkflowService {
           const stat = await fs.stat(docPath);
           documents[docName] = true;
           exists = true;
-          
+
           if (!lastModified || stat.mtime.getTime() > new Date(lastModified).getTime()) {
             lastModified = stat.mtime.toISOString();
           }
@@ -1193,7 +1259,7 @@ export class SpecWorkflowService {
       return {
         exists,
         documents,
-        lastModified
+        lastModified,
       };
     } catch (error) {
       this.logger.error('Error reading steering status:', error);
@@ -1201,8 +1267,10 @@ export class SpecWorkflowService {
     }
   }
 
-  async getSpecDocuments(specName: string): Promise<{ name: string; exists: boolean; path: string; lastModified?: string }[]> {
-    if (!await this.ensureSpecWorkflowExists()) {
+  async getSpecDocuments(
+    specName: string,
+  ): Promise<{ name: string; exists: boolean; path: string; lastModified?: string }[]> {
+    if (!(await this.ensureSpecWorkflowExists())) {
       return [];
     }
 
@@ -1211,23 +1279,25 @@ export class SpecWorkflowService {
 
     // Check if the spec is archived
     const isArchived = await this.archiveService.isSpecArchived(specName);
-    this.logger.log(`SpecWorkflow: Checking documents for spec '${specName}' (archived: ${isArchived})`);
+    this.logger.log(
+      `SpecWorkflow: Checking documents for spec '${specName}' (archived: ${isArchived})`,
+    );
 
     for (const docType of documents) {
       let docPath: string;
       let found = false;
-      
+
       if (isArchived) {
         // For archived specs, look in the archive directory first
         docPath = path.join(this.specWorkflowRoot!, 'archive', 'specs', specName, `${docType}.md`);
-        
+
         try {
           const stat = await fs.stat(docPath);
           result.push({
             name: docType,
             exists: true,
             path: docPath,
-            lastModified: stat.mtime.toISOString()
+            lastModified: stat.mtime.toISOString(),
           });
           found = true;
         } catch {
@@ -1235,20 +1305,20 @@ export class SpecWorkflowService {
           result.push({
             name: docType,
             exists: false,
-            path: docPath
+            path: docPath,
           });
         }
       } else {
         // For active specs, try specs/ subdirectory first
         docPath = path.join(this.specWorkflowRoot!, 'specs', specName, `${docType}.md`);
-        
+
         try {
           const stat = await fs.stat(docPath);
           result.push({
             name: docType,
             exists: true,
             path: docPath,
-            lastModified: stat.mtime.toISOString()
+            lastModified: stat.mtime.toISOString(),
           });
           found = true;
         } catch {
@@ -1260,27 +1330,31 @@ export class SpecWorkflowService {
               name: docType,
               exists: true,
               path: docPath,
-              lastModified: stat.mtime.toISOString()
+              lastModified: stat.mtime.toISOString(),
             });
             found = true;
           } catch {
             result.push({
               name: docType,
               exists: false,
-              path: docPath
+              path: docPath,
             });
           }
         }
       }
-      
-      this.logger.log(`SpecWorkflow: Document ${docType}.md for ${specName}: ${found ? 'found' : 'not found'} at ${docPath}`);
+
+      this.logger.log(
+        `SpecWorkflow: Document ${docType}.md for ${specName}: ${found ? 'found' : 'not found'} at ${docPath}`,
+      );
     }
 
     return result;
   }
 
-  async getSteeringDocuments(): Promise<{ name: string; exists: boolean; path: string; lastModified?: string }[]> {
-    if (!await this.ensureSpecWorkflowExists()) {
+  async getSteeringDocuments(): Promise<
+    { name: string; exists: boolean; path: string; lastModified?: string }[]
+  > {
+    if (!(await this.ensureSpecWorkflowExists())) {
       return [];
     }
 
@@ -1295,13 +1369,13 @@ export class SpecWorkflowService {
           name: docType,
           exists: true,
           path: docPath,
-          lastModified: stat.mtime.toISOString()
+          lastModified: stat.mtime.toISOString(),
         });
       } catch {
         result.push({
           name: docType,
           exists: false,
-          path: docPath
+          path: docPath,
         });
       }
     }
@@ -1310,16 +1384,22 @@ export class SpecWorkflowService {
   }
 
   async getDocumentPath(specName: string, docType: string): Promise<string | null> {
-    if (!this.specWorkflowRoot) {return null;}
+    if (!this.specWorkflowRoot) {
+      return null;
+    }
     const allowedDocTypes = ['requirements', 'design', 'tasks'];
-    if (!allowedDocTypes.includes(docType)) {return null;}
-    
+    if (!allowedDocTypes.includes(docType)) {
+      return null;
+    }
+
     // Check if the spec is archived
     const isArchived = await this.archiveService.isSpecArchived(specName);
-    this.logger.log(`SpecWorkflow: Getting document path for '${specName}/${docType}' (archived: ${isArchived})`);
-    
+    this.logger.log(
+      `SpecWorkflow: Getting document path for '${specName}/${docType}' (archived: ${isArchived})`,
+    );
+
     let docPath: string;
-    
+
     if (isArchived) {
       // For archived specs, look in the archive directory
       docPath = path.join(this.specWorkflowRoot, 'archive', 'specs', specName, `${docType}.md`);
@@ -1354,9 +1434,13 @@ export class SpecWorkflowService {
   }
 
   getSteeringDocumentPath(docType: string): string | null {
-    if (!this.specWorkflowRoot) {return null;}
+    if (!this.specWorkflowRoot) {
+      return null;
+    }
     const allowedDocTypes = ['product', 'tech', 'structure'];
-    if (!allowedDocTypes.includes(docType)) {return null;}
+    if (!allowedDocTypes.includes(docType)) {
+      return null;
+    }
     return path.join(this.specWorkflowRoot, 'steering', `${docType}.md`);
   }
 
@@ -1366,26 +1450,32 @@ export class SpecWorkflowService {
    * Get all archived specifications
    */
   async getAllArchivedSpecs(): Promise<SpecData[]> {
-    if (!await this.ensureSpecWorkflowExists()) {
+    if (!(await this.ensureSpecWorkflowExists())) {
       this.logger.log('SpecWorkflow: No .specflow directory found');
       return [];
     }
 
     const specs: SpecData[] = [];
-    
+
     try {
       const archiveSpecsDir = path.join(this.specWorkflowRoot!, 'archive', 'specs');
       this.logger.log('SpecWorkflow: Checking archived specs directory:', archiveSpecsDir);
-      
+
       try {
         await fs.access(archiveSpecsDir);
         const entries = await fs.readdir(archiveSpecsDir, { withFileTypes: true });
-        const specDirs = entries.filter(entry => entry.isDirectory());
-        this.logger.log('SpecWorkflow: Found archived spec directories:', specDirs.map(d => d.name));
-        
+        const specDirs = entries.filter((entry) => entry.isDirectory());
+        this.logger.log(
+          'SpecWorkflow: Found archived spec directories:',
+          specDirs.map((d) => d.name),
+        );
+
         for (const specDir of specDirs) {
           try {
-            const specData = await this.parseSpecDirectory(path.join(archiveSpecsDir, specDir.name), specDir.name);
+            const specData = await this.parseSpecDirectory(
+              path.join(archiveSpecsDir, specDir.name),
+              specDir.name,
+            );
             if (specData) {
               // Mark as archived
               specData.isArchived = true;
@@ -1400,7 +1490,9 @@ export class SpecWorkflowService {
       }
 
       this.logger.log(`SpecWorkflow: Found ${specs.length} archived specs`);
-      return specs.sort((a, b) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime());
+      return specs.sort(
+        (a, b) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime(),
+      );
     } catch (error) {
       this.logger.error('Error reading archived specs:', error);
       return [];
@@ -1416,12 +1508,14 @@ export class SpecWorkflowService {
     // Check for pending approvals first (Option A)
     try {
       const approvals = await this.getApprovals();
-      const pendingApprovals = approvals.filter(approval => 
-        approval.status === 'pending' && approval.categoryName === specName
+      const pendingApprovals = approvals.filter(
+        (approval) => approval.status === 'pending' && approval.categoryName === specName,
       );
 
       if (pendingApprovals.length > 0) {
-        throw new Error(`Cannot archive spec '${specName}': ${pendingApprovals.length} pending approval(s) exist. Complete or reject approvals first.`);
+        throw new Error(
+          `Cannot archive spec '${specName}': ${pendingApprovals.length} pending approval(s) exist. Complete or reject approvals first.`,
+        );
       }
     } catch (error: any) {
       if (error.message.includes('Cannot archive spec')) {
@@ -1488,7 +1582,7 @@ export class SpecWorkflowService {
       return {
         specName,
         entries,
-        stats
+        stats,
       };
     } catch (error) {
       this.logger.error(`Error loading logs for spec ${specName}:`, error);
@@ -1499,7 +1593,10 @@ export class SpecWorkflowService {
   /**
    * Search implementation logs for a spec
    */
-  async searchImplementationLogs(specName: string, query: string): Promise<ImplementationLogEntry[]> {
+  async searchImplementationLogs(
+    specName: string,
+    query: string,
+  ): Promise<ImplementationLogEntry[]> {
     try {
       return await this.implementationLogService.searchLogs(specName, query);
     } catch (error) {
@@ -1507,5 +1604,4 @@ export class SpecWorkflowService {
       return [];
     }
   }
-
 }

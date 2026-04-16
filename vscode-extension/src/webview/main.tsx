@@ -13,9 +13,9 @@ if (container) {
       <Suspense fallback="Loading...">
         <App />
       </Suspense>
-    </React.StrictMode>
+    </React.StrictMode>,
   );
-  
+
   // Mark body as loaded to prevent FOUC
   document.body.classList.add('loaded');
 }

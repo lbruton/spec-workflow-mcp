@@ -7,6 +7,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [1.1.7] - 2026-01-28
 
 ### Added
+
 - **Configurable Workflow Root** (Issue #193) - Support for custom `.spec-workflow` folder location:
   - New VSCode setting `specWorkflow.workflowRoot` for specifying custom path
   - **Workflow Location** card in Overview tab with current path display
@@ -18,6 +19,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [1.1.6] - 2026-01-24
 
 ### Added
+
 - **Bulk Approval Management** (PR #181) - New batch selection and action system for managing multiple approval requests:
   - **Selection Mode** - Toggle to enable multi-select with visual checkboxes on approval items
   - **Select All / Deselect All** - Quick controls to select or clear all visible approval items
@@ -29,6 +31,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [1.1.5] - 2026-01-24
 
 ### Added
+
 - **Custom Typography System** - Added locally-bundled fonts for improved readability and visual consistency:
   - **Inter** (400, 500, 600, 700 weights) - Modern sans-serif for UI text
   - **JetBrains Mono** (400, 500, 700 weights) - Developer-focused monospace for code
@@ -39,6 +42,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [1.1.4] - 2026-01-23
 
 ### Security
+
 - **Dependency Updates** - Fixed 6 vulnerabilities (3 high, 2 moderate, 1 low) via `npm audit fix`:
   - `diff` - DoS vulnerability in parsePatch/applyPatch (GHSA-73rr-hh4g-fpgx)
   - `glob` - Command injection via -c/--cmd (GHSA-5j98-mcp5-4vw2)
@@ -50,11 +54,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [1.1.3] - 2025-12-10
 
 ### Fixed
+
 - **Task Parser Alignment** - Aligned VSCode extension task parser with dashboard parser for consistent task parsing behavior
 
 ## [1.1.2] - 2025-11-10
 
 ### Fixed
+
 - **Task Status Update Bug** (PR #139) - Fixed task status updates failing in VSCode extension:
   - Removed race condition from redundant `sendTasks()` call that competed with file watcher auto-refresh
   - Synced extension's taskParser regex with core parser (removed `$` anchor, fixed capture groups)
@@ -63,16 +69,19 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - Result: Task status updates now work reliably in VSCode extension sidebar
 
 ### Changed
+
 - **Implementation Logs Format** - Updated to support new markdown-based implementation logs (migrated from JSON format)
 
 ## [1.1.0]
 
 ### Added
+
 - Added Integration Log page to the extension. This aligns the extension with the new MCP Server functionality.
 
 ## [1.0.0]
 
 ### Updated
+
 - Updated task parser to support the new structured prompt format.
 
 **NOTE: Extension version is now in sync with MCP server version and out of beta.**
@@ -80,6 +89,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.11]
 
 ### Fixed
+
 - Fixed "ReferenceError: t is not defined" errors in multiple components:
   - `CommentModal` in VSCode extension (Comment editing interface)
   - `comment-modal.tsx` wrapper (Modal context provider)
@@ -87,6 +97,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.10]
 
 ### Added
+
 - **Multi-Language Support Expansion** - Added comprehensive translations for 8 new languages
   - Spanish (es) 🇪🇸 translations for all components
   - Portuguese (pt) 🇧🇷 translations for all components
@@ -102,6 +113,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.9]
 
 ### Added
+
 - **AI Prompt Generation for Tasks** - Enhanced task management with intelligent prompt generation
   - Copy task button now uses custom AI prompts when available in tasks.md
   - Added support for parsing `_Prompt:` metadata fields from task definitions
@@ -111,11 +123,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - Added Prompt to UI for previewing the prompt for the task in a collapsible section
 
 ### Enhanced
+
 - **Task Parsing** - Extended task parser to extract and utilize custom AI prompts
 - **User Experience** - Context-aware prompts provide more specific guidance to AI agents
 - **Multi-language Support** - Added prompt-related translations for all supported languages
 
 ### Added
+
 - **Manual Language Selector** - Added dropdown for manual language selection in VSCode extension webview
   - Implemented Radix UI dropdown menu component with proper styling
   - Added language selector to extension header with support for English, Japanese, and Chinese
@@ -125,6 +139,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.8]
 
 ### Added
+
 - **Chinese (zh) Language Support** - Comprehensive Chinese translations for the VSCode extension webview
   - Complete Chinese translations for all UI elements in the webview interface
   - Integration with react-i18next for dynamic language switching
@@ -133,6 +148,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.6]
 
 ### Added
+
 - **Copy Instructions for Steering Documents** - Added "Copy Instructions" button to steering documents section
   - Single button in steering documents card header provides comprehensive instructions for all three steering documents
   - Covers product.md, tech.md, and structure.md with clear guidance for each document type
@@ -142,12 +158,14 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.5]
 
 ### Fixed
+
 - Improved text contrast in task card leverage sections for better readability in both light and dark themes
 - Fixed navigation bar visibility in light mode by adding subtle border and shadow
 
 ## [0.0.4]
 
 ### Changed
+
 - Branding update.
 
 **No functional changes.**
@@ -155,12 +173,14 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.3]
 
 ### Changed
+
 - Updated Approval View to support steering documents properly.
 - Updated Specification dropdown to "Document" instead.
 
 ## [0.0.2]
 
 ### Fixed
+
 - Long file paths in task cards now display with horizontal scrollbars instead of being cut off
 
 ## [0.0.1]

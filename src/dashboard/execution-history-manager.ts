@@ -45,10 +45,12 @@ export class ExecutionHistoryManager {
       // Handle empty or whitespace-only files
       const trimmedContent = content.trim();
       if (!trimmedContent) {
-        console.error(`[ExecutionHistoryManager] Warning: ${this.historyPath} is empty, using default history`);
+        console.error(
+          `[ExecutionHistoryManager] Warning: ${this.historyPath} is empty, using default history`,
+        );
         const defaultHistory = {
           executions: [],
-          lastUpdated: new Date().toISOString()
+          lastUpdated: new Date().toISOString(),
         };
         // Write default history to file
         await this.saveHistory(defaultHistory);
@@ -60,15 +62,19 @@ export class ExecutionHistoryManager {
         // File doesn't exist yet, create it with default history
         const defaultHistory = {
           executions: [],
-          lastUpdated: new Date().toISOString()
+          lastUpdated: new Date().toISOString(),
         };
         await this.saveHistory(defaultHistory);
         return defaultHistory;
       }
       if (error instanceof SyntaxError) {
         // JSON parsing error - file is corrupted or invalid
-        console.error(`[ExecutionHistoryManager] Error: Failed to parse ${this.historyPath}: ${error.message}`);
-        console.error(`[ExecutionHistoryManager] The file may be corrupted. Using default history.`);
+        console.error(
+          `[ExecutionHistoryManager] Error: Failed to parse ${this.historyPath}: ${error.message}`,
+        );
+        console.error(
+          `[ExecutionHistoryManager] The file may be corrupted. Using default history.`,
+        );
         // Back up the corrupted file
         try {
           const backupPath = `${this.historyPath}.corrupted.${Date.now()}`;
@@ -79,7 +85,7 @@ export class ExecutionHistoryManager {
         }
         const defaultHistory = {
           executions: [],
-          lastUpdated: new Date().toISOString()
+          lastUpdated: new Date().toISOString(),
         };
         // Write default history to file
         await this.saveHistory(defaultHistory);
@@ -127,7 +133,7 @@ export class ExecutionHistoryManager {
    */
   async getJobHistory(jobId: string, limit: number = 50): Promise<JobExecutionHistory[]> {
     const log = await this.loadHistory();
-    return log.executions.filter(e => e.jobId === jobId).slice(0, limit);
+    return log.executions.filter((e) => e.jobId === jobId).slice(0, limit);
   }
 
   /**
@@ -144,8 +150,8 @@ export class ExecutionHistoryManager {
   async getJobStats(jobId: string) {
     const history = await this.getJobHistory(jobId, 100);
 
-    const successful = history.filter(e => e.success);
-    const failed = history.filter(e => !e.success);
+    const successful = history.filter((e) => e.success);
+    const failed = history.filter((e) => !e.success);
 
     return {
       totalExecutions: history.length,
@@ -153,8 +159,11 @@ export class ExecutionHistoryManager {
       failedExecutions: failed.length,
       successRate: history.length > 0 ? (successful.length / history.length) * 100 : 0,
       totalItemsDeleted: successful.reduce((sum, e) => sum + e.itemsDeleted, 0),
-      avgDuration: successful.length > 0 ? successful.reduce((sum, e) => sum + e.duration, 0) / successful.length : 0,
-      lastExecution: history[0] || null
+      avgDuration:
+        successful.length > 0
+          ? successful.reduce((sum, e) => sum + e.duration, 0) / successful.length
+          : 0,
+      lastExecution: history[0] || null,
     };
   }
 
@@ -166,7 +175,7 @@ export class ExecutionHistoryManager {
     const cutoffTime = new Date();
     cutoffTime.setDate(cutoffTime.getDate() - daysToKeep);
 
-    log.executions = log.executions.filter(e => new Date(e.executedAt) > cutoffTime);
+    log.executions = log.executions.filter((e) => new Date(e.executedAt) > cutoffTime);
 
     await this.saveHistory(log);
   }

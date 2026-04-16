@@ -1,4 +1,12 @@
-import React, { createContext, useContext, useEffect, useMemo, useRef, useState, useCallback } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useCallback,
+} from 'react';
 
 type InitialPayload = {
   specs: any[];
@@ -97,14 +105,14 @@ export function WebSocketProvider({ children, projectId }: WebSocketProviderProp
         else if (msg.type === 'projects-update') {
           const handlers = eventHandlersRef.current.get('projects-update');
           if (handlers) {
-            handlers.forEach(handler => handler(msg.data));
+            handlers.forEach((handler) => handler(msg.data));
           }
         }
         // Handle project-scoped messages
         else if (msg.projectId === targetProjectId) {
           const handlers = eventHandlersRef.current.get(msg.type);
           if (handlers) {
-            handlers.forEach(handler => handler(msg.data));
+            handlers.forEach((handler) => handler(msg.data));
           }
         }
       } catch {
@@ -151,12 +159,15 @@ export function WebSocketProvider({ children, projectId }: WebSocketProviderProp
     }
   }, []);
 
-  const value = useMemo(() => ({
-    connected,
-    initial,
-    subscribe,
-    unsubscribe
-  }), [connected, initial, subscribe, unsubscribe]);
+  const value = useMemo(
+    () => ({
+      connected,
+      initial,
+      subscribe,
+      unsubscribe,
+    }),
+    [connected, initial, subscribe, unsubscribe],
+  );
 
   return <WsContext.Provider value={value}>{children}</WsContext.Provider>;
 }
@@ -166,5 +177,3 @@ export function useWs(): WsContextType {
   if (!ctx) throw new Error('useWs must be used within WebSocketProvider');
   return ctx;
 }
-
-

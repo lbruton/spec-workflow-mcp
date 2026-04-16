@@ -31,6 +31,7 @@ Peça ao seu assistente de IA para criar uma especificação:
 ```
 
 A IA automaticamente irá:
+
 1. Criar um documento de requisitos
 2. Projetar a abordagem técnica
 3. Dividir a implementação em tarefas
@@ -64,6 +65,7 @@ Use seu PRD ou documentos de design existentes:
 ```
 
 Retorna:
+
 - Nomes das especificações
 - Status atual
 - Porcentagem de progresso
@@ -76,6 +78,7 @@ Retorna:
 ```
 
 Fornece:
+
 - Status de aprovação dos requisitos
 - Status de aprovação do design
 - Progresso de conclusão de tarefas
@@ -84,6 +87,7 @@ Fornece:
 ### Visualizando Documentos da Especificação
 
 Use o dashboard ou extensão VSCode para:
+
 - Ler documentos de requisitos
 - Revisar documentos de design
 - Navegar listas de tarefas
@@ -94,6 +98,7 @@ Use o dashboard ou extensão VSCode para:
 ### Estrutura de Tarefas
 
 As tarefas são organizadas hierarquicamente:
+
 - **1.0** - Seções principais
   - **1.1** - Subtarefas
   - **1.2** - Subtarefas
@@ -102,11 +107,13 @@ As tarefas são organizadas hierarquicamente:
 ### Implementando Tarefas
 
 #### Método 1: Implementação Direta
+
 ```
 "Implemente a tarefa 1.2 da especificação user-auth"
 ```
 
 #### Método 2: Copiar do Dashboard
+
 1. Abra o dashboard
 2. Navegue até sua especificação
 3. Clique na aba "Tasks"
@@ -114,6 +121,7 @@ As tarefas são organizadas hierarquicamente:
 5. Cole na sua conversa com a IA
 
 #### Método 3: Implementação em Lote
+
 ```
 "Implemente todas as tarefas de configuração de banco de dados da especificação user-auth"
 ```
@@ -121,6 +129,7 @@ As tarefas são organizadas hierarquicamente:
 ### Status de Tarefa
 
 As tarefas têm três estados:
+
 - ⏳ **Pendente** - Não iniciada
 - 🔄 **Em Progresso** - Sendo trabalhada atualmente
 - ✅ **Concluída** - Finalizada
@@ -158,6 +167,7 @@ Quando os documentos estão prontos para revisão:
 ```
 
 Cria:
+
 - Descrição do bug
 - Passos para reproduzir
 - Comportamento esperado vs real
@@ -170,6 +180,7 @@ Cria:
 ```
 
 Gera:
+
 - Análise de causa raiz
 - Plano de implementação da correção
 - Requisitos de teste
@@ -180,6 +191,7 @@ Gera:
 ### Usando Templates
 
 Spec Workflow inclui templates para:
+
 - Documentos de requisitos
 - Documentos de design
 - Listas de tarefas
@@ -194,12 +206,15 @@ Crie seus próprios templates em `.specflow/templates/`:
 # Template de Recurso Personalizado
 
 ## Visão Geral
+
 [Descrição do recurso]
 
 ## Histórias de Usuário
+
 [Histórias de usuário]
 
 ## Requisitos Técnicos
+
 [Detalhes técnicos]
 ```
 
@@ -214,6 +229,7 @@ Crie orientação de alto nível para o projeto:
 ```
 
 Gera:
+
 - **Direcionamento de produto** - Visão e objetivos
 - **Direcionamento técnico** - Decisões de arquitetura
 - **Direcionamento de estrutura** - Organização do projeto
@@ -221,6 +237,7 @@ Gera:
 ### Sistema de Arquivo
 
 Gerencie especificações concluídas:
+
 - Mova especificações finalizadas para arquivo
 - Mantenha workspace ativo limpo
 - Acesse especificações arquivadas a qualquer momento
@@ -239,6 +256,7 @@ Mude o idioma da interface:
 ### 1. Comece com Documentos de Direcionamento
 
 Antes de criar especificações:
+
 ```
 "Crie documentos de direcionamento para guiar o projeto"
 ```
@@ -246,6 +264,7 @@ Antes de criar especificações:
 ### 2. Seja Específico nos Requisitos
 
 Bom:
+
 ```
 "Crie uma especificação para autenticação de usuário com:
 - Login por email/senha
@@ -255,6 +274,7 @@ Bom:
 ```
 
 Não ideal:
+
 ```
 "Crie uma especificação de login"
 ```
@@ -262,6 +282,7 @@ Não ideal:
 ### 3. Revise Antes da Implementação
 
 Sempre revise e aprove:
+
 1. Documento de requisitos
 2. Documento de design
 3. Detalhamento de tarefas
@@ -275,6 +296,7 @@ Sempre revise e aprove:
 ### 5. Use o Dashboard
 
 O dashboard fornece:
+
 - Rastreamento visual de progresso
 - Navegação fácil de documentos
 - Ações rápidas de aprovação
@@ -336,6 +358,7 @@ O dashboard fornece:
 ### Consciência Contextual
 
 O assistente de IA automaticamente:
+
 - Conhece sua estrutura de projeto
 - Entende relações entre especificações
 - Rastreia progresso de implementação
@@ -344,6 +367,7 @@ O assistente de IA automaticamente:
 ### Comandos em Linguagem Natural
 
 Fale naturalmente:
+
 - "Quais especificações eu tenho?"
 - "Mostre-me o que falta fazer"
 - "Comece a trabalhar na próxima tarefa"
@@ -352,6 +376,7 @@ Fale naturalmente:
 ### Fluxo de Trabalho Contínuo
 
 A IA mantém contexto entre sessões:
+
 - Retome de onde parou
 - Referencie decisões anteriores
 - Construa sobre trabalho existente

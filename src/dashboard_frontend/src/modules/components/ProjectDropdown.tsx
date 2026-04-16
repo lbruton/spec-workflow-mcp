@@ -41,8 +41,8 @@ export function ProjectDropdown() {
   }, [isOpen]);
 
   // Filter projects based on search query
-  const filteredProjects = projects.filter(project =>
-    project.projectName.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredProjects = projects.filter((project) =>
+    project.projectName.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleProjectSelect = (projectId: string) => {
@@ -67,9 +67,7 @@ export function ProjectDropdown() {
         className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[var(--surface-hover)] transition-colors text-[var(--text-primary)]"
         aria-label={t('projects.selectProject', 'Select project')}
       >
-        <span className="text-sm font-medium">
-          {t('projects.label', 'Projects')}:
-        </span>
+        <span className="text-sm font-medium">{t('projects.label', 'Projects')}:</span>
         <span className="text-sm font-semibold">
           {currentProject?.projectName || t('projects.none', 'No Project')}
         </span>
@@ -148,7 +146,8 @@ export function ProjectDropdown() {
                         <div className="flex items-center gap-1 flex-shrink-0">
                           {project.pendingApprovals > 0 && (
                             <span className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 px-1.5 py-0.5 rounded-full whitespace-nowrap">
-                              {project.pendingApprovals} {project.pendingApprovals === 1 ? 'approval' : 'approvals'}
+                              {project.pendingApprovals}{' '}
+                              {project.pendingApprovals === 1 ? 'approval' : 'approvals'}
                             </span>
                           )}
                           {project.activeTasks > 0 && (

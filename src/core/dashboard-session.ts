@@ -97,7 +97,7 @@ export class DashboardSessionManager {
       url,
       port,
       pid,
-      startedAt: new Date().toISOString()
+      startedAt: new Date().toISOString(),
     };
 
     await this.writeSession(session);

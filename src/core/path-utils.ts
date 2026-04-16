@@ -88,9 +88,7 @@ export class PathUtils {
     // posix.normalize handles /./, /../, and // but keeps trailing slash
     const normalized = posix.normalize(unixStyle);
     // Remove trailing slash for consistent comparison (except for root "/")
-    return normalized.endsWith('/') && normalized.length > 1
-      ? normalized.slice(0, -1)
-      : normalized;
+    return normalized.endsWith('/') && normalized.length > 1 ? normalized.slice(0, -1) : normalized;
   }
 
   /**
@@ -193,26 +191,26 @@ export class PathUtils {
     if (!basePath || typeof basePath !== 'string') {
       throw new Error('Invalid base path');
     }
-    
+
     // Check each path segment for traversal attempts
     for (const pathSegment of paths) {
       if (pathSegment && (pathSegment.includes('..') || pathSegment.startsWith('/'))) {
         throw new Error(`Invalid path segment: ${pathSegment}`);
       }
     }
-    
+
     const joined = normalize(join(basePath, ...paths));
     const resolvedBase = resolve(basePath);
     const resolvedJoined = resolve(joined);
-    
+
     // Ensure the joined path is within the base path
     if (!resolvedJoined.startsWith(resolvedBase)) {
       throw new Error('Path traversal detected in join operation');
     }
-    
+
     return joined;
   }
-  
+
   static getWorkflowRoot(projectPath: string): string {
     if (this.docvaultConfig) {
       return this.docvaultConfig.specflowRoot;
@@ -257,7 +255,6 @@ export class PathUtils {
     return join(this.getWorkflowRoot(projectPath), 'approvals', specName);
   }
 
-
   // Ensure paths work across Windows, macOS, Linux
   static toPlatformPath(path: string): string {
     return path.split('/').join(sep);
@@ -271,11 +268,11 @@ export class PathUtils {
   static getRelativePath(projectPath: string, fullPath: string): string {
     const normalizedProject = normalize(projectPath);
     const normalizedFull = normalize(fullPath);
-    
+
     if (normalizedFull.startsWith(normalizedProject)) {
       return normalizedFull.slice(normalizedProject.length + 1);
     }
-    
+
     return normalizedFull;
   }
 }
@@ -286,48 +283,48 @@ export async function validateProjectPath(projectPath: string): Promise<string> 
     if (!projectPath || typeof projectPath !== 'string') {
       throw new Error('Invalid project path: path must be a non-empty string');
     }
-    
+
     // Check for dangerous path patterns before resolving
     if (projectPath.includes('..') || projectPath.includes('~')) {
       // Normalize the path first to check if it's actually traversing
       const normalized = normalize(projectPath);
       const resolved = resolve(normalized);
-      
+
       // Get the current working directory for comparison
       const cwd = process.cwd();
-      
+
       // Additional check: ensure the resolved path doesn't contain parent directory references
       if (normalized.includes('..') && !resolved.startsWith(cwd)) {
         throw new Error(`Path traversal detected: ${projectPath}`);
       }
     }
-    
+
     // Resolve to absolute path
     const absolutePath = resolve(projectPath);
-    
+
     // Security check: Ensure the path doesn't escape to system directories
     const systemPaths = ['/etc', '/usr', '/bin', '/sbin', '/var', '/sys', '/proc'];
     const windowsSystemPaths = ['C:\\Windows', 'C:\\Program Files', 'C:\\Program Files (x86)'];
     const allSystemPaths = process.platform === 'win32' ? windowsSystemPaths : systemPaths;
-    
+
     for (const sysPath of allSystemPaths) {
       if (absolutePath.toLowerCase().startsWith(sysPath.toLowerCase())) {
         throw new Error(`Access to system directory not allowed: ${absolutePath}`);
       }
     }
-    
+
     // Check if path exists
     await access(absolutePath, constants.F_OK);
-    
+
     // Ensure it's a directory
     const stats = await stat(absolutePath);
     if (!stats.isDirectory()) {
       throw new Error(`Project path is not a directory: ${absolutePath}`);
     }
-    
+
     // Final security check: ensure we can actually access this directory
     await access(absolutePath, constants.R_OK | constants.W_OK);
-    
+
     return absolutePath;
   } catch (error) {
     if (error instanceof Error) {
@@ -352,7 +349,7 @@ export async function ensureDirectoryExists(dirPath: string): Promise<void> {
 
 export async function ensureWorkflowDirectory(projectPath: string): Promise<string> {
   const workflowRoot = PathUtils.getWorkflowRoot(projectPath);
-  
+
   // Create all necessary subdirectories (approvals created on-demand)
   const directories = [
     workflowRoot,
@@ -361,12 +358,12 @@ export async function ensureWorkflowDirectory(projectPath: string): Promise<stri
     PathUtils.getSteeringPath(projectPath),
     PathUtils.getTemplatesPath(projectPath),
     PathUtils.getAgentsPath(projectPath),
-    PathUtils.getCommandsPath(projectPath)
+    PathUtils.getCommandsPath(projectPath),
   ];
-  
+
   for (const dir of directories) {
     await ensureDirectoryExists(dir);
   }
-  
+
   return workflowRoot;
 }

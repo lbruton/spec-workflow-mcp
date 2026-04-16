@@ -15,23 +15,25 @@ Call to find existing specs before creating new ones. Searches both active and o
     properties: {
       projectPath: {
         type: 'string',
-        description: 'Absolute path to the project root (optional - uses server context path if not provided)'
+        description:
+          'Absolute path to the project root (optional - uses server context path if not provided)',
       },
       query: {
         type: 'string',
-        description: 'Search query — matches against spec directory name (e.g., "STAK-123" or "authentication"). Case-insensitive.'
+        description:
+          'Search query — matches against spec directory name (e.g., "STAK-123" or "authentication"). Case-insensitive.',
       },
       includeArchived: {
         type: 'boolean',
-        description: 'Include archived specs in results (default: false)'
-      }
+        description: 'Include archived specs in results (default: false)',
+      },
     },
-    required: []
+    required: [],
   },
   annotations: {
     title: 'Spec List',
     readOnlyHint: true,
-  }
+  },
 };
 
 interface SpecListEntry {
@@ -44,7 +46,10 @@ interface SpecListEntry {
   archived: boolean;
 }
 
-function determinePhaseAndStatus(spec: { phases: any; taskProgress?: any }): { currentPhase: string; overallStatus: string } {
+function determinePhaseAndStatus(spec: { phases: any; taskProgress?: any }): {
+  currentPhase: string;
+  overallStatus: string;
+} {
   if (spec.phases.discovery?.exists && !spec.phases.discovery?.approved) {
     return { currentPhase: 'discovery', overallStatus: 'discovery-in-progress' };
   }
@@ -63,7 +68,11 @@ function determinePhaseAndStatus(spec: { phases: any; taskProgress?: any }): { c
   ) {
     return { currentPhase: 'readiness-gate', overallStatus: 'readiness-gate-needed' };
   }
-  if (spec.taskProgress && spec.taskProgress.completed === spec.taskProgress.total && spec.taskProgress.total > 0) {
+  if (
+    spec.taskProgress &&
+    spec.taskProgress.completed === spec.taskProgress.total &&
+    spec.taskProgress.total > 0
+  ) {
     return { currentPhase: 'completed', overallStatus: 'completed' };
   }
   if (spec.taskProgress && spec.taskProgress.pending > 0) {
@@ -80,7 +89,7 @@ export async function specListHandler(args: any, context: ToolContext): Promise<
   if (!projectPath) {
     return {
       success: false,
-      message: 'Project path is required but not provided in context or arguments'
+      message: 'Project path is required but not provided in context or arguments',
     };
   }
 
@@ -101,7 +110,7 @@ export async function specListHandler(args: any, context: ToolContext): Promise<
           taskProgress: spec.taskProgress || { total: 0, completed: 0, pending: 0 },
           createdAt: spec.createdAt,
           lastModified: spec.lastModified,
-          archived: false
+          archived: false,
         });
       }
     }
@@ -124,7 +133,7 @@ export async function specListHandler(args: any, context: ToolContext): Promise<
                   taskProgress: { total: 0, completed: 0, pending: 0 },
                   createdAt: stats.birthtime.toISOString(),
                   lastModified: stats.mtime.toISOString(),
-                  archived: true
+                  archived: true,
                 });
               } catch {
                 // Skip unreadable archive entries
@@ -138,7 +147,7 @@ export async function specListHandler(args: any, context: ToolContext): Promise<
     }
 
     const matchLabel = query ? ` matching "${args.query}"` : '';
-    const archivedCount = results.filter(r => r.archived).length;
+    const archivedCount = results.filter((r) => r.archived).length;
     const activeCount = results.length - archivedCount;
 
     return {
@@ -147,13 +156,13 @@ export async function specListHandler(args: any, context: ToolContext): Promise<
       data: {
         specs: results,
         query: args.query || null,
-        includeArchived
+        includeArchived,
       },
-      nextSteps: results.length === 0
-        ? ['No specs found. Use create-spec-doc to create a new specification.']
-        : ['Use spec-status with a spec name for detailed phase information.']
+      nextSteps:
+        results.length === 0
+          ? ['No specs found. Use create-spec-doc to create a new specification.']
+          : ['Use spec-status with a spec name for detailed phase information.'],
     };
-
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     return {
@@ -161,8 +170,8 @@ export async function specListHandler(args: any, context: ToolContext): Promise<
       message: `Failed to list specifications: ${errorMessage}`,
       nextSteps: [
         'Verify the project path is correct',
-        'Verify the workflow root has a specs/ directory'
-      ]
+        'Verify the workflow root has a specs/ directory',
+      ],
     };
   }
 }

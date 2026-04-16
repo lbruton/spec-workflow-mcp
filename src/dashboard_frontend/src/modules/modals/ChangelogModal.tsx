@@ -9,12 +9,7 @@ interface ChangelogModalProps {
   projectId?: string;
 }
 
-export function ChangelogModal({
-  isOpen,
-  onClose,
-  version,
-  projectId
-}: ChangelogModalProps) {
+export function ChangelogModal({ isOpen, onClose, version, projectId }: ChangelogModalProps) {
   const { t } = useTranslation();
   const [content, setContent] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -39,7 +34,7 @@ export function ChangelogModal({
           throw new Error(`Failed to fetch changelog: ${response.statusText}`);
         }
 
-        const data = await response.json() as { content: string };
+        const data = (await response.json()) as { content: string };
         setContent(data.content);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load changelog');
@@ -95,9 +90,7 @@ export function ChangelogModal({
             </div>
           ) : error ? (
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-              <p className="text-red-700 dark:text-red-300 text-sm">
-                {error}
-              </p>
+              <p className="text-red-700 dark:text-red-300 text-sm">{error}</p>
             </div>
           ) : content ? (
             <div className="changelog-content text-[var(--text-primary)]">
@@ -105,14 +98,20 @@ export function ChangelogModal({
                 // Handle headers
                 if (line.startsWith('## ')) {
                   return (
-                    <h2 key={index} className="text-xl font-bold mt-6 mb-3 text-[var(--text-primary)] border-b border-[var(--border-default)] pb-2">
+                    <h2
+                      key={index}
+                      className="text-xl font-bold mt-6 mb-3 text-[var(--text-primary)] border-b border-[var(--border-default)] pb-2"
+                    >
                       {line.replace(/^## \[?|\].*$/g, '')}
                     </h2>
                   );
                 }
                 if (line.startsWith('### ')) {
                   return (
-                    <h3 key={index} className="text-lg font-semibold mt-4 mb-2 text-[var(--text-primary)]">
+                    <h3
+                      key={index}
+                      className="text-lg font-semibold mt-4 mb-2 text-[var(--text-primary)]"
+                    >
                       {line.replace('### ', '')}
                     </h3>
                   );
@@ -128,7 +127,11 @@ export function ChangelogModal({
                       <span className="text-[var(--text-secondary)]">
                         {parts.map((part, i) => {
                           if (part.startsWith('**') && part.endsWith('**')) {
-                            return <strong key={i} className="text-[var(--text-primary)] font-semibold">{part.slice(2, -2)}</strong>;
+                            return (
+                              <strong key={i} className="text-[var(--text-primary)] font-semibold">
+                                {part.slice(2, -2)}
+                              </strong>
+                            );
                           }
                           return <span key={i}>{part}</span>;
                         })}

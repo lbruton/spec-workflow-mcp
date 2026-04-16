@@ -97,13 +97,13 @@ function main() {
     if (result.mismatches && result.mismatches.length > 0) {
       if (checkOnly) {
         console.log(`❌ ${filePath}`);
-        result.mismatches.forEach(m => {
+        result.mismatches.forEach((m) => {
           console.log(`   └─ ${m.field}: ${m.current} → ${targetVersion}`);
         });
         hasErrors = true;
       } else {
         console.log(`✅ ${filePath} (updated)`);
-        result.mismatches.forEach(m => {
+        result.mismatches.forEach((m) => {
           console.log(`   └─ ${m.field}: ${m.current} → ${targetVersion}`);
         });
         updatedCount++;
@@ -131,4 +131,3 @@ function main() {
 main();
 
 export { getPackageVersion, updatePluginFile };
-

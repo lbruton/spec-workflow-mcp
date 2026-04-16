@@ -25,11 +25,13 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 **반환값**: 완전한 워크플로우를 설명하는 Markdown 가이드
 
 **사용 예제**:
+
 ```
 "spec 워크플로우 가이드 보여줘"
 ```
 
 **응답 포함 내용**:
+
 - 워크플로우 개요
 - 단계별 프로세스
 - 모범 사례
@@ -44,11 +46,13 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 **반환값**: steering 문서 생성을 위한 Markdown 가이드
 
 **사용 예제**:
+
 ```
 "steering 문서 만드는 방법 보여줘"
 ```
 
 **응답 포함 내용**:
+
 - Steering 문서 유형
 - 생성 프로세스
 - 내용 가이드라인
@@ -62,14 +66,15 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 
 **매개변수**:
 
-| 매개변수 | 타입 | 필수 | 설명 |
-|-----------|------|----------|-------------|
-| specName | string | 예 | spec의 이름 (kebab-case) |
-| docType | string | 예 | 타입: "requirements", "design", 또는 "tasks" |
-| content | string | 예 | 문서의 Markdown 내용 |
-| revision | boolean | 아니오 | 수정 여부 (기본값: false) |
+| 매개변수 | 타입    | 필수   | 설명                                         |
+| -------- | ------- | ------ | -------------------------------------------- |
+| specName | string  | 예     | spec의 이름 (kebab-case)                     |
+| docType  | string  | 예     | 타입: "requirements", "design", 또는 "tasks" |
+| content  | string  | 예     | 문서의 Markdown 내용                         |
+| revision | boolean | 아니오 | 수정 여부 (기본값: false)                    |
 
 **사용 예제**:
+
 ```typescript
 {
   specName: "user-authentication",
@@ -80,6 +85,7 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 ```
 
 **반환값**:
+
 ```typescript
 {
   success: true,
@@ -90,6 +96,7 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 ```
 
 **참고사항**:
+
 - spec 디렉토리가 없으면 생성
 - 새 문서에 대해 자동으로 승인 요청
 - Markdown 형식 검증
@@ -104,28 +111,30 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 **반환값**: spec 요약 배열
 
 **응답 구조**:
+
 ```typescript
 [
   {
-    name: "user-authentication",
-    status: "in-progress",
+    name: 'user-authentication',
+    status: 'in-progress',
     progress: 45,
     documents: {
-      requirements: "approved",
-      design: "pending-approval",
-      tasks: "not-created"
+      requirements: 'approved',
+      design: 'pending-approval',
+      tasks: 'not-created',
     },
     taskStats: {
       total: 15,
       completed: 7,
       inProgress: 1,
-      pending: 7
-    }
-  }
-]
+      pending: 7,
+    },
+  },
+];
 ```
 
 **사용 예제**:
+
 ```
 "내 모든 spec 목록 보여줘"
 ```
@@ -136,13 +145,14 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 
 **매개변수**:
 
-| 매개변수 | 타입 | 필수 | 설명 |
-|-----------|------|----------|-------------|
-| specName | string | 예 | 확인할 spec의 이름 |
+| 매개변수 | 타입   | 필수 | 설명               |
+| -------- | ------ | ---- | ------------------ |
+| specName | string | 예   | 확인할 spec의 이름 |
 
 **반환값**: 상세 spec 상태
 
 **응답 구조**:
+
 ```typescript
 {
   exists: true,
@@ -175,6 +185,7 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 ```
 
 **사용 예제**:
+
 ```
 "user-authentication spec의 상태 보여줘"
 ```
@@ -185,17 +196,18 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 
 **매개변수**:
 
-| 매개변수 | 타입 | 필수 | 설명 |
-|-----------|------|----------|-------------|
-| specName | string | 예 | spec의 이름 |
-| action | string | 예 | 작업: "update", "complete", "list", "progress" |
-| taskId | string | 때때로 | 작업 ID (update/complete에 필요) |
-| status | string | 아니오 | 새 상태: "pending", "in-progress", "completed" |
-| notes | string | 아니오 | 작업에 대한 추가 메모 |
+| 매개변수 | 타입   | 필수   | 설명                                           |
+| -------- | ------ | ------ | ---------------------------------------------- |
+| specName | string | 예     | spec의 이름                                    |
+| action   | string | 예     | 작업: "update", "complete", "list", "progress" |
+| taskId   | string | 때때로 | 작업 ID (update/complete에 필요)               |
+| status   | string | 아니오 | 새 상태: "pending", "in-progress", "completed" |
+| notes    | string | 아니오 | 작업에 대한 추가 메모                          |
 
 **작업**:
 
 1. **작업 상태 업데이트**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -207,6 +219,7 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 ```
 
 2. **작업 완료**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -216,6 +229,7 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 ```
 
 3. **작업 목록**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -224,6 +238,7 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 ```
 
 4. **진행 상황 가져오기**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -244,6 +259,7 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 **반환값**: 모든 템플릿을 포함하는 객체
 
 **응답 구조**:
+
 ```typescript
 {
   requirements: "# Requirements Template\n\n## Overview\n...",
@@ -256,6 +272,7 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 ```
 
 **사용 예제**:
+
 ```
 "모든 문서 템플릿 가져와줘"
 ```
@@ -266,20 +283,22 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 
 **매개변수**:
 
-| 매개변수 | 타입 | 필수 | 설명 |
-|-----------|------|----------|-------------|
-| docType | string | 아니오 | 특정 문서: "product", "tech", "structure", 또는 "all" |
+| 매개변수 | 타입   | 필수   | 설명                                                  |
+| -------- | ------ | ------ | ----------------------------------------------------- |
+| docType  | string | 아니오 | 특정 문서: "product", "tech", "structure", 또는 "all" |
 
 **반환값**: Steering 문서 내용
 
 **사용 예제**:
+
 ```typescript
 {
-  docType: "tech"  // 기술 steering만 반환
+  docType: 'tech', // 기술 steering만 반환
 }
 ```
 
 **응답 구조**:
+
 ```typescript
 {
   product: "# Product Steering\n\n## Vision\n...",
@@ -294,14 +313,15 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 
 **매개변수**:
 
-| 매개변수 | 타입 | 필수 | 설명 |
-|-----------|------|----------|-------------|
-| specName | string | 예 | spec의 이름 |
+| 매개변수       | 타입    | 필수   | 설명                          |
+| -------------- | ------- | ------ | ----------------------------- |
+| specName       | string  | 예     | spec의 이름                   |
 | includeContent | boolean | 아니오 | 문서 내용 포함 (기본값: true) |
 
 **반환값**: 완전한 spec 컨텍스트
 
 **응답 구조**:
+
 ```typescript
 {
   name: "user-authentication",
@@ -333,6 +353,7 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 ```
 
 **사용 예제**:
+
 ```
 "user-authentication spec의 전체 컨텍스트 가져와줘"
 ```
@@ -345,12 +366,13 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 
 **매개변수**:
 
-| 매개변수 | 타입 | 필수 | 설명 |
-|-----------|------|----------|-------------|
-| docType | string | 예 | 타입: "product", "tech", 또는 "structure" |
-| content | string | 예 | 문서의 Markdown 내용 |
+| 매개변수 | 타입   | 필수 | 설명                                      |
+| -------- | ------ | ---- | ----------------------------------------- |
+| docType  | string | 예   | 타입: "product", "tech", 또는 "structure" |
+| content  | string | 예   | 문서의 Markdown 내용                      |
 
 **사용 예제**:
+
 ```typescript
 {
   docType: "product",
@@ -359,6 +381,7 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 ```
 
 **반환값**:
+
 ```typescript
 {
   success: true,
@@ -368,6 +391,7 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 ```
 
 **참고사항**:
+
 - 필요시 steering 디렉토리 생성
 - 기존 steering 문서 덮어쓰기
 - steering 문서에는 승인 불필요
@@ -381,14 +405,15 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 
 **매개변수**:
 
-| 매개변수 | 타입 | 필수 | 설명 |
-|-----------|------|----------|-------------|
-| specName | string | 예 | spec의 이름 |
-| docType | string | 예 | 승인할 문서 타입 |
-| documentId | string | 예 | 추적을 위한 고유 ID |
-| content | string | 예 | 검토할 문서 내용 |
+| 매개변수   | 타입   | 필수 | 설명                |
+| ---------- | ------ | ---- | ------------------- |
+| specName   | string | 예   | spec의 이름         |
+| docType    | string | 예   | 승인할 문서 타입    |
+| documentId | string | 예   | 추적을 위한 고유 ID |
+| content    | string | 예   | 검토할 문서 내용    |
 
 **사용 예제**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -399,6 +424,7 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 ```
 
 **반환값**:
+
 ```typescript
 {
   success: true,
@@ -413,12 +439,13 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 
 **매개변수**:
 
-| 매개변수 | 타입 | 필수 | 설명 |
-|-----------|------|----------|-------------|
-| specName | string | 예 | spec의 이름 |
-| documentId | string | 예 | 확인할 문서 ID |
+| 매개변수   | 타입   | 필수 | 설명           |
+| ---------- | ------ | ---- | -------------- |
+| specName   | string | 예   | spec의 이름    |
+| documentId | string | 예   | 확인할 문서 ID |
 
 **반환값**:
+
 ```typescript
 {
   exists: true,
@@ -430,6 +457,7 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 ```
 
 **사용 예제**:
+
 ```
 "user-auth 요구사항의 승인 상태 확인해줘"
 ```
@@ -440,12 +468,13 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 
 **매개변수**:
 
-| 매개변수 | 타입 | 필수 | 설명 |
-|-----------|------|----------|-------------|
-| specName | string | 예 | spec의 이름 |
-| documentId | string | 예 | 제거할 문서 ID |
+| 매개변수   | 타입   | 필수 | 설명           |
+| ---------- | ------ | ---- | -------------- |
+| specName   | string | 예   | spec의 이름    |
+| documentId | string | 예   | 제거할 문서 ID |
 
 **반환값**:
+
 ```typescript
 {
   success: true,
@@ -454,6 +483,7 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 ```
 
 **사용 예제**:
+
 ```
 "user-auth의 완료된 승인 정리해줘"
 ```
@@ -539,6 +569,7 @@ Spec Workflow MCP는 구조화된 소프트웨어 개발을 위한 전문 도구
 5. exports에 추가
 
 예제 구조:
+
 ```typescript
 export const customTool = {
   name: 'custom-tool',
@@ -548,7 +579,7 @@ export const customTool = {
   },
   handler: async (params) => {
     // Implementation
-  }
+  },
 };
 ```
 

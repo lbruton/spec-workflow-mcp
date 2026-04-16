@@ -45,5 +45,7 @@ export async function validateMarkdownForMdx(content: string): Promise<MdxValida
 }
 
 export function formatMdxValidationIssues(issues: MdxValidationIssue[]): string[] {
-  return issues.map((issue) => `Line ${issue.line}:${issue.column} [${issue.ruleId}] ${issue.message}`);
+  return issues.map(
+    (issue) => `Line ${issue.line}:${issue.column} [${issue.ruleId}] ${issue.message}`,
+  );
 }

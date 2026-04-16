@@ -22,7 +22,8 @@ const SUPPORTED_LANGUAGES = [
 export function LanguageSelector({ className = '' }: LanguageSelectorProps) {
   const { i18n, t } = useTranslation();
 
-  const currentLanguage = SUPPORTED_LANGUAGES.find(lang => lang.code === i18n.language) || SUPPORTED_LANGUAGES[0];
+  const currentLanguage =
+    SUPPORTED_LANGUAGES.find((lang) => lang.code === i18n.language) || SUPPORTED_LANGUAGES[0];
 
   const handleLanguageChange = (languageCode: string) => {
     i18n.changeLanguage(languageCode);
@@ -45,10 +46,15 @@ export function LanguageSelector({ className = '' }: LanguageSelectorProps) {
           </option>
         ))}
       </select>
-      
+
       {/* Custom dropdown arrow */}
       <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-        <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="h-4 w-4 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
         </svg>
       </div>

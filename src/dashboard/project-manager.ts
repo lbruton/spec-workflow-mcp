@@ -4,20 +4,24 @@ import { SpecParser } from './parser.js';
 import { SpecWatcher } from './watcher.js';
 import { ApprovalStorage } from './approval-storage.js';
 import { SpecArchiveService } from '../core/archive-service.js';
-import { ProjectRegistry, ProjectRegistryEntry, ProjectInstance } from '../core/project-registry.js';
+import {
+  ProjectRegistry,
+  ProjectRegistryEntry,
+  ProjectInstance,
+} from '../core/project-registry.js';
 import { PathUtils } from '../core/path-utils.js';
 import { resolveGitRoot, resolveGitWorkspaceRoot } from '../core/git-utils.js';
 import { loadConfig } from '../core/config-loader.js';
 
 export interface ProjectContext {
   projectId: string;
-  projectPath: string;           // Translated workflow root path for specs/.specflow access
-  workspacePath: string;         // Translated workspace/worktree path for file artifact resolution
-  originalProjectPath: string;   // Original workspace path for display/registry
-  workflowRootPath: string;      // Original workflow root path for display/debugging
+  projectPath: string; // Translated workflow root path for specs/.specflow access
+  workspacePath: string; // Translated workspace/worktree path for file artifact resolution
+  originalProjectPath: string; // Original workspace path for display/registry
+  workflowRootPath: string; // Original workflow root path for display/debugging
   projectName: string;
-  instances: ProjectInstance[];  // Active MCP server instances for this project
-  worktrees: string[];           // Active worktree workspace paths
+  instances: ProjectInstance[]; // Active MCP server instances for this project
+  worktrees: string[]; // Active worktree workspace paths
   parser: SpecParser;
   watcher: SpecWatcher;
   approvalStorage: ApprovalStorage;
@@ -76,7 +80,7 @@ export class ProjectManager extends EventEmitter {
     this.registryWatcher = chokidar.watch(registryPath, {
       ignoreInitial: true,
       persistent: true,
-      ignorePermissionErrors: true
+      ignorePermissionErrors: true,
     });
 
     this.registryWatcher.on('change', async () => {
@@ -101,7 +105,7 @@ export class ProjectManager extends EventEmitter {
   private async syncWithRegistry(): Promise<void> {
     try {
       const entries = await this.registry.getAllProjects();
-      const registryIds = new Set(entries.map(e => e.projectId));
+      const registryIds = new Set(entries.map((e) => e.projectId));
       const currentIds = new Set(this.projects.keys());
 
       // Add new projects or update instances for existing ones
@@ -144,9 +148,8 @@ export class ProjectManager extends EventEmitter {
     try {
       // Translate paths once at entry point (components should not know about Docker)
       // Use first worktree as workspace path when available, otherwise fall back to projectPath
-      const workspacePath = (entry.worktrees && entry.worktrees.length > 0)
-        ? entry.worktrees[0]
-        : entry.projectPath;
+      const workspacePath =
+        entry.worktrees && entry.worktrees.length > 0 ? entry.worktrees[0] : entry.projectPath;
       const translatedWorkspacePath = PathUtils.translatePath(workspacePath);
       let translatedWorkflowRootPath = PathUtils.translatePath(entry.workflowRootPath);
 
@@ -164,7 +167,7 @@ export class ProjectManager extends EventEmitter {
       const watcher = new SpecWatcher(translatedWorkflowRootPath, parser);
       const approvalStorage = new ApprovalStorage(translatedWorkflowRootPath, {
         originalPath: entry.workflowRootPath,
-        fileResolutionPath: translatedWorkspacePath
+        fileResolutionPath: translatedWorkspacePath,
       });
       const archiveService = new SpecArchiveService(translatedWorkflowRootPath);
 
@@ -196,12 +199,12 @@ export class ProjectManager extends EventEmitter {
         originalProjectPath: entry.projectPath, // Keep workspace path for display/registry
         workflowRootPath: entry.workflowRootPath,
         projectName: entry.projectName,
-        instances: entry.instances || [],       // Track MCP server instances
-        worktrees: entry.worktrees || [],       // Active worktree workspace paths
+        instances: entry.instances || [], // Track MCP server instances
+        worktrees: entry.worktrees || [], // Active worktree workspace paths
         parser,
         watcher,
         approvalStorage,
-        archiveService
+        archiveService,
       };
 
       this.projects.set(entry.projectId, context);
@@ -236,7 +239,7 @@ export class ProjectManager extends EventEmitter {
       // Emit project removed event
       this.emit('project-removed', projectId);
     } catch (error) {
-      console.error(`Failed to remove project ${projectId}:`, error);
+      console.error('Failed to remove project %s:', projectId, error);
     }
   }
 
@@ -257,15 +260,17 @@ export class ProjectManager extends EventEmitter {
   /**
    * Get projects list for API (enriched with approval/task counts and worktrees)
    */
-  async getProjectsList(): Promise<Array<{
-    projectId: string;
-    projectName: string;
-    projectPath: string;
-    instances: ProjectInstance[];
-    worktrees: string[];
-    pendingApprovals: number;
-    activeTasks: number;
-  }>> {
+  async getProjectsList(): Promise<
+    Array<{
+      projectId: string;
+      projectName: string;
+      projectPath: string;
+      instances: ProjectInstance[];
+      worktrees: string[];
+      pendingApprovals: number;
+      activeTasks: number;
+    }>
+  > {
     const projects = Array.from(this.projects.values());
     const results = await Promise.all(
       projects.map(async (p) => {
@@ -296,13 +301,13 @@ export class ProjectManager extends EventEmitter {
         return {
           projectId: p.projectId,
           projectName: p.projectName,
-          projectPath: p.originalProjectPath,  // Return original path for display
+          projectPath: p.originalProjectPath, // Return original path for display
           instances: p.instances,
           worktrees: p.worktrees,
           pendingApprovals,
-          activeTasks
+          activeTasks,
         };
-      })
+      }),
     );
     return results;
   }
@@ -325,7 +330,7 @@ export class ProjectManager extends EventEmitter {
 
     // Register new project (with dummy PID since it's manual)
     const projectId = await this.registry.registerProject(workspacePath, process.pid, {
-      workflowRootPath
+      workflowRootPath,
     });
 
     // Get the entry and add it

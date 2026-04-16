@@ -12,11 +12,11 @@ npx -y @pimzino/spec-workflow-mcp@latest [project-path] [options]
 
 ### 利用可能なオプション
 
-| オプション | 説明 | 例 |
-|--------|-------------|---------|
-| `--help` | 包括的な使用情報を表示 | `npx -y @pimzino/spec-workflow-mcp@latest --help` |
-| `--dashboard` | ダッシュボード専用モードで実行（デフォルトポート：5000） | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard` |
-| `--port <number>` | カスタムダッシュボードポートを指定（1024-65535） | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080` |
+| オプション        | 説明                                                     | 例                                                                 |
+| ----------------- | -------------------------------------------------------- | ------------------------------------------------------------------ |
+| `--help`          | 包括的な使用情報を表示                                   | `npx -y @pimzino/spec-workflow-mcp@latest --help`                  |
+| `--dashboard`     | ダッシュボード専用モードで実行（デフォルトポート：5000） | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard`             |
+| `--port <number>` | カスタムダッシュボードポートを指定（1024-65535）         | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080` |
 
 ### 重要な注意事項
 
@@ -29,12 +29,14 @@ npx -y @pimzino/spec-workflow-mcp@latest [project-path] [options]
 ### 典型的なワークフロー
 
 1. **ダッシュボードを起動する**（最初に一度だけ実行）：
+
 ```bash
 # デフォルトポート5000を使用
 npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 ```
 
 2. **MCPサーバーを起動する**（プロジェクトごとに1つ、別々のターミナルで）：
+
 ```bash
 # プロジェクト1
 npx -y @pimzino/spec-workflow-mcp@latest ~/projects/app1
@@ -63,11 +65,12 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 デフォルトのグローバル状態ディレクトリ（`~/.specflow-mcp`）をオーバーライドします。これは`$HOME`が読み取り専用のサンドボックス環境で役立ちます。
 
-| 変数 | デフォルト | 説明 |
-|----------|---------|-------------|
+| 変数                 | デフォルト        | 説明                                   |
+| -------------------- | ----------------- | -------------------------------------- |
 | `SPEC_WORKFLOW_HOME` | `~/.specflow-mcp` | グローバル状態ファイル用のディレクトリ |
 
 **このディレクトリに保存されるファイル：**
+
 - `activeProjects.json` - プロジェクトレジストリ
 - `activeSession.json` - ダッシュボードセッション情報
 - `settings.json` - グローバル設定
@@ -98,6 +101,7 @@ SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@la
 ## ダッシュボードセッション管理
 
 ダッシュボードは`~/.specflow-mcp/activeSession.json`（または設定されている場合は`$SPEC_WORKFLOW_HOME/activeSession.json`）にセッション情報を保存します。このファイルは：
+
 - 単一のダッシュボードインスタンスを強制
 - MCPサーバーが実行中のダッシュボードを発見できるようにする
 - ダッシュボードが停止すると自動的にクリーンアップされる
@@ -177,12 +181,12 @@ debounceMs = 300
 
 #### 基本設定
 
-| オプション | タイプ | デフォルト | 説明 |
-|--------|------|---------|-------------|
-| `projectDir` | string | 現在のディレクトリ | プロジェクトディレクトリパス |
-| `port` | number | エフェメラル | ダッシュボードポート（1024-65535） |
-| `dashboardOnly` | boolean | false | MCPサーバーなしでダッシュボードを実行 |
-| `lang` | string | "en" | インターフェース言語 |
+| オプション      | タイプ  | デフォルト         | 説明                                  |
+| --------------- | ------- | ------------------ | ------------------------------------- |
+| `projectDir`    | string  | 現在のディレクトリ | プロジェクトディレクトリパス          |
+| `port`          | number  | エフェメラル       | ダッシュボードポート（1024-65535）    |
+| `dashboardOnly` | boolean | false              | MCPサーバーなしでダッシュボードを実行 |
+| `lang`          | string  | "en"               | インターフェース言語                  |
 
 > **注意**：`autoStartDashboard`オプションはv2.0.0で削除されました。ダッシュボードは`--dashboard`フラグでアクセスできる統合マルチプロジェクトモードを使用するようになりました。
 
@@ -203,11 +207,13 @@ debounceMs = 300
 ### カスタム設定の作成
 
 1. 例の設定をコピーします：
+
 ```bash
 cp .specflow/config.example.toml .specflow/config.toml
 ```
 
 2. 設定を編集します：
+
 ```toml
 # 私のプロジェクト設定
 projectDir = "/Users/myname/projects/myapp"
@@ -216,6 +222,7 @@ lang = "en"
 ```
 
 3. 設定を使用します：
+
 ```bash
 # 自動的に.specflow/config.tomlを使用
 npx -y @pimzino/spec-workflow-mcp@latest
@@ -262,6 +269,7 @@ verboseLogging = true
 ```
 
 使用方法：
+
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest --config dev-config.toml
 ```
@@ -280,6 +288,7 @@ verboseLogging = false
 ```
 
 使用方法：
+
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ```
@@ -293,6 +302,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ### エフェメラルポート
 
 ポートが指定されていない場合、システムは自動的に利用可能なエフェメラルポートを選択します。これは以下の場合に推奨されます：
+
 - 開発環境
 - 複数の同時プロジェクト
 - ポート競合の回避
@@ -300,6 +310,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ### 固定ポート
 
 以下が必要な場合は固定ポートを使用してください：
+
 - ブックマークのための一貫したURL
 - 他のツールとの統合
 - 共有設定を使用したチームコラボレーション
@@ -367,11 +378,13 @@ VSCode拡張機能には独自の設定があります：
 ### 設定が読み込まれない
 
 1. **ファイルの場所を確認：**
+
    ```bash
    ls -la .specflow/config.toml
    ```
 
 2. **TOML構文を検証：**
+
    ```bash
    # TOML CLIツールをインストール
    npm install -g @iarna/toml
@@ -388,12 +401,12 @@ VSCode拡張機能には独自の設定があります：
 
 ### 一般的な問題
 
-| 問題 | 解決策 |
-|-------|----------|
-| ポートが既に使用中 | 別のポートを使用するか、エフェメラルポートを省略 |
-| 設定ファイルが見つからない | パスを確認し、必要に応じて絶対パスを使用 |
-| 無効なTOML構文 | TOMLリンターで検証 |
-| 設定が適用されない | 設定の優先順位を確認 |
+| 問題                       | 解決策                                           |
+| -------------------------- | ------------------------------------------------ |
+| ポートが既に使用中         | 別のポートを使用するか、エフェメラルポートを省略 |
+| 設定ファイルが見つからない | パスを確認し、必要に応じて絶対パスを使用         |
+| 無効なTOML構文             | TOMLリンターで検証                               |
+| 設定が適用されない         | 設定の優先順位を確認                             |
 
 ## ベストプラクティス
 

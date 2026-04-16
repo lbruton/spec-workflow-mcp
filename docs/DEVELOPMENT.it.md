@@ -33,6 +33,7 @@ npm install
 ```
 
 Questo installa:
+
 - MCP SDK
 - TypeScript e strumenti di build
 - Express per server dashboard
@@ -51,15 +52,15 @@ Questo compila i file TypeScript in JavaScript nella directory `dist/`.
 
 ### Comandi Principali
 
-| Comando | Descrizione |
-|---------|-------------|
-| `npm run dev` | Avvia in modalità sviluppo con auto-reload |
-| `npm run build` | Compila bundle produzione |
-| `npm start` | Esegui server produzione |
-| `npm test` | Esegui suite di test |
-| `npm run clean` | Rimuovi artefatti build |
-| `npm run lint` | Esegui linter codice |
-| `npm run format` | Formatta codice con Prettier |
+| Comando          | Descrizione                                |
+| ---------------- | ------------------------------------------ |
+| `npm run dev`    | Avvia in modalità sviluppo con auto-reload |
+| `npm run build`  | Compila bundle produzione                  |
+| `npm start`      | Esegui server produzione                   |
+| `npm test`       | Esegui suite di test                       |
+| `npm run clean`  | Rimuovi artefatti build                    |
+| `npm run lint`   | Esegui linter codice                       |
+| `npm run format` | Formatta codice con Prettier               |
 
 ### Modalità Sviluppo
 
@@ -68,6 +69,7 @@ npm run dev
 ```
 
 Funzionalità:
+
 - Auto-ricompilazione su modifiche file
 - Hot reload per dashboard
 - Messaggi errore dettagliati
@@ -80,6 +82,7 @@ npm run clean && npm run build
 ```
 
 Ottimizzazioni:
+
 - JavaScript minificato
 - Dimensione bundle ottimizzata
 - Gestione errori produzione
@@ -122,26 +125,32 @@ Client (AI) ↔ Protocollo MCP ↔ Server ↔ File System
 ### Componenti Chiave
 
 #### 1. Server MCP (`src/index.ts`)
+
 - Gestisce comunicazione protocollo MCP
 - Elabora richieste strumenti
 - Gestisce stato progetto
 - Operazioni file system
 
 #### 2. Server Dashboard (`src/server.ts`)
+
 - Serve dashboard web
 - Connessioni WebSocket
 - Aggiornamenti in tempo reale
 - Endpoint API HTTP
 
 #### 3. Strumenti (`src/tools/`)
+
 Ogni strumento è un modulo separato:
+
 - Validazione input
 - Logica business
 - Operazioni file
 - Formattazione risposta
 
 #### 4. Prompt (`src/prompts/`)
+
 Stringhe template per:
+
 - Generazione documenti
 - Guida workflow
 - Messaggi errore
@@ -164,9 +173,9 @@ export const myNewTool: Tool = {
     type: 'object',
     properties: {
       param1: { type: 'string', description: 'Descrizione parametro' },
-      param2: { type: 'number', optional: true }
+      param2: { type: 'number', optional: true },
     },
-    required: ['param1']
+    required: ['param1'],
   },
   handler: async (params) => {
     // Implementazione strumento
@@ -176,9 +185,9 @@ export const myNewTool: Tool = {
 
     return {
       success: true,
-      data: 'Risposta strumento'
+      data: 'Risposta strumento',
     };
-  }
+  },
 };
 ```
 
@@ -212,10 +221,14 @@ server.registerTool(myNewTool);
 ```javascript
 document.getElementById('new-action').addEventListener('click', () => {
   // Logica funzionalità
-  ws.send(JSON.stringify({
-    type: 'new-action',
-    data: { /* ... */ }
-  }));
+  ws.send(
+    JSON.stringify({
+      type: 'new-action',
+      data: {
+        /* ... */
+      },
+    }),
+  );
 });
 ```
 
@@ -260,7 +273,7 @@ import { myTool } from './my-tool';
 describe('myTool', () => {
   it('dovrebbe elaborare input correttamente', async () => {
     const result = await myTool.handler({
-      param1: 'test'
+      param1: 'test',
     });
 
     expect(result.success).toBe(true);
@@ -269,7 +282,7 @@ describe('myTool', () => {
 
   it('dovrebbe gestire errori', async () => {
     const result = await myTool.handler({
-      param1: null
+      param1: null,
     });
 
     expect(result.success).toBe(false);
@@ -285,7 +298,7 @@ Testa workflow completi:
 ```typescript
 // tests/integration/workflow.test.ts
 describe('Workflow Completo', () => {
-  it('dovrebbe creare spec dall\'inizio alla fine', async () => {
+  it("dovrebbe creare spec dall'inizio alla fine", async () => {
     // Crea requisiti
     // Approva requisiti
     // Crea design
@@ -397,6 +410,7 @@ Segui conventional commits:
 - `chore:` Manutenzione
 
 Esempi:
+
 ```
 feat: aggiungi workflow revisione approvazione
 fix: risolvi problema riconnessione WebSocket dashboard
@@ -416,11 +430,13 @@ docs: aggiorna guida configurazione
 ### Pacchetto NPM
 
 1. **Aggiorna versione**:
+
    ```bash
    npm version patch|minor|major
    ```
 
 2. **Compila pacchetto**:
+
    ```bash
    npm run build
    ```
@@ -435,6 +451,7 @@ docs: aggiorna guida configurazione
 1. **Aggiorna versione estensione** in `vscode-extension/package.json`
 
 2. **Compila estensione**:
+
    ```bash
    cd vscode-extension
    npm run package
@@ -490,11 +507,11 @@ if (safePath.includes('..')) {
 
 ### Errori Build Comuni
 
-| Errore | Soluzione |
-|-------|----------|
-| Errori TypeScript | Esegui `npm run build` per vedere errori dettagliati |
-| Modulo non trovato | Controlla import ed esegui `npm install` |
-| Porta già in uso | Cambia porta o termina processo esistente |
+| Errore                        | Soluzione                                              |
+| ----------------------------- | ------------------------------------------------------ |
+| Errori TypeScript             | Esegui `npm run build` per vedere errori dettagliati   |
+| Modulo non trovato            | Controlla import ed esegui `npm install`               |
+| Porta già in uso              | Cambia porta o termina processo esistente              |
 | Connessione WebSocket fallita | Verifica che server sia in esecuzione e porta corretta |
 
 ### Suggerimenti Sviluppo

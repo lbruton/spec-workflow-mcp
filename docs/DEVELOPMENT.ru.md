@@ -33,6 +33,7 @@ npm install
 ```
 
 Это устанавливает:
+
 - MCP SDK
 - TypeScript и инструменты сборки
 - Express для сервера панели управления
@@ -51,15 +52,15 @@ npm run build
 
 ### Основные команды
 
-| Команда | Описание |
-|---------|-------------|
-| `npm run dev` | Запустить в режиме разработки с автоперезагрузкой |
-| `npm run build` | Собрать производственный пакет |
-| `npm start` | Запустить производственный сервер |
-| `npm test` | Запустить набор тестов |
-| `npm run clean` | Удалить артефакты сборки |
-| `npm run lint` | Запустить линтер кода |
-| `npm run format` | Форматировать код с помощью Prettier |
+| Команда          | Описание                                          |
+| ---------------- | ------------------------------------------------- |
+| `npm run dev`    | Запустить в режиме разработки с автоперезагрузкой |
+| `npm run build`  | Собрать производственный пакет                    |
+| `npm start`      | Запустить производственный сервер                 |
+| `npm test`       | Запустить набор тестов                            |
+| `npm run clean`  | Удалить артефакты сборки                          |
+| `npm run lint`   | Запустить линтер кода                             |
+| `npm run format` | Форматировать код с помощью Prettier              |
 
 ### Режим разработки
 
@@ -68,6 +69,7 @@ npm run dev
 ```
 
 Функции:
+
 - Автоматическая перекомпиляция при изменении файлов
 - Горячая перезагрузка для панели управления
 - Подробные сообщения об ошибках
@@ -80,6 +82,7 @@ npm run clean && npm run build
 ```
 
 Оптимизации:
+
 - Минифицированный JavaScript
 - Оптимизированный размер пакета
 - Обработка ошибок продакшена
@@ -122,26 +125,32 @@ Client (AI) ↔ MCP Protocol ↔ Server ↔ File System
 ### Ключевые компоненты
 
 #### 1. Сервер MCP (`src/index.ts`)
+
 - Обрабатывает связь по протоколу MCP
 - Обрабатывает запросы инструментов
 - Управляет состоянием проекта
 - Операции с файловой системой
 
 #### 2. Сервер панели управления (`src/server.ts`)
+
 - Обслуживает веб-панель управления
 - Соединения WebSocket
 - Обновления в реальном времени
 - Конечные точки HTTP API
 
 #### 3. Инструменты (`src/tools/`)
+
 Каждый инструмент - отдельный модуль:
+
 - Валидация входных данных
 - Бизнес-логика
 - Операции с файлами
 - Форматирование ответов
 
 #### 4. Запросы (`src/prompts/`)
+
 Шаблонные строки для:
+
 - Генерации документов
 - Руководства по рабочему процессу
 - Сообщений об ошибках
@@ -164,9 +173,9 @@ export const myNewTool: Tool = {
     type: 'object',
     properties: {
       param1: { type: 'string', description: 'Описание параметра' },
-      param2: { type: 'number', optional: true }
+      param2: { type: 'number', optional: true },
     },
-    required: ['param1']
+    required: ['param1'],
   },
   handler: async (params) => {
     // Реализация инструмента
@@ -176,9 +185,9 @@ export const myNewTool: Tool = {
 
     return {
       success: true,
-      data: 'Ответ инструмента'
+      data: 'Ответ инструмента',
     };
-  }
+  },
 };
 ```
 
@@ -212,10 +221,14 @@ server.registerTool(myNewTool);
 ```javascript
 document.getElementById('new-action').addEventListener('click', () => {
   // Логика функции
-  ws.send(JSON.stringify({
-    type: 'new-action',
-    data: { /* ... */ }
-  }));
+  ws.send(
+    JSON.stringify({
+      type: 'new-action',
+      data: {
+        /* ... */
+      },
+    }),
+  );
 });
 ```
 
@@ -260,7 +273,7 @@ import { myTool } from './my-tool';
 describe('myTool', () => {
   it('должен правильно обрабатывать входные данные', async () => {
     const result = await myTool.handler({
-      param1: 'test'
+      param1: 'test',
     });
 
     expect(result.success).toBe(true);
@@ -269,7 +282,7 @@ describe('myTool', () => {
 
   it('должен обрабатывать ошибки', async () => {
     const result = await myTool.handler({
-      param1: null
+      param1: null,
     });
 
     expect(result.success).toBe(false);
@@ -397,6 +410,7 @@ console.log('Обновление состояния:', newState);
 - `chore:` Обслуживание
 
 Примеры:
+
 ```
 feat: add approval revision workflow
 fix: resolve dashboard WebSocket reconnection issue
@@ -416,11 +430,13 @@ docs: update configuration guide
 ### Пакет NPM
 
 1. **Обновите версию**:
+
    ```bash
    npm version patch|minor|major
    ```
 
 2. **Соберите пакет**:
+
    ```bash
    npm run build
    ```
@@ -435,6 +451,7 @@ docs: update configuration guide
 1. **Обновите версию расширения** в `vscode-extension/package.json`
 
 2. **Соберите расширение**:
+
    ```bash
    cd vscode-extension
    npm run package
@@ -490,12 +507,12 @@ if (safePath.includes('..')) {
 
 ### Распространенные ошибки сборки
 
-| Ошибка | Решение |
-|-------|----------|
-| Ошибки TypeScript | Запустите `npm run build` для просмотра подробных ошибок |
-| Модуль не найден | Проверьте импорты и запустите `npm install` |
-| Порт уже используется | Измените порт или завершите существующий процесс |
-| Не удалось подключение WebSocket | Проверьте, что сервер запущен и порт правильный |
+| Ошибка                           | Решение                                                  |
+| -------------------------------- | -------------------------------------------------------- |
+| Ошибки TypeScript                | Запустите `npm run build` для просмотра подробных ошибок |
+| Модуль не найден                 | Проверьте импорты и запустите `npm install`              |
+| Порт уже используется            | Измените порт или завершите существующий процесс         |
+| Не удалось подключение WebSocket | Проверьте, что сервер запущен и порт правильный          |
 
 ### Советы по разработке
 

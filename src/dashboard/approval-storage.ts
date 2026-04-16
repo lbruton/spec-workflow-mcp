@@ -117,7 +117,7 @@ export class ApprovalStorage extends EventEmitter {
     options: {
       originalPath?: string;
       fileResolutionPath?: string;
-    } = {}
+    } = {},
   ) {
     super();
 
@@ -131,7 +131,9 @@ export class ApprovalStorage extends EventEmitter {
 
     // Prevent root directory usage which causes permission errors
     if (resolvedPath === '/' || resolvedPath === '\\' || resolvedPath.match(/^[A-Z]:\\?$/)) {
-      throw new Error(`Invalid project path: ${resolvedPath}. Cannot use root directory for spec workflow.`);
+      throw new Error(
+        `Invalid project path: ${resolvedPath}. Cannot use root directory for spec workflow.`,
+      );
     }
 
     this.projectPath = resolvedPath;
@@ -155,7 +157,7 @@ export class ApprovalStorage extends EventEmitter {
     this.watcher = chokidar.watch(`${this.approvalsDir}/**/*.json`, {
       ignoreInitial: false,
       persistent: true,
-      ignorePermissionErrors: true
+      ignorePermissionErrors: true,
     });
 
     this.watcher.on('add', () => this.scheduleApprovalChangeEmit());
@@ -211,10 +213,7 @@ export class ApprovalStorage extends EventEmitter {
       return [filePath];
     }
 
-    const candidates = [
-      join(this.fileResolutionPath, filePath),
-      join(this.projectPath, filePath)
-    ];
+    const candidates = [join(this.fileResolutionPath, filePath), join(this.projectPath, filePath)];
 
     return Array.from(new Set(candidates));
   }
@@ -251,7 +250,7 @@ export class ApprovalStorage extends EventEmitter {
     category: 'spec' | 'steering',
     categoryName: string,
     type: 'document' | 'action' = 'document',
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<string> {
     const id = this.generateId();
     const approval: ApprovalRequest = {
@@ -263,7 +262,7 @@ export class ApprovalStorage extends EventEmitter {
       createdAt: new Date().toISOString(),
       metadata,
       category,
-      categoryName
+      categoryName,
     };
 
     // Create category directory if it doesn't exist
@@ -303,6 +302,10 @@ export class ApprovalStorage extends EventEmitter {
       const categoryNames = await fs.readdir(this.approvalsDir, { withFileTypes: true });
       for (const categoryName of categoryNames) {
         if (categoryName.isDirectory()) {
+          // Validate id doesn't contain path traversal characters
+          if (id.includes('/') || id.includes('\\') || id.includes('..')) {
+            return null;
+          }
           const approvalPath = join(this.approvalsDir, categoryName.name, `${id}.json`);
           try {
             await fs.access(approvalPath);
@@ -324,8 +327,12 @@ export class ApprovalStorage extends EventEmitter {
     status: 'approved' | 'rejected' | 'needs-revision' | 'concerns',
     response: string,
     annotations?: string,
-    comments?: ApprovalComment[]
+    comments?: ApprovalComment[],
   ): Promise<void> {
+    // Validate id doesn't contain path traversal characters
+    if (id.includes('/') || id.includes('\\') || id.includes('..')) {
+      throw new Error('Invalid approval ID');
+    }
     const approval = await this.getApproval(id);
     if (!approval) {
       throw new Error(`Approval ${id} not found`);
@@ -336,13 +343,13 @@ export class ApprovalStorage extends EventEmitter {
       try {
         await this.captureSnapshot(id, 'revision_requested');
       } catch (error) {
-        console.warn(`Failed to capture revision snapshot for approval ${id}:`, error);
+        console.warn('Failed to capture revision snapshot for approval %s:', id, error);
       }
     } else if (status === 'approved' || status === 'concerns') {
       try {
         await this.captureSnapshot(id, 'approved');
       } catch (error) {
-        console.warn(`Failed to capture approval snapshot for approval ${id}:`, error);
+        console.warn('Failed to capture approval snapshot for approval %s:', id, error);
       }
     }
 
@@ -388,11 +395,7 @@ export class ApprovalStorage extends EventEmitter {
     await fs.writeFile(filePath, JSON.stringify(approval, null, 2), 'utf-8');
   }
 
-  async createRevision(
-    originalId: string,
-    newContent: string,
-    reason?: string
-  ): Promise<string> {
+  async createRevision(originalId: string, newContent: string, reason?: string): Promise<string> {
     const originalApproval = await this.getApproval(originalId);
     if (!originalApproval) {
       throw new Error(`Original approval ${originalId} not found`);
@@ -404,7 +407,8 @@ export class ApprovalStorage extends EventEmitter {
 
     // Resolve target file path (workspace first, workflow root fallback)
     const existingFilePath = await this.resolveExistingFilePath(originalApproval.filePath);
-    const filePath = existingFilePath || await this.resolveFilePathForWrite(originalApproval.filePath);
+    const filePath =
+      existingFilePath || (await this.resolveFilePathForWrite(originalApproval.filePath));
 
     let currentContent = '';
     try {
@@ -423,7 +427,7 @@ export class ApprovalStorage extends EventEmitter {
       version: version - 1,
       content: currentContent,
       timestamp: originalApproval.respondedAt || originalApproval.createdAt,
-      reason: reason
+      reason: reason,
     });
 
     // Write the new content to the file
@@ -447,9 +451,7 @@ export class ApprovalStorage extends EventEmitter {
 
   async getAllPendingApprovals(): Promise<ApprovalRequest[]> {
     const allApprovals = await this.getAllApprovals();
-    return allApprovals.filter(approval =>
-      approval.status === 'pending'
-    );
+    return allApprovals.filter((approval) => approval.status === 'pending');
   }
 
   async getAllApprovals(): Promise<ApprovalRequest[]> {
@@ -484,7 +486,9 @@ export class ApprovalStorage extends EventEmitter {
       }
 
       // Sort by creation date (newest first)
-      return approvals.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      return approvals.sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
     } catch {
       return [];
     }
@@ -536,7 +540,10 @@ export class ApprovalStorage extends EventEmitter {
 
   // Snapshot Management Methods
 
-  async captureSnapshot(approvalId: string, trigger: 'initial' | 'revision_requested' | 'approved' | 'manual'): Promise<void> {
+  async captureSnapshot(
+    approvalId: string,
+    trigger: 'initial' | 'revision_requested' | 'approved' | 'manual',
+  ): Promise<void> {
     const approval = await this.getApproval(approvalId);
     if (!approval || !approval.filePath) {
       throw new Error(`Approval ${approvalId} not found or has no file path`);
@@ -545,7 +552,9 @@ export class ApprovalStorage extends EventEmitter {
     // Read current file content (workspace first, workflow root fallback)
     const filePath = await this.resolveExistingFilePath(approval.filePath);
     if (!filePath) {
-      throw new Error(`Failed to read file for snapshot: file does not exist for ${approval.filePath}`);
+      throw new Error(
+        `Failed to read file for snapshot: file does not exist for ${approval.filePath}`,
+      );
     }
 
     let content: string;
@@ -555,7 +564,9 @@ export class ApprovalStorage extends EventEmitter {
       content = await fs.readFile(filePath, 'utf-8');
       stats = await fs.stat(filePath);
     } catch (error) {
-      throw new Error(`Failed to read file for snapshot: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to read file for snapshot: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
 
     // Create file-based snapshots directory
@@ -574,15 +585,17 @@ export class ApprovalStorage extends EventEmitter {
       metadata = {
         filePath: approval.filePath,
         currentVersion: 0,
-        snapshots: []
+        snapshots: [],
       };
     }
 
     // Check for duplicate initial snapshots
     if (trigger === 'initial') {
-      const existingInitial = metadata.snapshots.find(s => s.trigger === 'initial');
+      const existingInitial = metadata.snapshots.find((s) => s.trigger === 'initial');
       if (existingInitial) {
-        console.error(`Initial snapshot already exists for ${approval.filePath}, skipping creation`);
+        console.error(
+          `Initial snapshot already exists for ${approval.filePath}, skipping creation`,
+        );
         return;
       }
     }
@@ -604,10 +617,10 @@ export class ApprovalStorage extends EventEmitter {
       fileStats: {
         size: stats.size,
         lines: content.split('\n').length,
-        lastModified: stats.mtime.toISOString()
+        lastModified: stats.mtime.toISOString(),
       },
       comments: approval.comments || [],
-      annotations: approval.annotations || undefined
+      annotations: approval.annotations || undefined,
     };
 
     // Write snapshot to disk
@@ -622,7 +635,7 @@ export class ApprovalStorage extends EventEmitter {
       timestamp,
       trigger,
       approvalId,
-      approvalTitle: approval.title
+      approvalTitle: approval.title,
     });
 
     await fs.writeFile(metadataPath, JSON.stringify(metadata, null, 2), 'utf-8');
@@ -657,7 +670,7 @@ export class ApprovalStorage extends EventEmitter {
 
   async getSnapshot(approvalId: string, version: number): Promise<DocumentSnapshot | null> {
     const snapshots = await this.getSnapshots(approvalId);
-    return snapshots.find(s => s.version === version) || null;
+    return snapshots.find((s) => s.version === version) || null;
   }
 
   async getCurrentFileContent(approvalId: string): Promise<string | null> {
@@ -676,7 +689,11 @@ export class ApprovalStorage extends EventEmitter {
     }
   }
 
-  async compareSnapshots(approvalId: string, fromVersion: number, toVersion: number | 'current'): Promise<DiffResult> {
+  async compareSnapshots(
+    approvalId: string,
+    fromVersion: number,
+    toVersion: number | 'current',
+  ): Promise<DiffResult> {
     let fromContent: string;
     let toContent: string;
 
@@ -726,14 +743,14 @@ export class ApprovalStorage extends EventEmitter {
           resultLines.push({
             type: 'add',
             newLineNumber: newLineNum++,
-            content: line
+            content: line,
           });
         } else if (change.removed) {
           deletions++;
           resultLines.push({
             type: 'delete',
             oldLineNumber: oldLineNum++,
-            content: line
+            content: line,
           });
         } else {
           // Unchanged line
@@ -741,7 +758,7 @@ export class ApprovalStorage extends EventEmitter {
             type: 'normal',
             oldLineNumber: oldLineNum++,
             newLineNumber: newLineNum++,
-            content: line
+            content: line,
           });
         }
       }
@@ -758,13 +775,15 @@ export class ApprovalStorage extends EventEmitter {
       // changes represents in-place modifications; diffLines only produces additions/deletions
       // so changes is always 0 (the frontend calculates totalChanges = additions + deletions + changes)
       changes: 0,
-      chunks: [{
-        oldStart: 1,
-        oldLines: fromLineCount,
-        newStart: 1,
-        newLines: toLineCount,
-        lines: resultLines
-      }]
+      chunks: [
+        {
+          oldStart: 1,
+          oldLines: fromLineCount,
+          newStart: 1,
+          newLines: toLineCount,
+          lines: resultLines,
+        },
+      ],
     };
   }
 

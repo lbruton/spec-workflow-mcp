@@ -7,6 +7,7 @@ The spec-workflow-mcp project implements internationalization across three disti
 ## Supported Languages
 
 The project supports 11 languages:
+
 - English (en) 🇺🇸
 - Japanese (ja) 🇯🇵
 - Chinese (zh) 🇨🇳
@@ -22,6 +23,7 @@ The project supports 11 languages:
 ## Translation File Locations
 
 ### 1. Backend MCP Server (`src/locales/`)
+
 - **Purpose**: Translations for MCP tool responses and server messages
 - **Structure**: Starts with keys like `tools`, `specStatus`, `errors`
 - **Usage**: Used by the MCP server when responding to tool calls
@@ -36,6 +38,7 @@ The project supports 11 languages:
   ```
 
 ### 2. VSCode Extension Webview (`vscode-extension/src/webview/locales/`)
+
 - **Purpose**: Translations for the VSCode extension's webview UI
 - **Structure**: Starts with keys like `header`, `tabs`, `overview`
 - **Usage**: Used in the VSCode extension's React-based webview
@@ -49,6 +52,7 @@ The project supports 11 languages:
   ```
 
 ### 3. Dashboard Frontend (`src/dashboard_frontend/src/locales/`)
+
 - **Purpose**: Translations for the web dashboard UI
 - **Structure**: Similar to VSCode but with dashboard-specific sections
 - **Usage**: Used in the standalone web dashboard
@@ -80,6 +84,7 @@ npm run validate:i18n
 ```
 
 This script checks:
+
 - JSON syntax validity
 - Mustache template variable consistency across languages
 - File presence for all supported languages
@@ -122,7 +127,7 @@ Current implementation uses eager loading for better user experience during lang
 A critical issue was resolved where multiple components were using translation functions (`t()`) without properly declaring the `useTranslation` hook, causing "ReferenceError: t is not defined" errors. This affected:
 
 - Task management dropdown functionality
-- Comment modal interfaces  
+- Comment modal interfaces
 - Volume controls
 - Alert dialogs
 

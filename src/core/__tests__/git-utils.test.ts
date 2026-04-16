@@ -4,12 +4,12 @@ import {
   resolveGitRoot,
   resolveGitWorkspaceRoot,
   isGitWorktree,
-  SPEC_WORKFLOW_SHARED_ROOT_ENV
+  SPEC_WORKFLOW_SHARED_ROOT_ENV,
 } from '../git-utils.js';
 
 // Mock child_process
 vi.mock('child_process', () => ({
-  execSync: vi.fn()
+  execSync: vi.fn(),
 }));
 
 const mockedExecSync = vi.mocked(execSync);
@@ -183,8 +183,8 @@ describe('resolveGitRoot', () => {
           cwd: '/test/path',
           encoding: 'utf-8',
           stdio: ['pipe', 'pipe', 'pipe'],
-          timeout: 5000
-        })
+          timeout: 5000,
+        }),
       );
     });
   });
@@ -207,8 +207,8 @@ describe('resolveGitWorkspaceRoot', () => {
         cwd: '/home/user/repo/src/components',
         encoding: 'utf-8',
         stdio: ['pipe', 'pipe', 'pipe'],
-        timeout: 5000
-      })
+        timeout: 5000,
+      }),
     );
   });
 

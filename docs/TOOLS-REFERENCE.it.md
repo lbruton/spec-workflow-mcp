@@ -25,11 +25,13 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 **Ritorna**: Guida markdown che spiega workflow completo
 
 **Esempio Uso**:
+
 ```
 "Mostrami la guida al workflow specifiche"
 ```
 
 **Risposta Contiene**:
+
 - Panoramica workflow
 - Processo passo-passo
 - Best practice
@@ -44,11 +46,13 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 **Ritorna**: Guida markdown per creazione documenti steering
 
 **Esempio Uso**:
+
 ```
 "Mostrami come creare documenti steering"
 ```
 
 **Risposta Contiene**:
+
 - Tipi documenti steering
 - Processo creazione
 - Linee guida contenuto
@@ -62,14 +66,15 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 
 **Parametri**:
 
-| Parametro | Tipo | Richiesto | Descrizione |
-|-----------|------|----------|-------------|
-| specName | string | Sì | Nome specifica (kebab-case) |
-| docType | string | Sì | Tipo: "requirements", "design" o "tasks" |
-| content | string | Sì | Contenuto markdown del documento |
-| revision | boolean | No | Se è una revisione (default: false) |
+| Parametro | Tipo    | Richiesto | Descrizione                              |
+| --------- | ------- | --------- | ---------------------------------------- |
+| specName  | string  | Sì        | Nome specifica (kebab-case)              |
+| docType   | string  | Sì        | Tipo: "requirements", "design" o "tasks" |
+| content   | string  | Sì        | Contenuto markdown del documento         |
+| revision  | boolean | No        | Se è una revisione (default: false)      |
 
 **Esempio Uso**:
+
 ```typescript
 {
   specName: "user-authentication",
@@ -80,6 +85,7 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 ```
 
 **Ritorna**:
+
 ```typescript
 {
   success: true,
@@ -90,6 +96,7 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 ```
 
 **Note**:
+
 - Crea directory specifica se non esiste
 - Richiede automaticamente approvazione per nuovi documenti
 - Valida formato markdown
@@ -104,28 +111,30 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 **Ritorna**: Array di riassunti specifiche
 
 **Struttura Risposta**:
+
 ```typescript
 [
   {
-    name: "user-authentication",
-    status: "in-progress",
+    name: 'user-authentication',
+    status: 'in-progress',
     progress: 45,
     documents: {
-      requirements: "approved",
-      design: "pending-approval",
-      tasks: "not-created"
+      requirements: 'approved',
+      design: 'pending-approval',
+      tasks: 'not-created',
     },
     taskStats: {
       total: 15,
       completed: 7,
       inProgress: 1,
-      pending: 7
-    }
-  }
-]
+      pending: 7,
+    },
+  },
+];
 ```
 
 **Esempio Uso**:
+
 ```
 "Elenca tutte le mie specifiche"
 ```
@@ -136,13 +145,14 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 
 **Parametri**:
 
-| Parametro | Tipo | Richiesto | Descrizione |
-|-----------|------|----------|-------------|
-| specName | string | Sì | Nome specifica da controllare |
+| Parametro | Tipo   | Richiesto | Descrizione                   |
+| --------- | ------ | --------- | ----------------------------- |
+| specName  | string | Sì        | Nome specifica da controllare |
 
 **Ritorna**: Stato specifica dettagliato
 
 **Struttura Risposta**:
+
 ```typescript
 {
   exists: true,
@@ -175,6 +185,7 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 ```
 
 **Esempio Uso**:
+
 ```
 "Mostrami stato specifica user-authentication"
 ```
@@ -185,17 +196,18 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 
 **Parametri**:
 
-| Parametro | Tipo | Richiesto | Descrizione |
-|-----------|------|----------|-------------|
-| specName | string | Sì | Nome specifica |
-| action | string | Sì | Azione: "update", "complete", "list", "progress" |
-| taskId | string | A volte | ID task (richiesto per update/complete) |
-| status | string | No | Nuovo stato: "pending", "in-progress", "completed" |
-| notes | string | No | Note aggiuntive per task |
+| Parametro | Tipo   | Richiesto | Descrizione                                        |
+| --------- | ------ | --------- | -------------------------------------------------- |
+| specName  | string | Sì        | Nome specifica                                     |
+| action    | string | Sì        | Azione: "update", "complete", "list", "progress"   |
+| taskId    | string | A volte   | ID task (richiesto per update/complete)            |
+| status    | string | No        | Nuovo stato: "pending", "in-progress", "completed" |
+| notes     | string | No        | Note aggiuntive per task                           |
 
 **Azioni**:
 
 1. **Aggiorna Stato Task**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -207,6 +219,7 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 ```
 
 2. **Completa Task**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -216,6 +229,7 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 ```
 
 3. **Elenca Task**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -224,6 +238,7 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 ```
 
 4. **Ottieni Progressi**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -244,6 +259,7 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 **Ritorna**: Oggetto contenente tutti i template
 
 **Struttura Risposta**:
+
 ```typescript
 {
   requirements: "# Template Requisiti\n\n## Panoramica\n...",
@@ -256,6 +272,7 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 ```
 
 **Esempio Uso**:
+
 ```
 "Ottieni tutti i template documenti"
 ```
@@ -266,20 +283,22 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 
 **Parametri**:
 
-| Parametro | Tipo | Richiesto | Descrizione |
-|-----------|------|----------|-------------|
-| docType | string | No | Doc specifico: "product", "tech", "structure" o "all" |
+| Parametro | Tipo   | Richiesto | Descrizione                                           |
+| --------- | ------ | --------- | ----------------------------------------------------- |
+| docType   | string | No        | Doc specifico: "product", "tech", "structure" o "all" |
 
 **Ritorna**: Contenuto documento steering
 
 **Esempio Uso**:
+
 ```typescript
 {
-  docType: "tech"  // Ritorna solo steering tecnico
+  docType: 'tech', // Ritorna solo steering tecnico
 }
 ```
 
 **Struttura Risposta**:
+
 ```typescript
 {
   product: "# Steering Prodotto\n\n## Visione\n...",
@@ -294,14 +313,15 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 
 **Parametri**:
 
-| Parametro | Tipo | Richiesto | Descrizione |
-|-----------|------|----------|-------------|
-| specName | string | Sì | Nome specifica |
-| includeContent | boolean | No | Includi contenuto documento (default: true) |
+| Parametro      | Tipo    | Richiesto | Descrizione                                 |
+| -------------- | ------- | --------- | ------------------------------------------- |
+| specName       | string  | Sì        | Nome specifica                              |
+| includeContent | boolean | No        | Includi contenuto documento (default: true) |
 
 **Ritorna**: Contesto specifica completo
 
 **Struttura Risposta**:
+
 ```typescript
 {
   name: "user-authentication",
@@ -333,6 +353,7 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 ```
 
 **Esempio Uso**:
+
 ```
 "Ottieni contesto completo per specifica user-authentication"
 ```
@@ -345,12 +366,13 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 
 **Parametri**:
 
-| Parametro | Tipo | Richiesto | Descrizione |
-|-----------|------|----------|-------------|
-| docType | string | Sì | Tipo: "product", "tech" o "structure" |
-| content | string | Sì | Contenuto markdown documento |
+| Parametro | Tipo   | Richiesto | Descrizione                           |
+| --------- | ------ | --------- | ------------------------------------- |
+| docType   | string | Sì        | Tipo: "product", "tech" o "structure" |
+| content   | string | Sì        | Contenuto markdown documento          |
 
 **Esempio Uso**:
+
 ```typescript
 {
   docType: "product",
@@ -359,6 +381,7 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 ```
 
 **Ritorna**:
+
 ```typescript
 {
   success: true,
@@ -368,6 +391,7 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 ```
 
 **Note**:
+
 - Crea directory steering se necessario
 - Sovrascrive documenti steering esistenti
 - Nessuna approvazione richiesta per documenti steering
@@ -381,14 +405,15 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 
 **Parametri**:
 
-| Parametro | Tipo | Richiesto | Descrizione |
-|-----------|------|----------|-------------|
-| specName | string | Sì | Nome specifica |
-| docType | string | Sì | Tipo documento da approvare |
-| documentId | string | Sì | ID unico per tracciamento |
-| content | string | Sì | Contenuto documento per revisione |
+| Parametro  | Tipo   | Richiesto | Descrizione                       |
+| ---------- | ------ | --------- | --------------------------------- |
+| specName   | string | Sì        | Nome specifica                    |
+| docType    | string | Sì        | Tipo documento da approvare       |
+| documentId | string | Sì        | ID unico per tracciamento         |
+| content    | string | Sì        | Contenuto documento per revisione |
 
 **Esempio Uso**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -399,6 +424,7 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 ```
 
 **Ritorna**:
+
 ```typescript
 {
   success: true,
@@ -413,12 +439,13 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 
 **Parametri**:
 
-| Parametro | Tipo | Richiesto | Descrizione |
-|-----------|------|----------|-------------|
-| specName | string | Sì | Nome specifica |
-| documentId | string | Sì | ID documento da controllare |
+| Parametro  | Tipo   | Richiesto | Descrizione                 |
+| ---------- | ------ | --------- | --------------------------- |
+| specName   | string | Sì        | Nome specifica              |
+| documentId | string | Sì        | ID documento da controllare |
 
 **Ritorna**:
+
 ```typescript
 {
   exists: true,
@@ -430,6 +457,7 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 ```
 
 **Esempio Uso**:
+
 ```
 "Controlla stato approvazione per requisiti user-auth"
 ```
@@ -440,12 +468,13 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 
 **Parametri**:
 
-| Parametro | Tipo | Richiesto | Descrizione |
-|-----------|------|----------|-------------|
-| specName | string | Sì | Nome specifica |
-| documentId | string | Sì | ID documento da rimuovere |
+| Parametro  | Tipo   | Richiesto | Descrizione               |
+| ---------- | ------ | --------- | ------------------------- |
+| specName   | string | Sì        | Nome specifica            |
+| documentId | string | Sì        | ID documento da rimuovere |
 
 **Ritorna**:
+
 ```typescript
 {
   success: true,
@@ -454,6 +483,7 @@ Spec Workflow MCP fornisce strumenti specializzati per lo sviluppo software stru
 ```
 
 **Esempio Uso**:
+
 ```
 "Pulisci approvazioni completate per user-auth"
 ```
@@ -539,6 +569,7 @@ Per aggiungere nuovi strumenti:
 5. Aggiungi a export
 
 Esempio struttura:
+
 ```typescript
 export const customTool = {
   name: 'custom-tool',
@@ -548,7 +579,7 @@ export const customTool = {
   },
   handler: async (params) => {
     // Implementazione
-  }
+  },
 };
 ```
 

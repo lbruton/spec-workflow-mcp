@@ -31,6 +31,7 @@ Ask your AI assistant to create a spec:
 ```
 
 The AI will automatically:
+
 1. Create a requirements document
 2. Design the technical approach
 3. Break down implementation into tasks
@@ -64,6 +65,7 @@ Use your existing PRD or design documents:
 ```
 
 Returns:
+
 - Spec names
 - Current status
 - Progress percentage
@@ -76,6 +78,7 @@ Returns:
 ```
 
 Provides:
+
 - Requirements approval status
 - Design approval status
 - Task completion progress
@@ -84,6 +87,7 @@ Provides:
 ### Viewing Spec Documents
 
 Use the dashboard or VSCode extension to:
+
 - Read requirements documents
 - Review design documents
 - Browse task lists
@@ -94,6 +98,7 @@ Use the dashboard or VSCode extension to:
 ### Task Structure
 
 Tasks are organized hierarchically:
+
 - **1.0** - Major sections
   - **1.1** - Subtasks
   - **1.2** - Subtasks
@@ -102,11 +107,13 @@ Tasks are organized hierarchically:
 ### Implementing Tasks
 
 #### Method 1: Direct Implementation
+
 ```
 "Implement task 1.2 from the user-auth spec"
 ```
 
 #### Method 2: Copy from Dashboard
+
 1. Open the dashboard
 2. Navigate to your spec
 3. Click "Tasks" tab
@@ -114,6 +121,7 @@ Tasks are organized hierarchically:
 5. Paste into your AI conversation
 
 #### Method 3: Batch Implementation
+
 ```
 "Implement all database setup tasks from user-auth spec"
 ```
@@ -121,6 +129,7 @@ Tasks are organized hierarchically:
 ### Task Status
 
 Tasks have three states:
+
 - ⏳ **Pending** - Not started
 - 🔄 **In Progress** - Currently being worked on
 - ✅ **Completed** - Finished
@@ -158,6 +167,7 @@ When documents are ready for review:
 ```
 
 Creates:
+
 - Bug description
 - Steps to reproduce
 - Expected vs actual behavior
@@ -170,6 +180,7 @@ Creates:
 ```
 
 Generates:
+
 - Root cause analysis
 - Fix implementation plan
 - Testing requirements
@@ -180,6 +191,7 @@ Generates:
 ### Using Templates
 
 Spec Workflow includes templates for:
+
 - Requirements documents
 - Design documents
 - Task lists
@@ -194,12 +206,15 @@ Create your own templates in `.specflow/templates/`:
 # Custom Feature Template
 
 ## Overview
+
 [Feature description]
 
 ## User Stories
+
 [User stories]
 
 ## Technical Requirements
+
 [Technical details]
 ```
 
@@ -214,6 +229,7 @@ Create high-level project guidance:
 ```
 
 Generates:
+
 - **Product steering** - Vision and goals
 - **Technical steering** - Architecture decisions
 - **Structure steering** - Project organization
@@ -221,6 +237,7 @@ Generates:
 ### Archive System
 
 Manage completed specs:
+
 - Move finished specs to archive
 - Keep active workspace clean
 - Access archived specs anytime
@@ -239,6 +256,7 @@ Change interface language:
 ### 1. Start with Steering Documents
 
 Before creating specs:
+
 ```
 "Create steering documents to guide the project"
 ```
@@ -246,6 +264,7 @@ Before creating specs:
 ### 2. Be Specific in Requirements
 
 Good:
+
 ```
 "Create a spec for user authentication with:
 - Email/password login
@@ -255,6 +274,7 @@ Good:
 ```
 
 Not ideal:
+
 ```
 "Create a login spec"
 ```
@@ -262,6 +282,7 @@ Not ideal:
 ### 3. Review Before Implementation
 
 Always review and approve:
+
 1. Requirements document
 2. Design document
 3. Task breakdown
@@ -275,6 +296,7 @@ Always review and approve:
 ### 5. Use the Dashboard
 
 The dashboard provides:
+
 - Visual progress tracking
 - Easy document navigation
 - Quick approval actions
@@ -336,6 +358,7 @@ The dashboard provides:
 ### Contextual Awareness
 
 The AI assistant automatically:
+
 - Knows your project structure
 - Understands spec relationships
 - Tracks implementation progress
@@ -344,6 +367,7 @@ The AI assistant automatically:
 ### Natural Language Commands
 
 Speak naturally:
+
 - "What specs do I have?"
 - "Show me what's left to do"
 - "Start working on the next task"
@@ -352,6 +376,7 @@ Speak naturally:
 ### Continuous Workflow
 
 The AI maintains context between sessions:
+
 - Resume where you left off
 - Reference previous decisions
 - Build on existing work

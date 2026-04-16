@@ -5,8 +5,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   Activity,
   CheckSquare,
@@ -29,9 +40,17 @@ import {
   RotateCcw,
   Trash2,
   Undo2,
-  FolderOpen
+  FolderOpen,
 } from 'lucide-react';
-import { vscodeApi, type SpecData, type TaskProgressData, type ApprovalData, type SteeringStatus, type DocumentInfo, type SoundNotificationConfig } from '@/lib/vscode-api';
+import {
+  vscodeApi,
+  type SpecData,
+  type TaskProgressData,
+  type ApprovalData,
+  type SteeringStatus,
+  type DocumentInfo,
+  type SoundNotificationConfig,
+} from '@/lib/vscode-api';
 import { cn, formatDistanceToNow } from '@/lib/utils';
 import { useVSCodeTheme } from '@/hooks/useVSCodeTheme';
 import { useSoundNotifications } from '@/hooks/useSoundNotifications';
@@ -51,14 +70,19 @@ function App() {
   const [selectedSpec, setSelectedSpec] = useState<string | null>(null);
   const [taskData, setTaskData] = useState<TaskProgressData | null>(null);
   const [approvals, setApprovals] = useState<ApprovalData[]>([]);
-  const [approvalCategories, setApprovalCategories] = useState<{ value: string; label: string; count: number }[]>([]);
+  const [approvalCategories, setApprovalCategories] = useState<
+    { value: string; label: string; count: number }[]
+  >([]);
   const [selectedApprovalCategory, setSelectedApprovalCategory] = useState<string>('all');
   const [specDocuments, setSpecDocuments] = useState<DocumentInfo[]>([]);
   const [steeringDocuments, setSteeringDocuments] = useState<DocumentInfo[]>([]);
   const [, setSteering] = useState<SteeringStatus | null>(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
-  const [notification, setNotification] = useState<{message: string, level: 'info' | 'warning' | 'error' | 'success'} | null>(null);
+  const [notification, setNotification] = useState<{
+    message: string;
+    level: 'info' | 'warning' | 'error' | 'success';
+  } | null>(null);
   const [processingApproval, setProcessingApproval] = useState<string | null>(null);
   const [copiedTaskId, setCopiedTaskId] = useState<string | null>(null);
 
@@ -76,7 +100,10 @@ function App() {
   const [batchRejectModalOpen, setBatchRejectModalOpen] = useState<boolean>(false);
   const [batchRejectFeedback, setBatchRejectFeedback] = useState<string>('');
   // Undo state
-  const [lastBatchOperation, setLastBatchOperation] = useState<{ ids: string[]; action: string } | null>(null);
+  const [lastBatchOperation, setLastBatchOperation] = useState<{
+    ids: string[];
+    action: string;
+  } | null>(null);
   const [showUndoToast, setShowUndoToast] = useState<boolean>(false);
   const undoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [copiedSteering, setCopiedSteering] = useState<boolean>(false);
@@ -86,30 +113,32 @@ function App() {
     enabled: true,
     volume: 0.3,
     approvalSound: true,
-    taskCompletionSound: true
+    taskCompletionSound: true,
   });
   const [soundUris, setSoundUris] = useState<{ [key: string]: string } | null>(null);
   const [archiveView, setArchiveView] = useState<'active' | 'archived'>('active');
   const [selectedArchivedSpec, setSelectedArchivedSpec] = useState<string | null>(null);
   const [currentLanguage, setCurrentLanguage] = useState<string>('auto');
-  const [workflowRoot, setWorkflowRoot] = useState<{ path: string; isDefault: boolean }>({ path: '', isDefault: true });
-  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
-  
-  // Sound notifications - use config from VS Code settings
-  const soundNotifications = useSoundNotifications({ 
-    enabled: soundConfig.enabled, 
-    volume: soundConfig.volume,
-    soundUris: soundUris
+  const [workflowRoot, setWorkflowRoot] = useState<{ path: string; isDefault: boolean }>({
+    path: '',
+    isDefault: true,
   });
-  
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+
+  // Sound notifications - use config from VS Code settings
+  const soundNotifications = useSoundNotifications({
+    enabled: soundConfig.enabled,
+    volume: soundConfig.volume,
+    soundUris: soundUris,
+  });
+
   // Previous state tracking for notifications (use refs to avoid triggering effects)
   const previousApprovals = useRef<ApprovalData[]>([]);
   const previousTaskData = useRef<TaskProgressData | null>(null);
 
-
   // Toggle prompt expansion
   const togglePromptExpansion = (taskId: string) => {
-    setExpandedPrompts(prev => {
+    setExpandedPrompts((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(taskId)) {
         newSet.delete(taskId);
@@ -125,19 +154,27 @@ function App() {
     if (!selectedSpec) {
       return;
     }
-    
+
     // Use custom prompt if available, otherwise fallback to default
-    const command = task.prompt || t('task.copyPrompt', 'Please work on task {{taskId}} for spec "{{specName}}"', { taskId: task.id, specName: selectedSpec });
-    
+    const command =
+      task.prompt ||
+      t('task.copyPrompt', 'Please work on task {{taskId}} for spec "{{specName}}"', {
+        taskId: task.id,
+        specName: selectedSpec,
+      });
+
     // Try modern clipboard API first
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(command).then(() => {
-        setCopiedTaskId(task.id);
-        setTimeout(() => setCopiedTaskId(null), 2000);
-      }).catch(() => {
-        // Fallback to legacy method
-        fallbackCopy(command, task.id);
-      });
+      navigator.clipboard
+        .writeText(command)
+        .then(() => {
+          setCopiedTaskId(task.id);
+          setTimeout(() => setCopiedTaskId(null), 2000);
+        })
+        .catch(() => {
+          // Fallback to legacy method
+          fallbackCopy(command, task.id);
+        });
     } else {
       // Clipboard API not available
       fallbackCopy(command, task.id);
@@ -153,7 +190,7 @@ function App() {
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
-    
+
     try {
       const successful = document.execCommand('copy');
       if (successful) {
@@ -163,7 +200,7 @@ function App() {
     } catch (err) {
       console.error('Failed to copy text: ', err);
     }
-    
+
     document.body.removeChild(textArea);
   };
 
@@ -181,7 +218,7 @@ function App() {
   };
 
   const toggleApprovalSelection = (id: string) => {
-    setSelectedApprovalIds(prev => {
+    setSelectedApprovalIds((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(id)) {
         newSet.delete(id);
@@ -233,11 +270,7 @@ function App() {
   };
 
   // Helper to start a batch operation with proper tracking
-  const startBatchOperation = (
-    apiCall: () => void,
-    action: string,
-    ids: string[]
-  ) => {
+  const startBatchOperation = (apiCall: () => void, action: string, ids: string[]) => {
     // Prevent double-submission if already processing
     if (batchProcessing || pendingBatchOperation.current) {
       return;
@@ -264,7 +297,9 @@ function App() {
 
   // Handle undo operation
   const handleUndo = () => {
-    if (!lastBatchOperation) { return; }
+    if (!lastBatchOperation) {
+      return;
+    }
 
     // Clear the undo timeout
     if (undoTimeoutRef.current) {
@@ -283,23 +318,33 @@ function App() {
   };
 
   const handleBatchApprove = () => {
-    if (selectedApprovalIds.size === 0) {return;}
+    if (selectedApprovalIds.size === 0) {
+      return;
+    }
     if (selectedApprovalIds.size > BATCH_SIZE_LIMIT) {
-      setNotification({ message: t('approvals.batch.tooMany', { limit: BATCH_SIZE_LIMIT }), level: 'warning' });
+      setNotification({
+        message: t('approvals.batch.tooMany', { limit: BATCH_SIZE_LIMIT }),
+        level: 'warning',
+      });
       return;
     }
     const ids = Array.from(selectedApprovalIds);
     startBatchOperation(
       () => vscodeApi.batchApprove(ids, t('approvals.response.approved')),
       'approve',
-      ids
+      ids,
     );
   };
 
   const handleBatchReject = () => {
-    if (selectedApprovalIds.size === 0) {return;}
+    if (selectedApprovalIds.size === 0) {
+      return;
+    }
     if (selectedApprovalIds.size > BATCH_SIZE_LIMIT) {
-      setNotification({ message: t('approvals.batch.tooMany', { limit: BATCH_SIZE_LIMIT }), level: 'warning' });
+      setNotification({
+        message: t('approvals.batch.tooMany', { limit: BATCH_SIZE_LIMIT }),
+        level: 'warning',
+      });
       return;
     }
     // Always show feedback modal for reject - user must provide a reason
@@ -317,28 +362,33 @@ function App() {
     startBatchOperation(
       () => vscodeApi.batchReject(ids, batchRejectFeedback.trim()),
       'reject',
-      ids
+      ids,
     );
   };
 
   const handleBatchRevision = () => {
-    if (selectedApprovalIds.size === 0) {return;}
+    if (selectedApprovalIds.size === 0) {
+      return;
+    }
     if (selectedApprovalIds.size > BATCH_SIZE_LIMIT) {
-      setNotification({ message: t('approvals.batch.tooMany', { limit: BATCH_SIZE_LIMIT }), level: 'warning' });
+      setNotification({
+        message: t('approvals.batch.tooMany', { limit: BATCH_SIZE_LIMIT }),
+        level: 'warning',
+      });
       return;
     }
     const ids = Array.from(selectedApprovalIds);
     startBatchOperation(
       () => vscodeApi.batchRequestRevision(ids, t('approvals.response.needsRevision')),
       'revision',
-      ids
+      ids,
     );
   };
 
   // Language change handler
   const handleLanguageChange = (language: string) => {
     setCurrentLanguage(language);
-    
+
     if (language === 'auto') {
       // Reset to auto-detection - remove from localStorage
       localStorage.removeItem('spec-workflow-language');
@@ -348,7 +398,7 @@ function App() {
       localStorage.setItem('spec-workflow-language', language);
       i18n.changeLanguage(language);
     }
-    
+
     vscodeApi.setLanguagePreference(language);
     setNotification({ message: t('language.changed'), level: 'success' });
   };
@@ -362,16 +412,19 @@ function App() {
 - structure.md: Describe the codebase organization, directory structure, and module architecture
 
 Review the existing steering documents (if any) and help me improve or complete them based on my project requirements.`;
-    
+
     // Try modern clipboard API first
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(instructions).then(() => {
-        setCopiedSteering(true);
-        setTimeout(() => setCopiedSteering(false), 2000);
-      }).catch(() => {
-        // Fallback to legacy method
-        fallbackCopyGeneric(instructions);
-      });
+      navigator.clipboard
+        .writeText(instructions)
+        .then(() => {
+          setCopiedSteering(true);
+          setTimeout(() => setCopiedSteering(false), 2000);
+        })
+        .catch(() => {
+          // Fallback to legacy method
+          fallbackCopyGeneric(instructions);
+        });
     } else {
       // Clipboard API not available
       fallbackCopyGeneric(instructions);
@@ -387,7 +440,7 @@ Review the existing steering documents (if any) and help me improve or complete 
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
-    
+
     try {
       const successful = document.execCommand('copy');
       if (successful) {
@@ -397,7 +450,7 @@ Review the existing steering documents (if any) and help me improve or complete 
     } catch (err) {
       console.error('Failed to copy text: ', err);
     }
-    
+
     document.body.removeChild(textArea);
   };
 
@@ -405,7 +458,7 @@ Review the existing steering documents (if any) and help me improve or complete 
   const scrollToTop = () => {
     scrollContainerRef.current?.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: 'smooth',
     });
   };
 
@@ -421,17 +474,34 @@ Review the existing steering documents (if any) and help me improve or complete 
         console.log('Message data:', message.data);
         console.log('Selected spec:', selectedSpec);
         console.log('Message spec:', message.data?.specName);
-        
+
         // Update task data if we have data
         if (message.data) {
           console.log('Setting taskData with taskList count:', message.data.taskList?.length);
-          console.log('Sample task (2.2) from message:', message.data.taskList?.find((t: any) => t.id === '2.2'));
-          console.log('Tasks with metadata:', message.data.taskList?.filter((t: any) => 
-            t.requirements?.length || t.implementationDetails?.length || t.files?.length || t.purposes?.length || t.leverage
-          ).map((t: any) => ({ id: t.id, requirements: t.requirements, implementationDetails: t.implementationDetails })));
-          
+          console.log(
+            'Sample task (2.2) from message:',
+            message.data.taskList?.find((t: any) => t.id === '2.2'),
+          );
+          console.log(
+            'Tasks with metadata:',
+            message.data.taskList
+              ?.filter(
+                (t: any) =>
+                  t.requirements?.length ||
+                  t.implementationDetails?.length ||
+                  t.files?.length ||
+                  t.purposes?.length ||
+                  t.leverage,
+              )
+              .map((t: any) => ({
+                id: t.id,
+                requirements: t.requirements,
+                implementationDetails: t.implementationDetails,
+              })),
+          );
+
           setTaskData(message.data);
-          
+
           // If we don't have a selected spec yet, but we got task data, update the selected spec
           if (!selectedSpec && message.data.specName) {
             console.log('Setting selected spec from task data:', message.data.specName);
@@ -443,7 +513,10 @@ Review the existing steering documents (if any) and help me improve or complete 
         console.log('=== Received approvals-updated message ===');
         console.log('Current tab:', activeTab);
         console.log('Approvals count:', message.data?.length || 0);
-        console.log('Pending approvals:', message.data?.filter((a: any) => a.status === 'pending').length || 0);
+        console.log(
+          'Pending approvals:',
+          message.data?.filter((a: any) => a.status === 'pending').length || 0,
+        );
         console.log('About to setApprovals - this should trigger badge counter update');
 
         const newApprovals = message.data || [];
@@ -460,8 +533,8 @@ Review the existing steering documents (if any) and help me improve or complete 
         // This handles the case where approvals were processed by another user/process
         if (selectedApprovalIds.size > 0) {
           const validIds = new Set(newApprovals.map((a: ApprovalData) => a.id));
-          setSelectedApprovalIds(prev => {
-            const filtered = new Set([...prev].filter(id => validIds.has(id)));
+          setSelectedApprovalIds((prev) => {
+            const filtered = new Set([...prev].filter((id) => validIds.has(id)));
             // If all selections became invalid, exit selection mode
             if (filtered.size === 0 && selectionMode) {
               setSelectionMode(false);
@@ -501,8 +574,10 @@ Review the existing steering documents (if any) and help me improve or complete 
 
         // Handle batch operation completion - detect by checking if we're expecting one
         // and if the notification indicates a batch result (contains "requests" or "failed")
-        if (pendingBatchOperation.current &&
-            (message.message.includes('requests') || message.message.includes('failed'))) {
+        if (
+          pendingBatchOperation.current &&
+          (message.message.includes('requests') || message.message.includes('failed'))
+        ) {
           // Backend confirmed the batch operation - clear state and timeout with undo support
           const details = pendingBatchDetailsRef.current;
           pendingBatchDetailsRef.current = null;
@@ -510,12 +585,14 @@ Review the existing steering documents (if any) and help me improve or complete 
         }
       }),
       vscodeApi.onMessage('config-updated', (message: any) => {
-        setSoundConfig(message.data || {
-          enabled: true,
-          volume: 0.3,
-          approvalSound: true,
-          taskCompletionSound: true
-        });
+        setSoundConfig(
+          message.data || {
+            enabled: true,
+            volume: 0.3,
+            approvalSound: true,
+            taskCompletionSound: true,
+          },
+        );
       }),
       vscodeApi.onMessage('sound-uris-updated', (message: any) => {
         console.log('Received sound URIs from extension:', message.data);
@@ -524,13 +601,13 @@ Review the existing steering documents (if any) and help me improve or complete 
       vscodeApi.onMessage('navigate-to-approvals', (message: any) => {
         console.log('Navigating to approvals from native notification:', message.data);
         const { specName, approvalId: _approvalId } = message.data;
-        
+
         // Switch to approvals tab
         setActiveTab('approvals');
-        
+
         // Set the selected spec
         setSelectedSpec(specName);
-        
+
         console.log('Switched to approvals tab, selected spec:', specName);
       }),
       vscodeApi.onMessage('archived-specs-updated', (message: any) => {
@@ -571,7 +648,7 @@ Review the existing steering documents (if any) and help me improve or complete 
     vscodeApi.getWorkflowRoot();
 
     return () => {
-      unsubscribes.forEach(unsub => unsub());
+      unsubscribes.forEach((unsub) => unsub());
       // Clean up batch operation timeout on unmount to prevent memory leak
       if (batchTimeoutRef.current) {
         clearTimeout(batchTimeoutRef.current);
@@ -626,12 +703,22 @@ Review the existing steering documents (if any) and help me improve or complete 
       return;
     }
 
-    const currentPendingCount = approvals.filter(approval => approval.status === 'pending').length;
-    const previousPendingCount = previousApprovals.current.filter(approval => approval.status === 'pending').length;
+    const currentPendingCount = approvals.filter(
+      (approval) => approval.status === 'pending',
+    ).length;
+    const previousPendingCount = previousApprovals.current.filter(
+      (approval) => approval.status === 'pending',
+    ).length;
 
     // Check if we have new pending approvals
-    if (currentPendingCount > previousPendingCount && previousApprovals.current.length > 0 && soundConfig.approvalSound) {
-      console.log(`New pending approval detected: ${currentPendingCount} vs ${previousPendingCount}`);
+    if (
+      currentPendingCount > previousPendingCount &&
+      previousApprovals.current.length > 0 &&
+      soundConfig.approvalSound
+    ) {
+      console.log(
+        `New pending approval detected: ${currentPendingCount} vs ${previousPendingCount}`,
+      );
       soundNotifications.playApprovalPending();
     }
 
@@ -654,12 +741,18 @@ Review the existing steering documents (if any) and help me improve or complete 
     }
 
     // Compare completed task count
-    const currentCompletedCount = taskData.taskList.filter(task => task.status === 'completed').length;
-    const previousCompletedCount = previousTaskData.current.taskList.filter(task => task.status === 'completed').length;
+    const currentCompletedCount = taskData.taskList.filter(
+      (task) => task.status === 'completed',
+    ).length;
+    const previousCompletedCount = previousTaskData.current.taskList.filter(
+      (task) => task.status === 'completed',
+    ).length;
 
     // If completed count increased, play completion sound
     if (currentCompletedCount > previousCompletedCount && soundConfig.taskCompletionSound) {
-      console.log(`Task completion detected: ${currentCompletedCount} vs ${previousCompletedCount}`);
+      console.log(
+        `Task completion detected: ${currentCompletedCount} vs ${previousCompletedCount}`,
+      );
       soundNotifications.playTaskCompleted();
     }
 
@@ -689,9 +782,10 @@ Review the existing steering documents (if any) and help me improve or complete 
     vscodeApi.setSelectedSpec(specName);
   };
 
-
-
-  const handleTaskStatusUpdate = (taskId: string, status: 'pending' | 'in-progress' | 'completed') => {
+  const handleTaskStatusUpdate = (
+    taskId: string,
+    status: 'pending' | 'in-progress' | 'completed',
+  ) => {
     if (selectedSpec) {
       vscodeApi.updateTaskStatus(selectedSpec, taskId, status);
     }
@@ -699,47 +793,57 @@ Review the existing steering documents (if any) and help me improve or complete 
 
   // Calculate overall project statistics
   const projectStats = React.useMemo(() => {
-    const activeSpecs = specs.filter(spec => !spec.isArchived).length;
+    const activeSpecs = specs.filter((spec) => !spec.isArchived).length;
     const archivedSpecsCount = archivedSpecs.length;
     const totalSpecs = activeSpecs + archivedSpecsCount;
-    
-    const completedSpecs = specs.filter(spec => 
-      spec.taskProgress && spec.taskProgress.completed === spec.taskProgress.total && spec.taskProgress.total > 0
+
+    const completedSpecs = specs.filter(
+      (spec) =>
+        spec.taskProgress &&
+        spec.taskProgress.completed === spec.taskProgress.total &&
+        spec.taskProgress.total > 0,
     ).length;
     const totalTasks = specs.reduce((sum, spec) => sum + (spec.taskProgress?.total || 0), 0);
-    const completedTasks = specs.reduce((sum, spec) => sum + (spec.taskProgress?.completed || 0), 0);
-    
-    return { 
-      activeSpecs, 
-      archivedSpecs: archivedSpecsCount, 
-      totalSpecs, 
-      completedSpecs, 
-      totalTasks, 
-      completedTasks 
+    const completedTasks = specs.reduce(
+      (sum, spec) => sum + (spec.taskProgress?.completed || 0),
+      0,
+    );
+
+    return {
+      activeSpecs,
+      archivedSpecs: archivedSpecsCount,
+      totalSpecs,
+      completedSpecs,
+      totalTasks,
+      completedTasks,
     };
   }, [specs, archivedSpecs]);
 
   // Calculate pending approvals count
   const pendingApprovalsCount = React.useMemo(() => {
-    const count = approvals.filter(approval => approval.status === 'pending').length;
+    const count = approvals.filter((approval) => approval.status === 'pending').length;
     console.log('Badge counter recalculated:', count, 'from', approvals.length, 'total approvals');
     return count;
   }, [approvals]);
 
   return (
-    <div className={cn("sidebar-root", `vscode-${theme}`)}>
+    <div className={cn('sidebar-root', `vscode-${theme}`)}>
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-full flex flex-col">
         {/* Sticky Header Section */}
         <div className="sidebar-sticky-header space-y-3">
           {/* Notification Banner */}
           {notification && (
-            <div className={cn(
-              "p-2 rounded text-xs font-medium",
-              notification.level === 'success' && "bg-green-100 text-green-800 border border-green-200",
-              notification.level === 'error' && "bg-red-100 text-red-800 border border-red-200",
-              notification.level === 'warning' && "bg-yellow-100 text-yellow-800 border border-yellow-200",
-              notification.level === 'info' && "bg-blue-100 text-blue-800 border border-blue-200"
-            )}>
+            <div
+              className={cn(
+                'p-2 rounded text-xs font-medium',
+                notification.level === 'success' &&
+                  'bg-green-100 text-green-800 border border-green-200',
+                notification.level === 'error' && 'bg-red-100 text-red-800 border border-red-200',
+                notification.level === 'warning' &&
+                  'bg-yellow-100 text-yellow-800 border border-yellow-200',
+                notification.level === 'info' && 'bg-blue-100 text-blue-800 border border-blue-200',
+              )}
+            >
               <div className="flex items-center justify-between">
                 <span>{notification.message}</span>
                 <button
@@ -772,73 +876,73 @@ Review the existing steering documents (if any) and help me improve or complete 
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem
                     onClick={() => handleLanguageChange('auto')}
-                    className={cn(currentLanguage === 'auto' && "bg-accent")}
+                    className={cn(currentLanguage === 'auto' && 'bg-accent')}
                   >
                     {t('language.auto')}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleLanguageChange('en')}
-                    className={cn(currentLanguage === 'en' && "bg-accent")}
+                    className={cn(currentLanguage === 'en' && 'bg-accent')}
                   >
                     {t('language.english')}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleLanguageChange('ja')}
-                    className={cn(currentLanguage === 'ja' && "bg-accent")}
+                    className={cn(currentLanguage === 'ja' && 'bg-accent')}
                   >
                     {t('language.japanese')}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleLanguageChange('zh')}
-                    className={cn(currentLanguage === 'zh' && "bg-accent")}
+                    className={cn(currentLanguage === 'zh' && 'bg-accent')}
                   >
                     {t('language.chinese')}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleLanguageChange('es')}
-                    className={cn(currentLanguage === 'es' && "bg-accent")}
+                    className={cn(currentLanguage === 'es' && 'bg-accent')}
                   >
                     {t('language.spanish')}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleLanguageChange('pt')}
-                    className={cn(currentLanguage === 'pt' && "bg-accent")}
+                    className={cn(currentLanguage === 'pt' && 'bg-accent')}
                   >
                     {t('language.portuguese')}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleLanguageChange('de')}
-                    className={cn(currentLanguage === 'de' && "bg-accent")}
+                    className={cn(currentLanguage === 'de' && 'bg-accent')}
                   >
                     {t('language.german')}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleLanguageChange('fr')}
-                    className={cn(currentLanguage === 'fr' && "bg-accent")}
+                    className={cn(currentLanguage === 'fr' && 'bg-accent')}
                   >
                     {t('language.french')}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleLanguageChange('ru')}
-                    className={cn(currentLanguage === 'ru' && "bg-accent")}
+                    className={cn(currentLanguage === 'ru' && 'bg-accent')}
                   >
                     {t('language.russian')}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleLanguageChange('it')}
-                    className={cn(currentLanguage === 'it' && "bg-accent")}
+                    className={cn(currentLanguage === 'it' && 'bg-accent')}
                   >
                     {t('language.italian')}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleLanguageChange('ko')}
-                    className={cn(currentLanguage === 'ko' && "bg-accent")}
+                    className={cn(currentLanguage === 'ko' && 'bg-accent')}
                   >
                     {t('language.korean')}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleLanguageChange('ar')}
-                    className={cn(currentLanguage === 'ar' && "bg-accent")}
+                    className={cn(currentLanguage === 'ar' && 'bg-accent')}
                   >
                     {t('language.arabic')}
                   </DropdownMenuItem>
@@ -853,13 +957,8 @@ Review the existing steering documents (if any) and help me improve or complete 
               >
                 <Coffee className="h-4 w-4" />
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleRefresh}
-                disabled={loading}
-              >
-                <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
+              <Button variant="ghost" size="sm" onClick={handleRefresh} disabled={loading}>
+                <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
               </Button>
             </div>
           </div>
@@ -897,769 +996,956 @@ Review the existing steering documents (if any) and help me improve or complete 
 
         {/* Scrollable Content Section */}
         <div className="sidebar-scrollable-content" ref={scrollContainerRef}>
-
-        {/* Overview Tab */}
-        <TabsContent value="overview" className="space-y-3">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm">{t('overview.projectTitle')}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="space-y-1">
-                  <div className="text-muted-foreground">{t('overview.activeSpecs')}</div>
-                  <div className="font-medium">
-                    {projectStats.completedSpecs} / {projectStats.activeSpecs}
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <div className="text-muted-foreground">{t('overview.archivedSpecs')}</div>
-                  <div className="font-medium">
-                    {projectStats.archivedSpecs}
-                  </div>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="space-y-1">
-                  <div className="text-muted-foreground">{t('overview.totalSpecs')}</div>
-                  <div className="font-medium">
-                    {projectStats.totalSpecs}
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <div className="text-muted-foreground">{t('overview.tasks')}</div>
-                  <div className="font-medium">
-                    {projectStats.completedTasks} / {projectStats.totalTasks}
-                  </div>
-                </div>
-              </div>
-              
-              {projectStats.totalTasks > 0 && (
-                <div className="space-y-2">
-                  <div className="flex justify-between text-xs">
-                    <span>{t('overview.overallProgress')}</span>
-                    <span>{Math.round((projectStats.completedTasks / projectStats.totalTasks) * 100)}%</span>
-                  </div>
-                  <Progress 
-                    value={(projectStats.completedTasks / projectStats.totalTasks) * 100} 
-                    className="h-2"
-                  />
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Recent Activity */}
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm">{t('overview.recentActivity')}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {specs.slice(0, 3).map(spec => (
-                  <div key={spec.name} className="flex items-center justify-between text-xs">
-                    <div className="flex items-center space-x-2">
-                      <div className={cn(
-                        "w-2 h-2 rounded-full",
-                        spec.taskProgress && spec.taskProgress.completed === spec.taskProgress.total && spec.taskProgress.total > 0
-                          ? "bg-green-500" : "bg-blue-500"
-                      )} />
-                      <span className="truncate">{spec.displayName}</span>
+          {/* Overview Tab */}
+          <TabsContent value="overview" className="space-y-3">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm">{t('overview.projectTitle')}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="space-y-1">
+                    <div className="text-muted-foreground">{t('overview.activeSpecs')}</div>
+                    <div className="font-medium">
+                      {projectStats.completedSpecs} / {projectStats.activeSpecs}
                     </div>
-                    <span className="text-muted-foreground">
-                      {t('overview.modified', { time: formatDistanceToNow(spec.lastModified) })}
-                    </span>
                   </div>
-                ))}
-                {specs.length === 0 && (
-                  <div className="text-muted-foreground text-xs text-center py-2">
-                    {t('overview.noSpecs')}
+                  <div className="space-y-1">
+                    <div className="text-muted-foreground">{t('overview.archivedSpecs')}</div>
+                    <div className="font-medium">{projectStats.archivedSpecs}</div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="space-y-1">
+                    <div className="text-muted-foreground">{t('overview.totalSpecs')}</div>
+                    <div className="font-medium">{projectStats.totalSpecs}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-muted-foreground">{t('overview.tasks')}</div>
+                    <div className="font-medium">
+                      {projectStats.completedTasks} / {projectStats.totalTasks}
+                    </div>
+                  </div>
+                </div>
+
+                {projectStats.totalTasks > 0 && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs">
+                      <span>{t('overview.overallProgress')}</span>
+                      <span>
+                        {Math.round((projectStats.completedTasks / projectStats.totalTasks) * 100)}%
+                      </span>
+                    </div>
+                    <Progress
+                      value={(projectStats.completedTasks / projectStats.totalTasks) * 100}
+                      className="h-2"
+                    />
                   </div>
                 )}
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-        </TabsContent>
-
-
-        {/* Tasks Tab */}
-        <TabsContent value="tasks" className="space-y-3">
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <label className="text-sm font-medium">{t('tasks.specLabel')}:</label>
-              <Select value={selectedSpec || ''} onValueChange={handleSpecSelect}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={t('tasks.specPlaceholder')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {specs.map(spec => (
-                    <SelectItem key={spec.name} value={spec.name}>
-                      {spec.displayName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          
-          {selectedSpec ? (
-            taskData ? (
-              <>
-                {/* Stats Card */}
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="grid grid-cols-4 gap-6">
-                      <div className="text-center">
-                        <div className="font-medium text-lg">{taskData.total}</div>
-                        <div className="text-muted-foreground text-xs">{t('tasks.stats.total')}</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="font-medium text-lg text-green-600">{taskData.completed}</div>
-                        <div className="text-muted-foreground text-xs">{t('tasks.stats.done')}</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="font-medium text-lg text-amber-600">{taskData.total - taskData.completed}</div>
-                        <div className="text-muted-foreground text-xs">{t('tasks.stats.left')}</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="font-medium text-lg text-blue-600">{Math.round(taskData.progress)}%</div>
-                        <div className="text-muted-foreground text-xs">{t('tasks.stats.progress')}</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Progress Bar */}
-                <Card>
-                  <CardContent className="p-3">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium">{t('tasks.overallProgress')}</span>
-                      <span className="text-sm">{Math.round(taskData.progress)}%</span>
-                    </div>
-                    <Progress value={taskData.progress} className="h-2" />
-                  </CardContent>
-                </Card>
-
-                {/* Task List */}
+            {/* Recent Activity */}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm">{t('overview.recentActivity')}</CardTitle>
+              </CardHeader>
+              <CardContent>
                 <div className="space-y-2">
-                  {taskData.taskList?.map(task => {
-                    // DEBUG: Log actual task properties
-                    console.log(`🔍 TASK DEBUG [${task.id}]:`, {
-                      id: task.id,
-                      status: task.status,
-                      completed: task.completed,
-                      inProgress: task.inProgress,
-                      hasInProgress: 'inProgress' in task,
-                      allProps: Object.keys(task)
-                    });
-                    
-                    return (
-                    <Card key={task.id} className={cn(
-                      "transition-colors",
-                      task.isHeader && "border-purple-200 dark:border-slate-600 bg-purple-50 dark:bg-slate-800/60",
-                      task.status === 'in-progress' && "border-orange-500",
-                      task.completed && "border-green-500"
-                    )}>
-                      <CardContent className="p-3">
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <span className={cn(
-                              "text-sm flex-1",
-                              task.isHeader 
-                                ? "font-semibold text-purple-900 dark:text-purple-100" 
-                                : "font-medium"
-                            )}>
-                              {task.isHeader ? t('tasks.section', 'Section') : t('tasks.task', 'Task')} {task.id}
-                            </span>
-                            {!task.isHeader && (
-                              <>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className={cn(
-                                    "h-6 w-6 p-0",
-                                    copiedTaskId === task.id && "text-green-600"
-                                  )}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    copyTaskPrompt(task);
-                                  }}
-                                  title={copiedTaskId === task.id ? t('tasks.copied') : t('tasks.copyPromptTitle')}
-                                  disabled={copiedTaskId === task.id}
-                                >
-                                  <Copy className="h-3 w-3" />
-                                </Button>
-                                <Select 
-                                  value={task.completed ? 'completed' : (task.status || 'pending')} 
-                                  onValueChange={(status: 'pending' | 'in-progress' | 'completed') => 
-                                    handleTaskStatusUpdate(task.id, status)
-                                  }
-                                >
-                                  <SelectTrigger className={cn(
-                                    "w-auto h-6 px-2 text-xs border-0 focus:ring-0 focus:ring-offset-0",
-                                    task.completed 
-                                      ? "bg-green-500 text-white [&_svg]:!text-white [&_svg]:opacity-100" 
-                                      : task.status === 'in-progress'
-                                        ? "bg-orange-500 text-white [&_svg]:!text-white [&_svg]:opacity-100" 
-                                        : "bg-transparent border border-border text-foreground [&_svg]:text-foreground"
-                                  )}>
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="pending">{t('tasks.status.pending')}</SelectItem>
-                                    <SelectItem value="in-progress">{t('tasks.status.inProgress')}</SelectItem>
-                                    <SelectItem value="completed">{t('tasks.status.completed')}</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </>
-                            )}
-                            {task.isHeader && (
-                              <Badge 
-                                variant="secondary" 
-                                className="text-xs bg-purple-100 dark:bg-slate-700 text-purple-700 dark:text-slate-200 border-purple-300 dark:border-slate-500"
-                              >
-                                {t('tasks.taskGroup')}
-                              </Badge>
-                            )}
+                  {specs.slice(0, 3).map((spec) => (
+                    <div key={spec.name} className="flex items-center justify-between text-xs">
+                      <div className="flex items-center space-x-2">
+                        <div
+                          className={cn(
+                            'w-2 h-2 rounded-full',
+                            spec.taskProgress &&
+                              spec.taskProgress.completed === spec.taskProgress.total &&
+                              spec.taskProgress.total > 0
+                              ? 'bg-green-500'
+                              : 'bg-blue-500',
+                          )}
+                        />
+                        <span className="truncate">{spec.displayName}</span>
+                      </div>
+                      <span className="text-muted-foreground">
+                        {t('overview.modified', { time: formatDistanceToNow(spec.lastModified) })}
+                      </span>
+                    </div>
+                  ))}
+                  {specs.length === 0 && (
+                    <div className="text-muted-foreground text-xs text-center py-2">
+                      {t('overview.noSpecs')}
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Tasks Tab */}
+          <TabsContent value="tasks" className="space-y-3">
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <label className="text-sm font-medium">{t('tasks.specLabel')}:</label>
+                <Select value={selectedSpec || ''} onValueChange={handleSpecSelect}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder={t('tasks.specPlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {specs.map((spec) => (
+                      <SelectItem key={spec.name} value={spec.name}>
+                        {spec.displayName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {selectedSpec ? (
+              taskData ? (
+                <>
+                  {/* Stats Card */}
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="grid grid-cols-4 gap-6">
+                        <div className="text-center">
+                          <div className="font-medium text-lg">{taskData.total}</div>
+                          <div className="text-muted-foreground text-xs">
+                            {t('tasks.stats.total')}
                           </div>
-                          
-                          <p className={cn(
-                            "text-xs",
-                            task.isHeader 
-                              ? "text-slate-600 dark:text-slate-300" 
-                              : "text-muted-foreground"
-                          )}>{task.description}</p>
+                        </div>
+                        <div className="text-center">
+                          <div className="font-medium text-lg text-green-600">
+                            {taskData.completed}
+                          </div>
+                          <div className="text-muted-foreground text-xs">
+                            {t('tasks.stats.done')}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="font-medium text-lg text-amber-600">
+                            {taskData.total - taskData.completed}
+                          </div>
+                          <div className="text-muted-foreground text-xs">
+                            {t('tasks.stats.left')}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="font-medium text-lg text-blue-600">
+                            {Math.round(taskData.progress)}%
+                          </div>
+                          <div className="text-muted-foreground text-xs">
+                            {t('tasks.stats.progress')}
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-                          {/* Task Metadata */}
-                          <div className="space-y-2 border-t border-gray-100 dark:border-gray-700 pt-2">
-                            {/* Files */}
-                            {task.files && task.files.length > 0 && (
-                              <div className="space-y-1">
-                                <div className="text-xs font-medium text-purple-600 dark:text-purple-400 flex items-center gap-1">
-                                  {t('tasks.meta.files')}:
-                                </div>
-                                <div className="task-files-container">
-                                  <div className="task-files-list">
-                                    {task.files.map((file, index) => (
-                                      <span key={index} className="px-2 py-1 bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-300 text-xs rounded border border-purple-200 dark:border-purple-800 font-mono whitespace-nowrap flex-shrink-0">
-                                        {file}
-                                      </span>
-                                    ))}
-                                  </div>
-                                </div>
-                              </div>
-                            )}
+                  {/* Progress Bar */}
+                  <Card>
+                    <CardContent className="p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">{t('tasks.overallProgress')}</span>
+                        <span className="text-sm">{Math.round(taskData.progress)}%</span>
+                      </div>
+                      <Progress value={taskData.progress} className="h-2" />
+                    </CardContent>
+                  </Card>
 
-                            {/* Implementation Details */}
-                            {task.implementationDetails && task.implementationDetails.length > 0 && (
-                              <div className="space-y-1">
-                                <div className="text-xs font-medium text-blue-600 dark:text-blue-400 flex items-center gap-1">
-                                  {t('tasks.meta.implementation')}:
-                                </div>
-                                <ul className="text-xs text-muted-foreground list-disc list-inside space-y-0.5 ml-2">
-                                  {task.implementationDetails.map((detail, index) => (
-                                    <li key={index} className="leading-relaxed">{detail}</li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
+                  {/* Task List */}
+                  <div className="space-y-2">
+                    {taskData.taskList?.map((task) => {
+                      // DEBUG: Log actual task properties
+                      console.log(`🔍 TASK DEBUG [${task.id}]:`, {
+                        id: task.id,
+                        status: task.status,
+                        completed: task.completed,
+                        inProgress: task.inProgress,
+                        hasInProgress: 'inProgress' in task,
+                        allProps: Object.keys(task),
+                      });
 
-                            {/* Purposes */}
-                            {task.purposes && task.purposes.length > 0 && (
-                              <div className="space-y-1">
-                                <div className="text-xs font-medium text-green-600 dark:text-green-400 flex items-center gap-1">
-                                  {t('tasks.meta.purposes')}:
-                                </div>
-                                <ul className="text-xs text-muted-foreground list-disc list-inside space-y-0.5 ml-2">
-                                  {task.purposes.map((purpose, index) => (
-                                    <li key={index} className="leading-relaxed">{purpose}</li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-
-                            {/* Requirements */}
-                            {task.requirements && task.requirements.length > 0 && (
-                              <div className="space-y-1">
-                                <div className="text-xs font-medium text-orange-600 dark:text-orange-400 flex items-center gap-1">
-                                  {t('tasks.meta.requirements')}:
-                                </div>
-                                <div className="text-xs text-muted-foreground">
-                                  {task.requirements.join(', ')}
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Leverage */}
-                            {task.leverage && (
-                              <div className="space-y-1">
-                                <div className="text-xs font-medium text-cyan-600 dark:text-cyan-400 flex items-center gap-1">
-                                  {t('tasks.meta.leverage')}:
-                                </div>
-                                <div className="text-xs text-cyan-900 dark:text-cyan-100 bg-cyan-50 dark:bg-cyan-950/30 border border-cyan-200 dark:border-cyan-800 rounded px-2 py-1 font-mono">
-                                  {task.leverage}
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Prompt */}
-                            {task.prompt && (
-                              <div className="space-y-1">
-                                <div className="flex items-center justify-between">
-                                  <div className="text-xs font-medium text-indigo-600 dark:text-indigo-400 flex items-center gap-1">
-                                    <Bot className="w-3 h-3" />
-                                    {t('tasks.meta.prompt', 'AI Prompt')}:
-                                  </div>
-                                  <button
-                                    onClick={() => togglePromptExpansion(task.id)}
-                                    className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-200 transition-colors"
-                                    title={expandedPrompts.has(task.id) ? 'Collapse prompt' : 'Expand prompt'}
+                      return (
+                        <Card
+                          key={task.id}
+                          className={cn(
+                            'transition-colors',
+                            task.isHeader &&
+                              'border-purple-200 dark:border-slate-600 bg-purple-50 dark:bg-slate-800/60',
+                            task.status === 'in-progress' && 'border-orange-500',
+                            task.completed && 'border-green-500',
+                          )}
+                        >
+                          <CardContent className="p-3">
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className={cn(
+                                    'text-sm flex-1',
+                                    task.isHeader
+                                      ? 'font-semibold text-purple-900 dark:text-purple-100'
+                                      : 'font-medium',
+                                  )}
+                                >
+                                  {task.isHeader
+                                    ? t('tasks.section', 'Section')
+                                    : t('tasks.task', 'Task')}{' '}
+                                  {task.id}
+                                </span>
+                                {!task.isHeader && (
+                                  <>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className={cn(
+                                        'h-6 w-6 p-0',
+                                        copiedTaskId === task.id && 'text-green-600',
+                                      )}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        copyTaskPrompt(task);
+                                      }}
+                                      title={
+                                        copiedTaskId === task.id
+                                          ? t('tasks.copied')
+                                          : t('tasks.copyPromptTitle')
+                                      }
+                                      disabled={copiedTaskId === task.id}
+                                    >
+                                      <Copy className="h-3 w-3" />
+                                    </Button>
+                                    <Select
+                                      value={
+                                        task.completed ? 'completed' : task.status || 'pending'
+                                      }
+                                      onValueChange={(
+                                        status: 'pending' | 'in-progress' | 'completed',
+                                      ) => handleTaskStatusUpdate(task.id, status)}
+                                    >
+                                      <SelectTrigger
+                                        className={cn(
+                                          'w-auto h-6 px-2 text-xs border-0 focus:ring-0 focus:ring-offset-0',
+                                          task.completed
+                                            ? 'bg-green-500 text-white [&_svg]:!text-white [&_svg]:opacity-100'
+                                            : task.status === 'in-progress'
+                                              ? 'bg-orange-500 text-white [&_svg]:!text-white [&_svg]:opacity-100'
+                                              : 'bg-transparent border border-border text-foreground [&_svg]:text-foreground',
+                                        )}
+                                      >
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="pending">
+                                          {t('tasks.status.pending')}
+                                        </SelectItem>
+                                        <SelectItem value="in-progress">
+                                          {t('tasks.status.inProgress')}
+                                        </SelectItem>
+                                        <SelectItem value="completed">
+                                          {t('tasks.status.completed')}
+                                        </SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </>
+                                )}
+                                {task.isHeader && (
+                                  <Badge
+                                    variant="secondary"
+                                    className="text-xs bg-purple-100 dark:bg-slate-700 text-purple-700 dark:text-slate-200 border-purple-300 dark:border-slate-500"
                                   >
-                                    {expandedPrompts.has(task.id) ? (
-                                      <ChevronDown className="w-3 h-3" />
-                                    ) : (
-                                      <ChevronRight className="w-3 h-3" />
-                                    )}
-                                  </button>
-                                </div>
-                                {expandedPrompts.has(task.id) && (
-                                  <div className="text-xs text-indigo-900 dark:text-indigo-100 bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 rounded px-2 py-1.5 whitespace-pre-wrap break-words">
-                                    {task.prompt}
-                                  </div>
+                                    {t('tasks.taskGroup')}
+                                  </Badge>
                                 )}
                               </div>
-                            )}                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    );
-                  })}
-                </div>
-              </>
-            ) : (
-              <div className="text-center text-muted-foreground text-sm py-8">
-                {t('tasks.loading')}
-              </div>
-            )
-          ) : (
-            <div className="text-center text-muted-foreground text-sm py-8">
-              {specs.length === 0 ? t('tasks.noSpecs') : t('tasks.selectSpec')}
-            </div>
-          )}
-        </TabsContent>
 
-        {/* Logs Tab */}
-        <TabsContent value="logs" className="space-y-3">
-          <LogsPage
-            specs={specs}
-            selectedSpec={selectedSpec}
-            onSpecChange={(spec) => {
-              setSelectedSpec(spec);
-              vscodeApi.setSelectedSpec(spec);
-            }}
-          />
-        </TabsContent>
+                              <p
+                                className={cn(
+                                  'text-xs',
+                                  task.isHeader
+                                    ? 'text-slate-600 dark:text-slate-300'
+                                    : 'text-muted-foreground',
+                                )}
+                              >
+                                {task.description}
+                              </p>
 
-        {/* Approvals Tab */}
-        <TabsContent value="approvals" className="space-y-3 relative">
-          <div className="space-y-3">
-            {/* Category Filter */}
-            <div className="flex items-center space-x-2">
-              <label className="text-sm font-medium">{t('approvals.docLabel')}:</label>
-              <Select value={selectedApprovalCategory} onValueChange={setSelectedApprovalCategory}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={t('approvals.categoryPlaceholder')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {approvalCategories.map(category => (
-                    <SelectItem key={category.value} value={category.value}>
-                      <div className="flex items-center justify-between w-full">
-                        <span>{category.label}</span>
-                        {category.count > 0 && (
-                          <Badge
-                            variant="secondary"
-                            className="ml-2 h-4 w-4 p-0 text-xs flex items-center justify-center rounded-full min-w-[16px]"
-                          >
-                            {category.count}
-                          </Badge>
-                        )}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Selection Mode Header */}
-            {selectedApprovalCategory && (() => {
-              const pendingApprovals = selectedApprovalCategory === 'all'
-                ? approvals.filter(approval => approval.status === 'pending')
-                : approvals.filter(approval =>
-                    approval.status === 'pending' && approval.categoryName === selectedApprovalCategory
-                  );
-
-              if (pendingApprovals.length === 0) {return null;}
-
-              const allSelected = pendingApprovals.length > 0 &&
-                pendingApprovals.every(a => selectedApprovalIds.has(a.id));
-              const someSelected = pendingApprovals.some(a => selectedApprovalIds.has(a.id));
-
-              return (
-                <div className="flex items-center justify-between p-2 bg-muted rounded-md">
-                  <div className="flex items-center gap-2">
-                    {selectionMode && (
-                      <button
-                        onClick={() => selectAllApprovals(pendingApprovals.map(a => a.id))}
-                        className="flex items-center justify-center w-4 h-4 rounded border border-gray-400 hover:border-primary transition-colors"
-                        title={allSelected ? t('approvals.deselectAll') : t('approvals.selectAll')}
-                      >
-                        {allSelected ? (
-                          <Check className="w-3 h-3 text-primary" />
-                        ) : someSelected ? (
-                          <Minus className="w-3 h-3 text-primary" />
-                        ) : null}
-                      </button>
-                    )}
-                    <span className="text-xs text-muted-foreground">
-                      {selectionMode
-                        ? t('approvals.selectedCount', { count: selectedApprovalIds.size })
-                        : t('approvals.pendingCount', { count: pendingApprovals.length })
-                      }
-                    </span>
-                  </div>
-                  <Button
-                    variant={selectionMode ? 'outline' : 'secondary'}
-                    size="sm"
-                    className="h-6 px-2 text-xs"
-                    onClick={toggleSelectionMode}
-                  >
-                    {selectionMode ? (
-                      <>
-                        <X className="w-3 h-3 mr-1" />
-                        {t('approvals.cancel')}
-                      </>
-                    ) : (
-                      <>
-                        <Square className="w-3 h-3 mr-1" />
-                        {t('approvals.select')}
-                      </>
-                    )}
-                  </Button>
-                </div>
-              );
-            })()}
-          </div>
-
-          {selectedApprovalCategory ? (
-            (() => {
-              // Filter approvals based on selected category
-              const pendingApprovals = selectedApprovalCategory === 'all'
-                ? approvals.filter(approval => approval.status === 'pending')
-                : approvals.filter(approval =>
-                    approval.status === 'pending' && approval.categoryName === selectedApprovalCategory
-                  );
-
-              return pendingApprovals.length > 0 ? (
-                <div className={cn("space-y-2", selectionMode && selectedApprovalIds.size > 0 && "pb-16")}>
-                  {pendingApprovals.map(approval => {
-                    const isSelected = selectedApprovalIds.has(approval.id);
-
-                    return (
-                      <Card
-                        key={approval.id}
-                        className={cn(
-                          "transition-colors cursor-pointer",
-                          selectionMode && isSelected && "border-primary bg-primary/5"
-                        )}
-                        onClick={selectionMode ? () => toggleApprovalSelection(approval.id) : undefined}
-                      >
-                        <CardContent className="p-3">
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                              {/* Selection Checkbox */}
-                              {selectionMode && (
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    toggleApprovalSelection(approval.id);
-                                  }}
-                                  className={cn(
-                                    "flex items-center justify-center w-4 h-4 rounded border transition-colors flex-shrink-0",
-                                    isSelected
-                                      ? "bg-primary border-primary"
-                                      : "border-gray-400 hover:border-primary"
+                              {/* Task Metadata */}
+                              <div className="space-y-2 border-t border-gray-100 dark:border-gray-700 pt-2">
+                                {/* Files */}
+                                {task.files && task.files.length > 0 && (
+                                  <div className="space-y-1">
+                                    <div className="text-xs font-medium text-purple-600 dark:text-purple-400 flex items-center gap-1">
+                                      {t('tasks.meta.files')}:
+                                    </div>
+                                    <div className="task-files-container">
+                                      <div className="task-files-list">
+                                        {task.files.map((file, index) => (
+                                          <span
+                                            key={index}
+                                            className="px-2 py-1 bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-300 text-xs rounded border border-purple-200 dark:border-purple-800 font-mono whitespace-nowrap flex-shrink-0"
+                                          >
+                                            {file}
+                                          </span>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                                {/* Implementation Details */}
+                                {task.implementationDetails &&
+                                  task.implementationDetails.length > 0 && (
+                                    <div className="space-y-1">
+                                      <div className="text-xs font-medium text-blue-600 dark:text-blue-400 flex items-center gap-1">
+                                        {t('tasks.meta.implementation')}:
+                                      </div>
+                                      <ul className="text-xs text-muted-foreground list-disc list-inside space-y-0.5 ml-2">
+                                        {task.implementationDetails.map((detail, index) => (
+                                          <li key={index} className="leading-relaxed">
+                                            {detail}
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </div>
                                   )}
-                                >
-                                  {isSelected && <Check className="w-3 h-3 text-white" />}
-                                </button>
-                              )}
-                              <div className="flex items-center justify-between flex-1 min-w-0">
-                                <h3 className="font-medium text-sm truncate">{approval.title}</h3>
-                                <Badge variant="secondary" className="text-xs flex-shrink-0 ml-2">
-                                  {t('approvals.status.pending')}
-                                </Badge>
+                                {/* Purposes */}
+                                {task.purposes && task.purposes.length > 0 && (
+                                  <div className="space-y-1">
+                                    <div className="text-xs font-medium text-green-600 dark:text-green-400 flex items-center gap-1">
+                                      {t('tasks.meta.purposes')}:
+                                    </div>
+                                    <ul className="text-xs text-muted-foreground list-disc list-inside space-y-0.5 ml-2">
+                                      {task.purposes.map((purpose, index) => (
+                                        <li key={index} className="leading-relaxed">
+                                          {purpose}
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                )}
+                                {/* Requirements */}
+                                {task.requirements && task.requirements.length > 0 && (
+                                  <div className="space-y-1">
+                                    <div className="text-xs font-medium text-orange-600 dark:text-orange-400 flex items-center gap-1">
+                                      {t('tasks.meta.requirements')}:
+                                    </div>
+                                    <div className="text-xs text-muted-foreground">
+                                      {task.requirements.join(', ')}
+                                    </div>
+                                  </div>
+                                )}
+                                {/* Leverage */}
+                                {task.leverage && (
+                                  <div className="space-y-1">
+                                    <div className="text-xs font-medium text-cyan-600 dark:text-cyan-400 flex items-center gap-1">
+                                      {t('tasks.meta.leverage')}:
+                                    </div>
+                                    <div className="text-xs text-cyan-900 dark:text-cyan-100 bg-cyan-50 dark:bg-cyan-950/30 border border-cyan-200 dark:border-cyan-800 rounded px-2 py-1 font-mono">
+                                      {task.leverage}
+                                    </div>
+                                  </div>
+                                )}
+                                {/* Prompt */}
+                                {task.prompt && (
+                                  <div className="space-y-1">
+                                    <div className="flex items-center justify-between">
+                                      <div className="text-xs font-medium text-indigo-600 dark:text-indigo-400 flex items-center gap-1">
+                                        <Bot className="w-3 h-3" />
+                                        {t('tasks.meta.prompt', 'AI Prompt')}:
+                                      </div>
+                                      <button
+                                        onClick={() => togglePromptExpansion(task.id)}
+                                        className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-200 transition-colors"
+                                        title={
+                                          expandedPrompts.has(task.id)
+                                            ? 'Collapse prompt'
+                                            : 'Expand prompt'
+                                        }
+                                      >
+                                        {expandedPrompts.has(task.id) ? (
+                                          <ChevronDown className="w-3 h-3" />
+                                        ) : (
+                                          <ChevronRight className="w-3 h-3" />
+                                        )}
+                                      </button>
+                                    </div>
+                                    {expandedPrompts.has(task.id) && (
+                                      <div className="text-xs text-indigo-900 dark:text-indigo-100 bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 rounded px-2 py-1.5 whitespace-pre-wrap break-words">
+                                        {task.prompt}
+                                      </div>
+                                    )}
+                                  </div>
+                                )}{' '}
                               </div>
                             </div>
-                            {approval.description && (
-                              <p className="text-xs text-muted-foreground">{approval.description}</p>
-                            )}
-                            {approval.filePath && (
-                              <p className="text-xs text-muted-foreground font-mono truncate">
-                                {approval.filePath}
-                              </p>
-                            )}
-                            <div className="text-xs text-muted-foreground">
-                              {t('approvals.created', { time: formatDistanceToNow(approval.createdAt) })}
-                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                </>
+              ) : (
+                <div className="text-center text-muted-foreground text-sm py-8">
+                  {t('tasks.loading')}
+                </div>
+              )
+            ) : (
+              <div className="text-center text-muted-foreground text-sm py-8">
+                {specs.length === 0 ? t('tasks.noSpecs') : t('tasks.selectSpec')}
+              </div>
+            )}
+          </TabsContent>
 
-                            {/* Individual action buttons - hidden in selection mode */}
-                            {!selectionMode && (
-                              <div className="flex gap-1 flex-wrap">
-                                <Button
-                                  size="sm"
-                                  className="h-6 px-2 text-xs"
-                                  disabled={processingApproval === approval.id}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setProcessingApproval(approval.id);
-                                    vscodeApi.approveRequest(approval.id, t('approvals.response.approved'));
-                                    setTimeout(() => setProcessingApproval(null), 2000);
-                                  }}
-                                >
-                                  {processingApproval === approval.id ? t('approvals.processing') : t('approvals.approve')}
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="h-6 px-2 text-xs"
-                                  disabled={processingApproval === approval.id}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setProcessingApproval(approval.id);
-                                    vscodeApi.rejectRequest(approval.id, t('approvals.response.rejected'));
-                                    setTimeout(() => setProcessingApproval(null), 2000);
-                                  }}
-                                >
-                                  {processingApproval === approval.id ? t('approvals.processing') : t('approvals.reject')}
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="h-6 px-2 text-xs"
-                                  disabled={processingApproval === approval.id}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setProcessingApproval(approval.id);
-                                    vscodeApi.requestRevisionRequest(approval.id, t('approvals.response.needsRevision'));
-                                    setTimeout(() => setProcessingApproval(null), 2000);
-                                  }}
-                                >
-                                  {processingApproval === approval.id ? t('approvals.processing') : t('approvals.requestRevision')}
-                                </Button>
-                                {approval.filePath && (
+          {/* Logs Tab */}
+          <TabsContent value="logs" className="space-y-3">
+            <LogsPage
+              specs={specs}
+              selectedSpec={selectedSpec}
+              onSpecChange={(spec) => {
+                setSelectedSpec(spec);
+                vscodeApi.setSelectedSpec(spec);
+              }}
+            />
+          </TabsContent>
+
+          {/* Approvals Tab */}
+          <TabsContent value="approvals" className="space-y-3 relative">
+            <div className="space-y-3">
+              {/* Category Filter */}
+              <div className="flex items-center space-x-2">
+                <label className="text-sm font-medium">{t('approvals.docLabel')}:</label>
+                <Select
+                  value={selectedApprovalCategory}
+                  onValueChange={setSelectedApprovalCategory}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder={t('approvals.categoryPlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {approvalCategories.map((category) => (
+                      <SelectItem key={category.value} value={category.value}>
+                        <div className="flex items-center justify-between w-full">
+                          <span>{category.label}</span>
+                          {category.count > 0 && (
+                            <Badge
+                              variant="secondary"
+                              className="ml-2 h-4 w-4 p-0 text-xs flex items-center justify-center rounded-full min-w-[16px]"
+                            >
+                              {category.count}
+                            </Badge>
+                          )}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Selection Mode Header */}
+              {selectedApprovalCategory &&
+                (() => {
+                  const pendingApprovals =
+                    selectedApprovalCategory === 'all'
+                      ? approvals.filter((approval) => approval.status === 'pending')
+                      : approvals.filter(
+                          (approval) =>
+                            approval.status === 'pending' &&
+                            approval.categoryName === selectedApprovalCategory,
+                        );
+
+                  if (pendingApprovals.length === 0) {
+                    return null;
+                  }
+
+                  const allSelected =
+                    pendingApprovals.length > 0 &&
+                    pendingApprovals.every((a) => selectedApprovalIds.has(a.id));
+                  const someSelected = pendingApprovals.some((a) => selectedApprovalIds.has(a.id));
+
+                  return (
+                    <div className="flex items-center justify-between p-2 bg-muted rounded-md">
+                      <div className="flex items-center gap-2">
+                        {selectionMode && (
+                          <button
+                            onClick={() => selectAllApprovals(pendingApprovals.map((a) => a.id))}
+                            className="flex items-center justify-center w-4 h-4 rounded border border-gray-400 hover:border-primary transition-colors"
+                            title={
+                              allSelected ? t('approvals.deselectAll') : t('approvals.selectAll')
+                            }
+                          >
+                            {allSelected ? (
+                              <Check className="w-3 h-3 text-primary" />
+                            ) : someSelected ? (
+                              <Minus className="w-3 h-3 text-primary" />
+                            ) : null}
+                          </button>
+                        )}
+                        <span className="text-xs text-muted-foreground">
+                          {selectionMode
+                            ? t('approvals.selectedCount', { count: selectedApprovalIds.size })
+                            : t('approvals.pendingCount', { count: pendingApprovals.length })}
+                        </span>
+                      </div>
+                      <Button
+                        variant={selectionMode ? 'outline' : 'secondary'}
+                        size="sm"
+                        className="h-6 px-2 text-xs"
+                        onClick={toggleSelectionMode}
+                      >
+                        {selectionMode ? (
+                          <>
+                            <X className="w-3 h-3 mr-1" />
+                            {t('approvals.cancel')}
+                          </>
+                        ) : (
+                          <>
+                            <Square className="w-3 h-3 mr-1" />
+                            {t('approvals.select')}
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  );
+                })()}
+            </div>
+
+            {selectedApprovalCategory ? (
+              (() => {
+                // Filter approvals based on selected category
+                const pendingApprovals =
+                  selectedApprovalCategory === 'all'
+                    ? approvals.filter((approval) => approval.status === 'pending')
+                    : approvals.filter(
+                        (approval) =>
+                          approval.status === 'pending' &&
+                          approval.categoryName === selectedApprovalCategory,
+                      );
+
+                return pendingApprovals.length > 0 ? (
+                  <div
+                    className={cn(
+                      'space-y-2',
+                      selectionMode && selectedApprovalIds.size > 0 && 'pb-16',
+                    )}
+                  >
+                    {pendingApprovals.map((approval) => {
+                      const isSelected = selectedApprovalIds.has(approval.id);
+
+                      return (
+                        <Card
+                          key={approval.id}
+                          className={cn(
+                            'transition-colors cursor-pointer',
+                            selectionMode && isSelected && 'border-primary bg-primary/5',
+                          )}
+                          onClick={
+                            selectionMode ? () => toggleApprovalSelection(approval.id) : undefined
+                          }
+                        >
+                          <CardContent className="p-3">
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2">
+                                {/* Selection Checkbox */}
+                                {selectionMode && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      toggleApprovalSelection(approval.id);
+                                    }}
+                                    className={cn(
+                                      'flex items-center justify-center w-4 h-4 rounded border transition-colors flex-shrink-0',
+                                      isSelected
+                                        ? 'bg-primary border-primary'
+                                        : 'border-gray-400 hover:border-primary',
+                                    )}
+                                  >
+                                    {isSelected && <Check className="w-3 h-3 text-white" />}
+                                  </button>
+                                )}
+                                <div className="flex items-center justify-between flex-1 min-w-0">
+                                  <h3 className="font-medium text-sm truncate">{approval.title}</h3>
+                                  <Badge variant="secondary" className="text-xs flex-shrink-0 ml-2">
+                                    {t('approvals.status.pending')}
+                                  </Badge>
+                                </div>
+                              </div>
+                              {approval.description && (
+                                <p className="text-xs text-muted-foreground">
+                                  {approval.description}
+                                </p>
+                              )}
+                              {approval.filePath && (
+                                <p className="text-xs text-muted-foreground font-mono truncate">
+                                  {approval.filePath}
+                                </p>
+                              )}
+                              <div className="text-xs text-muted-foreground">
+                                {t('approvals.created', {
+                                  time: formatDistanceToNow(approval.createdAt),
+                                })}
+                              </div>
+
+                              {/* Individual action buttons - hidden in selection mode */}
+                              {!selectionMode && (
+                                <div className="flex gap-1 flex-wrap">
+                                  <Button
+                                    size="sm"
+                                    className="h-6 px-2 text-xs"
+                                    disabled={processingApproval === approval.id}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setProcessingApproval(approval.id);
+                                      vscodeApi.approveRequest(
+                                        approval.id,
+                                        t('approvals.response.approved'),
+                                      );
+                                      setTimeout(() => setProcessingApproval(null), 2000);
+                                    }}
+                                  >
+                                    {processingApproval === approval.id
+                                      ? t('approvals.processing')
+                                      : t('approvals.approve')}
+                                  </Button>
                                   <Button
                                     variant="outline"
                                     size="sm"
                                     className="h-6 px-2 text-xs"
+                                    disabled={processingApproval === approval.id}
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      vscodeApi.getApprovalContent(approval.id);
+                                      setProcessingApproval(approval.id);
+                                      vscodeApi.rejectRequest(
+                                        approval.id,
+                                        t('approvals.response.rejected'),
+                                      );
+                                      setTimeout(() => setProcessingApproval(null), 2000);
                                     }}
                                   >
-                                    {t('approvals.openInEditor')}
+                                    {processingApproval === approval.id
+                                      ? t('approvals.processing')
+                                      : t('approvals.reject')}
                                   </Button>
-                                )}
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-6 px-2 text-xs"
+                                    disabled={processingApproval === approval.id}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setProcessingApproval(approval.id);
+                                      vscodeApi.requestRevisionRequest(
+                                        approval.id,
+                                        t('approvals.response.needsRevision'),
+                                      );
+                                      setTimeout(() => setProcessingApproval(null), 2000);
+                                    }}
+                                  >
+                                    {processingApproval === approval.id
+                                      ? t('approvals.processing')
+                                      : t('approvals.requestRevision')}
+                                  </Button>
+                                  {approval.filePath && (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="h-6 px-2 text-xs"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        vscodeApi.getApprovalContent(approval.id);
+                                      }}
+                                    >
+                                      {t('approvals.openInEditor')}
+                                    </Button>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center text-muted-foreground text-sm py-8">
+                    {t('approvals.noPending')}
+                  </div>
+                );
+              })()
+            ) : (
+              <div className="text-center text-muted-foreground text-sm py-8">
+                {approvalCategories.length <= 1
+                  ? t('approvals.noPendingDocuments')
+                  : t('approvals.selectCategory')}
+              </div>
+            )}
+
+            {/* Sticky Footer for Batch Actions - Vertical Stack Design */}
+            {selectionMode && selectedApprovalIds.size > 0 && (
+              <div className="fixed bottom-0 left-0 right-0 p-3 bg-background border-t shadow-lg z-10">
+                {/* Header row with count and clear */}
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-muted-foreground">
+                    {t('approvals.selectedCount', { count: selectedApprovalIds.size })}
+                  </span>
+                  <button
+                    className="text-xs text-muted-foreground hover:text-foreground hover:underline"
+                    onClick={() => setSelectedApprovalIds(new Set())}
+                    disabled={batchProcessing}
+                  >
+                    {t('approvals.clearSelection')}
+                  </button>
+                </div>
+
+                {/* Vertical stack of action buttons */}
+                <div className="flex flex-col gap-1.5">
+                  {/* Approve - safe action first */}
+                  <Button
+                    size="sm"
+                    className="w-full h-7 text-xs justify-start bg-green-600 hover:bg-green-700"
+                    disabled={batchProcessing}
+                    onClick={handleBatchApprove}
+                  >
+                    <Check className="w-3.5 h-3.5 mr-2 flex-shrink-0" aria-hidden="true" />
+                    {batchProcessing
+                      ? t('approvals.processing')
+                      : t('approvals.approveAllCount', { count: selectedApprovalIds.size })}
+                  </Button>
+
+                  {/* Revise - secondary action */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full h-7 text-xs justify-start border-amber-400 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30"
+                    disabled={batchProcessing}
+                    onClick={handleBatchRevision}
+                  >
+                    <RotateCcw className="w-3.5 h-3.5 mr-2 flex-shrink-0" aria-hidden="true" />
+                    {batchProcessing
+                      ? t('approvals.processing')
+                      : t('approvals.revisionAllCount', { count: selectedApprovalIds.size })}
+                  </Button>
+
+                  {/* Reject - destructive action last */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full h-7 text-xs justify-start border-red-400 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/30"
+                    disabled={batchProcessing}
+                    onClick={handleBatchReject}
+                  >
+                    <Trash2 className="w-3.5 h-3.5 mr-2 flex-shrink-0" aria-hidden="true" />
+                    {batchProcessing
+                      ? t('approvals.processing')
+                      : t('approvals.rejectAllCount', { count: selectedApprovalIds.size })}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </TabsContent>
+
+          {/* Specs Tab */}
+          <TabsContent value="specs" className="space-y-3">
+            <div className="space-y-3">
+              {/* Sub-navigation for Active/Archived */}
+              <div className="flex items-center justify-center">
+                <div className="inline-flex items-center space-x-1 p-1 bg-muted rounded-md">
+                  <Button
+                    variant={archiveView === 'active' ? 'default' : 'ghost'}
+                    size="sm"
+                    className={cn(
+                      'h-7 px-3 text-xs font-medium transition-all',
+                      archiveView === 'active'
+                        ? 'bg-primary text-primary-foreground shadow-sm'
+                        : 'hover:bg-muted-foreground/10',
+                    )}
+                    onClick={() => {
+                      setArchiveView('active');
+                      setSelectedArchivedSpec(null);
+                    }}
+                  >
+                    {t('specs.active')}
+                  </Button>
+                  <Button
+                    variant={archiveView === 'archived' ? 'default' : 'ghost'}
+                    size="sm"
+                    className={cn(
+                      'h-7 px-3 text-xs font-medium transition-all',
+                      archiveView === 'archived'
+                        ? 'bg-primary text-primary-foreground shadow-sm'
+                        : 'hover:bg-muted-foreground/10',
+                    )}
+                    onClick={() => {
+                      setArchiveView('archived');
+                      setSelectedSpec(null);
+                    }}
+                  >
+                    {t('specs.archived')}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <label className="text-sm font-medium">{t('specs.specLabel')}:</label>
+                <Select
+                  value={archiveView === 'active' ? selectedSpec || '' : selectedArchivedSpec || ''}
+                  onValueChange={
+                    archiveView === 'active' ? handleSpecSelect : setSelectedArchivedSpec
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder={t('specs.specPlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {archiveView === 'active'
+                      ? specs
+                          .filter((spec) => !spec.isArchived)
+                          .map((spec) => (
+                            <SelectItem key={spec.name} value={spec.name}>
+                              {spec.displayName}
+                            </SelectItem>
+                          ))
+                      : archivedSpecs.map((spec) => (
+                          <SelectItem key={spec.name} value={spec.name}>
+                            {spec.displayName}
+                          </SelectItem>
+                        ))}
+                  </SelectContent>
+                </Select>
+
+                {/* Context-appropriate action button */}
+                {archiveView === 'active' && selectedSpec && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 px-3 text-xs whitespace-nowrap"
+                    onClick={() => vscodeApi.archiveSpec(selectedSpec)}
+                  >
+                    {t('specs.archive')}
+                  </Button>
+                )}
+
+                {archiveView === 'archived' && selectedArchivedSpec && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 px-3 text-xs whitespace-nowrap"
+                    onClick={() => vscodeApi.unarchiveSpec(selectedArchivedSpec)}
+                  >
+                    {t('specs.unarchive')}
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm">{t('specs.docsTitle')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {(archiveView === 'active' ? selectedSpec : selectedArchivedSpec) && (
+                  <div className="space-y-2">
+                    {specDocuments.length > 0 ? (
+                      specDocuments.map((doc) => (
+                        <div
+                          key={doc.name}
+                          className="flex items-center justify-between p-2 border rounded"
+                        >
+                          <div className="flex-1 space-y-1">
+                            <div className="font-medium text-sm">
+                              <span className="capitalize">{doc.name}</span>.md
+                            </div>
+                            {doc.exists && doc.lastModified && (
+                              <div className="text-xs text-muted-foreground">
+                                {t('specs.modified', {
+                                  time: formatDistanceToNow(doc.lastModified),
+                                })}
+                              </div>
+                            )}
+                            {!doc.exists && (
+                              <div className="text-xs text-muted-foreground">
+                                {t('specs.fileNotFound')}
                               </div>
                             )}
                           </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="text-center text-muted-foreground text-sm py-8">
-                  {t('approvals.noPending')}
-                </div>
-              );
-            })()
-          ) : (
-            <div className="text-center text-muted-foreground text-sm py-8">
-              {approvalCategories.length <= 1 ? t('approvals.noPendingDocuments') : t('approvals.selectCategory')}
-            </div>
-          )}
-
-          {/* Sticky Footer for Batch Actions - Vertical Stack Design */}
-          {selectionMode && selectedApprovalIds.size > 0 && (
-            <div className="fixed bottom-0 left-0 right-0 p-3 bg-background border-t shadow-lg z-10">
-              {/* Header row with count and clear */}
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-muted-foreground">
-                  {t('approvals.selectedCount', { count: selectedApprovalIds.size })}
-                </span>
-                <button
-                  className="text-xs text-muted-foreground hover:text-foreground hover:underline"
-                  onClick={() => setSelectedApprovalIds(new Set())}
-                  disabled={batchProcessing}
-                >
-                  {t('approvals.clearSelection')}
-                </button>
-              </div>
-
-              {/* Vertical stack of action buttons */}
-              <div className="flex flex-col gap-1.5">
-                {/* Approve - safe action first */}
-                <Button
-                  size="sm"
-                  className="w-full h-7 text-xs justify-start bg-green-600 hover:bg-green-700"
-                  disabled={batchProcessing}
-                  onClick={handleBatchApprove}
-                >
-                  <Check className="w-3.5 h-3.5 mr-2 flex-shrink-0" aria-hidden="true" />
-                  {batchProcessing ? t('approvals.processing') : t('approvals.approveAllCount', { count: selectedApprovalIds.size })}
-                </Button>
-
-                {/* Revise - secondary action */}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full h-7 text-xs justify-start border-amber-400 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30"
-                  disabled={batchProcessing}
-                  onClick={handleBatchRevision}
-                >
-                  <RotateCcw className="w-3.5 h-3.5 mr-2 flex-shrink-0" aria-hidden="true" />
-                  {batchProcessing ? t('approvals.processing') : t('approvals.revisionAllCount', { count: selectedApprovalIds.size })}
-                </Button>
-
-                {/* Reject - destructive action last */}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full h-7 text-xs justify-start border-red-400 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/30"
-                  disabled={batchProcessing}
-                  onClick={handleBatchReject}
-                >
-                  <Trash2 className="w-3.5 h-3.5 mr-2 flex-shrink-0" aria-hidden="true" />
-                  {batchProcessing ? t('approvals.processing') : t('approvals.rejectAllCount', { count: selectedApprovalIds.size })}
-                </Button>
-              </div>
-            </div>
-          )}
-        </TabsContent>
-
-        {/* Specs Tab */}
-        <TabsContent value="specs" className="space-y-3">
-          <div className="space-y-3">
-            {/* Sub-navigation for Active/Archived */}
-            <div className="flex items-center justify-center">
-              <div className="inline-flex items-center space-x-1 p-1 bg-muted rounded-md">
-                <Button
-                  variant={archiveView === 'active' ? 'default' : 'ghost'}
-                  size="sm"
-                  className={cn(
-                    "h-7 px-3 text-xs font-medium transition-all",
-                    archiveView === 'active' 
-                      ? "bg-primary text-primary-foreground shadow-sm" 
-                      : "hover:bg-muted-foreground/10"
-                  )}
-                  onClick={() => {
-                    setArchiveView('active');
-                    setSelectedArchivedSpec(null);
-                  }}
-                >
-                  {t('specs.active')}
-                </Button>
-                <Button
-                  variant={archiveView === 'archived' ? 'default' : 'ghost'}
-                  size="sm"
-                  className={cn(
-                    "h-7 px-3 text-xs font-medium transition-all",
-                    archiveView === 'archived' 
-                      ? "bg-primary text-primary-foreground shadow-sm" 
-                      : "hover:bg-muted-foreground/10"
-                  )}
-                  onClick={() => {
-                    setArchiveView('archived');
-                    setSelectedSpec(null);
-                  }}
-                >
-                  {t('specs.archived')}
-                </Button>
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <label className="text-sm font-medium">{t('specs.specLabel')}:</label>
-              <Select 
-                value={archiveView === 'active' ? (selectedSpec || '') : (selectedArchivedSpec || '')} 
-                onValueChange={archiveView === 'active' ? handleSpecSelect : setSelectedArchivedSpec}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={t('specs.specPlaceholder')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {archiveView === 'active' 
-                    ? specs.filter(spec => !spec.isArchived).map(spec => (
-                        <SelectItem key={spec.name} value={spec.name}>
-                          {spec.displayName}
-                        </SelectItem>
+                          <Button
+                            size="sm"
+                            className="h-6 px-2 text-xs"
+                            disabled={!doc.exists}
+                            onClick={() =>
+                              vscodeApi.openDocument(
+                                archiveView === 'active' ? selectedSpec! : selectedArchivedSpec!,
+                                doc.name,
+                              )
+                            }
+                          >
+                            {t('specs.open')}
+                          </Button>
+                        </div>
                       ))
-                    : archivedSpecs.map(spec => (
-                        <SelectItem key={spec.name} value={spec.name}>
-                          {spec.displayName}
-                        </SelectItem>
-                      ))
-                  }
-                </SelectContent>
-              </Select>
-              
-              {/* Context-appropriate action button */}
-              {archiveView === 'active' && selectedSpec && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 px-3 text-xs whitespace-nowrap"
-                  onClick={() => vscodeApi.archiveSpec(selectedSpec)}
-                >
-                  {t('specs.archive')}
-                </Button>
-              )}
-              
-              {archiveView === 'archived' && selectedArchivedSpec && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 px-3 text-xs whitespace-nowrap"
-                  onClick={() => vscodeApi.unarchiveSpec(selectedArchivedSpec)}
-                >
-                  {t('specs.unarchive')}
-                </Button>
-              )}
-            </div>
-          </div>
+                    ) : (
+                      <div className="text-center text-muted-foreground text-sm py-8">
+                        {t('specs.noDocs')}
+                      </div>
+                    )}
+                  </div>
+                )}
+                {!(archiveView === 'active' ? selectedSpec : selectedArchivedSpec) && (
+                  <div className="text-center text-muted-foreground text-sm py-8">
+                    {archiveView === 'active'
+                      ? specs.filter((spec) => !spec.isArchived).length === 0
+                        ? t('specs.noActiveSpecs')
+                        : t('specs.selectSpec')
+                      : archivedSpecs.length === 0
+                        ? t('specs.noArchivedSpecs')
+                        : t('specs.selectSpec')}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm">{t('specs.docsTitle')}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {(archiveView === 'active' ? selectedSpec : selectedArchivedSpec) && (
+          {/* Steering Tab */}
+          <TabsContent value="steering" className="space-y-3">
+            <Card>
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm">{t('steering.title')}</CardTitle>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-6 px-2 text-xs"
+                    onClick={copySteeringInstructions}
+                    title={copiedSteering ? t('steering.copied') : t('steering.copyInstructions')}
+                  >
+                    <Copy className="h-3 w-3 mr-1" />
+                    {copiedSteering ? t('steering.copied') : t('steering.copyInstructions')}
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
                 <div className="space-y-2">
-                  {specDocuments.length > 0 ? (
-                    specDocuments.map((doc) => (
-                      <div key={doc.name} className="flex items-center justify-between p-2 border rounded">
+                  {steeringDocuments.length > 0 ? (
+                    steeringDocuments.map((doc) => (
+                      <div
+                        key={doc.name}
+                        className="flex items-center justify-between p-2 border rounded"
+                      >
                         <div className="flex-1 space-y-1">
-                          <div className="font-medium text-sm"><span className="capitalize">{doc.name}</span>.md</div>
+                          <div className="font-medium text-sm">
+                            <span className="capitalize">{doc.name}</span>.md
+                          </div>
                           {doc.exists && doc.lastModified && (
                             <div className="text-xs text-muted-foreground">
-                              {t('specs.modified', { time: formatDistanceToNow(doc.lastModified) })}
+                              {t('steering.modified', {
+                                time: formatDistanceToNow(doc.lastModified),
+                              })}
                             </div>
                           )}
                           {!doc.exists && (
                             <div className="text-xs text-muted-foreground">
-                              {t('specs.fileNotFound')}
+                              {t('steering.fileNotFound')}
                             </div>
                           )}
                         </div>
@@ -1667,90 +1953,21 @@ Review the existing steering documents (if any) and help me improve or complete 
                           size="sm"
                           className="h-6 px-2 text-xs"
                           disabled={!doc.exists}
-                          onClick={() => vscodeApi.openDocument(
-                            archiveView === 'active' ? selectedSpec! : selectedArchivedSpec!, 
-                            doc.name
-                          )}
+                          onClick={() => vscodeApi.openSteeringDocument(doc.name)}
                         >
-                          {t('specs.open')}
+                          {t('steering.open')}
                         </Button>
                       </div>
                     ))
                   ) : (
                     <div className="text-center text-muted-foreground text-sm py-8">
-                      {t('specs.noDocs')}
+                      {t('steering.noDocs')}
                     </div>
                   )}
                 </div>
-              )}
-              {!(archiveView === 'active' ? selectedSpec : selectedArchivedSpec) && (
-                <div className="text-center text-muted-foreground text-sm py-8">
-                  {archiveView === 'active' 
-                    ? (specs.filter(spec => !spec.isArchived).length === 0 ? t('specs.noActiveSpecs') : t('specs.selectSpec'))
-                    : (archivedSpecs.length === 0 ? t('specs.noArchivedSpecs') : t('specs.selectSpec'))
-                  }
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Steering Tab */}
-        <TabsContent value="steering" className="space-y-3">
-          <Card>
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm">{t('steering.title')}</CardTitle>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-6 px-2 text-xs"
-                  onClick={copySteeringInstructions}
-                  title={copiedSteering ? t('steering.copied') : t('steering.copyInstructions')}
-                >
-                  <Copy className="h-3 w-3 mr-1" />
-                  {copiedSteering ? t('steering.copied') : t('steering.copyInstructions')}
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {steeringDocuments.length > 0 ? (
-                  steeringDocuments.map((doc) => (
-                    <div key={doc.name} className="flex items-center justify-between p-2 border rounded">
-                      <div className="flex-1 space-y-1">
-                        <div className="font-medium text-sm"><span className="capitalize">{doc.name}</span>.md</div>
-                        {doc.exists && doc.lastModified && (
-                          <div className="text-xs text-muted-foreground">
-                            {t('steering.modified', { time: formatDistanceToNow(doc.lastModified) })}
-                          </div>
-                        )}
-                        {!doc.exists && (
-                          <div className="text-xs text-muted-foreground">
-                            {t('steering.fileNotFound')}
-                          </div>
-                        )}
-                      </div>
-                      <Button
-                        size="sm"
-                        className="h-6 px-2 text-xs"
-                        disabled={!doc.exists}
-                        onClick={() => vscodeApi.openSteeringDocument(doc.name)}
-                      >
-                        {t('steering.open')}
-                      </Button>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center text-muted-foreground text-sm py-8">
-                    {t('steering.noDocs')}
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
+              </CardContent>
+            </Card>
+          </TabsContent>
         </div>
 
         {/* Sticky Footer - Workflow Root */}
@@ -1761,11 +1978,16 @@ Review the existing steering documents (if any) and help me improve or complete 
               title={t('workflowRoot.description')}
             >
               <FolderOpen className="h-3 w-3 flex-shrink-0" />
-              <span className="truncate font-mono" title={workflowRoot.path || t('workflowRoot.notSet')}>
+              <span
+                className="truncate font-mono"
+                title={workflowRoot.path || t('workflowRoot.notSet')}
+              >
                 {workflowRoot.path || t('workflowRoot.notSet')}
               </span>
               {workflowRoot.isDefault && workflowRoot.path && (
-                <span className="text-[9px] text-muted-foreground/70">({t('workflowRoot.default')})</span>
+                <span className="text-[9px] text-muted-foreground/70">
+                  ({t('workflowRoot.default')})
+                </span>
               )}
             </div>
             <div className="flex items-center gap-1 flex-shrink-0 ml-2">
@@ -1822,9 +2044,12 @@ Review the existing steering documents (if any) and help me improve or complete 
               <div className="flex items-center gap-2">
                 <Check className="w-4 h-4 text-green-400 flex-shrink-0" aria-hidden="true" />
                 <span className="text-sm">
-                  {lastBatchOperation.action === 'approve' && t('approvals.batch.undoApproved', { count: lastBatchOperation.ids.length })}
-                  {lastBatchOperation.action === 'reject' && t('approvals.batch.undoRejected', { count: lastBatchOperation.ids.length })}
-                  {lastBatchOperation.action === 'revision' && t('approvals.batch.undoRevision', { count: lastBatchOperation.ids.length })}
+                  {lastBatchOperation.action === 'approve' &&
+                    t('approvals.batch.undoApproved', { count: lastBatchOperation.ids.length })}
+                  {lastBatchOperation.action === 'reject' &&
+                    t('approvals.batch.undoRejected', { count: lastBatchOperation.ids.length })}
+                  {lastBatchOperation.action === 'revision' &&
+                    t('approvals.batch.undoRevision', { count: lastBatchOperation.ids.length })}
                 </span>
               </div>
               <div className="flex items-center gap-1 flex-shrink-0">
@@ -1879,11 +2104,7 @@ Review the existing steering documents (if any) and help me improve or complete 
                 autoFocus
               />
               <div className="flex justify-end gap-2 mt-3">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setBatchRejectModalOpen(false)}
-                >
+                <Button variant="outline" size="sm" onClick={() => setBatchRejectModalOpen(false)}>
                   {t('approvals.cancel')}
                 </Button>
                 <Button

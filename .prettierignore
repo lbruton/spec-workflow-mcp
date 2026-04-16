@@ -1,0 +1,23 @@
+# Build output
+dist/
+coverage/
+vscode-extension/webview-dist/
+
+# GitHub workflows — OAuth token lacks workflow scope to push these
+.github/
+
+# Package artifacts
+*.tgz
+node_modules/
+
+# Authored markdown — intentionally formatted, users copy verbatim
+skills/
+commands/
+agents/
+src/markdown/templates/
+
+# Obsidian / DocVault artifacts
+.specflow/
+
+# Generated
+package-lock.json

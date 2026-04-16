@@ -27,6 +27,7 @@ Les documents de direction fournissent des orientations de haut niveau qui maint
 Cela génère trois documents clés :
 
 #### 1. Direction Produit (`steering/product.md`)
+
 - Vision et mission du produit
 - Utilisateurs cibles et personas
 - Fonctionnalités principales et priorités
@@ -34,6 +35,7 @@ Cela génère trois documents clés :
 - Non-objectifs et contraintes
 
 #### 2. Direction Technique (`steering/tech.md`)
+
 - Décisions d'architecture
 - Choix de la pile technologique
 - Exigences de performance
@@ -41,6 +43,7 @@ Cela génère trois documents clés :
 - Approche de scalabilité
 
 #### 3. Direction Structurelle (`steering/structure.md`)
+
 - Organisation du projet
 - Conventions de fichiers et dossiers
 - Normes de nommage
@@ -69,6 +72,7 @@ Exigences → Conception → Tâches
 **Objectif** : Définir QUOI doit être construit
 
 **Contenu** :
+
 - Vue d'ensemble de la fonctionnalité
 - User stories
 - Exigences fonctionnelles
@@ -77,6 +81,7 @@ Exigences → Conception → Tâches
 - Contraintes et hypothèses
 
 **Exemple de Création** :
+
 ```
 "Créer des exigences pour un système de notification utilisateur qui supporte :
 - Notifications par email
@@ -91,6 +96,7 @@ Exigences → Conception → Tâches
 **Objectif** : Définir COMMENT ce sera construit
 
 **Contenu** :
+
 - Architecture technique
 - Conception des composants
 - Modèles de données
@@ -105,6 +111,7 @@ Exigences → Conception → Tâches
 **Objectif** : Définir les ÉTAPES pour le construire
 
 **Contenu** :
+
 - Décomposition hiérarchique des tâches
 - Dépendances
 - Estimations d'effort
@@ -112,6 +119,7 @@ Exigences → Conception → Tâches
 - Exigences de test
 
 **Exemple de Structure** :
+
 ```
 1.0 Configuration de la Base de Données
   1.1 Créer les tables de notification
@@ -145,18 +153,21 @@ Exigences → Conception → Tâches
 ### Prendre des Décisions d'Approbation
 
 #### Quand Approuver
+
 - Les exigences sont complètes et claires
 - La conception résout le problème énoncé
 - Les tâches sont logiques et complètes
 - Aucune préoccupation ou lacune majeure
 
 #### Quand Demander des Modifications
+
 - Détails importants manquants
 - Spécifications peu claires
 - Meilleure approche disponible
 - Nécessite un alignement avec les normes
 
 #### Quand Rejeter
+
 - Incompréhension fondamentale
 - Approche entièrement incorrecte
 - Nécessite une refonte complète
@@ -164,6 +175,7 @@ Exigences → Conception → Tâches
 ### Fournir des Commentaires Efficaces
 
 Bons commentaires :
+
 ```
 "Le flux d'authentification devrait utiliser des tokens JWT au lieu de sessions.
 Ajouter une limitation de débit aux endpoints API.
@@ -171,6 +183,7 @@ Inclure la gestion des erreurs pour les échecs réseau."
 ```
 
 Mauvais commentaires :
+
 ```
 "Cela n'a pas l'air correct. Corrigez-le."
 ```
@@ -180,7 +193,9 @@ Mauvais commentaires :
 ### Stratégie d'Exécution des Tâches
 
 #### Implémentation Séquentielle
+
 Meilleur pour les tâches dépendantes :
+
 ```
 "Implémenter la tâche 1.1 de la spec user-auth"
 "Maintenant implémenter la tâche 1.2"
@@ -188,13 +203,17 @@ Meilleur pour les tâches dépendantes :
 ```
 
 #### Implémentation Parallèle
+
 Pour les tâches indépendantes :
+
 ```
 "Implémenter toutes les tâches UI de la spec dashboard pendant que je travaille sur le backend"
 ```
 
 #### Implémentation par Section
+
 Pour les groupements logiques :
+
 ```
 "Implémenter toutes les tâches de base de données de la spec payment"
 ```
@@ -202,6 +221,7 @@ Pour les groupements logiques :
 ### Suivi de la Progression
 
 Surveiller l'implémentation via :
+
 - Vue des tâches du tableau de bord
 - Barres de progression
 - Indicateurs de statut
@@ -210,6 +230,7 @@ Surveiller l'implémentation via :
 ### Gérer les Blocages
 
 Lorsque bloqué :
+
 1. Documenter le blocage
 2. Créer une sous-tâche pour la résolution
 3. Passer à des tâches parallèles si possible
@@ -222,11 +243,13 @@ Lorsque bloqué :
 Après l'implémentation :
 
 1. **Tests Unitaires**
+
    ```
    "Créer des tests unitaires pour le service de notification"
    ```
 
 2. **Tests d'Intégration**
+
    ```
    "Créer des tests d'intégration pour les endpoints API"
    ```
@@ -239,6 +262,7 @@ Après l'implémentation :
 ### Mises à Jour de la Documentation
 
 Maintenir la documentation à jour :
+
 ```
 "Mettre à jour la documentation API pour les nouveaux endpoints"
 "Ajouter des exemples d'utilisation au README"
@@ -275,11 +299,13 @@ votre-projet/
 ### Conventions de Nommage
 
 **Noms de Spec** :
+
 - Utiliser kebab-case : `user-authentication`
 - Être descriptif : `payment-processing` et non `payments`
 - Éviter les versions : `user-profile` et non `user-profile-v2`
 
 **Noms de Document** :
+
 - Toujours : `requirements.md`, `design.md`, `tasks.md`
 - Cohérent à travers toutes les specs
 
@@ -296,6 +322,7 @@ Pour les fonctionnalités évolutives :
 5. Construire sur le travail existant
 
 Exemple :
+
 ```
 "Créer une spec d'amélioration pour user-auth qui ajoute :
 - Connexion sociale (Google, Facebook)
@@ -306,16 +333,19 @@ Exemple :
 ### Workflow de Refactorisation
 
 1. **Documenter l'État Actuel**
+
    ```
    "Créer une spec documentant le système d'authentification actuel"
    ```
 
 2. **Concevoir les Améliorations**
+
    ```
    "Concevoir une refactorisation pour améliorer les performances d'authentification"
    ```
 
 3. **Planifier la Migration**
+
    ```
    "Créer des tâches de migration pour la refactorisation"
    ```
@@ -328,21 +358,25 @@ Exemple :
 ### Workflow de Résolution de Bugs
 
 1. **Rapport de Bug**
+
    ```
    "Créer un rapport de bug pour le problème de timeout de connexion"
    ```
 
 2. **Investigation**
+
    ```
    "Investiguer la cause racine du bug #45"
    ```
 
 3. **Conception de Solution**
+
    ```
    "Concevoir un correctif pour le problème de timeout"
    ```
 
 4. **Implémentation**
+
    ```
    "Implémenter le correctif de bug"
    ```
@@ -357,17 +391,20 @@ Exemple :
 ### 1. Maintenir la Granularité des Specs
 
 **Bon** : Une spec par fonctionnalité
+
 - `user-authentication`
 - `payment-processing`
 - `notification-system`
 
 **Mauvais** : Specs trop larges
+
 - `backend-system`
 - `all-features`
 
 ### 2. Création Séquentielle de Documents
 
 Toujours suivre l'ordre :
+
 1. Exigences (quoi)
 2. Conception (comment)
 3. Tâches (étapes)
@@ -384,6 +421,7 @@ Ne jamais sauter d'étapes.
 ### 4. Maintenir les Specs à Jour
 
 Lorsque les exigences changent :
+
 ```
 "Mettre à jour les exigences pour user-auth pour inclure le support SSO"
 ```
@@ -391,6 +429,7 @@ Lorsque les exigences changent :
 ### 5. Utiliser une Terminologie Cohérente
 
 Maintenir la cohérence à travers :
+
 - Noms de spec
 - Noms de composant
 - Terminologie API
@@ -399,6 +438,7 @@ Maintenir la cohérence à travers :
 ### 6. Archiver les Specs Complétées
 
 Garder l'espace de travail propre :
+
 ```
 "Archiver la spec user-auth complétée"
 ```
@@ -434,6 +474,7 @@ Garder l'espace de travail propre :
 ### Specs Devenant Trop Grandes
 
 **Solution** : Diviser en specs plus petites
+
 ```
 "Diviser la spec e-commerce en :
 - product-catalog
@@ -445,6 +486,7 @@ Garder l'espace de travail propre :
 ### Exigences Peu Claires
 
 **Solution** : Demander des clarifications
+
 ```
 "Les exigences nécessitent plus de détails sur :
 - Rôles et permissions utilisateur
@@ -455,6 +497,7 @@ Garder l'espace de travail propre :
 ### Conception ne Correspondant pas aux Exigences
 
 **Solution** : Demander une révision
+
 ```
 "La conception ne traite pas l'exigence de multi-tenancy.
 Veuillez réviser pour inclure l'isolation des tenants."

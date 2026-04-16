@@ -21,13 +21,14 @@ export class I18nErrorBoundary extends Component<Props, State> {
 
   static getDerivedStateFromError(error: Error): State {
     // Check if this is an i18n-related error
-    const isI18nError = error.message.includes('i18n') || 
-                        error.message.includes('translation') ||
-                        error.message.includes('react-i18next');
-    
-    return { 
-      hasI18nError: isI18nError, 
-      error: isI18nError ? error : undefined 
+    const isI18nError =
+      error.message.includes('i18n') ||
+      error.message.includes('translation') ||
+      error.message.includes('react-i18next');
+
+    return {
+      hasI18nError: isI18nError,
+      error: isI18nError ? error : undefined,
     };
   }
 
@@ -46,7 +47,8 @@ export class I18nErrorBoundary extends Component<Props, State> {
             <div className="text-6xl mb-4">⚠️</div>
             <h1 className="text-2xl font-bold mb-4">Translation System Error</h1>
             <p className="text-gray-600 dark:text-gray-300 mb-4">
-              The translation system failed to initialize. The application is running with fallback text.
+              The translation system failed to initialize. The application is running with fallback
+              text.
             </p>
             <button
               onClick={() => window.location.reload()}

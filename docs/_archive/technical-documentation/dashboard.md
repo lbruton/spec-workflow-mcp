@@ -5,8 +5,9 @@
 ## 🌐 Dashboard Overview
 
 The dashboard provides a web interface for:
+
 - **Specification Management** - View, create, and organize specs
-- **Approval Workflow** - Review and approve documents  
+- **Approval Workflow** - Review and approve documents
 - **Task Tracking** - Monitor implementation progress
 - **Real-time Updates** - Live sync via WebSocket
 - **Document Viewing** - Browse markdown documents with syntax highlighting
@@ -14,6 +15,7 @@ The dashboard provides a web interface for:
 ## 🏗️ Architecture
 
 ### Frontend Stack
+
 - **React 18** - Component framework with hooks
 - **TypeScript** - Type-safe development
 - **Tailwind CSS** - Utility-first styling
@@ -21,6 +23,7 @@ The dashboard provides a web interface for:
 - **React Router** - Client-side routing
 
 ### Backend Stack
+
 - **Fastify** - High-performance web server
 - **WebSocket** - Real-time communication
 - **Chokidar** - File system watching
@@ -31,25 +34,25 @@ The dashboard provides a web interface for:
 ```mermaid
 sequenceDiagram
     participant Browser as Browser Client
-    participant Server as Dashboard Server  
+    participant Server as Dashboard Server
     participant FS as File System
     participant MCP as MCP Server
-    
+
     Browser->>Server: HTTP Request
     Server-->>Browser: HTML/CSS/JS
-    
+
     Browser->>Server: WebSocket Connect
     Server-->>Browser: Initial State
-    
+
     Note over Server: File Change Detected
     FS->>Server: File Modified
     Server->>Browser: Real-time Update
     Browser->>Browser: Update UI
-    
+
     Browser->>Server: Approval Action
     Server->>FS: Update Approval
     Server->>Browser: Confirmation
-    
+
     MCP->>Server: Tool Request
     Server-->>MCP: Tool Response
 ```
@@ -57,6 +60,7 @@ sequenceDiagram
 ## 🚀 Starting the Dashboard
 
 ### Standalone Mode
+
 ```bash
 # Dashboard only (no MCP server)
 npx -y @pimzino/spec-workflow-mcp@latest --dashboard
@@ -70,6 +74,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 ```
 
 ### With MCP Server
+
 The dashboard runs separately from MCP servers. Start the dashboard first, then MCP servers will automatically register with it:
 
 ```bash
@@ -81,6 +86,7 @@ npx -y @pimzino/spec-workflow-mcp@latest /project/path
 ```
 
 ### Development Mode
+
 ```bash
 # Start dashboard dev server (hot reload)
 npm run dev:dashboard
@@ -99,7 +105,7 @@ npm run dev:dashboard
 ├─────────────────────────────────────┤
 │ 📋 Specs      │ Main Content Area   │
 │ 📝 Steering   │                     │
-│ ✅ Approvals  │                     │  
+│ ✅ Approvals  │                     │
 │ 📊 Tasks      │                     │
 │ 📈 Statistics │                     │
 └─────────────────────────────────────┘
@@ -108,6 +114,7 @@ npm run dev:dashboard
 ### Page Components
 
 #### Specs Page (`SpecsPage.tsx`)
+
 ```typescript
 interface SpecsPageProps {
   specs: SpecData[];
@@ -122,6 +129,7 @@ interface SpecsPageProps {
 ```
 
 #### Approval Page (`ApprovalsPage.tsx`)
+
 ```typescript
 interface ApprovalsPageProps {
   approvals: ApprovalData[];
@@ -136,6 +144,7 @@ interface ApprovalsPageProps {
 ```
 
 #### Spec Viewer (`SpecViewerPage.tsx`)
+
 ```typescript
 interface SpecViewerProps {
   specName: string;
@@ -150,6 +159,7 @@ interface SpecViewerProps {
 ```
 
 #### Tasks Page (`TasksPage.tsx`)
+
 ```typescript
 interface TasksPageProps {
   tasks: TaskData[];
@@ -168,35 +178,36 @@ interface TasksPageProps {
 ### WebSocket Integration
 
 **Connection Setup**:
+
 ```typescript
 // src/dashboard_frontend/src/modules/ws/WebSocketProvider.tsx
 const WebSocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [message, setMessage] = useState<any>(null);
-  
+
   useEffect(() => {
     const ws = new WebSocket('ws://localhost:3456/ws');
-    
+
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       setMessage(data);
     };
-    
+
     ws.onopen = () => {
       console.log('WebSocket connected');
     };
-    
+
     ws.onerror = (error) => {
       console.error('WebSocket error:', error);
     };
-    
+
     setSocket(ws);
-    
+
     return () => {
       ws.close();
     };
   }, []);
-  
+
   return (
     <WebSocketContext.Provider value={{ socket, message }}>
       {children}
@@ -206,6 +217,7 @@ const WebSocketProvider = ({ children }: { children: React.ReactNode }) => {
 ```
 
 **Message Types**:
+
 ```typescript
 interface WebSocketMessage {
   type: 'initial' | 'specs-updated' | 'approval-updated' | 'task-updated';
@@ -217,39 +229,41 @@ interface WebSocketMessage {
 const messages = {
   initial: {
     type: 'initial',
-    data: { specs: [], approvals: [] }
+    data: { specs: [], approvals: [] },
   },
-  
+
   specsUpdated: {
-    type: 'specs-updated', 
-    data: { specs: [/* updated specs */] }
+    type: 'specs-updated',
+    data: {
+      specs: [
+        /* updated specs */
+      ],
+    },
   },
-  
+
   approvalUpdated: {
     type: 'approval-updated',
-    data: { approvalId: '...', status: 'approved' }
-  }
+    data: { approvalId: '...', status: 'approved' },
+  },
 };
 ```
 
 ### File Watching
 
 **Backend File Watcher**:
+
 ```typescript
 // src/dashboard/watcher.ts
 export class SpecWatcher {
   private watcher: FSWatcher;
-  
+
   constructor(projectPath: string, parser: SpecParser) {
-    this.watcher = chokidar.watch(
-      join(projectPath, '.specflow'),
-      {
-        ignored: /(^|[\/\\])\../, // Ignore hidden files
-        persistent: true,
-        ignoreInitial: true
-      }
-    );
-    
+    this.watcher = chokidar.watch(join(projectPath, '.specflow'), {
+      ignored: /(^|[\/\\])\../, // Ignore hidden files
+      persistent: true,
+      ignoreInitial: true,
+    });
+
     this.watcher.on('change', async (filePath) => {
       // Re-parse affected specs
       const specs = await parser.getAllSpecs();
@@ -257,10 +271,10 @@ export class SpecWatcher {
       this.broadcastUpdate('specs-updated', { specs });
     });
   }
-  
+
   private broadcastUpdate(type: string, data: any) {
     const message = JSON.stringify({ type, data, timestamp: new Date().toISOString() });
-    this.clients.forEach(client => {
+    this.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(message);
       }
@@ -274,21 +288,22 @@ export class SpecWatcher {
 ### Theme System
 
 **Theme Provider**:
+
 ```typescript
 // src/dashboard_frontend/src/modules/theme/ThemeProvider.tsx
 const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
-  
+
   useEffect(() => {
     // Auto-detect system theme
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     setTheme(mediaQuery.matches ? 'dark' : 'light');
-    
+
     mediaQuery.addEventListener('change', (e) => {
       setTheme(e.matches ? 'dark' : 'light');
     });
   }, []);
-  
+
   return (
     <div className={theme === 'dark' ? 'dark' : ''}>
       {children}
@@ -298,12 +313,13 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 ```
 
 **Color Palette**:
+
 ```css
 /* src/dashboard_frontend/src/modules/theme/theme.css */
 :root {
   /* Light theme */
   --color-primary: #3b82f6;
-  --color-secondary: #64748b;  
+  --color-secondary: #64748b;
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-error: #ef4444;
@@ -316,7 +332,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   /* Dark theme */
   --color-primary: #60a5fa;
   --color-secondary: #94a3b8;
-  --color-success: #34d399; 
+  --color-success: #34d399;
   --color-warning: #fbbf24;
   --color-error: #f87171;
   --color-background: #1f2937;
@@ -328,6 +344,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 ### Component Styling
 
 **Tailwind Configuration**:
+
 ```javascript
 // tailwind.config.js
 module.exports = {
@@ -343,10 +360,10 @@ module.exports = {
         error: 'var(--color-error)',
         background: 'var(--color-background)',
         surface: 'var(--color-surface)',
-        text: 'var(--color-text)'
-      }
-    }
-  }
+        text: 'var(--color-text)',
+      },
+    },
+  },
 };
 ```
 
@@ -362,25 +379,26 @@ const routes = {
   'GET /api/specs/:name': 'Get specific spec with details',
   'PUT /api/specs/:name': 'Update spec metadata',
   'DELETE /api/specs/:name': 'Delete specification',
-  
+
   // Approvals
   'GET /api/approvals': 'List pending approvals',
   'GET /api/approvals/:id': 'Get approval details',
   'POST /api/approvals/:id/approve': 'Approve document',
   'POST /api/approvals/:id/reject': 'Reject with comments',
   'DELETE /api/approvals/:id': 'Delete approval',
-  
+
   // Tasks
   'GET /api/tasks/:specName': 'Get tasks for specification',
   'PUT /api/tasks/:specName/:taskId': 'Update task status',
-  
+
   // System
   'GET /api/health': 'Health check endpoint',
-  'GET /api/version': 'Get server version info'
+  'GET /api/version': 'Get server version info',
 };
 ```
 
 **Example API Implementation**:
+
 ```typescript
 // src/dashboard/multi-server.ts
 export class MultiProjectDashboardServer {
@@ -413,7 +431,7 @@ export class MultiProjectDashboardServer {
         // Broadcast update to project subscribers
         this.broadcastToProjectClients(projectId, 'approval-updated', {
           approvalId: id,
-          status: 'approved'
+          status: 'approved',
         });
 
         reply.send({ success: true });
@@ -430,6 +448,7 @@ export class MultiProjectDashboardServer {
 ### Frontend Optimizations
 
 **React Optimizations**:
+
 ```typescript
 // Memoized components for expensive renders
 const SpecsList = React.memo(({ specs }: { specs: SpecData[] }) => {
@@ -460,6 +479,7 @@ const VirtualizedTaskList = ({ tasks }: { tasks: TaskData[] }) => {
 ```
 
 **Lazy Loading**:
+
 ```typescript
 // Code splitting for pages
 const SpecsPage = lazy(() => import('./modules/pages/SpecsPage'));
@@ -477,12 +497,13 @@ const ApprovalsPage = lazy(() => import('./modules/pages/ApprovalsPage'));
 ### Backend Optimizations
 
 **Response Caching**:
+
 ```typescript
 // Cache frequently requested data
 class ResponseCache {
   private cache = new Map<string, { data: any; timestamp: number }>();
   private ttl = 30000; // 30 seconds
-  
+
   get(key: string) {
     const entry = this.cache.get(key);
     if (entry && Date.now() - entry.timestamp < this.ttl) {
@@ -491,7 +512,7 @@ class ResponseCache {
     this.cache.delete(key);
     return null;
   }
-  
+
   set(key: string, data: any) {
     this.cache.set(key, { data, timestamp: Date.now() });
   }
@@ -499,6 +520,7 @@ class ResponseCache {
 ```
 
 **Efficient File Watching**:
+
 ```typescript
 // Debounced file change handling
 import { debounce } from 'lodash';
@@ -516,12 +538,14 @@ const debouncedUpdate = debounce(async (filePath: string) => {
 ### Development Tools
 
 **Browser DevTools Checklist**:
+
 1. **Console Tab** - Check for JavaScript errors
 2. **Network Tab** - Verify API requests and WebSocket connection
 3. **Application Tab** - Check localStorage and session data
 4. **Elements Tab** - Inspect DOM and CSS issues
 
 **Common Debug Commands**:
+
 ```javascript
 // In browser console
 
@@ -529,7 +553,9 @@ const debouncedUpdate = debounce(async (filePath: string) => {
 console.log('WebSocket state:', window.WebSocket.READY_STATE);
 
 // Test API endpoints
-fetch('/api/specs').then(r => r.json()).then(console.log);
+fetch('/api/specs')
+  .then((r) => r.json())
+  .then(console.log);
 
 // Check React DevTools
 window.React = React; // Enable React DevTools
@@ -538,6 +564,7 @@ window.React = React; // Enable React DevTools
 ### Backend Debugging
 
 **Server Logs**:
+
 ```bash
 # Enable debug logging
 DEBUG=dashboard:* npm run dev:dashboard
@@ -547,6 +574,7 @@ DEBUG=dashboard:server,dashboard:watcher npm run dev:dashboard
 ```
 
 **API Testing**:
+
 ```bash
 # Test endpoints directly
 curl -X GET http://localhost:3456/api/specs

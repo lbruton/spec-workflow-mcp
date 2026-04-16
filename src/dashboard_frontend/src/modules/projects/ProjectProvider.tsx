@@ -1,4 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from 'react';
 
 export interface ProjectInstance {
   pid: number;
@@ -67,7 +75,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await fetch('/api/projects/list');
       if (response.ok) {
-        const data = await response.json() as Project[];
+        const data = (await response.json()) as Project[];
         setProjects(data);
 
         const currentId = currentProjectIdRef.current;
@@ -78,7 +86,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
         }
 
         // If current project no longer exists, select first available
-        if (currentId && !data.find(p => p.projectId === currentId)) {
+        if (currentId && !data.find((p) => p.projectId === currentId)) {
           console.warn('Current project no longer exists, selecting first available');
           setCurrentProjectId(data.length > 0 ? data[0].projectId : null);
         }
@@ -112,17 +120,20 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const currentProject = useMemo(() => {
-    return projects.find(p => p.projectId === currentProjectId) || null;
+    return projects.find((p) => p.projectId === currentProjectId) || null;
   }, [projects, currentProjectId]);
 
-  const value = useMemo<ProjectContextType>(() => ({
-    projects,
-    currentProjectId,
-    currentProject,
-    setCurrentProject,
-    refreshProjects: fetchProjects,
-    loading
-  }), [projects, currentProjectId, currentProject, setCurrentProject, fetchProjects, loading]);
+  const value = useMemo<ProjectContextType>(
+    () => ({
+      projects,
+      currentProjectId,
+      currentProject,
+      setCurrentProject,
+      refreshProjects: fetchProjects,
+      loading,
+    }),
+    [projects, currentProjectId, currentProject, setCurrentProject, fetchProjects, loading],
+  );
 
   return <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>;
 }

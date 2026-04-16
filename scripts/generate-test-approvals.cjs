@@ -47,7 +47,7 @@ This document outlines the authentication flow for the application.
 - Passwords must be hashed using bcrypt
 - Tokens expire after 24 hours
 - Refresh tokens valid for 30 days`,
-    priority: 'high'
+    priority: 'high',
   },
   {
     title: 'API Endpoint Design Document',
@@ -73,7 +73,7 @@ This document outlines the authentication flow for the application.
 - POST /api/approvals/:id/approve
 - POST /api/approvals/:id/reject
 - POST /api/approvals/batch`,
-    priority: 'medium'
+    priority: 'medium',
   },
   {
     title: 'Database Schema Migration Plan',
@@ -96,7 +96,7 @@ This document outlines the authentication flow for the application.
 2. Run migration scripts
 3. Verify data integrity
 4. Update application code`,
-    priority: 'high'
+    priority: 'high',
   },
   {
     title: 'Frontend Component Library Standards',
@@ -119,7 +119,7 @@ This document outlines the authentication flow for the application.
 - Unit tests for all components
 - Integration tests for complex interactions
 - Storybook for component documentation`,
-    priority: 'low'
+    priority: 'low',
   },
   {
     title: 'Security Best Practices Guide',
@@ -143,7 +143,7 @@ This document outlines the authentication flow for the application.
 - Request signing
 - Rate limiting
 - CORS configuration`,
-    priority: 'high'
+    priority: 'high',
   },
   {
     title: 'Testing Strategy Documentation',
@@ -164,7 +164,7 @@ This document outlines the authentication flow for the application.
 - Playwright for browser testing
 - Critical user journeys
 - Cross-browser compatibility`,
-    priority: 'medium'
+    priority: 'medium',
   },
   {
     title: 'Deployment Pipeline Configuration',
@@ -188,7 +188,7 @@ This document outlines the authentication flow for the application.
 - Keep last 3 deployments
 - One-click rollback capability
 - Database migration rollback procedures`,
-    priority: 'high'
+    priority: 'high',
   },
   {
     title: 'Performance Optimization Guide',
@@ -211,7 +211,7 @@ This document outlines the authentication flow for the application.
 - Performance metrics
 - Error tracking
 - User analytics`,
-    priority: 'medium'
+    priority: 'medium',
   },
   {
     title: 'Internationalization (i18n) Implementation',
@@ -232,7 +232,7 @@ This document outlines the authentication flow for the application.
 - Translation key structure
 - Language detection
 - Fallback strategies`,
-    priority: 'low'
+    priority: 'low',
   },
   {
     title: 'Monitoring and Observability Setup',
@@ -253,8 +253,8 @@ This document outlines the authentication flow for the application.
 - Error rate thresholds
 - Performance degradation
 - System health checks`,
-    priority: 'medium'
-  }
+    priority: 'medium',
+  },
 ];
 
 async function cleanTestApprovals(approvalsDir, docsDir) {
@@ -263,7 +263,7 @@ async function cleanTestApprovals(approvalsDir, docsDir) {
   try {
     // Remove test approval JSON files
     const files = await fs.readdir(approvalsDir);
-    const testFiles = files.filter(f => f.startsWith('test-approval-'));
+    const testFiles = files.filter((f) => f.startsWith('test-approval-'));
 
     for (const file of testFiles) {
       await fs.unlink(path.join(approvalsDir, file));
@@ -295,7 +295,9 @@ async function generateTestApprovals(count) {
   // Parse arguments
   const args = process.argv.slice(2);
   const shouldClean = args.includes('--clean');
-  const numApprovals = args.find(arg => !arg.startsWith('--')) ? parseInt(args.find(arg => !arg.startsWith('--'))) : count;
+  const numApprovals = args.find((arg) => !arg.startsWith('--'))
+    ? parseInt(args.find((arg) => !arg.startsWith('--')))
+    : count;
 
   console.log('🎯 Test Approval Generator');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
@@ -318,7 +320,7 @@ async function generateTestApprovals(count) {
   for (let i = 0; i < numApprovals; i++) {
     const template = approvalTemplates[i % approvalTemplates.length];
     const approvalId = `test-approval-${i + 1}`;
-    const timestamp = new Date(now.getTime() + (i * 15 * 60 * 1000)); // 15 minutes apart
+    const timestamp = new Date(now.getTime() + i * 15 * 60 * 1000); // 15 minutes apart
 
     // Create approval JSON
     const approval = {
@@ -333,8 +335,8 @@ async function generateTestApprovals(count) {
       metadata: {
         priority: template.priority,
         reviewer: 'team',
-        testData: true
-      }
+        testData: true,
+      },
     };
 
     const approvalPath = path.join(approvalsDir, `${approvalId}.json`);
@@ -372,7 +374,7 @@ async function generateTestApprovals(count) {
 
 // Run the generator
 const defaultCount = 7;
-generateTestApprovals(defaultCount).catch(error => {
+generateTestApprovals(defaultCount).catch((error) => {
   console.error('❌ Error generating test approvals:', error);
   process.exit(1);
 });

@@ -7,24 +7,25 @@ import { SpecParser } from '../core/parser.js';
 const prompt: Prompt = {
   name: 'implement-task',
   title: 'Implement Specification Task',
-  description: 'Guide for implementing a specific task from the tasks.md document. Provides comprehensive instructions for task execution, including reading _Prompt fields, marking progress, completion criteria, and logging implementation details for the dashboard.',
+  description:
+    'Guide for implementing a specific task from the tasks.md document. Provides comprehensive instructions for task execution, including reading _Prompt fields, marking progress, completion criteria, and logging implementation details for the dashboard.',
   arguments: [
     {
       name: 'specName',
       description: 'Feature name in kebab-case for the task to implement',
-      required: true
+      required: true,
     },
     {
       name: 'taskId',
       description: 'Specific task ID to implement (e.g., "1", "2.1", "3")',
-      required: false
-    }
-  ]
+      required: false,
+    },
+  ],
 };
 
 async function handler(args: Record<string, any>, context: ToolContext): Promise<PromptMessage[]> {
   const { specName, taskId } = args;
-  
+
   if (!specName) {
     throw new Error('specName is a required argument');
   }
@@ -46,7 +47,7 @@ async function handler(args: Record<string, any>, context: ToolContext): Promise
   }
   if (!spec.phases.readinessReport.exists || !spec.phases.readinessReport.approved) {
     throw new Error(
-      `PHASE GATE: Cannot start implementation for "${specName}" until readiness-report.md exists and is approved in the dashboard.`
+      `PHASE GATE: Cannot start implementation for "${specName}" until readiness-report.md exists and is approved in the dashboard.`,
     );
   }
 
@@ -206,9 +207,9 @@ ${context.dashboardUrl ? `- Dashboard: ${context.dashboardUrl}` : ''}
 After completing 60+ tasks, consider using a handoff to relay to a fresh session.
 Save handoff context: spec name, completed tasks, in-progress state, next task ID.
 
-Please proceed with implementing ${taskId ? `task ${taskId}` : 'the next task'} following this workflow.`
-      }
-    }
+Please proceed with implementing ${taskId ? `task ${taskId}` : 'the next task'} following this workflow.`,
+      },
+    },
   ];
 
   return messages;
@@ -216,5 +217,5 @@ Please proceed with implementing ${taskId ? `task ${taskId}` : 'the next task'} 
 
 export const implementTaskPrompt: PromptDefinition = {
   prompt,
-  handler
+  handler,
 };

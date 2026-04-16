@@ -20,6 +20,7 @@ The web dashboard is a real-time web application that provides visual access to 
 ### Starting the Dashboard
 
 #### Standalone Dashboard
+
 ```bash
 # Uses ephemeral port
 npx -y @pimzino/spec-workflow-mcp@latest /path/to/project --dashboard
@@ -29,6 +30,7 @@ npx -y @pimzino/spec-workflow-mcp@latest /path/to/project --dashboard --port 300
 ```
 
 #### With MCP Server
+
 ```bash
 # Run MCP server and dashboard separately (recommended)
 # Terminal 1: Start dashboard
@@ -119,18 +121,19 @@ Access project guidance:
 
 #### Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| `Alt + S` | Focus spec list |
-| `Alt + T` | View tasks |
-| `Alt + R` | View requirements |
-| `Alt + D` | View design |
+| Shortcut  | Action               |
+| --------- | -------------------- |
+| `Alt + S` | Focus spec list      |
+| `Alt + T` | View tasks           |
+| `Alt + R` | View requirements    |
+| `Alt + D` | View design          |
 | `Alt + A` | Open approval dialog |
-| `Esc` | Close dialog |
+| `Esc`     | Close dialog         |
 
 #### URL Structure
 
 Direct links to specific views:
+
 - `/` - Home dashboard
 - `/spec/{name}` - Specific spec
 - `/spec/{name}/requirements` - Requirements doc
@@ -164,6 +167,7 @@ The dashboard uses WebSockets for live updates:
 #### Theme Settings
 
 Toggle between light and dark modes:
+
 - Click theme icon in header
 - Persists across sessions
 - Respects system preference
@@ -171,11 +175,13 @@ Toggle between light and dark modes:
 #### Language Selection
 
 Change interface language:
+
 1. Click settings icon
 2. Select language from dropdown
 3. Interface updates immediately
 
 Supported languages:
+
 - English (en)
 - Japanese (ja)
 - Chinese (zh)
@@ -191,6 +197,7 @@ Supported languages:
 #### Display Options
 
 Customize view preferences:
+
 - Compact/expanded spec cards
 - Show/hide completed tasks
 - Document font size
@@ -208,6 +215,7 @@ Install from VSCode Marketplace:
 4. Reload VSCode
 
 Or via command line:
+
 ```bash
 code --install-extension Pimzino.specflow-mcp
 ```
@@ -303,31 +311,31 @@ Configure in VSCode settings:
 
 #### Setting Descriptions
 
-| Setting | Description | Default |
-|---------|-------------|---------|
-| `language` | Interface language | "en" |
-| `notifications.enabled` | Show notifications | true |
-| `notifications.sound` | Play sound alerts | true |
-| `notifications.volume` | Sound volume (0-1) | 0.5 |
-| `archive.showInExplorer` | Show archived specs | true |
-| `tasks.autoRefresh` | Auto-refresh tasks | true |
-| `tasks.refreshInterval` | Refresh interval (ms) | 5000 |
-| `theme.followVSCode` | Match VSCode theme | true |
+| Setting                  | Description           | Default |
+| ------------------------ | --------------------- | ------- |
+| `language`               | Interface language    | "en"    |
+| `notifications.enabled`  | Show notifications    | true    |
+| `notifications.sound`    | Play sound alerts     | true    |
+| `notifications.volume`   | Sound volume (0-1)    | 0.5     |
+| `archive.showInExplorer` | Show archived specs   | true    |
+| `tasks.autoRefresh`      | Auto-refresh tasks    | true    |
+| `tasks.refreshInterval`  | Refresh interval (ms) | 5000    |
+| `theme.followVSCode`     | Match VSCode theme    | true    |
 
 ### Extension Commands
 
 Available in Command Palette (Ctrl+Shift+P):
 
-| Command | Description |
-|---------|-------------|
-| `Spec Workflow: Create Spec` | Start new spec |
-| `Spec Workflow: List Specs` | Show all specs |
-| `Spec Workflow: View Dashboard` | Open web dashboard |
-| `Spec Workflow: Archive Spec` | Move to archive |
-| `Spec Workflow: Restore Spec` | Restore from archive |
-| `Spec Workflow: Refresh` | Reload spec data |
-| `Spec Workflow: Show Steering` | View steering docs |
-| `Spec Workflow: Export Spec` | Export to markdown |
+| Command                         | Description          |
+| ------------------------------- | -------------------- |
+| `Spec Workflow: Create Spec`    | Start new spec       |
+| `Spec Workflow: List Specs`     | Show all specs       |
+| `Spec Workflow: View Dashboard` | Open web dashboard   |
+| `Spec Workflow: Archive Spec`   | Move to archive      |
+| `Spec Workflow: Restore Spec`   | Restore from archive |
+| `Spec Workflow: Refresh`        | Reload spec data     |
+| `Spec Workflow: Show Steering`  | View steering docs   |
+| `Spec Workflow: Export Spec`    | Export to markdown   |
 
 ### Sound Notifications
 
@@ -339,6 +347,7 @@ The extension includes audio alerts for:
 - **Updates** - Soft notification
 
 Configure in settings:
+
 ```json
 {
   "specWorkflow.notifications.sound": true,
@@ -348,20 +357,20 @@ Configure in settings:
 
 ## Feature Comparison
 
-| Feature | Web Dashboard | VSCode Extension |
-|---------|--------------|------------------|
-| View specs | ✅ | ✅ |
-| Manage tasks | ✅ | ✅ |
-| Approvals | ✅ | ✅ |
-| Real-time updates | ✅ | ✅ |
-| Archive system | ❌ | ✅ |
-| Sound notifications | ❌ | ✅ |
-| Editor integration | ❌ | ✅ |
-| Context menus | ❌ | ✅ |
-| Keyboard shortcuts | Limited | Full |
-| Multi-project | Manual | Automatic |
-| Offline access | ❌ | ✅ |
-| Export options | Basic | Advanced |
+| Feature             | Web Dashboard | VSCode Extension |
+| ------------------- | ------------- | ---------------- |
+| View specs          | ✅            | ✅               |
+| Manage tasks        | ✅            | ✅               |
+| Approvals           | ✅            | ✅               |
+| Real-time updates   | ✅            | ✅               |
+| Archive system      | ❌            | ✅               |
+| Sound notifications | ❌            | ✅               |
+| Editor integration  | ❌            | ✅               |
+| Context menus       | ❌            | ✅               |
+| Keyboard shortcuts  | Limited       | Full             |
+| Multi-project       | Manual        | Automatic        |
+| Offline access      | ❌            | ✅               |
+| Export options      | Basic         | Advanced         |
 
 ## Choosing the Right Interface
 
@@ -447,6 +456,7 @@ The dashboard is responsive:
 ### VSCode Extension
 
 Inherits VSCode accessibility:
+
 - Screen reader support
 - Keyboard navigation
 - High contrast themes
@@ -480,27 +490,28 @@ Inherits VSCode accessibility:
 
 ### Dashboard Issues
 
-| Issue | Solution |
-|-------|----------|
-| Won't load | Check server is running, verify URL |
-| No updates | Check WebSocket connection, refresh page |
-| Approval not working | Ensure dashboard and MCP are connected |
-| Styling broken | Clear browser cache, check console |
+| Issue                | Solution                                 |
+| -------------------- | ---------------------------------------- |
+| Won't load           | Check server is running, verify URL      |
+| No updates           | Check WebSocket connection, refresh page |
+| Approval not working | Ensure dashboard and MCP are connected   |
+| Styling broken       | Clear browser cache, check console       |
 
 ### Extension Issues
 
-| Issue | Solution |
-|-------|----------|
-| Not showing specs | Check project has .specflow directory |
-| Commands not working | Reload VSCode window |
-| No notifications | Check extension settings |
-| Archive not visible | Enable in settings |
+| Issue                | Solution                              |
+| -------------------- | ------------------------------------- |
+| Not showing specs    | Check project has .specflow directory |
+| Commands not working | Reload VSCode window                  |
+| No notifications     | Check extension settings              |
+| Archive not visible  | Enable in settings                    |
 
 ## Advanced Usage
 
 ### Custom Dashboard URL
 
 Configure in multiple terminals:
+
 ```bash
 # Terminal 1: MCP Server
 npx -y @pimzino/spec-workflow-mcp@latest /project

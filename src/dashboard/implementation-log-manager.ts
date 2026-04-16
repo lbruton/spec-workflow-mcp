@@ -73,13 +73,19 @@ export class ImplementationLogManager {
         // Convert "Key Name" to camelCase
         const words = key.toLowerCase().trim().split(/\s+/);
         if (words.length === 0) return '';
-        return words[0] + words.slice(1).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('');
+        return (
+          words[0] +
+          words
+            .slice(1)
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join('')
+        );
       };
 
       // Helper function to map markdown property names to TypeScript interface property names
       const mapPropertyName = (normalizedKey: string): string => {
         const mapping: Record<string, string> = {
-          'exported': 'isExported'  // Exported → isExported
+          exported: 'isExported', // Exported → isExported
         };
         return mapping[normalizedKey] || normalizedKey;
       };
@@ -109,7 +115,7 @@ export class ImplementationLogManager {
         if (match) {
           return {
             key: normalizeKey(match[1]),
-            value: match[2].trim()
+            value: match[2].trim(),
           };
         }
         return null;
@@ -204,8 +210,11 @@ export class ImplementationLogManager {
           }
         }
         // Parse file lists
-        else if ((currentSection === 'filesModified' || currentSection === 'filesCreated') &&
-                 line.startsWith('- ') && !line.includes('_No files')) {
+        else if (
+          (currentSection === 'filesModified' || currentSection === 'filesCreated') &&
+          line.startsWith('- ') &&
+          !line.includes('_No files')
+        ) {
           const fileName = line.slice(2).trim();
           if (currentSection === 'filesModified') {
             filesModified.push(fileName);
@@ -222,7 +231,10 @@ export class ImplementationLogManager {
 
             // Handle arrays (exports, methods)
             if (mappedKey === 'exports' || mappedKey === 'methods' || mappedKey === 'userStories') {
-              const items = kv.value.split(',').map(s => s.trim()).filter(s => s.length > 0);
+              const items = kv.value
+                .split(',')
+                .map((s) => s.trim())
+                .filter((s) => s.length > 0);
               currentItem[mappedKey] = items;
             } else {
               // Convert value to appropriate type (Yes/No → boolean, N/A → empty string, etc.)
@@ -253,9 +265,9 @@ export class ImplementationLogManager {
         statistics: {
           linesAdded,
           linesRemoved,
-          filesChanged
+          filesChanged,
         },
-        artifacts
+        artifacts,
       };
 
       return entry;
@@ -274,7 +286,7 @@ export class ImplementationLogManager {
 
     try {
       const files = await fs.readdir(this.logsDir);
-      const mdFiles = files.filter(f => f.endsWith('.md'));
+      const mdFiles = files.filter((f) => f.endsWith('.md'));
 
       const entries: ImplementationLogEntry[] = [];
 
@@ -296,14 +308,14 @@ export class ImplementationLogManager {
 
       return {
         entries,
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       };
     } catch (error: any) {
       if (error.code === 'ENOENT') {
         // Directory doesn't exist yet
         return {
           entries: [],
-          lastUpdated: new Date().toISOString()
+          lastUpdated: new Date().toISOString(),
         };
       }
       throw error;
@@ -340,7 +352,7 @@ export class ImplementationLogManager {
     // Files
     markdown += `## Files Modified\n`;
     if (entry.filesModified.length > 0) {
-      entry.filesModified.forEach(file => {
+      entry.filesModified.forEach((file) => {
         markdown += `- ${file}\n`;
       });
     } else {
@@ -350,7 +362,7 @@ export class ImplementationLogManager {
 
     markdown += `## Files Created\n`;
     if (entry.filesCreated.length > 0) {
-      entry.filesCreated.forEach(file => {
+      entry.filesCreated.forEach((file) => {
         markdown += `- ${file}\n`;
       });
     } else {
@@ -361,7 +373,12 @@ export class ImplementationLogManager {
     // Artifacts
     markdown += `---\n\n## Artifacts\n\n`;
 
-    if (!entry.artifacts || Object.keys(entry.artifacts).every(key => !entry.artifacts[key as keyof typeof entry.artifacts]?.length)) {
+    if (
+      !entry.artifacts ||
+      Object.keys(entry.artifacts).every(
+        (key) => !entry.artifacts[key as keyof typeof entry.artifacts]?.length,
+      )
+    ) {
       markdown += `_No artifacts recorded_\n`;
       return markdown;
     }
@@ -369,7 +386,7 @@ export class ImplementationLogManager {
     // API Endpoints
     if (entry.artifacts.apiEndpoints && entry.artifacts.apiEndpoints.length > 0) {
       markdown += `### API Endpoints\n\n`;
-      entry.artifacts.apiEndpoints.forEach(api => {
+      entry.artifacts.apiEndpoints.forEach((api) => {
         markdown += `#### ${api.method} ${api.path}\n`;
         markdown += `- **Purpose:** ${api.purpose}\n`;
         markdown += `- **Location:** ${api.location}\n`;
@@ -382,13 +399,14 @@ export class ImplementationLogManager {
     // Components
     if (entry.artifacts.components && entry.artifacts.components.length > 0) {
       markdown += `### Components\n\n`;
-      entry.artifacts.components.forEach(comp => {
+      entry.artifacts.components.forEach((comp) => {
         markdown += `#### ${comp.name}\n`;
         markdown += `- **Type:** ${comp.type}\n`;
         markdown += `- **Purpose:** ${comp.purpose}\n`;
         markdown += `- **Location:** ${comp.location}\n`;
         if (comp.props) markdown += `- **Props:** ${comp.props}\n`;
-        if (comp.exports && comp.exports.length > 0) markdown += `- **Exports:** ${comp.exports.join(', ')}\n`;
+        if (comp.exports && comp.exports.length > 0)
+          markdown += `- **Exports:** ${comp.exports.join(', ')}\n`;
         markdown += `\n`;
       });
     }
@@ -396,7 +414,7 @@ export class ImplementationLogManager {
     // Functions
     if (entry.artifacts.functions && entry.artifacts.functions.length > 0) {
       markdown += `### Functions\n\n`;
-      entry.artifacts.functions.forEach(func => {
+      entry.artifacts.functions.forEach((func) => {
         markdown += `#### ${func.name}\n`;
         markdown += `- **Purpose:** ${func.purpose}\n`;
         markdown += `- **Location:** ${func.location}\n`;
@@ -409,11 +427,12 @@ export class ImplementationLogManager {
     // Classes
     if (entry.artifacts.classes && entry.artifacts.classes.length > 0) {
       markdown += `### Classes\n\n`;
-      entry.artifacts.classes.forEach(cls => {
+      entry.artifacts.classes.forEach((cls) => {
         markdown += `#### ${cls.name}\n`;
         markdown += `- **Purpose:** ${cls.purpose}\n`;
         markdown += `- **Location:** ${cls.location}\n`;
-        if (cls.methods && cls.methods.length > 0) markdown += `- **Methods:** ${cls.methods.join(', ')}\n`;
+        if (cls.methods && cls.methods.length > 0)
+          markdown += `- **Methods:** ${cls.methods.join(', ')}\n`;
         markdown += `- **Exported:** ${cls.isExported ? 'Yes' : 'No'}\n`;
         markdown += `\n`;
       });
@@ -422,7 +441,7 @@ export class ImplementationLogManager {
     // Integrations
     if (entry.artifacts.integrations && entry.artifacts.integrations.length > 0) {
       markdown += `### Integrations\n\n`;
-      entry.artifacts.integrations.forEach(intg => {
+      entry.artifacts.integrations.forEach((intg) => {
         markdown += `#### Integration\n`;
         markdown += `- **Description:** ${intg.description}\n`;
         markdown += `- **Frontend Component:** ${intg.frontendComponent}\n`;
@@ -435,7 +454,7 @@ export class ImplementationLogManager {
     // Tests
     if (entry.artifacts.tests && entry.artifacts.tests.length > 0) {
       markdown += `### Tests\n\n`;
-      entry.artifacts.tests.forEach(test => {
+      entry.artifacts.tests.forEach((test) => {
         markdown += `#### ${test.name}\n`;
         markdown += `- **Type:** ${test.type}\n`;
         markdown += `- **Framework:** ${test.framework}\n`;
@@ -445,8 +464,10 @@ export class ImplementationLogManager {
         markdown += `- **Failed:** ${test.failed}\n`;
         markdown += `- **Total:** ${test.total}\n`;
         if (test.duration) markdown += `- **Duration:** ${test.duration}\n`;
-        if (test.coveragePercent !== undefined) markdown += `- **Coverage Percent:** ${test.coveragePercent}\n`;
-        if (test.userStories && test.userStories.length > 0) markdown += `- **User Stories:** ${test.userStories.join(', ')}\n`;
+        if (test.coveragePercent !== undefined)
+          markdown += `- **Coverage Percent:** ${test.coveragePercent}\n`;
+        if (test.userStories && test.userStories.length > 0)
+          markdown += `- **User Stories:** ${test.userStories.join(', ')}\n`;
         markdown += `\n`;
       });
     }
@@ -462,7 +483,7 @@ export class ImplementationLogManager {
 
     const newEntry: ImplementationLogEntry = {
       ...entry,
-      id: randomUUID()
+      id: randomUUID(),
     };
 
     const fileName = this.generateFileName(newEntry.taskId, newEntry.id);
@@ -487,7 +508,7 @@ export class ImplementationLogManager {
    */
   async getTaskLogs(taskId: string): Promise<ImplementationLogEntry[]> {
     const log = await this.loadLog();
-    return log.entries.filter(e => e.taskId === taskId);
+    return log.entries.filter((e) => e.taskId === taskId);
   }
 
   /**
@@ -495,7 +516,7 @@ export class ImplementationLogManager {
    */
   async getLogsByDateRange(startDate: Date, endDate: Date): Promise<ImplementationLogEntry[]> {
     const log = await this.loadLog();
-    return log.entries.filter(e => {
+    return log.entries.filter((e) => {
       const entryDate = new Date(e.timestamp);
       return entryDate >= startDate && entryDate <= endDate;
     });
@@ -509,18 +530,21 @@ export class ImplementationLogManager {
     const log = await this.loadLog();
 
     // Split query into keywords (space-separated) and convert to lowercase
-    const keywords = query.toLowerCase().split(/\s+/).filter(k => k.length > 0);
+    const keywords = query
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((k) => k.length > 0);
 
-    return log.entries.filter(e => {
+    return log.entries.filter((e) => {
       // For each keyword, check if it appears anywhere in this entry
       // ALL keywords must match (AND logic)
-      return keywords.every(keyword => {
+      return keywords.every((keyword) => {
         // Search in summary, taskId, and files
         if (
           e.summary.toLowerCase().includes(keyword) ||
           e.taskId.toLowerCase().includes(keyword) ||
-          e.filesModified.some(f => f.toLowerCase().includes(keyword)) ||
-          e.filesCreated.some(f => f.toLowerCase().includes(keyword))
+          e.filesModified.some((f) => f.toLowerCase().includes(keyword)) ||
+          e.filesCreated.some((f) => f.toLowerCase().includes(keyword))
         ) {
           return true;
         }
@@ -528,68 +552,86 @@ export class ImplementationLogManager {
         // Search in artifacts
         if (e.artifacts) {
           // Search API endpoints
-          if (e.artifacts.apiEndpoints?.some(api =>
-            api.method?.toLowerCase().includes(keyword) ||
-            api.path?.toLowerCase().includes(keyword) ||
-            api.purpose?.toLowerCase().includes(keyword) ||
-            api.location?.toLowerCase().includes(keyword) ||
-            (api.requestFormat && api.requestFormat.toLowerCase().includes(keyword)) ||
-            (api.responseFormat && api.responseFormat.toLowerCase().includes(keyword))
-          )) {
+          if (
+            e.artifacts.apiEndpoints?.some(
+              (api) =>
+                api.method?.toLowerCase().includes(keyword) ||
+                api.path?.toLowerCase().includes(keyword) ||
+                api.purpose?.toLowerCase().includes(keyword) ||
+                api.location?.toLowerCase().includes(keyword) ||
+                (api.requestFormat && api.requestFormat.toLowerCase().includes(keyword)) ||
+                (api.responseFormat && api.responseFormat.toLowerCase().includes(keyword)),
+            )
+          ) {
             return true;
           }
 
           // Search components
-          if (e.artifacts.components?.some(comp =>
-            comp.name?.toLowerCase().includes(keyword) ||
-            comp.type?.toLowerCase().includes(keyword) ||
-            comp.purpose?.toLowerCase().includes(keyword) ||
-            comp.location?.toLowerCase().includes(keyword) ||
-            (comp.props && comp.props.toLowerCase().includes(keyword)) ||
-            (comp.exports?.some(exp => exp.toLowerCase().includes(keyword)))
-          )) {
+          if (
+            e.artifacts.components?.some(
+              (comp) =>
+                comp.name?.toLowerCase().includes(keyword) ||
+                comp.type?.toLowerCase().includes(keyword) ||
+                comp.purpose?.toLowerCase().includes(keyword) ||
+                comp.location?.toLowerCase().includes(keyword) ||
+                (comp.props && comp.props.toLowerCase().includes(keyword)) ||
+                comp.exports?.some((exp) => exp.toLowerCase().includes(keyword)),
+            )
+          ) {
             return true;
           }
 
           // Search functions
-          if (e.artifacts.functions?.some(func =>
-            func.name?.toLowerCase().includes(keyword) ||
-            func.purpose?.toLowerCase().includes(keyword) ||
-            func.location?.toLowerCase().includes(keyword) ||
-            (func.signature && func.signature.toLowerCase().includes(keyword))
-          )) {
+          if (
+            e.artifacts.functions?.some(
+              (func) =>
+                func.name?.toLowerCase().includes(keyword) ||
+                func.purpose?.toLowerCase().includes(keyword) ||
+                func.location?.toLowerCase().includes(keyword) ||
+                (func.signature && func.signature.toLowerCase().includes(keyword)),
+            )
+          ) {
             return true;
           }
 
           // Search classes
-          if (e.artifacts.classes?.some(cls =>
-            cls.name?.toLowerCase().includes(keyword) ||
-            cls.purpose?.toLowerCase().includes(keyword) ||
-            cls.location?.toLowerCase().includes(keyword) ||
-            (cls.methods?.some(method => method.toLowerCase().includes(keyword)))
-          )) {
+          if (
+            e.artifacts.classes?.some(
+              (cls) =>
+                cls.name?.toLowerCase().includes(keyword) ||
+                cls.purpose?.toLowerCase().includes(keyword) ||
+                cls.location?.toLowerCase().includes(keyword) ||
+                cls.methods?.some((method) => method.toLowerCase().includes(keyword)),
+            )
+          ) {
             return true;
           }
 
           // Search integrations
-          if (e.artifacts.integrations?.some(intg =>
-            intg.description?.toLowerCase().includes(keyword) ||
-            intg.frontendComponent?.toLowerCase().includes(keyword) ||
-            intg.backendEndpoint?.toLowerCase().includes(keyword) ||
-            intg.dataFlow?.toLowerCase().includes(keyword)
-          )) {
+          if (
+            e.artifacts.integrations?.some(
+              (intg) =>
+                intg.description?.toLowerCase().includes(keyword) ||
+                intg.frontendComponent?.toLowerCase().includes(keyword) ||
+                intg.backendEndpoint?.toLowerCase().includes(keyword) ||
+                intg.dataFlow?.toLowerCase().includes(keyword),
+            )
+          ) {
             return true;
           }
 
           // Search tests
-          if (e.artifacts.tests?.some(test =>
-            test.name?.toLowerCase().includes(keyword) ||
-            test.type?.toLowerCase().includes(keyword) ||
-            test.framework?.toLowerCase().includes(keyword) ||
-            test.location?.toLowerCase().includes(keyword) ||
-            test.status?.toLowerCase().includes(keyword) ||
-            (test.userStories?.some(us => us.toLowerCase().includes(keyword)))
-          )) {
+          if (
+            e.artifacts.tests?.some(
+              (test) =>
+                test.name?.toLowerCase().includes(keyword) ||
+                test.type?.toLowerCase().includes(keyword) ||
+                test.framework?.toLowerCase().includes(keyword) ||
+                test.location?.toLowerCase().includes(keyword) ||
+                test.status?.toLowerCase().includes(keyword) ||
+                test.userStories?.some((us) => us.toLowerCase().includes(keyword)),
+            )
+          ) {
             return true;
           }
         }
@@ -612,7 +654,7 @@ export class ImplementationLogManager {
         totalFilesCreated: 0,
         totalLinesAdded: 0,
         totalLinesRemoved: 0,
-        lastImplementation: null
+        lastImplementation: null,
       };
     }
 
@@ -622,19 +664,22 @@ export class ImplementationLogManager {
       totalFilesCreated: taskLogs.reduce((sum, e) => sum + e.filesCreated.length, 0),
       totalLinesAdded: taskLogs.reduce((sum, e) => sum + e.statistics.linesAdded, 0),
       totalLinesRemoved: taskLogs.reduce((sum, e) => sum + e.statistics.linesRemoved, 0),
-      lastImplementation: taskLogs[0] || null
+      lastImplementation: taskLogs[0] || null,
     };
   }
 
   /**
    * Get all logs that contain a specific artifact type
    */
-  async getLogsByArtifactType(artifactType: 'apiEndpoints' | 'components' | 'functions' | 'classes' | 'integrations'): Promise<ImplementationLogEntry[]> {
+  async getLogsByArtifactType(
+    artifactType: 'apiEndpoints' | 'components' | 'functions' | 'classes' | 'integrations',
+  ): Promise<ImplementationLogEntry[]> {
     const log = await this.loadLog();
-    return log.entries.filter(entry =>
-      entry.artifacts &&
-      entry.artifacts[artifactType] &&
-      (entry.artifacts[artifactType] as any).length > 0
+    return log.entries.filter(
+      (entry) =>
+        entry.artifacts &&
+        entry.artifacts[artifactType] &&
+        (entry.artifacts[artifactType] as any).length > 0,
     );
   }
 
@@ -642,11 +687,14 @@ export class ImplementationLogManager {
    * Search for specific artifacts across all logs
    * Returns logs that contain artifacts matching the search term
    */
-  async findArtifact(artifactType: string, searchTerm: string): Promise<Array<{ log: ImplementationLogEntry; artifact: any }>> {
+  async findArtifact(
+    artifactType: string,
+    searchTerm: string,
+  ): Promise<Array<{ log: ImplementationLogEntry; artifact: any }>> {
     const log = await this.loadLog();
     const results: Array<{ log: ImplementationLogEntry; artifact: any }> = [];
 
-    log.entries.forEach(entry => {
+    log.entries.forEach((entry) => {
       if (entry.artifacts && entry.artifacts[artifactType as keyof typeof entry.artifacts]) {
         const artifacts = entry.artifacts[artifactType as keyof typeof entry.artifacts] as any;
         if (Array.isArray(artifacts)) {
@@ -655,7 +703,7 @@ export class ImplementationLogManager {
             return searchable.includes(searchTerm.toLowerCase());
           });
 
-          matchingArtifacts.forEach(artifact => {
+          matchingArtifacts.forEach((artifact) => {
             results.push({ log: entry, artifact });
           });
         }

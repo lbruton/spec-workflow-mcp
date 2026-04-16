@@ -151,8 +151,8 @@ describe('task-validator', () => {
 `;
         const result = validateTasksMarkdown(content);
         expect(result.valid).toBe(true);
-        expect(result.warnings.some(w => w.field === 'prompt_structure')).toBe(true);
-        const promptWarning = result.warnings.find(w => w.field === 'prompt_structure');
+        expect(result.warnings.some((w) => w.field === 'prompt_structure')).toBe(true);
+        const promptWarning = result.warnings.find((w) => w.field === 'prompt_structure');
         expect(promptWarning?.message).toContain('missing sections');
       });
     });
@@ -216,16 +216,22 @@ Just some text.
       const result = {
         valid: false,
         errors: [
-          { line: 5, field: 'taskId', message: 'Missing task ID', suggestion: 'Add numeric ID', severity: 'error' as const }
+          {
+            line: 5,
+            field: 'taskId',
+            message: 'Missing task ID',
+            suggestion: 'Add numeric ID',
+            severity: 'error' as const,
+          },
         ],
         warnings: [],
-        summary: { totalTasks: 1, validTasks: 0, invalidTasks: 1 }
+        summary: { totalTasks: 1, validTasks: 0, invalidTasks: 1 },
       };
 
       const formatted = formatValidationErrors(result);
       expect(formatted.length).toBeGreaterThan(0);
-      expect(formatted.some(m => m.includes('Line 5'))).toBe(true);
-      expect(formatted.some(m => m.includes('Missing task ID'))).toBe(true);
+      expect(formatted.some((m) => m.includes('Line 5'))).toBe(true);
+      expect(formatted.some((m) => m.includes('Missing task ID'))).toBe(true);
     });
 
     it('should format warnings correctly', () => {
@@ -233,14 +239,21 @@ Just some text.
         valid: true,
         errors: [],
         warnings: [
-          { line: 10, taskId: '1', field: 'requirements', message: 'Missing underscores', suggestion: 'Use _Requirements:_', severity: 'warning' as const }
+          {
+            line: 10,
+            taskId: '1',
+            field: 'requirements',
+            message: 'Missing underscores',
+            suggestion: 'Use _Requirements:_',
+            severity: 'warning' as const,
+          },
         ],
-        summary: { totalTasks: 1, validTasks: 1, invalidTasks: 0 }
+        summary: { totalTasks: 1, validTasks: 1, invalidTasks: 0 },
       };
 
       const formatted = formatValidationErrors(result);
-      expect(formatted.some(m => m.includes('warning'))).toBe(true);
-      expect(formatted.some(m => m.includes('Line 10'))).toBe(true);
+      expect(formatted.some((m) => m.includes('warning'))).toBe(true);
+      expect(formatted.some((m) => m.includes('Line 10'))).toBe(true);
     });
 
     it('should return empty array for valid result with no warnings', () => {
@@ -248,7 +261,7 @@ Just some text.
         valid: true,
         errors: [],
         warnings: [],
-        summary: { totalTasks: 2, validTasks: 2, invalidTasks: 0 }
+        summary: { totalTasks: 2, validTasks: 2, invalidTasks: 0 },
       };
 
       const formatted = formatValidationErrors(result);

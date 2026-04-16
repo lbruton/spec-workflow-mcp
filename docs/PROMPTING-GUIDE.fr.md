@@ -19,16 +19,19 @@ Un guide complet avec des exemples et des meilleures pratiques pour interagir av
 ### Création de Spec Basique
 
 #### Demande Simple
+
 ```
 "Créer une spec pour l'authentification utilisateur"
 ```
 
 L'IA créera :
+
 - Document d'exigences
 - Document de conception (après approbation)
 - Décomposition des tâches (après approbation de la conception)
 
 #### Demande Détaillée
+
 ```
 "Créer une spec appelée payment-processing avec :
 - Paiements par carte de crédit via Stripe
@@ -39,6 +42,7 @@ L'IA créera :
 ```
 
 #### À Partir de Documentation Existante
+
 ```
 "Créer une spec à partir du PRD dans @product-requirements.md"
 ```
@@ -50,6 +54,7 @@ L'IA créera :
 ### Création de Spec Avancée
 
 #### Avec Contraintes Techniques
+
 ```
 "Créer une spec pour les notifications en temps réel qui :
 - Utilise WebSockets pour les mises à jour en direct
@@ -60,6 +65,7 @@ L'IA créera :
 ```
 
 #### Avec Critères d'Acceptation
+
 ```
 "Créer une spec pour la fonctionnalité de recherche avec ces critères d'acceptation :
 - Les résultats apparaissent en moins de 200ms
@@ -70,6 +76,7 @@ L'IA créera :
 ```
 
 #### Spécification de Microservice
+
 ```
 "Créer une spec pour un microservice d'inventaire qui :
 - Expose une API REST
@@ -84,6 +91,7 @@ L'IA créera :
 ### Liste et Statut
 
 #### Obtenir une Vue d'Ensemble
+
 ```
 "Lister toutes mes specs"
 "Montrer toutes les specs et leur progression"
@@ -92,6 +100,7 @@ L'IA créera :
 ```
 
 #### Statut Spécifique
+
 ```
 "Afficher le statut de la spec user-auth"
 "Quelle est la progression de payment-processing ?"
@@ -100,6 +109,7 @@ L'IA créera :
 ```
 
 #### Filtrage
+
 ```
 "Montrer les specs qui sont complétées à plus de 50%"
 "Lister les specs en attente de mon approbation"
@@ -110,6 +120,7 @@ L'IA créera :
 ### Gestion des Documents
 
 #### Visualisation des Documents
+
 ```
 "Montrer les exigences pour user-auth"
 "Afficher le document de conception pour payments"
@@ -118,6 +129,7 @@ L'IA créera :
 ```
 
 #### Mise à Jour des Documents
+
 ```
 "Mettre à jour les exigences user-auth pour inclure 2FA"
 "Réviser la conception payment pour utiliser Stripe Connect"
@@ -130,6 +142,7 @@ L'IA créera :
 ### Tâches Individuelles
 
 #### Implémentation Basique
+
 ```
 "Implémenter la tâche 1.2 de user-auth"
 "Compléter la tâche 2.1.3 dans la spec payment"
@@ -137,6 +150,7 @@ L'IA créera :
 ```
 
 #### Avec Contexte
+
 ```
 "Implémenter la tâche 1.2 de user-auth en utilisant TypeScript et Express"
 "Compléter la tâche de migration de base de données en utilisant Prisma"
@@ -146,6 +160,7 @@ L'IA créera :
 ### Implémentation par Lot
 
 #### Par Section
+
 ```
 "Implémenter toutes les tâches de base de données de user-auth"
 "Compléter toutes les tâches frontend dans la spec dashboard"
@@ -153,6 +168,7 @@ L'IA créera :
 ```
 
 #### Par Priorité
+
 ```
 "Implémenter d'abord toutes les tâches critiques"
 "Compléter les tâches MVP de user-profile"
@@ -160,6 +176,7 @@ L'IA créera :
 ```
 
 #### Séquentiel
+
 ```
 "Implémenter les tâches 1.1 à 1.5 de user-auth"
 "Compléter toutes les sous-tâches sous la section 2"
@@ -169,6 +186,7 @@ L'IA créera :
 ### Stratégies d'Implémentation
 
 #### Test-Driven
+
 ```
 "Pour la tâche 1.2, écrire d'abord les tests puis implémenter"
 "Implémenter la tâche 2.1 avec couverture de tests complète"
@@ -176,6 +194,7 @@ L'IA créera :
 ```
 
 #### Avec Documentation
+
 ```
 "Implémenter la tâche 1.3 et documenter l'API"
 "Compléter la tâche d'authentification avec des commentaires inline"
@@ -187,6 +206,7 @@ L'IA créera :
 ### Création de Direction
 
 #### Ensemble Complet
+
 ```
 "Créer des documents de direction pour mon projet e-commerce"
 "Configurer la direction pour une application SaaS"
@@ -194,6 +214,7 @@ L'IA créera :
 ```
 
 #### Documents Individuels
+
 ```
 "Créer un document de direction produit axé sur l'expérience utilisateur"
 "Créer une direction technique pour une architecture microservices"
@@ -201,6 +222,7 @@ L'IA créera :
 ```
 
 #### À Partir du Contexte
+
 ```
 "Créer des documents de direction basés sur @project-brief.md"
 "Générer la direction à partir de nos décisions techniques dans @architecture.md"
@@ -219,6 +241,7 @@ L'IA créera :
 ### Demande de Feedback
 
 #### Avec Préoccupations Spécifiques
+
 ```
 "Demander l'approbation pour les exigences user-auth - vérifier particulièrement la section sécurité"
 "Demander une révision de la conception payment - se concentrer sur la gestion des erreurs"
@@ -226,6 +249,7 @@ L'IA créera :
 ```
 
 #### Demandes de Révision
+
 ```
 "Les exigences nécessitent plus de détails sur :
 - Scénarios de gestion d'erreurs
@@ -237,6 +261,7 @@ Veuillez réviser et resoumettre"
 ### Décisions d'Approbation
 
 #### Approbation
+
 ```
 "Approuver les exigences user-auth"
 "La conception semble bonne, l'approuver"
@@ -244,6 +269,7 @@ Veuillez réviser et resoumettre"
 ```
 
 #### Demande de Modifications
+
 ```
 "Demander des modifications aux exigences :
 - Ajouter le support multi-tenant
@@ -252,6 +278,7 @@ Veuillez réviser et resoumettre"
 ```
 
 #### Rejet
+
 ```
 "Rejeter la conception actuelle - nous devons utiliser une architecture événementielle à la place"
 "Recommencer avec les exigences - la portée est trop large"
@@ -262,6 +289,7 @@ Veuillez réviser et resoumettre"
 ### Signalement de Bugs
 
 #### Rapport Détaillé
+
 ```
 "Créer un rapport de bug :
 Titre : La connexion échoue avec des caractères spéciaux
@@ -273,6 +301,7 @@ Environnement : Production"
 ```
 
 #### À Partir des Logs d'Erreur
+
 ```
 "Créer un rapport de bug à partir de cette erreur : [coller la stack trace]"
 "Documenter ce bug à partir de l'alerte Sentry : [lien]"
@@ -281,6 +310,7 @@ Environnement : Production"
 ### Résolution de Bug
 
 #### Investigation
+
 ```
 "Investiguer la cause racine du bug #45"
 "Analyser pourquoi le webhook de paiement échoue"
@@ -288,6 +318,7 @@ Environnement : Production"
 ```
 
 #### Implémentation du Correctif
+
 ```
 "Créer un correctif pour le bug #45 dans l'authentification utilisateur"
 "Implémenter une solution pour le problème de timeout de paiement"
@@ -305,11 +336,13 @@ Les exigences et conceptions évoluent souvent pendant l'implémentation. Lorsqu
 L'IA a accès à des instructions complètes de rafraîchissement des tâches via le prompt refresh-tasks. Informez simplement l'IA de vos changements :
 
 #### Rafraîchissement de Tâches Basique
+
 ```
 "Les exigences ont été mises à jour. Veuillez rafraîchir tasks.md pour s'aligner avec les requirements.md et design.md actuels."
 ```
 
 #### Rafraîchissement de Tâches Détaillé avec Contexte
+
 ```
 "J'ai mis à jour la spec avec les changements suivants :
 - Supprimé le module de reporting
@@ -324,6 +357,7 @@ Veuillez rafraîchir tasks.md en suivant le processus de rafraîchissement des t
 ```
 
 #### Changement d'Architecture Nécessitant une Migration
+
 ```
 "Nous passons de l'API REST à GraphQL. Plusieurs endpoints REST sont déjà implémentés. Veuillez mettre à jour tasks.md avec :
 1. Tout le travail REST complété préservé
@@ -365,22 +399,26 @@ Lorsque vous demandez un rafraîchissement des tâches, l'IA va :
 ### Exemples de Scénarios
 
 #### Suppression de Fonctionnalité
+
 ```
 "Nous avons décidé de supprimer le module de reporting de la spec. Mettre à jour tasks.md en conséquence."
 ```
 
 Comportement attendu de l'IA :
+
 - Garder toutes les tâches de reporting complétées avec leur statut [x]
 - Garder toutes les tâches de reporting en cours avec leur statut [-]
 - Supprimer uniquement les tâches de reporting en attente [ ]
 - Ajouter une note : "_Note : Fonctionnalité de reporting supprimée de la spec mais travail complété préservé_"
 
 #### Changement d'Architecture avec Travail Complété
+
 ```
 "Nous passons de MongoDB à PostgreSQL. Mettre à jour les tâches de base de données en attente. Notez que nous avons déjà implémenté les schémas MongoDB et la logique de connexion."
 ```
 
 Comportement attendu de l'IA :
+
 - Préserver toutes les tâches MongoDB complétées exactement telles qu'écrites
 - Préserver toutes les tâches MongoDB en cours exactement telles qu'écrites
 - Ajouter de nouvelles tâches de migration immédiatement après le travail MongoDB complété :
@@ -394,11 +432,13 @@ Comportement attendu de l'IA :
 - Maintenir la séquence de numérotation des tâches
 
 #### Ajout de Fonctionnalité
+
 ```
 "Ajouter la connexion sociale à la spec d'authentification. Les exigences et la conception ont été mises à jour."
 ```
 
 Comportement attendu de l'IA :
+
 - Analyser la structure de tâches actuelle pour le point d'insertion logique
 - Ajouter de nouvelles tâches de connexion sociale avec une numérotation appropriée
 - Référencer les exigences spécifiques pour la connexion sociale
@@ -410,11 +450,13 @@ Comportement attendu de l'IA :
 Quand les changements d'architecture affectent du code déjà implémenté :
 
 #### Migration REST vers GraphQL
+
 ```
 "Nous passons de REST à GraphQL. Plusieurs endpoints REST sont déjà implémentés."
 ```
 
 Ajouts de tâches attendus :
+
 - Préserver les tâches d'endpoints REST complétées
 - Ajouter des tâches de définition de schéma GraphQL
 - Ajouter des tâches d'implémentation de resolver
@@ -423,11 +465,13 @@ Ajouts de tâches attendus :
 - Ajouter des tâches de nettoyage pour supprimer les endpoints REST après vérification de GraphQL
 
 #### Division Monolithe vers Microservices
+
 ```
 "Nous divisons le service utilisateur monolithique en services auth et profile séparés."
 ```
 
 Ajouts de tâches attendus :
+
 - Préserver les tâches de service monolithique complétées
 - Ajouter des tâches de séparation de service
 - Ajouter des tâches de communication inter-services
@@ -456,16 +500,19 @@ Les tâches de migration doivent clairement indiquer leur objectif :
 Lorsque vous informez l'IA des changements de spec :
 
 #### Être Spécifique sur les Changements et l'Impact
+
 ```
 "Les exigences de traitement des paiements ont changé. Stripe est maintenant requis au lieu de PayPal. Nous avons déjà implémenté les gestionnaires de webhook PayPal. Veuillez mettre à jour tasks.md pour refléter ce changement, incluant les tâches de migration."
 ```
 
 #### Fournir le Contexte pour la Préservation et la Migration
+
 ```
 "Bien que nous passions de MongoDB à PostgreSQL, garder toutes les tâches MongoDB complétées car ce travail est déjà fait. Ajouter des tâches de migration pour transitionner le code MongoDB implémenté vers PostgreSQL."
 ```
 
 #### Demander une Validation
+
 ```
 "Après mise à jour de tasks.md, confirmer que toutes les exigences dans requirements.md ont des tâches correspondantes, que des chemins de migration existent pour les changements d'architecture, et qu'aucune tâche en attente n'existe pour les fonctionnalités supprimées."
 ```
@@ -497,6 +544,7 @@ L'IA suivra alors les instructions complètes de rafraîchissement pour mettre �
 ### Workflows Multi-Spec
 
 #### Specs Reliées
+
 ```
 "Créer une spec pour admin-dashboard qui s'intègre avec :
 - spec user-management
@@ -505,6 +553,7 @@ L'IA suivra alors les instructions complètes de rafraîchissement pour mettre �
 ```
 
 #### Dépendances de Spec
+
 ```
 "Créer une spec pour notifications qui dépend de :
 - user-auth étant complète
@@ -515,6 +564,7 @@ L'IA suivra alors les instructions complètes de rafraîchissement pour mettre �
 ### Développement Incrémental
 
 #### MVP en Premier
+
 ```
 "Créer une spec MVP pour user-profiles avec juste :
 - Création de profil de base
@@ -524,6 +574,7 @@ L'IA suivra alors les instructions complètes de rafraîchissement pour mettre �
 ```
 
 #### Specs d'Amélioration
+
 ```
 "Créer une spec d'amélioration pour user-auth ajoutant :
 - Connexion sociale (Google, GitHub)
@@ -535,6 +586,7 @@ L'IA suivra alors les instructions complètes de rafraîchissement pour mettre �
 ### Scénarios Complexes
 
 #### Specs de Migration
+
 ```
 "Créer une spec pour migrer de MongoDB à PostgreSQL :
 - Documenter le schéma actuel
@@ -544,6 +596,7 @@ L'IA suivra alors les instructions complètes de rafraîchissement pour mettre �
 ```
 
 #### Specs de Refactorisation
+
 ```
 "Créer une spec de refactorisation pour :
 - Diviser le monolithe en services
@@ -553,6 +606,7 @@ L'IA suivra alors les instructions complètes de rafraîchissement pour mettre �
 ```
 
 #### Specs de Performance
+
 ```
 "Créer une spec d'optimisation de performance :
 - Profiler les goulots d'étranglement actuels
@@ -564,6 +618,7 @@ L'IA suivra alors les instructions complètes de rafraîchissement pour mettre �
 ## Combinaisons de Workflow
 
 ### Flux de Fonctionnalité Complet
+
 ```
 1. "Créer des documents de direction pour le projet"
 2. "Créer une spec pour l'authentification utilisateur"
@@ -576,6 +631,7 @@ L'IA suivra alors les instructions complètes de rafraîchissement pour mettre �
 ```
 
 ### Développement Parallèle
+
 ```
 "Pendant que je révise les exigences, commencer à rédiger la conception API"
 "Créer des specs pour le frontend et le backend en parallèle"
@@ -583,6 +639,7 @@ L'IA suivra alors les instructions complètes de rafraîchissement pour mettre �
 ```
 
 ### Raffinement Itératif
+
 ```
 1. "Créer la spec initiale pour search"
 2. "Implémenter la recherche de base (tâches 1-3)"
@@ -594,6 +651,7 @@ L'IA suivra alors les instructions complètes de rafraîchissement pour mettre �
 ## Prompts Contextuels
 
 ### Utilisation du Contexte du Projet
+
 ```
 "Créer une spec qui suit nos patterns existants"
 "Implémenter cette tâche de manière cohérente avec notre codebase"
@@ -601,6 +659,7 @@ L'IA suivra alors les instructions complètes de rafraîchissement pour mettre �
 ```
 
 ### Référencement d'Autres Specs
+
 ```
 "Créer une spec similaire à user-auth mais pour l'authentification admin"
 "Utiliser les mêmes patterns de conception que dans la spec payment"
@@ -608,6 +667,7 @@ L'IA suivra alors les instructions complètes de rafraîchissement pour mettre �
 ```
 
 ### Construire sur le Travail Précédent
+
 ```
 "Étendre la spec user-auth pour inclure la gestion d'équipe"
 "Ajouter le support GraphQL à la spec API REST existante"
@@ -617,28 +677,34 @@ L'IA suivra alors les instructions complètes de rafraîchissement pour mettre �
 ## Conseils pour un Prompting Efficace
 
 ### Être Spécifique
+
 ❌ **Vague** : "Créer une spec de connexion"
 ✅ **Spécifique** : "Créer une spec pour connexion email/mot de passe avec 2FA, se souvenir de moi, et réinitialisation de mot de passe"
 
 ### Fournir du Contexte
+
 ❌ **Sans contexte** : "Implémenter la tâche"
 ✅ **Avec contexte** : "Implémenter la tâche 1.2 en utilisant notre middleware Express existant et la base de données PostgreSQL"
 
 ### Définir des Attentes Claires
+
 ❌ **Peu clair** : "L'améliorer"
 ✅ **Clair** : "Améliorer la conception pour gérer 10x le trafic actuel avec des temps de réponse sous 200ms"
 
 ### Utiliser des Demandes Incrémentales
+
 ❌ **Trop** : "Créer 5 specs et tout implémenter"
 ✅ **Incrémental** : "Créer d'abord la spec user-auth, puis nous réviserons avant de passer à la suivante"
 
 ### Référencer le Travail Existant
+
 ❌ **Recommencer** : "Créer un nouveau système de paiement"
 ✅ **Construire sur** : "Améliorer notre spec payment pour ajouter la facturation d'abonnement"
 
 ## Bibliothèque de Patterns Courants
 
 ### Opérations CRUD
+
 ```
 "Créer une spec pour les opérations CRUD sur les produits incluant :
 - Création avec validation
@@ -648,6 +714,7 @@ L'IA suivra alors les instructions complètes de rafraîchissement pour mettre �
 ```
 
 ### Authentification & Autorisation
+
 ```
 "Créer une spec d'auth avec :
 - Authentification basée JWT
@@ -658,6 +725,7 @@ L'IA suivra alors les instructions complètes de rafraîchissement pour mettre �
 ```
 
 ### Fonctionnalités Temps Réel
+
 ```
 "Créer une spec pour chat en temps réel :
 - Connexions WebSocket
@@ -668,6 +736,7 @@ L'IA suivra alors les instructions complètes de rafraîchissement pour mettre �
 ```
 
 ### Gestion de Fichiers
+
 ```
 "Créer une spec de téléchargement de fichiers :
 - Téléchargements par morceaux pour gros fichiers
@@ -678,6 +747,7 @@ L'IA suivra alors les instructions complètes de rafraîchissement pour mettre �
 ```
 
 ### Analytique & Reporting
+
 ```
 "Créer une spec d'analytique :
 - Suivi d'événements
@@ -690,6 +760,7 @@ L'IA suivra alors les instructions complètes de rafraîchissement pour mettre �
 ## Prompts de Dépannage
 
 ### Quand les Choses Tournent Mal
+
 ```
 "Pourquoi cette spec n'apparaît pas ?"
 "Déboguer pourquoi la tâche ne se complète pas"
@@ -698,6 +769,7 @@ L'IA suivra alors les instructions complètes de rafraîchissement pour mettre �
 ```
 
 ### Se Débloquer
+
 ```
 "Que devrais-je faire ensuite ?"
 "Montrer ce qui bloque la progression"

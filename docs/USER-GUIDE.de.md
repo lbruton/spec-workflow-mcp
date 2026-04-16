@@ -31,6 +31,7 @@ Bitten Sie Ihren AI-Assistenten, eine Spec zu erstellen:
 ```
 
 Die AI wird automatisch:
+
 1. Ein Anforderungsdokument erstellen
 2. Den technischen Ansatz entwerfen
 3. Die Implementierung in Aufgaben aufteilen
@@ -64,6 +65,7 @@ Verwenden Sie Ihre bestehenden PRD- oder Design-Dokumente:
 ```
 
 Gibt zurück:
+
 - Spec-Namen
 - Aktueller Status
 - Fortschrittsprozentsatz
@@ -76,6 +78,7 @@ Gibt zurück:
 ```
 
 Bietet:
+
 - Freigabestatus der Anforderungen
 - Freigabestatus des Designs
 - Aufgabenerledigungsfortschritt
@@ -84,6 +87,7 @@ Bietet:
 ### Spec-Dokumente anzeigen
 
 Verwenden Sie das Dashboard oder die VSCode Extension, um:
+
 - Anforderungsdokumente zu lesen
 - Design-Dokumente zu überprüfen
 - Aufgabenlisten zu durchsuchen
@@ -94,6 +98,7 @@ Verwenden Sie das Dashboard oder die VSCode Extension, um:
 ### Aufgabenstruktur
 
 Aufgaben sind hierarchisch organisiert:
+
 - **1.0** - Hauptabschnitte
   - **1.1** - Unteraufgaben
   - **1.2** - Unteraufgaben
@@ -102,11 +107,13 @@ Aufgaben sind hierarchisch organisiert:
 ### Aufgaben implementieren
 
 #### Methode 1: Direkte Implementierung
+
 ```
 "Implementiere Aufgabe 1.2 aus der user-auth Spec"
 ```
 
 #### Methode 2: Aus Dashboard kopieren
+
 1. Dashboard öffnen
 2. Zu Ihrer Spec navigieren
 3. "Aufgaben"-Tab klicken
@@ -114,6 +121,7 @@ Aufgaben sind hierarchisch organisiert:
 5. In Ihr AI-Gespräch einfügen
 
 #### Methode 3: Batch-Implementierung
+
 ```
 "Implementiere alle Datenbank-Setup-Aufgaben aus user-auth Spec"
 ```
@@ -121,6 +129,7 @@ Aufgaben sind hierarchisch organisiert:
 ### Aufgabenstatus
 
 Aufgaben haben drei Zustände:
+
 - ⏳ **Ausstehend** - Nicht begonnen
 - 🔄 **In Bearbeitung** - Wird derzeit bearbeitet
 - ✅ **Abgeschlossen** - Fertig
@@ -158,6 +167,7 @@ Wenn Dokumente zur Überprüfung bereit sind:
 ```
 
 Erstellt:
+
 - Bug-Beschreibung
 - Reproduktionsschritte
 - Erwartetes vs. tatsächliches Verhalten
@@ -170,6 +180,7 @@ Erstellt:
 ```
 
 Generiert:
+
 - Ursachenanalyse
 - Fix-Implementierungsplan
 - Testanforderungen
@@ -180,6 +191,7 @@ Generiert:
 ### Templates verwenden
 
 Spec Workflow enthält Templates für:
+
 - Anforderungsdokumente
 - Design-Dokumente
 - Aufgabenlisten
@@ -194,12 +206,15 @@ Erstellen Sie Ihre eigenen Templates in `.specflow/templates/`:
 # Benutzerdefiniertes Feature-Template
 
 ## Überblick
+
 [Feature-Beschreibung]
 
 ## User Stories
+
 [User Stories]
 
 ## Technische Anforderungen
+
 [Technische Details]
 ```
 
@@ -214,6 +229,7 @@ Hochrangige Projektleitlinien erstellen:
 ```
 
 Generiert:
+
 - **Product Steering** - Vision und Ziele
 - **Technical Steering** - Architekturentscheidungen
 - **Structure Steering** - Projektorganisation
@@ -221,6 +237,7 @@ Generiert:
 ### Archivsystem
 
 Erledigte Specs verwalten:
+
 - Fertige Specs ins Archiv verschieben
 - Aktiven Workspace sauber halten
 - Jederzeit auf archivierte Specs zugreifen
@@ -239,6 +256,7 @@ Oberflächensprache ändern:
 ### 1. Mit Steering-Dokumenten beginnen
 
 Vor dem Erstellen von Specs:
+
 ```
 "Erstelle Steering-Dokumente zur Projektleitung"
 ```
@@ -246,6 +264,7 @@ Vor dem Erstellen von Specs:
 ### 2. In Anforderungen spezifisch sein
 
 Gut:
+
 ```
 "Erstelle eine Spec für Benutzerauthentifizierung mit:
 - E-Mail/Passwort-Login
@@ -255,6 +274,7 @@ Gut:
 ```
 
 Nicht ideal:
+
 ```
 "Erstelle eine Login-Spec"
 ```
@@ -262,6 +282,7 @@ Nicht ideal:
 ### 3. Vor Implementierung überprüfen
 
 Immer überprüfen und genehmigen:
+
 1. Anforderungsdokument
 2. Design-Dokument
 3. Aufgabenaufschlüsselung
@@ -275,6 +296,7 @@ Immer überprüfen und genehmigen:
 ### 5. Dashboard verwenden
 
 Das Dashboard bietet:
+
 - Visuelle Fortschrittsverfolgung
 - Einfache Dokumentnavigation
 - Schnelle Freigabeaktionen
@@ -336,6 +358,7 @@ Das Dashboard bietet:
 ### Kontextbewusstsein
 
 Der AI-Assistent automatisch:
+
 - Kennt Ihre Projektstruktur
 - Versteht Spec-Beziehungen
 - Verfolgt Implementierungsfortschritt
@@ -344,6 +367,7 @@ Der AI-Assistent automatisch:
 ### Natürlichsprachliche Befehle
 
 Natürlich sprechen:
+
 - "Welche Specs habe ich?"
 - "Zeige mir, was noch zu tun ist"
 - "Beginne mit der nächsten Aufgabe"
@@ -352,6 +376,7 @@ Natürlich sprechen:
 ### Kontinuierlicher Workflow
 
 Die AI hält Kontext zwischen Sitzungen:
+
 - Dort weitermachen, wo Sie aufgehört haben
 - Frühere Entscheidungen referenzieren
 - Auf bestehender Arbeit aufbauen

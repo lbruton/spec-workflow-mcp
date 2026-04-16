@@ -44,11 +44,13 @@ export class SettingsManager {
       // Handle empty or whitespace-only files
       const trimmedContent = content.trim();
       if (!trimmedContent) {
-        console.error(`[SettingsManager] Warning: ${this.settingsPath} is empty, using default settings`);
+        console.error(
+          `[SettingsManager] Warning: ${this.settingsPath} is empty, using default settings`,
+        );
         const defaultSettings = {
           automationJobs: [],
           createdAt: new Date().toISOString(),
-          lastModified: new Date().toISOString()
+          lastModified: new Date().toISOString(),
         };
         // Write default settings to file
         await this.saveSettings(defaultSettings);
@@ -66,14 +68,16 @@ export class SettingsManager {
         const defaultSettings = {
           automationJobs: [],
           createdAt: new Date().toISOString(),
-          lastModified: new Date().toISOString()
+          lastModified: new Date().toISOString(),
         };
         await this.saveSettings(defaultSettings);
         return defaultSettings;
       }
       if (error instanceof SyntaxError) {
         // JSON parsing error - file is corrupted or invalid
-        console.error(`[SettingsManager] Error: Failed to parse ${this.settingsPath}: ${error.message}`);
+        console.error(
+          `[SettingsManager] Error: Failed to parse ${this.settingsPath}: ${error.message}`,
+        );
         console.error(`[SettingsManager] The file may be corrupted. Using default settings.`);
         // Back up the corrupted file
         try {
@@ -86,7 +90,7 @@ export class SettingsManager {
         const defaultSettings = {
           automationJobs: [],
           createdAt: new Date().toISOString(),
-          lastModified: new Date().toISOString()
+          lastModified: new Date().toISOString(),
         };
         // Write default settings to file
         await this.saveSettings(defaultSettings);
@@ -121,7 +125,7 @@ export class SettingsManager {
    */
   async getJob(jobId: string): Promise<AutomationJob | null> {
     const settings = await this.loadSettings();
-    return settings.automationJobs.find(job => job.id === jobId) || null;
+    return settings.automationJobs.find((job) => job.id === jobId) || null;
   }
 
   /**
@@ -139,7 +143,7 @@ export class SettingsManager {
     const settings = await this.loadSettings();
 
     // Check for duplicate ID
-    if (settings.automationJobs.some(j => j.id === job.id)) {
+    if (settings.automationJobs.some((j) => j.id === job.id)) {
       throw new Error(`Job with ID ${job.id} already exists`);
     }
 
@@ -152,7 +156,7 @@ export class SettingsManager {
    */
   async updateJob(jobId: string, updates: Partial<AutomationJob>): Promise<void> {
     const settings = await this.loadSettings();
-    const jobIndex = settings.automationJobs.findIndex(j => j.id === jobId);
+    const jobIndex = settings.automationJobs.findIndex((j) => j.id === jobId);
 
     if (jobIndex === -1) {
       throw new Error(`Job with ID ${jobId} not found`);
@@ -163,7 +167,7 @@ export class SettingsManager {
       ...settings.automationJobs[jobIndex],
       ...updates,
       id: settings.automationJobs[jobIndex].id,
-      type: settings.automationJobs[jobIndex].type
+      type: settings.automationJobs[jobIndex].type,
     };
 
     await this.saveSettings(settings);
@@ -176,7 +180,7 @@ export class SettingsManager {
     const settings = await this.loadSettings();
     const originalLength = settings.automationJobs.length;
 
-    settings.automationJobs = settings.automationJobs.filter(j => j.id !== jobId);
+    settings.automationJobs = settings.automationJobs.filter((j) => j.id !== jobId);
 
     if (settings.automationJobs.length === originalLength) {
       throw new Error(`Job with ID ${jobId} not found`);

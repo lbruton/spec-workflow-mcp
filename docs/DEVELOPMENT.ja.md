@@ -33,6 +33,7 @@ npm install
 ```
 
 これにより以下がインストールされます：
+
 - MCP SDK
 - TypeScriptとビルドツール
 - ダッシュボードサーバー用Express
@@ -51,15 +52,15 @@ npm run build
 
 ### コアコマンド
 
-| コマンド | 説明 |
-|---------|-------------|
-| `npm run dev` | 自動リロード付きで開発モードで起動 |
-| `npm run build` | 本番バンドルをビルド |
-| `npm start` | 本番サーバーを実行 |
-| `npm test` | テストスイートを実行 |
-| `npm run clean` | ビルド成果物を削除 |
-| `npm run lint` | コードリンターを実行 |
-| `npm run format` | Prettierでコードをフォーマット |
+| コマンド         | 説明                               |
+| ---------------- | ---------------------------------- |
+| `npm run dev`    | 自動リロード付きで開発モードで起動 |
+| `npm run build`  | 本番バンドルをビルド               |
+| `npm start`      | 本番サーバーを実行                 |
+| `npm test`       | テストスイートを実行               |
+| `npm run clean`  | ビルド成果物を削除                 |
+| `npm run lint`   | コードリンターを実行               |
+| `npm run format` | Prettierでコードをフォーマット     |
 
 ### 開発モード
 
@@ -68,6 +69,7 @@ npm run dev
 ```
 
 機能：
+
 - ファイル変更時の自動再コンパイル
 - ダッシュボードのホットリロード
 - 詳細なエラーメッセージ
@@ -80,6 +82,7 @@ npm run clean && npm run build
 ```
 
 最適化：
+
 - 最小化されたJavaScript
 - 最適化されたバンドルサイズ
 - 本番エラーハンドリング
@@ -122,26 +125,32 @@ spec-workflow-mcp/
 ### 主要コンポーネント
 
 #### 1. MCPサーバー（`src/index.ts`）
+
 - MCPプロトコル通信を処理
 - ツールリクエストを処理
 - プロジェクト状態を管理
 - ファイルシステム操作
 
 #### 2. ダッシュボードサーバー（`src/server.ts`）
+
 - Webダッシュボードを提供
 - WebSocket接続
 - リアルタイム更新
 - HTTP APIエンドポイント
 
 #### 3. ツール（`src/tools/`）
+
 各ツールは個別のモジュールです：
+
 - 入力検証
 - ビジネスロジック
 - ファイル操作
 - レスポンスのフォーマット
 
 #### 4. プロンプト（`src/prompts/`）
+
 以下のためのテンプレート文字列：
+
 - ドキュメント生成
 - ワークフローガイダンス
 - エラーメッセージ
@@ -164,9 +173,9 @@ export const myNewTool: Tool = {
     type: 'object',
     properties: {
       param1: { type: 'string', description: 'パラメータの説明' },
-      param2: { type: 'number', optional: true }
+      param2: { type: 'number', optional: true },
     },
-    required: ['param1']
+    required: ['param1'],
   },
   handler: async (params) => {
     // ツールの実装
@@ -176,9 +185,9 @@ export const myNewTool: Tool = {
 
     return {
       success: true,
-      data: 'ツールのレスポンス'
+      data: 'ツールのレスポンス',
     };
-  }
+  },
 };
 ```
 
@@ -212,10 +221,14 @@ server.registerTool(myNewTool);
 ```javascript
 document.getElementById('new-action').addEventListener('click', () => {
   // 機能ロジック
-  ws.send(JSON.stringify({
-    type: 'new-action',
-    data: { /* ... */ }
-  }));
+  ws.send(
+    JSON.stringify({
+      type: 'new-action',
+      data: {
+        /* ... */
+      },
+    }),
+  );
 });
 ```
 
@@ -260,7 +273,7 @@ import { myTool } from './my-tool';
 describe('myTool', () => {
   it('入力を正しく処理する', async () => {
     const result = await myTool.handler({
-      param1: 'test'
+      param1: 'test',
     });
 
     expect(result.success).toBe(true);
@@ -269,7 +282,7 @@ describe('myTool', () => {
 
   it('エラーを処理する', async () => {
     const result = await myTool.handler({
-      param1: null
+      param1: null,
     });
 
     expect(result.success).toBe(false);
@@ -397,6 +410,7 @@ console.log('状態更新:', newState);
 - `chore:` メンテナンス
 
 例：
+
 ```
 feat: add approval revision workflow
 fix: resolve dashboard WebSocket reconnection issue
@@ -416,11 +430,13 @@ docs: update configuration guide
 ### NPMパッケージ
 
 1. **バージョンを更新**：
+
    ```bash
    npm version patch|minor|major
    ```
 
 2. **パッケージをビルド**：
+
    ```bash
    npm run build
    ```
@@ -435,6 +451,7 @@ docs: update configuration guide
 1. **拡張機能のバージョンを更新**（`vscode-extension/package.json`）
 
 2. **拡張機能をビルド**：
+
    ```bash
    cd vscode-extension
    npm run package
@@ -490,12 +507,12 @@ if (safePath.includes('..')) {
 
 ### 一般的なビルドエラー
 
-| エラー | 解決策 |
-|-------|----------|
-| TypeScriptエラー | `npm run build`を実行して詳細なエラーを確認 |
-| モジュールが見つからない | インポートを確認し、`npm install`を実行 |
-| ポートが既に使用中 | ポートを変更するか既存のプロセスを終了 |
-| WebSocket接続失敗 | サーバーが実行中でポートが正しいか確認 |
+| エラー                   | 解決策                                      |
+| ------------------------ | ------------------------------------------- |
+| TypeScriptエラー         | `npm run build`を実行して詳細なエラーを確認 |
+| モジュールが見つからない | インポートを確認し、`npm install`を実行     |
+| ポートが既に使用中       | ポートを変更するか既存のプロセスを終了      |
+| WebSocket接続失敗        | サーバーが実行中でポートが正しいか確認      |
 
 ### 開発のヒント
 

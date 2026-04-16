@@ -22,19 +22,18 @@ export function DiffViewer({
   showLineNumbers = true,
   highlightSyntax = false,
   onLineComment,
-  className = ''
+  className = '',
 }: DiffViewerProps) {
-
   const processedLines = useMemo(() => {
     const lines: ProcessedLine[] = [];
     let diffLineNumber = 1;
 
-    diff.chunks.forEach(chunk => {
-      chunk.lines.forEach(line => {
+    diff.chunks.forEach((chunk) => {
+      chunk.lines.forEach((line) => {
         lines.push({
           ...line,
           isVisible: true,
-          diffLineNumber: diffLineNumber++
+          diffLineNumber: diffLineNumber++,
         });
       });
     });
@@ -47,7 +46,11 @@ export function DiffViewer({
 
     if (highlightSyntax) {
       // TODO: Add syntax highlighting for markdown if needed
-      return <pre className="whitespace-pre-wrap font-mono text-sm text-[var(--text-primary)]">{content}</pre>;
+      return (
+        <pre className="whitespace-pre-wrap font-mono text-sm text-[var(--text-primary)]">
+          {content}
+        </pre>
+      );
     }
 
     return (
@@ -64,7 +67,7 @@ export function DiffViewer({
   );
 
   const getLineClassName = (line: ProcessedLine, isLeft = false) => {
-    const baseClass = "flex min-h-[1.5rem] hover:bg-[var(--surface-hover)]";
+    const baseClass = 'flex min-h-[1.5rem] hover:bg-[var(--surface-hover)]';
 
     switch (line.type) {
       case 'add':
@@ -78,9 +81,12 @@ export function DiffViewer({
 
   const getLineSymbol = (type: DiffLine['type']) => {
     switch (type) {
-      case 'add': return '+';
-      case 'delete': return '-';
-      default: return ' ';
+      case 'add':
+        return '+';
+      case 'delete':
+        return '-';
+      default:
+        return ' ';
     }
   };
 
@@ -95,11 +101,19 @@ export function DiffViewer({
     const newContent = line.type === 'add' ? line.content : '';
 
     if (line.type === 'add') {
-      return <span className="bg-[var(--status-success-muted)] text-[var(--status-success)]">{line.content}</span>;
+      return (
+        <span className="bg-[var(--status-success-muted)] text-[var(--status-success)]">
+          {line.content}
+        </span>
+      );
     }
 
     if (line.type === 'delete') {
-      return <span className="bg-[var(--status-error-muted)] text-[var(--status-error)] line-through">{line.content}</span>;
+      return (
+        <span className="bg-[var(--status-error-muted)] text-[var(--status-error)] line-through">
+          {line.content}
+        </span>
+      );
     }
 
     return <span>{line.content}</span>;
@@ -112,14 +126,20 @@ export function DiffViewer({
       if (line.type !== 'normal') return true;
 
       // Check if within context of any change
-      for (let i = Math.max(0, index - contextLines); i <= Math.min(processedLines.length - 1, index + contextLines); i++) {
+      for (
+        let i = Math.max(0, index - contextLines);
+        i <= Math.min(processedLines.length - 1, index + contextLines);
+        i++
+      ) {
         if (processedLines[i].type !== 'normal') return true;
       }
       return false;
     });
 
     return (
-      <div className={`border border-[var(--border-default)] rounded-lg overflow-hidden ${className}`}>
+      <div
+        className={`border border-[var(--border-default)] rounded-lg overflow-hidden ${className}`}
+      >
         <div className="bg-[var(--surface-inset)] px-3 py-2 border-b border-[var(--border-default)]">
           <div className="text-sm text-[var(--text-muted)] font-mono tabular-nums">
             <span className="text-[var(--status-success)]">+{diff.additions}</span>
@@ -138,7 +158,10 @@ export function DiffViewer({
 
         <div className="divide-y divide-[var(--border-subtle)]">
           {visibleLines.map((line, index) => (
-            <div key={index} className={`flex min-h-[1.5rem] ${line.type === 'normal' ? 'bg-[var(--surface-panel)]' : line.type === 'add' ? 'bg-[var(--status-success-muted)]' : 'bg-[var(--status-error-muted)]'}`}>
+            <div
+              key={index}
+              className={`flex min-h-[1.5rem] ${line.type === 'normal' ? 'bg-[var(--surface-panel)]' : line.type === 'add' ? 'bg-[var(--status-success-muted)]' : 'bg-[var(--status-error-muted)]'}`}
+            >
               {showLineNumbers && renderLineNumber(line.newLineNumber || line.oldLineNumber)}
               <div className="flex-1 px-3 py-1 min-w-0">
                 <pre className="whitespace-pre-wrap font-mono text-sm break-words overflow-x-auto">
@@ -154,7 +177,9 @@ export function DiffViewer({
 
   if (viewMode === 'unified') {
     return (
-      <div className={`border border-[var(--border-default)] rounded-lg overflow-hidden ${className}`}>
+      <div
+        className={`border border-[var(--border-default)] rounded-lg overflow-hidden ${className}`}
+      >
         <div className="bg-[var(--surface-inset)] px-3 py-2 border-b border-[var(--border-default)]">
           <div className="text-sm text-[var(--text-muted)] font-mono tabular-nums">
             <span className="text-[var(--status-success)]">+{diff.additions}</span>
@@ -181,17 +206,25 @@ export function DiffViewer({
               <div className="w-6 px-2 py-1 text-xs text-[var(--text-faint)] font-mono text-center bg-[var(--surface-inset)] border-r border-[var(--border-default)] select-none flex-shrink-0">
                 {getLineSymbol(line.type)}
               </div>
-              <div className="flex-1 px-3 py-1 min-w-0">
-                {renderLineContent(line)}
-              </div>
+              <div className="flex-1 px-3 py-1 min-w-0">{renderLineContent(line)}</div>
               {onLineComment && (
                 <button
-                  onClick={() => onLineComment(line.newLineNumber || line.oldLineNumber || 0, line.type === 'delete' ? 'old' : 'new')}
+                  onClick={() =>
+                    onLineComment(
+                      line.newLineNumber || line.oldLineNumber || 0,
+                      line.type === 'delete' ? 'old' : 'new',
+                    )
+                  }
                   className="w-8 h-6 mx-2 my-1 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:opacity-100 text-[var(--text-faint)] hover:text-[var(--accent-primary)] transition-opacity"
                   title="Add comment"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                    />
                   </svg>
                 </button>
               )}
@@ -203,11 +236,13 @@ export function DiffViewer({
   }
 
   // Split view
-  const leftLines = processedLines.filter(line => line.type !== 'add');
-  const rightLines = processedLines.filter(line => line.type !== 'delete');
+  const leftLines = processedLines.filter((line) => line.type !== 'add');
+  const rightLines = processedLines.filter((line) => line.type !== 'delete');
 
   return (
-    <div className={`border border-[var(--border-default)] rounded-lg overflow-hidden ${className}`}>
+    <div
+      className={`border border-[var(--border-default)] rounded-lg overflow-hidden ${className}`}
+    >
       <div className="bg-[var(--surface-inset)] px-3 py-2 border-b border-[var(--border-default)]">
         <div className="text-sm text-[var(--text-muted)] font-mono tabular-nums">
           <span className="text-[var(--status-success)]">+{diff.additions}</span>
@@ -232,9 +267,7 @@ export function DiffViewer({
             {leftLines.map((line, index) => (
               <div key={index} className={getLineClassName(line, true)}>
                 {showLineNumbers && renderLineNumber(line.oldLineNumber)}
-                <div className="flex-1 px-3 py-1 min-w-0">
-                  {renderLineContent(line)}
-                </div>
+                <div className="flex-1 px-3 py-1 min-w-0">{renderLineContent(line)}</div>
                 {onLineComment && line.type === 'delete' && (
                   <button
                     onClick={() => onLineComment(line.oldLineNumber || 0, 'old')}
@@ -242,7 +275,12 @@ export function DiffViewer({
                     title="Add comment"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                      />
                     </svg>
                   </button>
                 )}
@@ -260,9 +298,7 @@ export function DiffViewer({
             {rightLines.map((line, index) => (
               <div key={index} className={getLineClassName(line)}>
                 {showLineNumbers && renderLineNumber(line.newLineNumber)}
-                <div className="flex-1 px-3 py-1 min-w-0">
-                  {renderLineContent(line)}
-                </div>
+                <div className="flex-1 px-3 py-1 min-w-0">{renderLineContent(line)}</div>
                 {onLineComment && line.type === 'add' && (
                   <button
                     onClick={() => onLineComment(line.newLineNumber || 0, 'new')}
@@ -270,7 +306,12 @@ export function DiffViewer({
                     title="Add comment"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                      />
                     </svg>
                   </button>
                 )}

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 vi.mock('../core/git-utils.js', () => ({
   resolveGitWorkspaceRoot: vi.fn((path: string) => `/workspace${path}`),
-  resolveGitRoot: vi.fn((path: string) => `/shared${path}`)
+  resolveGitRoot: vi.fn((path: string) => `/shared${path}`),
 }));
 
 import { parseArguments } from '../index.js';

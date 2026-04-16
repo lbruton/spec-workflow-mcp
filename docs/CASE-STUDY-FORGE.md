@@ -17,6 +17,7 @@ This build session serves as an end-to-end validation of the spec-workflow syste
 The session began with `/chat` -- freeform conversation with no commitment. The user described the problem: their team uses Cisco DNAC solely for its CLI template simulation feature, pasting configs and using `$variable` substitution to generate device-specific output. They wanted a purpose-built tool that did exactly this, without the overhead of a full DNAC deployment.
 
 Key decisions made during chat:
+
 - **React + Vite + Tailwind** over vanilla JS (component model maps well to the UI)
 - **Zustand** for state management (lightweight, built-in localStorage middleware)
 - **Web Crypto API** for encryption (browser-native, zero dependencies)
@@ -27,6 +28,7 @@ Key decisions made during chat:
 ### Project Scaffolding (~15 min)
 
 Once the concept solidified, the infrastructure was established:
+
 - GitHub repository created
 - `CLAUDE.md` authored with project context and steering docs
 - DocVault project pages created
@@ -50,10 +52,12 @@ The first issue (FORGE-1) was created with detailed acceptance criteria covering
 Implementation used the parallel subagent dispatch pattern, with tasks grouped by file independence:
 
 **Batch 1 -- Scaffolding + Mockup (2 agents)**
+
 - Task 1: Vite + React + Tailwind + TypeScript project scaffolding, type definitions
 - Task 0.1: Visual mockup via `frontend-design` skill
 
 **Batch 2 -- Engines + Prototype (5 agents, after scaffolding complete)**
+
 - Task 2: Storage service + Zustand store with localStorage persistence
 - Task 3: Template parser engine (variable detection, section splitting, type inference)
 - Task 4: Substitution engine + syntax highlighter (CLI, XML, JSON, YAML)
@@ -64,6 +68,7 @@ Implementation used the parallel subagent dispatch pattern, with tasks grouped b
 After Batch 2, the interactive prototype was presented for visual approval. The user reviewed the playground HTML file covering sidebar navigation, config preview, variable forms, section tabs, and the terminal-style output area. Approval was granted before any UI component code was written.
 
 **Batch 3 -- UI Components (6 agents, after prototype gate approval)**
+
 - Task 6: App shell + sidebar navigation (tree view, CRUD modals)
 - Task 7: Template editor + paste flow (auto-detect variables and sections)
 - Task 8: Config generator + preview (variable form, live substitution, section tabs, copy)
@@ -72,6 +77,7 @@ After Batch 2, the interactive prototype was presented for visual approval. The 
 - Task 11: Welcome screen + seed template ("The forge is cold. Add a template to light it.")
 
 **Integration (2 agents, after UI batch complete)**
+
 - Task 12: Docker container (multi-stage build, nginx:alpine, SPA routing, security headers)
 - Task 13: Integration testing + polish (end-to-end flow verification, all 11 requirements)
 
@@ -87,6 +93,7 @@ The user tested V1 with real production templates. This surfaced issues that uni
 ### FORGE-2+3 Combined Spec (~10 min)
 
 Two issues created during QA were combined into a single spec:
+
 - **FORGE-2**: Section boundary format improvements (START/END markers, duplicate name handling, editor polish, sidebar sticky button, PWA support)
 - **FORGE-3**: Generated config history (save outputs with metadata, audit trail, sidebar sub-folders)
 
@@ -95,16 +102,19 @@ The spec cycle was fast because the issues were already detailed with acceptance
 ### FORGE-2+3 Implementation: 7 Tasks in 2 Parallel Batches (~25 min)
 
 **Group A (3 agents)**
+
 - Task 1: Parser enhancements (START/END markers, duplicate naming, `cleanUpSections()`)
 - Task 2: Types + store extensions (GeneratedConfig data model, CRUD actions, vault integration)
 - Task 6: PWA support (favicon, web manifest, theme color)
 
 **Group B (3 agents, after Group A types landed)**
+
 - Task 3: Template editor polish (panel reorder, guidance text, Clean Up button, variable highlighting)
 - Task 4: Sidebar enhancements (Templates/Generated sub-folders, sticky Add View button)
 - Task 5: Generated config save modal + viewer (SaveGeneratedModal, GeneratedConfigViewer)
 
 **Integration (1 agent)**
+
 - Task 7: Build verification, test suite, end-to-end validation
 
 ### Bug Fixes (~20 min)
@@ -158,6 +168,7 @@ Each phase produced a formal document in `.specflow/specs/`:
 ### Dashboard Approvals
 
 Every phase transition required explicit approval through the spec-workflow dashboard:
+
 - Requirements approved before design could begin
 - Design approved before tasks could be written
 - Tasks approved before implementation could start
@@ -168,6 +179,7 @@ This created 8 total approval gates across both specs (4 per spec).
 ### Prototype Gate (Phase 3.5)
 
 A critical innovation: before any UI component code was written, the prototype gate required:
+
 1. A visual mockup
 2. An interactive playground (single-file HTML demonstrating all interactions)
 3. Explicit user approval of the visual design
@@ -177,6 +189,7 @@ This caught branding inconsistencies and layout issues before six parallel agent
 ### Readiness Gate (Phase 3.9)
 
 A cross-validation step before implementation dispatch:
+
 - Every requirement traced to at least one task
 - File Touch Map showed no conflicts between parallel tasks
 - Prototype gate was confirmed complete
@@ -185,6 +198,7 @@ A cross-validation step before implementation dispatch:
 ### Subagent Dispatch
 
 Implementation used the parallel subagent dispatch pattern:
+
 1. Analyze File Touch Map for independence
 2. Group tasks into batches with zero file overlap
 3. Dispatch each batch simultaneously
@@ -306,20 +320,20 @@ Browser-native cryptography eliminates a dependency and its associated supply-ch
 
 ## 7. Metrics
 
-| Metric | Value |
-|--------|-------|
-| Total implementation tasks | 23 (16 V1 + 7 V1.1) |
-| Total tests | 52 (all passing) |
-| Total lines of code | ~15,000 |
-| JS bundle size | 285 KB (gzip: 84 KB) |
-| CSS bundle size | 33 KB (gzip: 7 KB) |
-| Docker image size | 92 MB (nginx:alpine) |
-| Subagent dispatches | ~30 across both specs |
-| Dashboard approvals | 8 (requirements, design, tasks, readiness x 2 specs) |
-| Bug fixes during QA | 5 |
-| Issues created | 5 (FORGE-1 through FORGE-5) |
-| Time from empty repo to deployed | ~3 hours |
-| Formal requirements written | 17 (11 V1 + 6 V1.1) |
+| Metric                           | Value                                                |
+| -------------------------------- | ---------------------------------------------------- |
+| Total implementation tasks       | 23 (16 V1 + 7 V1.1)                                  |
+| Total tests                      | 52 (all passing)                                     |
+| Total lines of code              | ~15,000                                              |
+| JS bundle size                   | 285 KB (gzip: 84 KB)                                 |
+| CSS bundle size                  | 33 KB (gzip: 7 KB)                                   |
+| Docker image size                | 92 MB (nginx:alpine)                                 |
+| Subagent dispatches              | ~30 across both specs                                |
+| Dashboard approvals              | 8 (requirements, design, tasks, readiness x 2 specs) |
+| Bug fixes during QA              | 5                                                    |
+| Issues created                   | 5 (FORGE-1 through FORGE-5)                          |
+| Time from empty repo to deployed | ~3 hours                                             |
+| Formal requirements written      | 17 (11 V1 + 6 V1.1)                                  |
 
 ---
 

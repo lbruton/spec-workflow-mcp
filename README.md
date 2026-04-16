@@ -26,23 +26,23 @@ Built on [Pimzino/spec-workflow-mcp](https://github.com/Pimzino/spec-workflow-mc
 
 ## Four Systems, One Workflow
 
-| System | What It Does |
-|--------|-------------|
-| **SpecFlow** (MCP Server) | Spec-driven lifecycle: Requirements → Design → Tasks → Implementation with dashboard approvals at every gate. 6 tools, 10 prompts. |
-| **DocVault** (Obsidian Vault) | Cross-project knowledge base. One vault serves 8+ repos -- architecture, infrastructure, decisions, issues. Graph visualization + wikilinks. |
-| **Claude Context** (Milvus) | Semantic code search via self-hosted vector database. Search by meaning, not keywords. Forked from [zilliztech/claude-context](https://github.com/zilliztech/claude-context), hardened with timeouts and pinned versions. Requires a running Milvus instance (Docker or otherwise). |
-| **Skill System** (60+ Skills) | CLAUDE.md stays tiny -- a routing table to skills. Each skill encodes a full workflow: debugging, deployment, PR resolution, infrastructure management. |
+| System                        | What It Does                                                                                                                                                                                                                                                                        |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **SpecFlow** (MCP Server)     | Spec-driven lifecycle: Requirements → Design → Tasks → Implementation with dashboard approvals at every gate. 6 tools, 10 prompts.                                                                                                                                                  |
+| **DocVault** (Obsidian Vault) | Cross-project knowledge base. One vault serves 8+ repos -- architecture, infrastructure, decisions, issues. Graph visualization + wikilinks.                                                                                                                                        |
+| **Claude Context** (Milvus)   | Semantic code search via self-hosted vector database. Search by meaning, not keywords. Forked from [zilliztech/claude-context](https://github.com/zilliztech/claude-context), hardened with timeouts and pinned versions. Requires a running Milvus instance (Docker or otherwise). |
+| **Skill System** (60+ Skills) | CLAUDE.md stays tiny -- a routing table to skills. Each skill encodes a full workflow: debugging, deployment, PR resolution, infrastructure management.                                                                                                                             |
 
 ## Four-Tier Memory Architecture
 
 Not everything belongs in one file. Each tier has a purpose and a source of truth ranking.
 
-| Tier | System | Role |
-|------|--------|------|
-| **1** | DocVault | Ground truth. Human-curated Obsidian vault. Wins all conflicts. |
+| Tier  | System      | Role                                                                                                                                                         |
+| ----- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **1** | DocVault    | Ground truth. Human-curated Obsidian vault. Wins all conflicts.                                                                                              |
 | **2** | session-rag | Verbatim session history. Indexes JSONL transcripts into Milvus Lite, semantic search with date filtering. Primary context source for `/start` and `/prime`. |
-| **3** | mem0 | Curated episodic memory. Retro learnings, cross-session decisions, handoffs. Cloud API. |
-| **4** | File Memory | Session context. Project-scoped markdown at `~/.claude/projects/*/memory/`. |
+| **3** | mem0        | Curated episodic memory. Retro learnings, cross-session decisions, handoffs. Cloud API.                                                                      |
+| **4** | File Memory | Session context. Project-scoped markdown at `~/.claude/projects/*/memory/`.                                                                                  |
 
 ## Continuous Learning Loop
 
@@ -97,38 +97,38 @@ Tasks with zero file overlap execute concurrently in batches.
 
 Agents shouldn't grep blindly through your codebase. Four search tiers, cheapest first:
 
-| Tier | Engine | Query Style |
-|------|--------|-------------|
-| 1 | Code Graph Context (Neo4j) | Structural: "what calls this function?" |
-| 2 | Claude Context (Milvus) | Semantic: "find code related to payment processing" |
-| 3 | Grep / Glob | Literal: exact strings, filenames, identifiers |
-| 4 | Code Oracle Agent | Deep analysis: combines all sources + AI reasoning |
+| Tier | Engine                     | Query Style                                         |
+| ---- | -------------------------- | --------------------------------------------------- |
+| 1    | Code Graph Context (Neo4j) | Structural: "what calls this function?"             |
+| 2    | Claude Context (Milvus)    | Semantic: "find code related to payment processing" |
+| 3    | Grep / Glob                | Literal: exact strings, filenames, identifiers      |
+| 4    | Code Oracle Agent          | Deep analysis: combines all sources + AI reasoning  |
 
 Claude Context is a [hardened fork](https://github.com/lbruton/claude-context) of Zilliz's [zilliztech/claude-context](https://github.com/zilliztech/claude-context) -- self-hosted Milvus, 30s timeouts, pinned npm versions. No collection limits, full data sovereignty. Embedding generation requires a cloud API (OpenAI or compatible) or a local model via Ollama. Requires a running Milvus instance alongside (Docker recommended).
 
 ## Comparison
 
-| Dimension | SpecKit | BMAD | GSD | Taskmaster | mex | Pimzino | **SpecFlow** |
-|-----------|---------|------|-----|------------|-----|---------|------------|
-| Approval gates | None | Advisory | UAT | None | None | Dashboard | **Dashboard + skills** |
-| Memory | constitution.md | Git docs | STATE.md | tasks.json | Scaffold | Steering docs | **3-tier** |
-| Session learning | None | None | None | None | GROW loop | None | **/prime → /wrap** |
-| Code search | None | None | None | None | None | None | **Semantic + structural** |
-| Multi-project | Per-repo | Per-repo | Per-repo | Per-repo | Per-repo | Per-repo | **One vault, all repos** |
-| Infrastructure | Code only | Code only | Code only | Code only | Code only | Code only | **Docker, DNS, VMs** |
-| Drift detection | None | None | None | None | 8 checkers | None | /vault-update gate |
-| Self-hosted | Files | Files | Files | Files | Files | Node.js | **Milvus, Neo4j + cloud optional** |
-| Best for | Quick adoption | Enterprise teams | Solo context eng. | PRD pipelines | Per-repo memory | Structured workflow | **Multi-project governance** |
+| Dimension        | SpecKit         | BMAD             | GSD               | Taskmaster    | mex             | Pimzino             | **SpecFlow**                       |
+| ---------------- | --------------- | ---------------- | ----------------- | ------------- | --------------- | ------------------- | ---------------------------------- |
+| Approval gates   | None            | Advisory         | UAT               | None          | None            | Dashboard           | **Dashboard + skills**             |
+| Memory           | constitution.md | Git docs         | STATE.md          | tasks.json    | Scaffold        | Steering docs       | **3-tier**                         |
+| Session learning | None            | None             | None              | None          | GROW loop       | None                | **/prime → /wrap**                 |
+| Code search      | None            | None             | None              | None          | None            | None                | **Semantic + structural**          |
+| Multi-project    | Per-repo        | Per-repo         | Per-repo          | Per-repo      | Per-repo        | Per-repo            | **One vault, all repos**           |
+| Infrastructure   | Code only       | Code only        | Code only         | Code only     | Code only       | Code only           | **Docker, DNS, VMs**               |
+| Drift detection  | None            | None             | None              | None          | 8 checkers      | None                | /vault-update gate                 |
+| Self-hosted      | Files           | Files            | Files             | Files         | Files           | Node.js             | **Milvus, Neo4j + cloud optional** |
+| Best for         | Quick adoption  | Enterprise teams | Solo context eng. | PRD pipelines | Per-repo memory | Structured workflow | **Multi-project governance**       |
 
 ## Multi-Agent Support
 
 SpecFlow works as an MCP server, which means any agent that speaks the MCP protocol can use it. Verified with all three major coding agents:
 
-| Agent | MCP Loading | Spec Lifecycle | Skills |
-|-------|------------|----------------|--------|
-| **Claude Code** | MCP via npm, plugin via git clone | Full | 60+ skills via SKILL.md |
-| **Gemini CLI** | Manual MCP config | Full | Via GEMINI.md instructions |
-| **Codex CLI** | Manual MCP config | Full | Via CODEX.md instructions |
+| Agent           | MCP Loading                       | Spec Lifecycle | Skills                     |
+| --------------- | --------------------------------- | -------------- | -------------------------- |
+| **Claude Code** | MCP via npm, plugin via git clone | Full           | 60+ skills via SKILL.md    |
+| **Gemini CLI**  | Manual MCP config                 | Full           | Via GEMINI.md instructions |
+| **Codex CLI**   | Manual MCP config                 | Full           | Via CODEX.md instructions  |
 
 All three agents share the same MCP tools, DocVault knowledge base, and spec workflow. Agent-specific instruction files (CLAUDE.md, GEMINI.md, CODEX.md) tailor behavior to each agent's capabilities.
 
@@ -181,12 +181,12 @@ cp -r ~/specflow-source/agents/* ~/.claude/agents/
 
 Or, if you prefer not to clone the repo, [download the latest ZIP](https://github.com/lbruton/specflow/archive/refs/heads/main.zip), unpack it, and copy the `skills/`, `commands/`, and `agents/` directories into your `~/.claude/` directory.
 
-
 After restarting Claude Code, the shipped skills (`/prime`, `/wrap`, `/audit`, `/spec`, `/chat`, `/discover`, `/codacy-resolve`, `/retro`, `/publish-templates`, `/migrate-skill`), their slash commands, and the background subagents they dispatch (`prime-status`, `session-digest`, `code-oracle`, `session-oracle`) will all be available.
 
 > **Path convention:** The shipped skills and agents assume **DocVault sits as a sibling directory next to the project** (i.e. they reference `../DocVault/...` from the project root). If your vault lives elsewhere, set `docvault` in `.claude/project.json` to override.
 
 > **Architecture:** The two install steps are independent and serve different purposes:
+>
 > - **The npm package** (`@lbruton/specflow`) ships the MCP server, dashboard, and bundled spec templates. It is the engine.
 > - **The GitHub repo** (`specflow/skills/`, `specflow/commands/`, and `specflow/agents/`) ships the markdown skills, slash commands, and background subagent definitions that Claude reads directly. They are the user-facing workflows.
 >
@@ -256,28 +256,28 @@ npx @lbruton/specflow@latest --dashboard --port 5051
 
 ## MCP Tools
 
-| Tool | Description |
-|------|-------------|
-| `spec-status` | Get detailed status of a spec |
-| `spec-list` | List all specs across projects |
-| `approvals` | Manage phase approval workflow |
-| `log-implementation` | Record implementation artifacts |
-| `spec-workflow-guide` | Get workflow guidance |
-| `steering-guide` | Access project steering documents |
+| Tool                  | Description                       |
+| --------------------- | --------------------------------- |
+| `spec-status`         | Get detailed status of a spec     |
+| `spec-list`           | List all specs across projects    |
+| `approvals`           | Manage phase approval workflow    |
+| `log-implementation`  | Record implementation artifacts   |
+| `spec-workflow-guide` | Get workflow guidance             |
+| `steering-guide`      | Access project steering documents |
 
 ## MCP Prompts
 
 Five workflow prompts plus two injection prompts (seven total):
 
-| Prompt | Description |
-|--------|-------------|
-| `create-spec` | Create a new spec from requirements |
-| `create-steering-doc` | Create project steering documentation |
-| `implement-task` | Generate implementation plan for a task |
-| `refresh-tasks` | Re-sync task state from spec files |
-| `spec-status` | Phase and completion summary for a spec |
+| Prompt                       | Description                                     |
+| ---------------------------- | ----------------------------------------------- |
+| `create-spec`                | Create a new spec from requirements             |
+| `create-steering-doc`        | Create project steering documentation           |
+| `implement-task`             | Generate implementation plan for a task         |
+| `refresh-tasks`              | Re-sync task state from spec files              |
+| `spec-status`                | Phase and completion summary for a spec         |
 | `inject-spec-workflow-guide` | Inject the spec workflow guide into the session |
-| `inject-steering-guide` | Inject the steering doc guide into the session |
+| `inject-steering-guide`      | Inject the steering doc guide into the session  |
 
 **Note:** `/wrap`, `/prime`, and `/audit` are lifecycle **skills** (shipped as markdown in `skills/`), not MCP prompts. They run in the agent's context without crossing the MCP boundary. See the skills directory for their full definitions.
 
@@ -288,12 +288,12 @@ Five workflow prompts plus two injection prompts (seven total):
 
 The core spec workflow works out of the box with Node.js. Extended features use additional services -- some self-hosted, some cloud-based. Local LLM support exists via Ollama but results vary significantly by model size and hardware (a capable GPU is recommended; smaller models may produce lower-quality output):
 
-| Component | Purpose | Link |
-|-----------|---------|------|
-| [Obsidian](https://obsidian.md) | DocVault knowledge base | [obsidian.md](https://obsidian.md) |
-| [mem0](https://github.com/mem0ai/mem0) | Cross-session episodic memory (cloud API; self-hosted fork planned) | [mem0.ai](https://mem0.ai) |
-| [Milvus](https://milvus.io) | Self-hosted vector DB for Claude Context | [milvus.io](https://milvus.io) |
-| [Claude Code](https://claude.ai/claude-code) | CLI agent that consumes MCP servers | [docs](https://docs.anthropic.com/en/docs/claude-code) |
+| Component                                    | Purpose                                                             | Link                                                   |
+| -------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------ |
+| [Obsidian](https://obsidian.md)              | DocVault knowledge base                                             | [obsidian.md](https://obsidian.md)                     |
+| [mem0](https://github.com/mem0ai/mem0)       | Cross-session episodic memory (cloud API; self-hosted fork planned) | [mem0.ai](https://mem0.ai)                             |
+| [Milvus](https://milvus.io)                  | Self-hosted vector DB for Claude Context                            | [milvus.io](https://milvus.io)                         |
+| [Claude Code](https://claude.ai/claude-code) | CLI agent that consumes MCP servers                                 | [docs](https://docs.anthropic.com/en/docs/claude-code) |
 
 ## Architecture
 
