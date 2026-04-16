@@ -239,7 +239,7 @@ export class ProjectManager extends EventEmitter {
       // Emit project removed event
       this.emit('project-removed', projectId);
     } catch (error) {
-      console.error(`Failed to remove project ${projectId}:`, error);
+      console.error('Failed to remove project %s:', projectId, error);
     }
   }
 

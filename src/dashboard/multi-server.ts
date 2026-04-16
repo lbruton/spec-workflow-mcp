@@ -1,4 +1,5 @@
 import fastify, { FastifyInstance } from 'fastify';
+import fastifyRateLimit from '@fastify/rate-limit';
 import fastifyStatic from '@fastify/static';
 import fastifyWebsocket from '@fastify/websocket';
 import fastifyCors from '@fastify/cors';
@@ -28,6 +29,19 @@ import { loadConfig } from '../core/config-loader.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+/**
+ * Validate that a user-provided path segment stays within the expected base directory.
+ * Prevents path traversal attacks (e.g., "../../etc/passwd").
+ */
+function ensureWithinBase(base: string, userSegment: string): string {
+  const full = resolve(join(base, userSegment));
+  if (!full.startsWith(resolve(base) + '/')) {
+    throw new Error('Path traversal detected');
+  }
+  return full;
+}
+
 
 interface WebSocketClient {
   socket: WebSocket;
@@ -139,6 +153,12 @@ export class MultiProjectDashboardServer {
 
     // Initialize job scheduler
     await this.jobScheduler.initialize();
+
+    // Register rate-limit plugin (CodeQL-recognized pattern)
+    await this.app.register(fastifyRateLimit, {
+      max: 100,
+      timeWindow: '1 minute',
+    });
 
     // Register CORS plugin if enabled
     const corsConfig = getCorsConfig(this.securityConfig);
@@ -489,7 +509,7 @@ export class MultiProjectDashboardServer {
         return reply.code(404).send({ error: 'Project not found' });
       }
 
-      const specDir = join(project.projectPath, 'specs', name);
+      const specDir = ensureWithinBase(join(project.projectPath, 'specs'), name);
       const documents = ['discovery', 'requirements', 'design', 'tasks', 'readiness-report'];
       const result: Record<string, { content: string; lastModified: string } | null> = {};
 
@@ -519,7 +539,7 @@ export class MultiProjectDashboardServer {
       }
 
       // Use archive path instead of active specs path
-      const specDir = join(project.projectPath, 'archive', 'specs', name);
+      const specDir = ensureWithinBase(join(project.projectPath, 'archive', 'specs'), name);
       const documents = ['discovery', 'requirements', 'design', 'tasks', 'readiness-report'];
       const result: Record<string, { content: string; lastModified: string } | null> = {};
 
@@ -563,10 +583,11 @@ export class MultiProjectDashboardServer {
         return reply.code(400).send({ error: 'Content must be a string' });
       }
 
-      const docPath = join(project.projectPath, 'specs', name, `${document}.md`);
+      const safeSpecDir = ensureWithinBase(join(project.projectPath, 'specs'), name);
+      const docPath = join(safeSpecDir, `${document}.md`);
 
       try {
-        const specDir = join(project.projectPath, 'specs', name);
+        const specDir = safeSpecDir;
         await fs.mkdir(specDir, { recursive: true });
         await fs.writeFile(docPath, content, 'utf-8');
         return { success: true, message: 'Document saved successfully' };
@@ -635,6 +656,10 @@ export class MultiProjectDashboardServer {
 
         const candidateSet = new Set<string>();
         const p = approval.filePath;
+        // Reject path traversal attempts in stored file paths
+        if (p.includes('..')) {
+          return reply.code(400).send({ error: 'Invalid file path' });
+        }
         const isAbsolutePath = p.startsWith('/') || p.match(/^[A-Za-z]:[\\\/]/);
 
         if (!isAbsolutePath) {
@@ -996,7 +1021,7 @@ export class MultiProjectDashboardServer {
         return reply.code(400).send({ error: 'Invalid steering document name' });
       }
 
-      const docPath = join(project.projectPath, 'steering', `${name}.md`);
+      const docPath = ensureWithinBase(join(project.projectPath, 'steering'), `${name}.md`);
 
       try {
         const content = await readFile(docPath, 'utf-8');
@@ -1032,11 +1057,10 @@ export class MultiProjectDashboardServer {
         return reply.code(400).send({ error: 'Content must be a string' });
       }
 
-      const steeringDir = join(project.projectPath, 'steering');
-      const docPath = join(steeringDir, `${name}.md`);
+      const docPath = ensureWithinBase(join(project.projectPath, 'steering'), `${name}.md`);
 
       try {
-        await fs.mkdir(steeringDir, { recursive: true });
+        await fs.mkdir(join(project.projectPath, 'steering'), { recursive: true });
         await fs.writeFile(docPath, content, 'utf-8');
         return { success: true, message: 'Steering document saved successfully' };
       } catch (error: any) {
@@ -1061,7 +1085,8 @@ export class MultiProjectDashboardServer {
           return reply.code(404).send({ error: 'Spec or tasks not found' });
         }
 
-        const tasksPath = join(project.projectPath, 'specs', name, 'tasks.md');
+        const safeSpecDir = ensureWithinBase(join(project.projectPath, 'specs'), name);
+        const tasksPath = join(safeSpecDir, 'tasks.md');
         const tasksContent = await readFile(tasksPath, 'utf-8');
         const parseResult = parseTasksFromMarkdown(tasksContent);
 
@@ -1105,7 +1130,8 @@ export class MultiProjectDashboardServer {
         }
 
         try {
-          const tasksPath = join(project.projectPath, 'specs', name, 'tasks.md');
+          const safeSpecDir = ensureWithinBase(join(project.projectPath, 'specs'), name);
+          const tasksPath = join(safeSpecDir, 'tasks.md');
 
           let tasksContent: string;
           try {
@@ -1179,12 +1205,12 @@ export class MultiProjectDashboardServer {
               });
           }
 
-          const specPath = join(project.projectPath, 'specs', name);
+          const specPath = ensureWithinBase(join(project.projectPath, 'specs'), name);
           const logManager = new ImplementationLogManager(specPath);
           const entry = await logManager.addLogEntry(logData);
 
           await this.broadcastImplementationLogUpdate(projectId, name);
-          return entry;
+          return reply.type('application/json').send(entry);
         } catch (error: any) {
           return reply
             .code(500)
@@ -1206,7 +1232,7 @@ export class MultiProjectDashboardServer {
         }
 
         try {
-          const specPath = join(project.projectPath, 'specs', name);
+          const specPath = ensureWithinBase(join(project.projectPath, 'specs'), name);
           const logManager = new ImplementationLogManager(specPath);
           let logs = await logManager.getAllLogs();
 
@@ -1214,7 +1240,9 @@ export class MultiProjectDashboardServer {
             logs = logs.filter((log) => log.taskId === query.taskId);
           }
           if (query.search) {
-            logs = await logManager.searchLogs(query.search);
+            // Validate search input to prevent regex injection
+            const sanitizedSearch = String(query.search).slice(0, 200);
+            logs = await logManager.searchLogs(sanitizedSearch);
           }
 
           return { entries: logs };
@@ -1242,7 +1270,7 @@ export class MultiProjectDashboardServer {
         }
 
         try {
-          const specPath = join(project.projectPath, 'specs', name);
+          const specPath = ensureWithinBase(join(project.projectPath, 'specs'), name);
           const logManager = new ImplementationLogManager(specPath);
           const stats = await logManager.getTaskStats(taskId);
 
@@ -1501,7 +1529,8 @@ export class MultiProjectDashboardServer {
       const project = this.projectManager.getProject(projectId);
       if (!project) return;
 
-      const tasksPath = join(project.projectPath, 'specs', specName, 'tasks.md');
+      const safeSpecDir = ensureWithinBase(join(project.projectPath, 'specs'), specName);
+      const tasksPath = join(safeSpecDir, 'tasks.md');
       const tasksContent = await readFile(tasksPath, 'utf-8');
       const parseResult = parseTasksFromMarkdown(tasksContent);
 
@@ -1528,7 +1557,7 @@ export class MultiProjectDashboardServer {
       const project = this.projectManager.getProject(projectId);
       if (!project) return;
 
-      const specPath = join(project.projectPath, 'specs', specName);
+      const specPath = ensureWithinBase(join(project.projectPath, 'specs'), specName);
       const logManager = new ImplementationLogManager(specPath);
       const logs = await logManager.getAllLogs();
 

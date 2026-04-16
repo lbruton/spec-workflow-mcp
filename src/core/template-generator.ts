@@ -285,10 +285,7 @@ function replaceTasksClosingSection(template: string, conventions: ProjectConven
   // Match the ## Standard Closing Tasks section to end of file
   const sectionRegex = /## Standard Closing Tasks\n[\s\S]*$/;
   if (sectionRegex.test(template)) {
-    return template.replace(
-      sectionRegex,
-      replacement.replace(/^## Standard Closing Tasks\n/, '## Standard Closing Tasks\n'),
-    );
+    return template.replace(sectionRegex, replacement);
   }
 
   // If no Standard Closing Tasks section found, append it

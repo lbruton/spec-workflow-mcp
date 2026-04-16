@@ -1,5 +1,5 @@
 import { promises as fs } from 'fs';
-import { join } from 'path';
+import { join, resolve } from 'path';
 import { PathUtils } from './path-utils.js';
 import { removeSpecFromIndex, addSpecToIndex } from './index-updater.js';
 import { loadConfig } from './config-loader.js';
@@ -9,10 +9,20 @@ import { loadConfig } from './config-loader.js';
 // PathUtils.get*Path() methods rely on a process-level DocVault singleton
 // that isn't initialized in the dashboard process.
 function specsPath(projectPath: string, specName: string): string {
-  return join(projectPath, 'specs', specName);
+  const base = join(projectPath, 'specs');
+  const full = resolve(join(base, specName));
+  if (!full.startsWith(resolve(base) + '/')) {
+    throw new Error('Path traversal detected');
+  }
+  return full;
 }
 function archiveSpecPath(projectPath: string, specName: string): string {
-  return join(projectPath, 'archive', 'specs', specName);
+  const base = join(projectPath, 'archive', 'specs');
+  const full = resolve(join(base, specName));
+  if (!full.startsWith(resolve(base) + '/')) {
+    throw new Error('Path traversal detected');
+  }
+  return full;
 }
 function archiveSpecsDir(projectPath: string): string {
   return join(projectPath, 'archive', 'specs');
