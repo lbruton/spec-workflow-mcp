@@ -1,11 +1,11 @@
 ---
 name: wrap
 description: >
-  End-of-session orchestrator — verifies session work, writes a template-enforced session
-  digest to DocVault, and saves a curated summary to mem0. Run after /retro (or
-  /pr-cleanup → /retro if a PR was merged). Replaces /goodnight and /digest-session.
-  Triggers: "wrap", "wrap up", "close session", "end of session", "done for the night",
-  "finish up", "closing time".
+  End-of-session orchestrator — verifies session work, runs retro inline (if not already
+  done), and saves a curated summary + retro lessons to mem0. No DocVault digest write —
+  session-rag + mem0 are the durable session record. Run at end of any session, optionally
+  after /pr-cleanup. Triggers: "wrap", "wrap up", "close session", "end of session",
+  "done for the night", "finish up", "closing time".
 ---
 
 # Wrap Session
@@ -16,13 +16,14 @@ for permission between steps. The user invoked `/wrap` once — that is the perm
 ## Recommended end-of-session flow
 
 ```
-With PR merged this session:   /pr-cleanup → /retro → /wrap
-Without PR:                    /retro → /wrap
+With PR merged this session:   /pr-cleanup → /wrap
+Without PR:                    /wrap
 Quick re-orient only:          /start  (no wrap needed)
 ```
 
-`/wrap` focuses on the session digest and mem0 summary. Retro lessons are captured by
-`/retro`. If `/retro` was NOT run before `/wrap`, wrap will run retro inline automatically.
+`/wrap` handles everything: retro extraction (if `/retro` wasn't already run mid-session)
++ mem0 session summary. `/retro` remains available standalone for mid-session use (after
+specs, debugging rabbit holes) but is no longer a required pre-step.
 
 ## Arguments
 
@@ -31,33 +32,22 @@ Quick re-orient only:          /start  (no wrap needed)
 
 ---
 
-## DocVault path convention
-
-All paths in this skill that reference DocVault use `../DocVault/` relative to the current
-project root. By spec-workflow convention, **DocVault lives one directory up from every
-project folder, as a sibling**. For example, if your project is at
-`~/code/MyProject/`, DocVault is at `~/code/DocVault/`. No configuration — the layout is
-fixed. If your DocVault lives elsewhere, adjust the paths below for your environment.
-
----
-
 ## Design Principle (read this first — it governs everything below)
 
-Earlier versions of `/wrap` used five gated phases with mandatory approval prompts between
-each one. That over-corrected for prompt drift by stopping the agent every few steps to ask
-the user "is it OK to continue?" — which shifted the burden from *verification* to
-*permission*. The user shouldn't have to babysit a wrap-up.
+Earlier versions of `/wrap` wrote a template-enforced DocVault digest as the quality gate.
+With session-rag indexing every turn automatically and mem0 holding curated episodic memory,
+the digest became redundant — nobody reads it, and both retrieval surfaces serve `/start`
+and `/prime` better than a markdown file.
 
-This version replaces the gates with a **template-enforced digest**. The digest file has
-required sections (Summary / Retro Lessons / Git State / Session Health / Next Session); if
-any section is empty or missing, the wrap is broken. The agent cannot finish the wrap
-without filling every section, and that artifact-shape requirement does the work that the
-gates used to do — without ever stopping to ask permission.
+This version replaces the digest with two durable artifacts: **mem0 retro-learning entries**
+(prescriptive lessons) and a **mem0 session summary** (curated recap with concrete anchors).
+The user-facing **recap** (Step 8) is the proof that the session was properly closed.
+Existing DocVault digest files under `Daily Digests/` are left as read-only archive.
 
 **Three rules that follow from this:**
 
 1. **Run the whole flow in one shot.** No "STOP HERE", no "wait for user acknowledgment",
-   no phase banners. Just observe → retro → write digest → report.
+   no phase banners. Just observe → retro check → mem0 saves → report.
 2. **Take action autonomously where the action is obvious.** If a task was marked `[x]`
    without `log-implementation`, run `log-implementation` *now* — do not ask. If main is
    behind origin and the working tree is clean, pull — do not ask. If a worktree has
@@ -72,6 +62,29 @@ gates used to do — without ever stopping to ask permission.
 
 Run these steps in order. Steps 1, 4, and 6 do parallel work internally; otherwise the
 order matters because each step uses earlier results.
+
+### Step 0 — Project identity guard (blocking)
+
+```bash
+cat .claude/project.json 2>/dev/null
+pwd
+git rev-parse --show-toplevel 2>/dev/null
+```
+
+If `.claude/project.json` is missing, STOP. The digest would land under the wrong
+`<ProjectFolder>` (falling through to git-toplevel-basename — e.g., a session launched in
+`Devops/` would route to the outer repo name instead of `Devops/`). Warn and fix before
+continuing:
+
+```
+⚠ project.json missing — digest routing will be wrong
+  cwd: <pwd>
+  git toplevel: <git-toplevel>
+  Likely cause: .claude/ gitignored, dropped during merge/reset/worktree switch.
+```
+
+Offer to create `project.json` from a sibling template and proceed once resolved. Also
+warn if `pwd` is a subdir of a different git toplevel — same class of bug.
 
 ### Step 1 — Observe (parallel)
 
@@ -119,7 +132,7 @@ Then search mem0, scoped to this project:
 ```
 mcp__mem0__search_memories(
   query: "retro-learning",
-  user_id: "<your-mem0-user-id>",
+  user_id: "lbruton",
   filters: { "metadata.type": "retro-learning", "metadata.project": "<project-tag>" },
   limit: 5
 )
@@ -146,7 +159,7 @@ For each lesson, save to mem0:
 ```
 mcp__mem0__add_memory(
   text: "<single prescriptive sentence — action verb or 'When X, do Y' format>",
-  user_id: "<your-mem0-user-id>",
+  user_id: "lbruton",
   agent_id: "<project-tag from .claude/project.json>",
   metadata: {
     "type": "retro-learning",
@@ -163,10 +176,9 @@ parameter is silently dropped. Setting both is fine but `metadata.project` is wh
 the record findable.
 
 **Actor attribution (strict):**
-- Things the user did: "the user prefers/uses/instructs..." (or use the user's real name/handle if known)
+- Things lbruton did: "lbruton prefers/uses/instructs..."
 - Things Claude did: "Claude should..."
 - Codebase facts: passive voice or component name
-- Never use generic placeholder names ("User", "Alice", "Bob") — use a real identifier or "the user" / "this user"
 
 Hold the list of lessons in working memory — they go into the digest in Step 5.
 
@@ -207,99 +219,31 @@ Compute the traffic-light color:
 - **🔴 Red** — something is genuinely wrong (PR with failing checks, log-implementation
   catch-up failed, mem0 write failed, etc.)
 
-### Step 6 — Write the digest (TEMPLATE-ENFORCED — this is the gate)
+### Step 6 — (DocVault digest write — retired per OPS-134)
 
-This is the artifact that replaces the old phase gates. The digest MUST contain every
-section listed in the template below. Missing sections = broken wrap. Empty sections =
-broken wrap. Do not abbreviate, do not omit, do not "skip if N/A" — write `_(none)_` if a
-section legitimately has nothing to report, but the heading must exist.
+DocVault digest files are no longer written. session-rag indexes every turn automatically;
+mem0 (Steps 3 + 7) holds the curated session record. Existing files under
+`DocVault/Daily Digests/` are left as read-only archive — do not delete them.
 
-**Path:** `../DocVault/Daily Digests/<ProjectFolder>/<YYYY-MM-DD>.md`
+**If `--handoff` was passed**, include handoff context in the mem0 session summary (Step 7)
+with these fields embedded in the text:
+- Continue issue ID
+- Resume command / first action
+- Immediate next task
+- Gotchas / non-obvious state
 
-`<ProjectFolder>` maps to the project name (the basename of the current project
-directory, preserving its original casing). If the session was launched from a parent or
-root workspace that contains multiple projects, use `Root` as the project folder name.
-
-If the file doesn't exist, create it with frontmatter:
-
-```markdown
----
-date: <YYYY-MM-DD>
-project: <ProjectName>
-tags: [daily-digest, <project-tag>]
----
-
-# Daily Digest — <ProjectName> (<YYYY-MM-DD>)
-```
-
-Then append a new digest entry. If the file already exists, just append the entry.
-
-#### Digest entry template (REQUIRED structure)
-
-```markdown
-## <HH:MM AM/PM> — <Agent name, e.g., Claude (Opus 4.6)>
-
-### Summary
-<200-300 words of flowing prose. Cover: goal of the session, what was accomplished
-(commits, PRs, issues closed, features shipped), problems encountered and how resolved,
-decisions made and why, current state, what should happen next. Include concrete anchors:
-commit hashes, issue IDs, version numbers, file paths.>
-
-### Retro Lessons
-<bullet list of the lessons saved to mem0 in Step 3, with category tag>
-- [<category>] <one-sentence prescriptive lesson>
-- [<category>] <one-sentence prescriptive lesson>
-- ...
-_(write `_(none — chat-only session)_` if no lessons were saved)_
-_(write `_(completed via /retro)_` if /retro was run before /wrap)_
-
-### Git State
-- **Branch:** <current branch>
-- **Session commits:** <count> (<short SHA list>)
-- **Session PRs:** <#N status mergeState — or "none">
-- **Worktrees:** <count, with brief status>
-- **Uncommitted at wrap:** <count or "clean">
-
-### Session Health <emoji>
-<the soft warnings block — see "Session Health Block" section below for the format>
-
-### Next Session
-<1-3 sentences suggesting what to work on next, based on what's still open. NOT a binding
-commitment — just a hint for /prime to surface.>
-```
-
-**If `--handoff` was passed**, append a `### Handoff Notes` section AFTER `Next Session`
-with these required fields:
-
-```markdown
-### Handoff Notes
-- **Continue issue:** <ISSUE-ID — REQUIRED. If no issue exists for the active work,
-  create one before writing handoff notes>
-- **Resume with:** <exact command or first action — e.g., `/prime`, a file to open>
-- **Immediate next:** <task being actively worked on, with enough detail to resume
-  without re-reading code>
-- **Then:** <2-3 follow-up tasks in priority order>
-- **Watch out for:** <gotchas, non-obvious state, things the next session needs to know>
-```
-
-`/prime` reads this section as "where we left off" — make it actionable and specific.
-
-#### Commit the digest
-
-```bash
-cd ../DocVault && git add "Daily Digests/" && git commit -m "digest: <project> session <date>" && git push origin main
-```
+session-rag + mem0 will surface this for `/start` and `/prime` in the next session.
 
 ### Step 7 — Save curated mem0 session summary
 
-Write ONE concise mem0 entry for the startup hook and `/prime` to retrieve next session.
+Write ONE concise mem0 entry for the startup hook and `/prime`/`/start` to retrieve next session.
 
 ```
 mcp__mem0__add_memory(
   text: "[<ProjectName> | <branch> | <date>] <2-3 sentence summary of what was
          accomplished, key decisions, and current state. Include commit hashes,
          issue IDs, and version numbers as anchors.>",
-  user_id: "<your-mem0-user-id>",
+  user_id: "lbruton",
   agent_id: "<project-tag>",
   metadata: {
     "category": "session-summary",
@@ -325,13 +269,13 @@ Health block plus a one-line pointer to the digest path.
 ```
 ## Session Wrapped 🟢 / 🟡 / 🔴
 
-**Digest:** ../DocVault/Daily Digests/<path>.md
-**Lessons saved:** <count> retro entries to mem0
+**Retro lessons:** <count> entries saved to mem0 (or "completed via /retro")
 **Session summary:** Saved to mem0 as session-digest
+**Durable record:** session-rag (auto-indexed turns) + mem0 (curated)
 
-<Session Health block — same content as the digest section, see format below>
+<Session Health block — see format below>
 
-<If --handoff: "Handoff ready — /prime in your new terminal will load the notes.">
+<If --handoff: "Handoff ready — /prime or /start in your new terminal will load the notes.">
 ```
 
 That's it. No "press enter to continue", no "is everything OK?". The user invoked `/wrap`
@@ -376,7 +320,7 @@ Warning examples:
 - `⚠ Local main is behind origin/main by 3 commits — auto-pull skipped because working tree was dirty`
 - `⚠ PR #47 open with passing checks — not merged this session`
 - `⚠ Worktree .worktrees/swf-92 has uncommitted changes — left intact`
-- `⚠ Stale worktree .worktrees/swf-88 (branch merged) — manual cleanup recommended`
+- `⚠ Stale worktree .worktrees/swf-88 (branch merged) — run /pr-cleanup next session`
 - `⚠ Runtime code changed but no version bump detected — run /release patch before next PR`
 
 ### 🔴 Red — something is genuinely broken
@@ -409,10 +353,11 @@ the session summary. Red is a *report*, not a halt.
 - **Run actions autonomously where the action is obvious.** Implementation logging, fast-
   forward pull when clean, DocVault sync. Anything that touches dirty user work becomes a
   warning, not an action.
-- **Template-enforced digest.** Every section in the template MUST exist with content (or
-  `_(none)_`). Missing section = broken wrap.
+- **mem0 is the durable record.** Both retro-learning entries and the session summary MUST
+  succeed. If mem0 fails, report it as 🔴 red in Session Health.
 - **Session Health is the only place warnings appear.** Never interrupt the flow to flag
   something — collect it for the Health block.
+- **Existing DocVault digests are read-only archive.** Do not write new ones, do not delete old ones.
 - **The recap is the last thing the user sees.** No follow-up questions after it.
 - **No Haiku agents.** All summaries and digests are written by YOU (the in-context model).
   Never dispatch a subagent for summarization.
@@ -427,7 +372,7 @@ the session summary. Red is a *report*, not a halt.
 
 - Ask the user to commit/stash/discard uncommitted changes (those become warnings)
 - Ask the user to merge or close PRs (those become warnings)
-- Auto-delete worktrees or branches (warnings)
+- Auto-delete worktrees or branches (warnings; run /pr-cleanup for branch cleanup)
 - Print phase banners or gate tables
 - Stop and wait for user acknowledgment between steps
 - Push the project repo (the user does that themselves after reviewing the wrap)

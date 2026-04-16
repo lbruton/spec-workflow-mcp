@@ -33,7 +33,7 @@ Built on [Pimzino/spec-workflow-mcp](https://github.com/Pimzino/spec-workflow-mc
 | **Claude Context** (Milvus) | Semantic code search via self-hosted vector database. Search by meaning, not keywords. Forked from [zilliztech/claude-context](https://github.com/zilliztech/claude-context), hardened with timeouts and pinned versions. Requires a running Milvus instance (Docker or otherwise). |
 | **Skill System** (60+ Skills) | CLAUDE.md stays tiny -- a routing table to skills. Each skill encodes a full workflow: debugging, deployment, PR resolution, infrastructure management. |
 
-## Three-Tier Memory Architecture
+## Four-Tier Memory Architecture
 
 Not everything belongs in one file. Each tier has a purpose and a source of truth ranking.
 
@@ -53,7 +53,7 @@ Every session learns from the previous. This is the single biggest differentiato
   ├─ session-rag (recent turns)
   ├─ mem0 (curated memories)   [/pr-cleanup] (if PR merged)
   ├─ Git log + status            ├─ Prune remote refs
-  └─ 5 most recent issues       ├─ Remove merged worktrees
+  └─ 5 most recent issues        ├─ Remove merged worktrees
                                  └─ Pull main fast-forward
 /prime (full boot)
   ├─ session-rag + mem0        /wrap (retro folded in)
