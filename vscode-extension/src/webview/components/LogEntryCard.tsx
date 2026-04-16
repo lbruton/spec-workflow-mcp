@@ -38,9 +38,7 @@ export function LogEntryCard({ entry }: LogEntryCardProps) {
               <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 text-xs font-mono rounded">
                 {entry.taskId}
               </span>
-              <span className="text-sm text-muted-foreground">
-                {formatDate(entry.timestamp)}
-              </span>
+              <span className="text-sm text-muted-foreground">{formatDate(entry.timestamp)}</span>
             </div>
             <p className="text-sm font-medium mt-1">{entry.summary}</p>
           </div>
@@ -71,7 +69,7 @@ export function LogEntryCard({ entry }: LogEntryCardProps) {
               </div>
               <div className="p-2 bg-muted rounded">
                 <div className="text-lg font-bold text-purple-600">
-                  {(entry.statistics.linesAdded - entry.statistics.linesRemoved)}
+                  {entry.statistics.linesAdded - entry.statistics.linesRemoved}
                 </div>
                 <div className="text-xs text-muted-foreground">{t('logs.entry.netChange')}</div>
               </div>
@@ -112,26 +110,14 @@ export function LogEntryCard({ entry }: LogEntryCardProps) {
                   type="apiEndpoints"
                   artifacts={entry.artifacts.apiEndpoints || []}
                 />
-                <ArtifactSection
-                  type="components"
-                  artifacts={entry.artifacts.components || []}
-                />
-                <ArtifactSection
-                  type="functions"
-                  artifacts={entry.artifacts.functions || []}
-                />
-                <ArtifactSection
-                  type="classes"
-                  artifacts={entry.artifacts.classes || []}
-                />
+                <ArtifactSection type="components" artifacts={entry.artifacts.components || []} />
+                <ArtifactSection type="functions" artifacts={entry.artifacts.functions || []} />
+                <ArtifactSection type="classes" artifacts={entry.artifacts.classes || []} />
                 <ArtifactSection
                   type="integrations"
                   artifacts={entry.artifacts.integrations || []}
                 />
-                <ArtifactSection
-                  type="tests"
-                  artifacts={entry.artifacts.tests || []}
-                />
+                <ArtifactSection type="tests" artifacts={entry.artifacts.tests || []} />
               </div>
             )}
           </div>

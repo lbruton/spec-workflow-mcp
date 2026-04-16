@@ -20,6 +20,7 @@ Das Web-Dashboard ist eine Echtzeit-Webanwendung, die visuellen Zugriff auf Ihre
 ### Dashboard starten
 
 #### Eigenständiges Dashboard
+
 ```bash
 # Verwendet ephemeren Port
 npx -y @pimzino/spec-workflow-mcp@latest /pfad/zu/projekt --dashboard
@@ -29,6 +30,7 @@ npx -y @pimzino/spec-workflow-mcp@latest /pfad/zu/projekt --dashboard --port 300
 ```
 
 #### Mit MCP-Server
+
 ```bash
 # MCP-Server und Dashboard separat ausführen (empfohlen)
 # Terminal 1: Dashboard starten
@@ -119,18 +121,19 @@ Zugriff auf Projektleitlinien:
 
 #### Tastaturkürzel
 
-| Kürzel | Aktion |
-|--------|--------|
+| Kürzel    | Aktion                 |
+| --------- | ---------------------- |
 | `Alt + S` | Spec-Liste fokussieren |
-| `Alt + T` | Aufgaben anzeigen |
+| `Alt + T` | Aufgaben anzeigen      |
 | `Alt + R` | Anforderungen anzeigen |
-| `Alt + D` | Design anzeigen |
+| `Alt + D` | Design anzeigen        |
 | `Alt + A` | Freigabe-Dialog öffnen |
-| `Esc` | Dialog schließen |
+| `Esc`     | Dialog schließen       |
 
 #### URL-Struktur
 
 Direkte Links zu bestimmten Ansichten:
+
 - `/` - Home-Dashboard
 - `/spec/{name}` - Spezifische Spec
 - `/spec/{name}/requirements` - Anforderungsdokument
@@ -164,6 +167,7 @@ Das Dashboard verwendet WebSockets für Live-Updates:
 #### Theme-Einstellungen
 
 Zwischen hellem und dunklem Modus wechseln:
+
 - Theme-Symbol im Header klicken
 - Bleibt über Sitzungen hinweg bestehen
 - Respektiert Systempräferenz
@@ -171,11 +175,13 @@ Zwischen hellem und dunklem Modus wechseln:
 #### Sprachauswahl
 
 Oberflächensprache ändern:
+
 1. Einstellungssymbol klicken
 2. Sprache aus Dropdown auswählen
 3. Oberfläche wird sofort aktualisiert
 
 Unterstützte Sprachen:
+
 - English (en)
 - Japanese (ja)
 - Chinese (zh)
@@ -191,6 +197,7 @@ Unterstützte Sprachen:
 #### Anzeigeoptionen
 
 Ansichtspräferenzen anpassen:
+
 - Kompakte/erweiterte Spec-Karten
 - Erledigte Aufgaben ein-/ausblenden
 - Dokumentschriftgröße
@@ -208,6 +215,7 @@ Aus dem VSCode Marketplace installieren:
 4. VSCode neu laden
 
 Oder über Befehlszeile:
+
 ```bash
 code --install-extension Pimzino.specflow-mcp
 ```
@@ -303,31 +311,31 @@ In VSCode-Einstellungen konfigurieren:
 
 #### Einstellungsbeschreibungen
 
-| Einstellung | Beschreibung | Standard |
-|-------------|--------------|----------|
-| `language` | Oberflächensprache | "en" |
-| `notifications.enabled` | Benachrichtigungen anzeigen | true |
-| `notifications.sound` | Sound-Warnungen abspielen | true |
-| `notifications.volume` | Sound-Lautstärke (0-1) | 0.5 |
-| `archive.showInExplorer` | Archivierte Specs anzeigen | true |
-| `tasks.autoRefresh` | Aufgaben auto-aktualisieren | true |
-| `tasks.refreshInterval` | Aktualisierungsintervall (ms) | 5000 |
-| `theme.followVSCode` | VSCode-Theme übernehmen | true |
+| Einstellung              | Beschreibung                  | Standard |
+| ------------------------ | ----------------------------- | -------- |
+| `language`               | Oberflächensprache            | "en"     |
+| `notifications.enabled`  | Benachrichtigungen anzeigen   | true     |
+| `notifications.sound`    | Sound-Warnungen abspielen     | true     |
+| `notifications.volume`   | Sound-Lautstärke (0-1)        | 0.5      |
+| `archive.showInExplorer` | Archivierte Specs anzeigen    | true     |
+| `tasks.autoRefresh`      | Aufgaben auto-aktualisieren   | true     |
+| `tasks.refreshInterval`  | Aktualisierungsintervall (ms) | 5000     |
+| `theme.followVSCode`     | VSCode-Theme übernehmen       | true     |
 
 ### Extension-Befehle
 
 Verfügbar in der Befehlspalette (Strg+Shift+P):
 
-| Befehl | Beschreibung |
-|--------|--------------|
-| `Spec Workflow: Create Spec` | Neue Spec starten |
-| `Spec Workflow: List Specs` | Alle Specs anzeigen |
-| `Spec Workflow: View Dashboard` | Web-Dashboard öffnen |
-| `Spec Workflow: Archive Spec` | Ins Archiv verschieben |
-| `Spec Workflow: Restore Spec` | Aus Archiv wiederherstellen |
-| `Spec Workflow: Refresh` | Spec-Daten neu laden |
-| `Spec Workflow: Show Steering` | Steering-Dokumente anzeigen |
-| `Spec Workflow: Export Spec` | Als Markdown exportieren |
+| Befehl                          | Beschreibung                |
+| ------------------------------- | --------------------------- |
+| `Spec Workflow: Create Spec`    | Neue Spec starten           |
+| `Spec Workflow: List Specs`     | Alle Specs anzeigen         |
+| `Spec Workflow: View Dashboard` | Web-Dashboard öffnen        |
+| `Spec Workflow: Archive Spec`   | Ins Archiv verschieben      |
+| `Spec Workflow: Restore Spec`   | Aus Archiv wiederherstellen |
+| `Spec Workflow: Refresh`        | Spec-Daten neu laden        |
+| `Spec Workflow: Show Steering`  | Steering-Dokumente anzeigen |
+| `Spec Workflow: Export Spec`    | Als Markdown exportieren    |
 
 ### Sound-Benachrichtigungen
 
@@ -339,6 +347,7 @@ Die Extension enthält Audio-Warnungen für:
 - **Updates** - Sanfte Benachrichtigung
 
 In Einstellungen konfigurieren:
+
 ```json
 {
   "specWorkflow.notifications.sound": true,
@@ -348,20 +357,20 @@ In Einstellungen konfigurieren:
 
 ## Funktionsvergleich
 
-| Funktion | Web-Dashboard | VSCode Extension |
-|----------|--------------|------------------|
-| Specs anzeigen | ✅ | ✅ |
-| Aufgaben verwalten | ✅ | ✅ |
-| Freigaben | ✅ | ✅ |
-| Echtzeit-Updates | ✅ | ✅ |
-| Archivsystem | ❌ | ✅ |
-| Sound-Benachrichtigungen | ❌ | ✅ |
-| Editor-Integration | ❌ | ✅ |
-| Kontextmenüs | ❌ | ✅ |
-| Tastaturkürzel | Begrenzt | Vollständig |
-| Mehrprojekt | Manuell | Automatisch |
-| Offline-Zugriff | ❌ | ✅ |
-| Exportoptionen | Basis | Erweitert |
+| Funktion                 | Web-Dashboard | VSCode Extension |
+| ------------------------ | ------------- | ---------------- |
+| Specs anzeigen           | ✅            | ✅               |
+| Aufgaben verwalten       | ✅            | ✅               |
+| Freigaben                | ✅            | ✅               |
+| Echtzeit-Updates         | ✅            | ✅               |
+| Archivsystem             | ❌            | ✅               |
+| Sound-Benachrichtigungen | ❌            | ✅               |
+| Editor-Integration       | ❌            | ✅               |
+| Kontextmenüs             | ❌            | ✅               |
+| Tastaturkürzel           | Begrenzt      | Vollständig      |
+| Mehrprojekt              | Manuell       | Automatisch      |
+| Offline-Zugriff          | ❌            | ✅               |
+| Exportoptionen           | Basis         | Erweitert        |
 
 ## Die richtige Oberfläche wählen
 
@@ -447,6 +456,7 @@ Das Dashboard ist responsiv:
 ### VSCode Extension
 
 Erbt VSCode-Barrierefreiheit:
+
 - Screenreader-Unterstützung
 - Tastaturnavigation
 - Hochkontrast-Themes
@@ -480,21 +490,21 @@ Erbt VSCode-Barrierefreiheit:
 
 ### Dashboard-Probleme
 
-| Problem | Lösung |
-|---------|--------|
-| Lädt nicht | Server läuft prüfen, URL verifizieren |
-| Keine Updates | WebSocket-Verbindung prüfen, Seite aktualisieren |
+| Problem                     | Lösung                                               |
+| --------------------------- | ---------------------------------------------------- |
+| Lädt nicht                  | Server läuft prüfen, URL verifizieren                |
+| Keine Updates               | WebSocket-Verbindung prüfen, Seite aktualisieren     |
 | Freigabe funktioniert nicht | Sicherstellen, dass Dashboard und MCP verbunden sind |
-| Styling defekt | Browser-Cache leeren, Konsole prüfen |
+| Styling defekt              | Browser-Cache leeren, Konsole prüfen                 |
 
 ### Extension-Probleme
 
-| Problem | Lösung |
-|---------|--------|
-| Zeigt keine Specs | Prüfen, ob Projekt .specflow-Verzeichnis hat |
-| Befehle funktionieren nicht | VSCode-Fenster neu laden |
-| Keine Benachrichtigungen | Extension-Einstellungen prüfen |
-| Archiv nicht sichtbar | In Einstellungen aktivieren |
+| Problem                     | Lösung                                       |
+| --------------------------- | -------------------------------------------- |
+| Zeigt keine Specs           | Prüfen, ob Projekt .specflow-Verzeichnis hat |
+| Befehle funktionieren nicht | VSCode-Fenster neu laden                     |
+| Keine Benachrichtigungen    | Extension-Einstellungen prüfen               |
+| Archiv nicht sichtbar       | In Einstellungen aktivieren                  |
 
 ## Verwandte Dokumentation
 

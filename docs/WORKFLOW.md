@@ -27,6 +27,7 @@ Steering documents provide high-level guidance that keeps your project aligned a
 This generates three key documents:
 
 #### 1. Product Steering (`steering/product.md`)
+
 - Product vision and mission
 - Target users and personas
 - Core features and priorities
@@ -34,6 +35,7 @@ This generates three key documents:
 - Non-goals and constraints
 
 #### 2. Technical Steering (`steering/tech.md`)
+
 - Architecture decisions
 - Technology stack choices
 - Performance requirements
@@ -41,6 +43,7 @@ This generates three key documents:
 - Scalability approach
 
 #### 3. Structure Steering (`steering/structure.md`)
+
 - Project organization
 - File and folder conventions
 - Naming standards
@@ -69,6 +72,7 @@ Requirements → Design → Tasks
 **Purpose**: Define WHAT needs to be built
 
 **Contents**:
+
 - Feature overview
 - User stories
 - Functional requirements
@@ -77,6 +81,7 @@ Requirements → Design → Tasks
 - Constraints and assumptions
 
 **Example Creation**:
+
 ```
 "Create requirements for a user notification system that supports:
 - Email notifications
@@ -91,6 +96,7 @@ Requirements → Design → Tasks
 **Purpose**: Define HOW it will be built
 
 **Contents**:
+
 - Technical architecture
 - Component design
 - Data models
@@ -105,6 +111,7 @@ Requirements → Design → Tasks
 **Purpose**: Define the STEPS to build it
 
 **Contents**:
+
 - Hierarchical task breakdown
 - Dependencies
 - Effort estimates
@@ -112,6 +119,7 @@ Requirements → Design → Tasks
 - Testing requirements
 
 **Structure Example**:
+
 ```
 1.0 Database Setup
   1.1 Create notification tables
@@ -145,18 +153,21 @@ Requirements → Design → Tasks
 ### Making Approval Decisions
 
 #### When to Approve
+
 - Requirements are complete and clear
 - Design solves the stated problem
 - Tasks are logical and comprehensive
 - No major concerns or gaps
 
 #### When to Request Changes
+
 - Missing important details
 - Unclear specifications
 - Better approach available
 - Needs alignment with standards
 
 #### When to Reject
+
 - Fundamental misunderstanding
 - Wrong approach entirely
 - Requires complete rethink
@@ -164,6 +175,7 @@ Requirements → Design → Tasks
 ### Providing Effective Feedback
 
 Good feedback:
+
 ```
 "The authentication flow should use JWT tokens instead of sessions.
 Add rate limiting to the API endpoints.
@@ -171,6 +183,7 @@ Include error handling for network failures."
 ```
 
 Poor feedback:
+
 ```
 "This doesn't look right. Fix it."
 ```
@@ -180,7 +193,9 @@ Poor feedback:
 ### Task Execution Strategy
 
 #### Sequential Implementation
+
 Best for dependent tasks:
+
 ```
 "Implement task 1.1 from user-auth spec"
 "Now implement task 1.2"
@@ -188,13 +203,17 @@ Best for dependent tasks:
 ```
 
 #### Parallel Implementation
+
 For independent tasks:
+
 ```
 "Implement all UI tasks from the dashboard spec while I work on the backend"
 ```
 
 #### Section-Based Implementation
+
 For logical groupings:
+
 ```
 "Implement all database tasks from the payment spec"
 ```
@@ -202,6 +221,7 @@ For logical groupings:
 ### Progress Tracking
 
 Monitor implementation through:
+
 - Dashboard task view
 - Progress bars
 - Status indicators
@@ -210,6 +230,7 @@ Monitor implementation through:
 ### Handling Blockers
 
 When blocked:
+
 1. Document the blocker
 2. Create a sub-task for resolution
 3. Move to parallel tasks if possible
@@ -222,11 +243,13 @@ When blocked:
 After implementation:
 
 1. **Unit Testing**
+
    ```
    "Create unit tests for the notification service"
    ```
 
 2. **Integration Testing**
+
    ```
    "Create integration tests for the API endpoints"
    ```
@@ -239,6 +262,7 @@ After implementation:
 ### Documentation Updates
 
 Keep documentation current:
+
 ```
 "Update the API documentation for the new endpoints"
 "Add usage examples to the README"
@@ -275,11 +299,13 @@ your-project/
 ### Naming Conventions
 
 **Spec Names**:
+
 - Use kebab-case: `user-authentication`
 - Be descriptive: `payment-processing` not `payments`
 - Avoid versions: `user-profile` not `user-profile-v2`
 
 **Document Names**:
+
 - Always: `requirements.md`, `design.md`, `tasks.md`
 - Consistent across all specs
 
@@ -296,6 +322,7 @@ For evolving features:
 5. Build on existing work
 
 Example:
+
 ```
 "Create an enhancement spec for user-auth that adds:
 - Social login (Google, Facebook)
@@ -306,16 +333,19 @@ Example:
 ### Refactoring Workflow
 
 1. **Document Current State**
+
    ```
    "Create a spec documenting the current authentication system"
    ```
 
 2. **Design Improvements**
+
    ```
    "Design refactoring to improve authentication performance"
    ```
 
 3. **Plan Migration**
+
    ```
    "Create migration tasks for the refactoring"
    ```
@@ -328,21 +358,25 @@ Example:
 ### Bug Resolution Workflow
 
 1. **Bug Report**
+
    ```
    "Create bug report for login timeout issue"
    ```
 
 2. **Investigation**
+
    ```
    "Investigate root cause of bug #45"
    ```
 
 3. **Solution Design**
+
    ```
    "Design fix for the timeout issue"
    ```
 
 4. **Implementation**
+
    ```
    "Implement the bug fix"
    ```
@@ -357,17 +391,20 @@ Example:
 ### 1. Maintain Spec Granularity
 
 **Good**: One spec per feature
+
 - `user-authentication`
 - `payment-processing`
 - `notification-system`
 
 **Poor**: Overly broad specs
+
 - `backend-system`
 - `all-features`
 
 ### 2. Sequential Document Creation
 
 Always follow the order:
+
 1. Requirements (what)
 2. Design (how)
 3. Tasks (steps)
@@ -384,6 +421,7 @@ Never skip ahead.
 ### 4. Keep Specs Updated
 
 When requirements change:
+
 ```
 "Update the requirements for user-auth to include SSO support"
 ```
@@ -391,6 +429,7 @@ When requirements change:
 ### 5. Use Consistent Terminology
 
 Maintain consistency across:
+
 - Spec names
 - Component names
 - API terminology
@@ -399,6 +438,7 @@ Maintain consistency across:
 ### 6. Archive Completed Specs
 
 Keep workspace clean:
+
 ```
 "Archive the completed user-auth spec"
 ```
@@ -434,6 +474,7 @@ Keep workspace clean:
 ### Specs Getting Too Large
 
 **Solution**: Break into smaller specs
+
 ```
 "Split the e-commerce spec into:
 - product-catalog
@@ -445,6 +486,7 @@ Keep workspace clean:
 ### Unclear Requirements
 
 **Solution**: Request clarification
+
 ```
 "The requirements need more detail on:
 - User roles and permissions
@@ -455,6 +497,7 @@ Keep workspace clean:
 ### Design Doesn't Match Requirements
 
 **Solution**: Request revision
+
 ```
 "The design doesn't address the multi-tenancy requirement.
 Please revise to include tenant isolation."

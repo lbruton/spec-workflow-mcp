@@ -11,5 +11,3 @@ export function hexToColorObject(hex: string) {
 export function isValidHex(hex: string) {
   return /^#[0-9A-Fa-f]{6}$/.test(hex);
 }
-
-

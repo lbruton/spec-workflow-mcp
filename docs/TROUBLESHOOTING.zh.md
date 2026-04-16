@@ -5,6 +5,7 @@
 ## 快速诊断
 
 ### 检查安装
+
 ```bash
 # 验证 npm 包是否可访问
 npx -y @pimzino/spec-workflow-mcp@latest --help
@@ -17,6 +18,7 @@ ls -la .specflow  # 或在 Windows 上使用 'dir .specflow'
 ```
 
 ### 检查服务
+
 ```bash
 # 测试 MCP 服务器
 npx -y @pimzino/spec-workflow-mcp@latest /path/to/project
@@ -38,6 +40,7 @@ netstat -an | findstr :3000  # Windows
 **错误**：`npm ERR! 404 Not Found - @pimzino/spec-workflow-mcp@latest`
 
 **解决方案**：
+
 1. 检查互联网连接
 2. 清除 npm 缓存：
    ```bash
@@ -58,6 +61,7 @@ netstat -an | findstr :3000  # Windows
 **错误**：`EACCES: permission denied`
 
 **解决方案**：
+
 1. **macOS/Linux**：使用正确的 npm 权限：
    ```bash
    npm config set prefix ~/.npm-global
@@ -79,6 +83,7 @@ netstat -an | findstr :3000  # Windows
 **错误**：`Failed to start MCP server`
 
 **解决方案**：
+
 1. 检查 Node.js 版本：
    ```bash
    node --version  # 应为 18.0 或更高
@@ -104,6 +109,7 @@ netstat -an | findstr :3000  # Windows
 **解决方案**：
 
 1. **Claude Desktop**：检查配置文件：
+
    ```json
    {
      "mcpServers": {
@@ -116,6 +122,7 @@ netstat -an | findstr :3000  # Windows
    ```
 
 2. **Claude Code CLI**：验证设置：
+
    ```bash
    claude mcp list  # 检查 spec-workflow 是否列出
    claude mcp remove spec-workflow  # 如果存在则删除
@@ -131,6 +138,7 @@ netstat -an | findstr :3000  # Windows
 **错误**：`Tool 'spec-workflow' not found`
 
 **解决方案**：
+
 1. 完全重启您的 AI 工具
 2. 检查 MCP 服务器是否正在运行（查找进程）
 3. 验证配置是否正确保存
@@ -143,6 +151,7 @@ netstat -an | findstr :3000  # Windows
 **错误**：`Cannot connect to dashboard` 或空白页面
 
 **解决方案**：
+
 1. 验证仪表板是否已启动：
    ```bash
    npx -y @pimzino/spec-workflow-mcp@latest /path --dashboard
@@ -160,11 +169,13 @@ netstat -an | findstr :3000  # Windows
 **错误**：`Error: listen EADDRINUSE: address already in use :::3000`
 
 **解决方案**：
+
 1. 使用不同的端口：
    ```bash
    npx -y @pimzino/spec-workflow-mcp@latest /path --dashboard --port 3456
    ```
 2. 查找并终止使用该端口的进程：
+
    ```bash
    # macOS/Linux
    lsof -i :3000
@@ -174,6 +185,7 @@ netstat -an | findstr :3000  # Windows
    netstat -ano | findstr :3000
    taskkill /PID [PID] /F
    ```
+
 3. 使用临时端口（省略 --port 标志）：
    ```bash
    npx -y @pimzino/spec-workflow-mcp@latest /path --dashboard
@@ -184,6 +196,7 @@ netstat -an | findstr :3000  # Windows
 **错误**：`WebSocket connection lost` 或实时更新不起作用
 
 **解决方案**：
+
 1. 刷新浏览器页面
 2. 检查防火墙是否阻止 WebSocket
 3. 验证仪表板和 MCP 服务器是否从同一项目运行
@@ -195,6 +208,7 @@ netstat -an | findstr :3000  # Windows
 **症状**：更改未实时反映
 
 **解决方案**：
+
 1. 硬刷新浏览器（Ctrl+Shift+R 或 Cmd+Shift+R）
 2. 清除浏览器缓存
 3. 检查 WebSocket 连接状态（应显示绿色）
@@ -212,6 +226,7 @@ netstat -an | findstr :3000  # Windows
 **错误**：仪表板中无审批通知
 
 **解决方案**：
+
 1. 确保仪表板与 MCP 服务器一起运行：
    ```bash
    # 分别运行两者
@@ -231,6 +246,7 @@ netstat -an | findstr :3000  # Windows
 **错误**：审批按钮不起作用
 
 **解决方案**：
+
 1. 检查浏览器控制台中的 JavaScript 错误
 2. 验证您是否在正确的规格页面上
 3. 确保文档具有待审批状态
@@ -243,6 +259,7 @@ netstat -an | findstr :3000  # Windows
 **错误**：规格文档未出现在文件系统中
 
 **解决方案**：
+
 1. 检查写入权限：
    ```bash
    touch .specflow/test.txt
@@ -262,6 +279,7 @@ netstat -an | findstr :3000  # Windows
 **错误**：创建规格时出现 `EACCES` 或 `Permission denied`
 
 **解决方案**：
+
 1. 修复目录权限：
    ```bash
    chmod -R 755 .specflow  # macOS/Linux
@@ -280,6 +298,7 @@ netstat -an | findstr :3000  # Windows
 **错误**：Spec Workflow 图标未出现在活动栏中
 
 **解决方案**：
+
 1. 验证扩展是否已安装：
    - 打开扩展（Ctrl+Shift+X）
    - 搜索 "Spec Workflow MCP"
@@ -295,6 +314,7 @@ netstat -an | findstr :3000  # Windows
 **错误**：命令失败或显示错误
 
 **解决方案**：
+
 1. 打开包含 `.specflow` 的项目文件夹
 2. 检查 VSCode 是否使用正确的工作区
 3. 查看扩展日志以获取特定错误
@@ -311,6 +331,7 @@ netstat -an | findstr :3000  # Windows
 **错误**：config.toml 中的设置未被应用
 
 **解决方案**：
+
 1. 验证 TOML 语法：
    ```bash
    # 安装 TOML 验证器
@@ -321,6 +342,7 @@ netstat -an | findstr :3000  # Windows
    - 默认：`.specflow/config.toml`
    - 自定义：使用 `--config` 标志
 3. 确保没有语法错误：
+
    ```toml
    # 正确
    port = 3000
@@ -336,7 +358,9 @@ netstat -an | findstr :3000  # Windows
 **错误**：像 `--port` 这样的标志被忽略
 
 **解决方案**：
+
 1. 检查参数顺序：
+
    ```bash
    # 正确
    npx -y @pimzino/spec-workflow-mcp@latest /path --dashboard --port 3000
@@ -344,6 +368,7 @@ netstat -an | findstr :3000  # Windows
    # 错误
    npx -y @pimzino/spec-workflow-mcp@latest --dashboard /path --port 3000
    ```
+
 2. 确保标志值有效：
    - 端口：1024-65535
    - 语言：en, ja, zh, es, pt, de, fr, ru, it, ko, ar
@@ -356,6 +381,7 @@ netstat -an | findstr :3000  # Windows
 **症状**：仪表板或工具响应缓慢
 
 **解决方案**：
+
 1. 检查系统资源：
    ```bash
    # CPU 和内存使用情况
@@ -377,6 +403,7 @@ netstat -an | findstr :3000  # Windows
 ### 高内存使用
 
 **解决方案**：
+
 1. 定期重启服务
 2. 限制仪表板刷新率：
    ```json
@@ -391,6 +418,7 @@ netstat -an | findstr :3000  # Windows
 ### 公司代理后面
 
 **解决方案**：
+
 1. 配置 npm 代理：
    ```bash
    npm config set proxy http://proxy.company.com:8080
@@ -405,6 +433,7 @@ netstat -an | findstr :3000  # Windows
 ### 防火墙阻止连接
 
 **解决方案**：
+
 1. 允许 Node.js 通过防火墙
 2. 使用 localhost 而不是 0.0.0.0
 3. 配置特定端口规则
@@ -415,9 +444,11 @@ netstat -an | findstr :3000  # Windows
 ### Windows
 
 #### 路径格式问题
+
 **错误**：`Invalid path` 或找不到路径
 
 **解决方案**：
+
 ```bash
 # 使用正斜杠
 npx -y @pimzino/spec-workflow-mcp@latest C:/Users/name/project
@@ -427,9 +458,11 @@ npx -y @pimzino/spec-workflow-mcp@latest "C:\\Users\\name\\project"
 ```
 
 #### PowerShell 执行策略
+
 **错误**：`cannot be loaded because running scripts is disabled`
 
 **解决方案**：
+
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
@@ -437,9 +470,11 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ### macOS
 
 #### Gatekeeper 阻止
+
 **错误**：`cannot be opened because the developer cannot be verified`
 
 **解决方案**：
+
 1. 系统偏好设置 → 安全性与隐私 → 允许
 2. 或删除隔离：
    ```bash
@@ -449,9 +484,11 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ### Linux
 
 #### 缺少依赖项
+
 **错误**：`shared library not found`
 
 **解决方案**：
+
 ```bash
 # Ubuntu/Debian
 sudo apt-get update
@@ -468,6 +505,7 @@ sudo yum groupinstall "Development Tools"
 报告问题时，请包括：
 
 1. **系统信息**：
+
    ```bash
    node --version
    npm --version

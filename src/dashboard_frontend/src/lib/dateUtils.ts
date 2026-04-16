@@ -17,7 +17,7 @@ export function formatDate(
     fallbackText?: string;
     includeSeconds?: boolean;
   },
-  t?: TranslationFn
+  t?: TranslationFn,
 ): string {
   const {
     fallbackKey = 'common.never',

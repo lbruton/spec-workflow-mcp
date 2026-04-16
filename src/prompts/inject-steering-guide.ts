@@ -6,13 +6,14 @@ import { steeringGuideHandler } from '../tools/steering-guide.js';
 const prompt: Prompt = {
   name: 'inject-steering-guide',
   title: 'Inject Steering Guide into Context',
-  description: 'Injects the complete steering document workflow guide into the conversation context. This provides instructions for creating project-level guidance documents (product.md, tech.md, structure.md) when explicitly requested by the user.'
+  description:
+    'Injects the complete steering document workflow guide into the conversation context. This provides instructions for creating project-level guidance documents (product.md, tech.md, structure.md) when explicitly requested by the user.',
 };
 
 async function handler(args: Record<string, any>, context: ToolContext): Promise<PromptMessage[]> {
   // Call the steering-guide tool to get the full guide
   const toolResponse = await steeringGuideHandler({}, context);
-  
+
   // Extract the guide content from the tool response
   const guide = toolResponse.data?.guide || '';
   const dashboardUrl = toolResponse.data?.dashboardUrl;
@@ -32,7 +33,7 @@ ${guide}
 ${dashboardUrl ? `- Dashboard: ${dashboardUrl}` : '- Dashboard: Please start the dashboard or use VS Code extension "Spec Workflow MCP"'}
 
 **Next Steps:**
-${nextSteps.map(step => `- ${step}`).join('\n')}
+${nextSteps.map((step) => `- ${step}`).join('\n')}
 
 **Important Instructions:**
 1. This guide has been injected into your context for creating steering documents
@@ -45,9 +46,9 @@ ${nextSteps.map(step => `- ${step}`).join('\n')}
 
 **Note:** Steering documents are NOT part of the standard spec workflow. They are project-level guidance documents that should only be created when explicitly requested by the user. These documents establish vision, architecture, and conventions for established codebases.
 
-Please acknowledge that you've reviewed this steering workflow guide and confirm whether the user wants to create steering documents.`
-      }
-    }
+Please acknowledge that you've reviewed this steering workflow guide and confirm whether the user wants to create steering documents.`,
+      },
+    },
   ];
 
   return messages;
@@ -55,5 +56,5 @@ Please acknowledge that you've reviewed this steering workflow guide and confirm
 
 export const injectSteeringGuidePrompt: PromptDefinition = {
   prompt,
-  handler
+  handler,
 };

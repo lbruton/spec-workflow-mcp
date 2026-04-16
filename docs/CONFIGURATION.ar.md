@@ -12,11 +12,11 @@ npx -y @pimzino/spec-workflow-mcp@latest [project-path] [options]
 
 ### الخيارات المتاحة
 
-| الخيار | الوصف | مثال |
-|--------|-------------|---------|
-| `--help` | عرض معلومات الاستخدام الشاملة | `npx -y @pimzino/spec-workflow-mcp@latest --help` |
-| `--dashboard` | تشغيل وضع لوحة التحكم فقط (المنفذ الافتراضي: 5000) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard` |
-| `--port <number>` | تحديد منفذ مخصص للوحة التحكم (1024-65535) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080` |
+| الخيار            | الوصف                                              | مثال                                                               |
+| ----------------- | -------------------------------------------------- | ------------------------------------------------------------------ |
+| `--help`          | عرض معلومات الاستخدام الشاملة                      | `npx -y @pimzino/spec-workflow-mcp@latest --help`                  |
+| `--dashboard`     | تشغيل وضع لوحة التحكم فقط (المنفذ الافتراضي: 5000) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard`             |
+| `--port <number>` | تحديد منفذ مخصص للوحة التحكم (1024-65535)          | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080` |
 
 ### ملاحظات مهمة
 
@@ -29,12 +29,14 @@ npx -y @pimzino/spec-workflow-mcp@latest [project-path] [options]
 ### سير العمل النموذجي
 
 1. **ابدأ لوحة التحكم** (قم بذلك أولاً، مرة واحدة فقط):
+
 ```bash
 # يستخدم المنفذ الافتراضي 5000
 npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 ```
 
 2. **ابدأ خوادم MCP** (واحد لكل مشروع، في نوافذ طرفية منفصلة):
+
 ```bash
 # المشروع 1
 npx -y @pimzino/spec-workflow-mcp@latest ~/projects/app1
@@ -63,11 +65,12 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 تجاوز دليل الحالة العامة الافتراضي (`~/.specflow-mcp`). هذا مفيد للبيئات المعزولة حيث يكون `$HOME` للقراءة فقط.
 
-| المتغير | الافتراضي | الوصف |
-|----------|---------|-------------|
+| المتغير              | الافتراضي         | الوصف                    |
+| -------------------- | ----------------- | ------------------------ |
 | `SPEC_WORKFLOW_HOME` | `~/.specflow-mcp` | دليل ملفات الحالة العامة |
 
 **الملفات المخزنة في هذا الدليل:**
+
 - `activeProjects.json` - سجل المشاريع
 - `activeSession.json` - معلومات جلسة لوحة التحكم
 - `settings.json` - الإعدادات العامة
@@ -98,6 +101,7 @@ SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@la
 ## إدارة جلسة لوحة التحكم
 
 تخزن لوحة التحكم معلومات جلستها في `~/.specflow-mcp/activeSession.json` (أو `$SPEC_WORKFLOW_HOME/activeSession.json` إذا تم تعيينه). هذا الملف:
+
 - يفرض مثيل واحد للوحة التحكم
 - يسمح لخوادم MCP باكتشاف لوحة التحكم قيد التشغيل
 - ينظف تلقائيًا عند توقف لوحة التحكم
@@ -177,12 +181,12 @@ debounceMs = 300
 
 #### الإعدادات الأساسية
 
-| الخيار | النوع | الافتراضي | الوصف |
-|--------|------|---------|-------------|
-| `projectDir` | string | الدليل الحالي | مسار دليل المشروع |
-| `port` | number | مؤقت | منفذ لوحة التحكم (1024-65535) |
-| `dashboardOnly` | boolean | false | تشغيل لوحة التحكم بدون خادم MCP |
-| `lang` | string | "en" | لغة الواجهة |
+| الخيار          | النوع   | الافتراضي     | الوصف                           |
+| --------------- | ------- | ------------- | ------------------------------- |
+| `projectDir`    | string  | الدليل الحالي | مسار دليل المشروع               |
+| `port`          | number  | مؤقت          | منفذ لوحة التحكم (1024-65535)   |
+| `dashboardOnly` | boolean | false         | تشغيل لوحة التحكم بدون خادم MCP |
+| `lang`          | string  | "en"          | لغة الواجهة                     |
 
 > **ملاحظة**: تمت إزالة خيار `autoStartDashboard` في الإصدار 2.0.0. تستخدم لوحة التحكم الآن وضع متعدد المشاريع الموحد المتاح عبر علامة `--dashboard`.
 
@@ -203,11 +207,13 @@ debounceMs = 300
 ### إنشاء تكوين مخصص
 
 1. انسخ التكوين المثالي:
+
 ```bash
 cp .specflow/config.example.toml .specflow/config.toml
 ```
 
 2. حرر التكوين:
+
 ```toml
 # تكوين مشروعي
 projectDir = "/Users/myname/projects/myapp"
@@ -216,6 +222,7 @@ lang = "en"
 ```
 
 3. استخدم التكوين:
+
 ```bash
 # يستخدم .specflow/config.toml تلقائيًا
 npx -y @pimzino/spec-workflow-mcp@latest
@@ -262,6 +269,7 @@ verboseLogging = true
 ```
 
 الاستخدام:
+
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest --config dev-config.toml
 ```
@@ -280,6 +288,7 @@ verboseLogging = false
 ```
 
 الاستخدام:
+
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ```
@@ -293,6 +302,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ### المنافذ المؤقتة
 
 عندما لا يتم تحديد منفذ، يختار النظام تلقائيًا منفذًا مؤقتًا متاحًا. هذا موصى به لـ:
+
 - بيئات التطوير
 - مشاريع متعددة متزامنة
 - تجنب تعارضات المنافذ
@@ -300,6 +310,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ### المنافذ الثابتة
 
 استخدم منافذ ثابتة عندما تحتاج:
+
 - عناوين URL متسقة للإشارات المرجعية
 - التكامل مع أدوات أخرى
 - التعاون الجماعي مع تكوينات مشتركة
@@ -367,11 +378,13 @@ npx -y @pimzino/spec-workflow-mcp@latest \
 ### التكوين لا يتم تحميله
 
 1. **تحقق من موقع الملف:**
+
    ```bash
    ls -la .specflow/config.toml
    ```
 
 2. **تحقق من صحة بناء جملة TOML:**
+
    ```bash
    # ثبت أداة TOML CLI
    npm install -g @iarna/toml
@@ -388,12 +401,12 @@ npx -y @pimzino/spec-workflow-mcp@latest \
 
 ### المشكلات الشائعة
 
-| المشكلة | الحل |
-|-------|----------|
-| المنفذ قيد الاستخدام بالفعل | استخدم منفذًا مختلفًا أو احذف للمنفذ المؤقت |
+| المشكلة                       | الحل                                               |
+| ----------------------------- | -------------------------------------------------- |
+| المنفذ قيد الاستخدام بالفعل   | استخدم منفذًا مختلفًا أو احذف للمنفذ المؤقت        |
 | لم يتم العثور على ملف التكوين | تحقق من المسار واستخدم المسار المطلق إذا لزم الأمر |
-| بناء جملة TOML غير صالح | تحقق من الصحة باستخدام أداة TOML |
-| الإعدادات لا يتم تطبيقها | تحقق من أسبقية التكوين |
+| بناء جملة TOML غير صالح       | تحقق من الصحة باستخدام أداة TOML                   |
+| الإعدادات لا يتم تطبيقها      | تحقق من أسبقية التكوين                             |
 
 ## أفضل الممارسات
 

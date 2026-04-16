@@ -48,7 +48,7 @@ export function JobExecutionHistory({ jobId, isExpanded }: JobExecutionHistoryPr
 
       const [historyRes, statsRes] = await Promise.all([
         fetch(`/api/jobs/${jobId}/history?limit=20`),
-        fetch(`/api/jobs/${jobId}/stats`)
+        fetch(`/api/jobs/${jobId}/stats`),
       ]);
 
       if (historyRes.ok) {
@@ -107,7 +107,9 @@ export function JobExecutionHistory({ jobId, isExpanded }: JobExecutionHistoryPr
           </div>
           <div className="bg-white dark:bg-gray-800 p-3 rounded-lg">
             <div className="text-xs text-gray-600 dark:text-gray-400">Success Rate</div>
-            <div className={`text-lg font-semibold ${stats.successRate === 100 ? 'text-green-600 dark:text-green-400' : stats.successRate >= 50 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400'}`}>
+            <div
+              className={`text-lg font-semibold ${stats.successRate === 100 ? 'text-green-600 dark:text-green-400' : stats.successRate >= 50 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400'}`}
+            >
               {stats.successRate.toFixed(0)}%
             </div>
           </div>
@@ -140,7 +142,9 @@ export function JobExecutionHistory({ jobId, isExpanded }: JobExecutionHistoryPr
 
       {/* Execution History */}
       <div>
-        <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">Recent Executions</h4>
+        <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
+          Recent Executions
+        </h4>
         {history.length === 0 ? (
           <div className="p-3 text-center text-sm text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 rounded-lg">
             No execution history yet
@@ -152,12 +156,14 @@ export function JobExecutionHistory({ jobId, isExpanded }: JobExecutionHistoryPr
                 key={`${execution.executedAt}-${index}`}
                 className="p-3 bg-white dark:bg-gray-800 rounded-lg border-l-4"
                 style={{
-                  borderLeftColor: execution.success ? '#10b981' : '#ef4444'
+                  borderLeftColor: execution.success ? '#10b981' : '#ef4444',
                 }}
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <span className={`inline-block w-2 h-2 rounded-full ${execution.success ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                    <span
+                      className={`inline-block w-2 h-2 rounded-full ${execution.success ? 'bg-green-500' : 'bg-red-500'}`}
+                    ></span>
                     <span className="text-sm font-medium text-gray-900 dark:text-white">
                       {execution.success ? 'Success' : 'Failed'}
                     </span>

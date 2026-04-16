@@ -9,16 +9,13 @@ import { mkdtemp, mkdir, rm, writeFile } from 'fs/promises';
 describe('Tool projectPath fallback behavior', () => {
   const mockContext: ToolContext = {
     projectPath: '/test/project/from/context',
-    dashboardUrl: 'http://localhost:5000'
+    dashboardUrl: 'http://localhost:5000',
   };
 
   describe('spec-status tool', () => {
     it('should use context.projectPath when args.projectPath is not provided', async () => {
-      const result = await specStatusHandler(
-        { specName: 'test-spec' },
-        mockContext
-      );
-      
+      const result = await specStatusHandler({ specName: 'test-spec' }, mockContext);
+
       // Should not fail due to missing projectPath
       // The actual implementation will fail because the spec doesn't exist,
       // but we can verify the error is not about missing projectPath
@@ -29,9 +26,9 @@ describe('Tool projectPath fallback behavior', () => {
     it('should use args.projectPath when explicitly provided', async () => {
       const result = await specStatusHandler(
         { specName: 'test-spec', projectPath: '/override/path' },
-        mockContext
+        mockContext,
       );
-      
+
       // Should not fail due to missing projectPath
       expect(result.success).toBe(false);
       expect(result.message).not.toContain('Project path is required but not provided');
@@ -39,12 +36,9 @@ describe('Tool projectPath fallback behavior', () => {
 
     it('should fail if neither args.projectPath nor context.projectPath is provided', async () => {
       const emptyContext: ToolContext = { projectPath: '' };
-      
-      const result = await specStatusHandler(
-        { specName: 'test-spec' },
-        emptyContext
-      );
-      
+
+      const result = await specStatusHandler({ specName: 'test-spec' }, emptyContext);
+
       expect(result.success).toBe(false);
       expect(result.message).toContain('Project path is required but not provided');
     });
@@ -60,11 +54,11 @@ describe('Tool projectPath fallback behavior', () => {
           filesModified: [],
           filesCreated: [],
           statistics: { linesAdded: 10, linesRemoved: 5 },
-          artifacts: { functions: [] }
+          artifacts: { functions: [] },
         },
-        mockContext
+        mockContext,
       );
-      
+
       // Should not fail due to missing projectPath
       expect(result.success).toBe(false);
       expect(result.message).not.toContain('Project path is required but not provided');
@@ -72,7 +66,7 @@ describe('Tool projectPath fallback behavior', () => {
 
     it('should fail if neither args.projectPath nor context.projectPath is provided', async () => {
       const emptyContext: ToolContext = { projectPath: '' };
-      
+
       const result = await logImplementationHandler(
         {
           specName: 'test-spec',
@@ -81,11 +75,11 @@ describe('Tool projectPath fallback behavior', () => {
           filesModified: [],
           filesCreated: [],
           statistics: { linesAdded: 10, linesRemoved: 5 },
-          artifacts: { functions: [] }
+          artifacts: { functions: [] },
         },
-        emptyContext
+        emptyContext,
       );
-      
+
       expect(result.success).toBe(false);
       expect(result.message).toContain('Project path is required but not provided');
     });
@@ -106,11 +100,11 @@ describe('Tool projectPath fallback behavior', () => {
           filePath: 'test.md',
           type: 'document',
           category: 'spec',
-          categoryName: 'test-spec'
+          categoryName: 'test-spec',
         },
-        mockContext
+        mockContext,
       );
-      
+
       // Should not fail due to missing projectPath
       expect(result.success).toBe(false);
       expect(result.message).not.toContain('Project path is required but not provided');
@@ -120,11 +114,11 @@ describe('Tool projectPath fallback behavior', () => {
       const result = await approvalsHandler(
         {
           action: 'status',
-          approvalId: 'test-id'
+          approvalId: 'test-id',
         },
-        mockContext
+        mockContext,
       );
-      
+
       // Should not fail due to missing projectPath
       expect(result.success).toBe(false);
       expect(result.message).not.toContain('Project path is required but not provided');
@@ -132,7 +126,7 @@ describe('Tool projectPath fallback behavior', () => {
 
     it('should fail if neither args.projectPath nor context.projectPath is provided', async () => {
       const emptyContext: ToolContext = { projectPath: '' };
-      
+
       const result = await approvalsHandler(
         {
           action: 'request',
@@ -140,11 +134,11 @@ describe('Tool projectPath fallback behavior', () => {
           filePath: 'test.md',
           type: 'document',
           category: 'spec',
-          categoryName: 'test-spec'
+          categoryName: 'test-spec',
         },
-        emptyContext
+        emptyContext,
       );
-      
+
       expect(result.success).toBe(false);
       expect(result.message).toContain('Project path is required but not provided');
     });
@@ -157,11 +151,11 @@ describe('Tool projectPath fallback behavior', () => {
           filePath: 'test.md',
           type: 'document',
           category: 'spec',
-          categoryName: 'test-spec'
+          categoryName: 'test-spec',
         },
-        mockContext
+        mockContext,
       );
-      
+
       // The actual error should be about path validation, not about PathUtils
       expect(result.success).toBe(false);
       expect(result.message).not.toContain('PathUtils.translatePath is not a function');
@@ -172,11 +166,11 @@ describe('Tool projectPath fallback behavior', () => {
       const result = await approvalsHandler(
         {
           action: 'status',
-          approvalId: 'test-id'
+          approvalId: 'test-id',
         },
-        mockContext
+        mockContext,
       );
-      
+
       // The actual error should be about path validation, not about PathUtils
       expect(result.success).toBe(false);
       expect(result.message).not.toContain('PathUtils.translatePath is not a function');
@@ -187,11 +181,11 @@ describe('Tool projectPath fallback behavior', () => {
       const result = await approvalsHandler(
         {
           action: 'delete',
-          approvalId: 'test-id'
+          approvalId: 'test-id',
         },
-        mockContext
+        mockContext,
       );
-      
+
       // The actual error should be about path validation, not about PathUtils
       expect(result.success).toBe(false);
       expect(result.message).not.toContain('PathUtils.translatePath is not a function');
@@ -214,14 +208,14 @@ describe('Tool projectPath fallback behavior', () => {
             filePath: relativePath,
             type: 'document',
             category: 'spec',
-            categoryName: 'test-spec'
+            categoryName: 'test-spec',
           },
-          { projectPath: tempProject }
+          { projectPath: tempProject },
         );
 
         expect(result.success).toBe(false);
         expect(result.message).toContain('MDX compatibility errors');
-        expect(result.nextSteps?.some(step => step.includes('mdx-compile-error'))).toBe(true);
+        expect(result.nextSteps?.some((step) => step.includes('mdx-compile-error'))).toBe(true);
       } finally {
         await rm(tempProject, { recursive: true, force: true });
       }
@@ -243,14 +237,14 @@ describe('Tool projectPath fallback behavior', () => {
             filePath: relativePath,
             type: 'document',
             category: 'spec',
-            categoryName: 'test-spec'
+            categoryName: 'test-spec',
           },
-          { projectPath: tempProject }
+          { projectPath: tempProject },
         );
 
         expect(result.success).toBe(false);
         expect(result.message).toContain('MDX compatibility errors');
-        expect(result.nextSteps?.some(step => step.includes('mdx-compile-error'))).toBe(true);
+        expect(result.nextSteps?.some((step) => step.includes('mdx-compile-error'))).toBe(true);
       } finally {
         await rm(tempProject, { recursive: true, force: true });
       }

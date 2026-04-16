@@ -82,7 +82,7 @@ async function collectMarkdownFiles(dirPath: string): Promise<string[]> {
   for (const entry of entries) {
     const fullPath = join(dirPath, entry.name);
     if (entry.isDirectory()) {
-      files.push(...await collectMarkdownFiles(fullPath));
+      files.push(...(await collectMarkdownFiles(fullPath)));
       continue;
     }
 
@@ -150,20 +150,32 @@ async function main(): Promise<void> {
     }
 
     if (options.json) {
-      console.log(JSON.stringify({
-        valid: issues.length === 0,
-        filesChecked: files.length,
-        errorCount: issues.length,
-        issues,
-      }, null, 2));
+      console.log(
+        JSON.stringify(
+          {
+            valid: issues.length === 0,
+            filesChecked: files.length,
+            errorCount: issues.length,
+            issues,
+          },
+          null,
+          2,
+        ),
+      );
     } else {
       if (issues.length === 0) {
-        console.log(`OK: ${files.length} markdown file(s) checked, no MDX compatibility errors found.`);
+        console.log(
+          `OK: ${files.length} markdown file(s) checked, no MDX compatibility errors found.`,
+        );
       } else {
         for (const issue of issues) {
-          console.log(`${issue.filePath}:${issue.line}:${issue.column} [${issue.ruleId}] ${issue.message}`);
+          console.log(
+            `${issue.filePath}:${issue.line}:${issue.column} [${issue.ruleId}] ${issue.message}`,
+          );
         }
-        console.log(`\nFound ${issues.length} MDX compatibility error(s) across ${files.length} markdown file(s).`);
+        console.log(
+          `\nFound ${issues.length} MDX compatibility error(s) across ${files.length} markdown file(s).`,
+        );
       }
     }
 

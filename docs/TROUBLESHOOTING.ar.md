@@ -5,6 +5,7 @@
 ## التشخيص السريع
 
 ### التحقق من التثبيت
+
 ```bash
 # تحقق من إمكانية الوصول إلى حزمة npm
 npx -y @pimzino/spec-workflow-mcp@latest --help
@@ -17,6 +18,7 @@ ls -la .specflow  # أو 'dir .specflow' على Windows
 ```
 
 ### التحقق من الخدمات
+
 ```bash
 # اختبر خادم MCP
 npx -y @pimzino/spec-workflow-mcp@latest /path/to/project
@@ -38,6 +40,7 @@ netstat -an | findstr :3000  # Windows
 **الخطأ**: `npm ERR! 404 Not Found - @pimzino/spec-workflow-mcp@latest`
 
 **الحلول**:
+
 1. تحقق من اتصال الإنترنت
 2. امسح ذاكرة التخزين المؤقت لـ npm:
    ```bash
@@ -58,6 +61,7 @@ netstat -an | findstr :3000  # Windows
 **الخطأ**: `EACCES: permission denied`
 
 **الحلول**:
+
 1. **macOS/Linux**: استخدم أذونات npm الصحيحة:
    ```bash
    npm config set prefix ~/.npm-global
@@ -79,6 +83,7 @@ netstat -an | findstr :3000  # Windows
 **الخطأ**: `Failed to start MCP server`
 
 **الحلول**:
+
 1. تحقق من إصدار Node.js:
    ```bash
    node --version  # يجب أن يكون 18.0 أو أعلى
@@ -104,6 +109,7 @@ netstat -an | findstr :3000  # Windows
 **الحلول**:
 
 1. **Claude Desktop**: تحقق من ملف التكوين:
+
    ```json
    {
      "mcpServers": {
@@ -116,6 +122,7 @@ netstat -an | findstr :3000  # Windows
    ```
 
 2. **Claude Code CLI**: تحقق من الإعداد:
+
    ```bash
    claude mcp list  # تحقق من إدراج spec-workflow
    claude mcp remove spec-workflow  # أزل إذا كان موجودًا
@@ -131,6 +138,7 @@ netstat -an | findstr :3000  # Windows
 **الخطأ**: `Tool 'spec-workflow' not found`
 
 **الحلول**:
+
 1. أعد تشغيل أداة الذكاء الاصطناعي بالكامل
 2. تحقق من تشغيل خادم MCP (ابحث عن العملية)
 3. تحقق من حفظ التكوين بشكل صحيح
@@ -143,6 +151,7 @@ netstat -an | findstr :3000  # Windows
 **الخطأ**: `Cannot connect to dashboard` أو صفحة فارغة
 
 **الحلول**:
+
 1. تحقق من بدء لوحة التحكم:
    ```bash
    npx -y @pimzino/spec-workflow-mcp@latest /path --dashboard
@@ -160,11 +169,13 @@ netstat -an | findstr :3000  # Windows
 **الخطأ**: `Error: listen EADDRINUSE: address already in use :::3000`
 
 **الحلول**:
+
 1. استخدم منفذًا مختلفًا:
    ```bash
    npx -y @pimzino/spec-workflow-mcp@latest /path --dashboard --port 3456
    ```
 2. اعثر على العملية التي تستخدم المنفذ وأنهها:
+
    ```bash
    # macOS/Linux
    lsof -i :3000
@@ -174,6 +185,7 @@ netstat -an | findstr :3000  # Windows
    netstat -ano | findstr :3000
    taskkill /PID [PID] /F
    ```
+
 3. استخدم منفذًا مؤقتًا (احذف علامة --port):
    ```bash
    npx -y @pimzino/spec-workflow-mcp@latest /path --dashboard
@@ -184,6 +196,7 @@ netstat -an | findstr :3000  # Windows
 **الخطأ**: `WebSocket connection lost` أو التحديثات الفورية لا تعمل
 
 **الحلول**:
+
 1. أعد تحميل صفحة المتصفح
 2. تحقق من عدم حظر جدار الحماية لـ WebSocket
 3. تحقق من تشغيل لوحة التحكم وخادم MCP من نفس المشروع
@@ -195,6 +208,7 @@ netstat -an | findstr :3000  # Windows
 **الأعراض**: التغييرات لا تنعكس في الوقت الفعلي
 
 **الحلول**:
+
 1. تحديث قوي للمتصفح (Ctrl+Shift+R أو Cmd+Shift+R)
 2. امسح ذاكرة التخزين المؤقت للمتصفح
 3. تحقق من حالة اتصال WebSocket (يجب أن تظهر باللون الأخضر)
@@ -212,6 +226,7 @@ netstat -an | findstr :3000  # Windows
 **الخطأ**: لا توجد إشعارات موافقة في لوحة التحكم
 
 **الحلول**:
+
 1. تأكد من تشغيل لوحة التحكم جنبًا إلى جنب مع خادم MCP:
    ```bash
    # قم بتشغيل كليهما بشكل منفصل
@@ -231,6 +246,7 @@ netstat -an | findstr :3000  # Windows
 **الخطأ**: أزرار الموافقة لا تعمل
 
 **الحلول**:
+
 1. تحقق من وحدة تحكم المتصفح لأخطاء JavaScript
 2. تحقق من أنك على صفحة المواصفة الصحيحة
 3. تأكد من أن المستند لديه حالة موافقة معلقة
@@ -243,6 +259,7 @@ netstat -an | findstr :3000  # Windows
 **الخطأ**: مستندات المواصفات لا تظهر في نظام الملفات
 
 **الحلول**:
+
 1. تحقق من أذونات الكتابة:
    ```bash
    touch .specflow/test.txt
@@ -262,6 +279,7 @@ netstat -an | findstr :3000  # Windows
 **الخطأ**: `EACCES` أو `Permission denied` عند إنشاء المواصفات
 
 **الحلول**:
+
 1. أصلح أذونات الدليل:
    ```bash
    chmod -R 755 .specflow  # macOS/Linux
@@ -280,6 +298,7 @@ netstat -an | findstr :3000  # Windows
 **الخطأ**: أيقونة Spec Workflow لا تظهر في شريط النشاط
 
 **الحلول**:
+
 1. تحقق من تثبيت الإضافة:
    - افتح الإضافات (Ctrl+Shift+X)
    - ابحث عن "Spec Workflow MCP"
@@ -295,6 +314,7 @@ netstat -an | findstr :3000  # Windows
 **الخطأ**: الأوامر تفشل أو تظهر أخطاء
 
 **الحلول**:
+
 1. افتح مجلد المشروع الذي يحتوي على `.specflow`
 2. تحقق من أن VSCode يستخدم مساحة العمل الصحيحة
 3. عرض سجلات الإضافة للأخطاء المحددة
@@ -311,6 +331,7 @@ netstat -an | findstr :3000  # Windows
 **الخطأ**: الإعدادات في config.toml لا يتم تطبيقها
 
 **الحلول**:
+
 1. تحقق من صحة بناء جملة TOML:
    ```bash
    # ثبت مدقق TOML
@@ -321,6 +342,7 @@ netstat -an | findstr :3000  # Windows
    - الافتراضي: `.specflow/config.toml`
    - مخصص: استخدم علامة `--config`
 3. تأكد من عدم وجود أخطاء في بناء الجملة:
+
    ```toml
    # صحيح
    port = 3000
@@ -336,7 +358,9 @@ netstat -an | findstr :3000  # Windows
 **الخطأ**: العلامات مثل `--port` يتم تجاهلها
 
 **الحلول**:
+
 1. تحقق من ترتيب الوسائط:
+
    ```bash
    # صحيح
    npx -y @pimzino/spec-workflow-mcp@latest /path --dashboard --port 3000
@@ -344,6 +368,7 @@ netstat -an | findstr :3000  # Windows
    # خاطئ
    npx -y @pimzino/spec-workflow-mcp@latest --dashboard /path --port 3000
    ```
+
 2. تأكد من أن قيم العلامة صالحة:
    - المنفذ: 1024-65535
    - اللغة: en, ja, zh, es, pt, de, fr, ru, it, ko, ar
@@ -356,6 +381,7 @@ netstat -an | findstr :3000  # Windows
 **الأعراض**: لوحة التحكم أو الأدوات تستجيب ببطء
 
 **الحلول**:
+
 1. تحقق من موارد النظام:
    ```bash
    # استخدام المعالج والذاكرة
@@ -377,6 +403,7 @@ netstat -an | findstr :3000  # Windows
 ### استخدام عالٍ للذاكرة
 
 **الحلول**:
+
 1. أعد تشغيل الخدمات دوريًا
 2. حد من معدل تحديث لوحة التحكم:
    ```json
@@ -391,6 +418,7 @@ netstat -an | findstr :3000  # Windows
 ### خلف وكيل الشركة
 
 **الحلول**:
+
 1. قم بتكوين وكيل npm:
    ```bash
    npm config set proxy http://proxy.company.com:8080
@@ -405,6 +433,7 @@ netstat -an | findstr :3000  # Windows
 ### جدار الحماية يحظر الاتصالات
 
 **الحلول**:
+
 1. السماح لـ Node.js من خلال جدار الحماية
 2. استخدم localhost بدلاً من 0.0.0.0
 3. قم بتكوين قواعد منافذ محددة
@@ -415,9 +444,11 @@ netstat -an | findstr :3000  # Windows
 ### Windows
 
 #### مشكلات تنسيق المسار
+
 **الخطأ**: `Invalid path` أو لم يتم العثور على المسار
 
 **الحلول**:
+
 ```bash
 # استخدم الشرطة المائلة الأمامية
 npx -y @pimzino/spec-workflow-mcp@latest C:/Users/name/project
@@ -427,9 +458,11 @@ npx -y @pimzino/spec-workflow-mcp@latest "C:\\Users\\name\\project"
 ```
 
 #### سياسة تنفيذ PowerShell
+
 **الخطأ**: `cannot be loaded because running scripts is disabled`
 
 **الحلول**:
+
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
@@ -437,9 +470,11 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ### macOS
 
 #### حظر Gatekeeper
+
 **الخطأ**: `cannot be opened because the developer cannot be verified`
 
 **الحلول**:
+
 1. تفضيلات النظام → الأمان والخصوصية → السماح
 2. أو إزالة الحجر الصحي:
    ```bash
@@ -449,9 +484,11 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ### Linux
 
 #### التبعيات المفقودة
+
 **الخطأ**: `shared library not found`
 
 **الحلول**:
+
 ```bash
 # Ubuntu/Debian
 sudo apt-get update
@@ -468,6 +505,7 @@ sudo yum groupinstall "Development Tools"
 عند الإبلاغ عن المشكلات، قم بتضمين:
 
 1. **معلومات النظام**:
+
    ```bash
    node --version
    npm --version

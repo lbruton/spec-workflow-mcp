@@ -2,11 +2,7 @@ import { describe, it, expect, afterEach } from 'vitest';
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync, chmodSync } from 'fs';
 import { join, resolve } from 'path';
 import { tmpdir } from 'os';
-import {
-  loadConfig,
-  createDefaultConfig,
-  loadOrCreateConfig,
-} from '../config-loader.js';
+import { loadConfig, createDefaultConfig, loadOrCreateConfig } from '../config-loader.js';
 
 describe('loadConfig', () => {
   let tempDir: string;
@@ -24,10 +20,7 @@ describe('loadConfig', () => {
     tempDir = mkdtempSync(join(tmpdir(), 'specflow-cfg-'));
     const specflowDir = join(tempDir, '.specflow');
     mkdirSync(specflowDir, { recursive: true });
-    writeFileSync(
-      join(specflowDir, 'config.json'),
-      JSON.stringify(config, null, 2),
-    );
+    writeFileSync(join(specflowDir, 'config.json'), JSON.stringify(config, null, 2));
     if (opts?.createDocVault !== false) {
       // Create the DocVault directory that the config points to
       const dvPath = config.docvault as string;
@@ -121,9 +114,7 @@ describe('loadConfig', () => {
       issue_prefix: 'TA',
     });
 
-    await expect(loadConfig(tempDir)).rejects.toThrow(
-      /docvault path must be a non-empty string/,
-    );
+    await expect(loadConfig(tempDir)).rejects.toThrow(/docvault path must be a non-empty string/);
   });
 
   it('throws on empty issue_prefix field', async () => {
@@ -146,9 +137,7 @@ describe('loadConfig', () => {
       { createDocVault: false },
     );
 
-    await expect(loadConfig(tempDir)).rejects.toThrow(
-      /DocVault path does not exist/,
-    );
+    await expect(loadConfig(tempDir)).rejects.toThrow(/DocVault path does not exist/);
   });
 });
 
@@ -195,9 +184,7 @@ describe('createDefaultConfig', () => {
     mkdirSync(projectDir, { recursive: true });
 
     tempDir = projectDir;
-    await expect(createDefaultConfig(projectDir)).rejects.toThrow(
-      /Could not auto-detect DocVault/,
-    );
+    await expect(createDefaultConfig(projectDir)).rejects.toThrow(/Could not auto-detect DocVault/);
   });
 });
 

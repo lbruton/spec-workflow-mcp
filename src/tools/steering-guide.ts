@@ -11,12 +11,12 @@ Call ONLY when user explicitly requests steering document creation or asks about
   inputSchema: {
     type: 'object',
     properties: {},
-    additionalProperties: false
+    additionalProperties: false,
   },
   annotations: {
     title: 'Steering Guide',
     readOnlyHint: true,
-  }
+  },
 };
 
 export async function steeringGuideHandler(args: any, context: ToolContext): Promise<ToolResponse> {
@@ -25,15 +25,17 @@ export async function steeringGuideHandler(args: any, context: ToolContext): Pro
     message: 'Steering workflow guide loaded - follow this workflow exactly to avoid errors',
     data: {
       guide: getSteeringGuide(PathUtils.getWorkflowRoot(context.projectPath)),
-      dashboardUrl: context.dashboardUrl
+      dashboardUrl: context.dashboardUrl,
     },
     nextSteps: [
       'Only proceed if user requested steering docs',
       'Create product.md first',
       'Then tech.md and structure.md',
       'Reference in future specs',
-      context.dashboardUrl ? `Dashboard: ${context.dashboardUrl}` : 'Start the dashboard with: specflow --dashboard'
-    ]
+      context.dashboardUrl
+        ? `Dashboard: ${context.dashboardUrl}`
+        : 'Start the dashboard with: specflow --dashboard',
+    ],
   };
 }
 

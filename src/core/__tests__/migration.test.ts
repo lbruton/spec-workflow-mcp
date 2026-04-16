@@ -13,10 +13,7 @@ import { tmpdir } from 'os';
 import { needsMigration, migrateToDocVault } from '../migration.js';
 import type { ResolvedConfig } from '../config-loader.js';
 
-function makeConfig(
-  tempDir: string,
-  specflowRoot: string,
-): ResolvedConfig {
+function makeConfig(tempDir: string, specflowRoot: string): ResolvedConfig {
   return {
     project: 'TestProject',
     docvault: '../DocVault',
@@ -118,7 +115,9 @@ describe('migrateToDocVault', () => {
     // Verify files were actually copied
     expect(readFileSync(join(specflowRoot, 'steering', 'product.md'), 'utf-8')).toBe('# Product');
     expect(readFileSync(join(specflowRoot, 'specs', 'spec-1.md'), 'utf-8')).toBe('# Spec 1');
-    expect(readFileSync(join(specflowRoot, 'approvals', 'approval.md'), 'utf-8')).toBe('# Approval');
+    expect(readFileSync(join(specflowRoot, 'approvals', 'approval.md'), 'utf-8')).toBe(
+      '# Approval',
+    );
     expect(readFileSync(join(specflowRoot, 'archive', 'old.md'), 'utf-8')).toBe('# Old');
   });
 
@@ -134,9 +133,9 @@ describe('migrateToDocVault', () => {
     await migrateToDocVault(tempDir, config);
 
     // Should be at templates/, not user-templates/
-    expect(
-      readFileSync(join(specflowRoot, 'templates', 'custom.md'), 'utf-8'),
-    ).toBe('# Custom Template');
+    expect(readFileSync(join(specflowRoot, 'templates', 'custom.md'), 'utf-8')).toBe(
+      '# Custom Template',
+    );
     expect(existsSync(join(specflowRoot, 'user-templates'))).toBe(false);
   });
 

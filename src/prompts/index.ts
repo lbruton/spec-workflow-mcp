@@ -1,4 +1,9 @@
-import { Prompt, PromptMessage, ListPromptsResult, GetPromptResult } from '@modelcontextprotocol/sdk/types.js';
+import {
+  Prompt,
+  PromptMessage,
+  ListPromptsResult,
+  GetPromptResult,
+} from '@modelcontextprotocol/sdk/types.js';
 import { ToolContext } from '../types.js';
 import { PromptDefinition, PromptHandler } from './types.js';
 
@@ -22,14 +27,14 @@ const promptDefinitions: PromptDefinition[] = [
   specStatusPrompt,
   injectSpecWorkflowGuidePrompt,
   injectSteeringGuidePrompt,
-  refreshTasksPrompt
+  refreshTasksPrompt,
 ];
 
 /**
  * Get all registered prompts
  */
 export function registerPrompts(): Prompt[] {
-  return promptDefinitions.map(def => def.prompt);
+  return promptDefinitions.map((def) => def.prompt);
 }
 
 /**
@@ -37,7 +42,7 @@ export function registerPrompts(): Prompt[] {
  */
 export async function handlePromptList(): Promise<ListPromptsResult> {
   return {
-    prompts: registerPrompts()
+    prompts: registerPrompts(),
   };
 }
 
@@ -45,12 +50,12 @@ export async function handlePromptList(): Promise<ListPromptsResult> {
  * Handle prompts/get request
  */
 export async function handlePromptGet(
-  name: string, 
-  args: Record<string, any> = {}, 
-  context: ToolContext
+  name: string,
+  args: Record<string, any> = {},
+  context: ToolContext,
 ): Promise<GetPromptResult> {
-  const promptDef = promptDefinitions.find(def => def.prompt.name === name);
-  
+  const promptDef = promptDefinitions.find((def) => def.prompt.name === name);
+
   if (!promptDef) {
     throw new Error(`Prompt not found: ${name}`);
   }

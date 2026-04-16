@@ -5,6 +5,7 @@
 ## 빠른 진단
 
 ### 설치 확인
+
 ```bash
 # npm 패키지 접근 가능 여부 확인
 npx -y @pimzino/spec-workflow-mcp@latest --help
@@ -17,6 +18,7 @@ ls -la .specflow  # 또는 Windows에서 'dir .specflow'
 ```
 
 ### 서비스 확인
+
 ```bash
 # MCP 서버 테스트
 npx -y @pimzino/spec-workflow-mcp@latest /path/to/project
@@ -38,6 +40,7 @@ netstat -an | findstr :3000  # Windows
 **에러**: `npm ERR! 404 Not Found - @pimzino/spec-workflow-mcp@latest`
 
 **해결 방법**:
+
 1. 인터넷 연결 확인
 2. npm 캐시 정리:
    ```bash
@@ -58,6 +61,7 @@ netstat -an | findstr :3000  # Windows
 **에러**: `EACCES: permission denied`
 
 **해결 방법**:
+
 1. **macOS/Linux**: 적절한 npm 권한 사용:
    ```bash
    npm config set prefix ~/.npm-global
@@ -79,6 +83,7 @@ netstat -an | findstr :3000  # Windows
 **에러**: `Failed to start MCP server`
 
 **해결 방법**:
+
 1. Node.js 버전 확인:
    ```bash
    node --version  # 18.0 이상이어야 함
@@ -104,6 +109,7 @@ netstat -an | findstr :3000  # Windows
 **해결 방법**:
 
 1. **Claude Desktop**: 구성 파일 확인:
+
    ```json
    {
      "mcpServers": {
@@ -116,6 +122,7 @@ netstat -an | findstr :3000  # Windows
    ```
 
 2. **Claude Code CLI**: 설정 확인:
+
    ```bash
    claude mcp list  # spec-workflow가 나열되는지 확인
    claude mcp remove spec-workflow  # 존재하면 제거
@@ -131,6 +138,7 @@ netstat -an | findstr :3000  # Windows
 **에러**: `Tool 'spec-workflow' not found`
 
 **해결 방법**:
+
 1. AI 도구를 완전히 재시작
 2. MCP 서버가 실행 중인지 확인 (프로세스 확인)
 3. 구성이 올바르게 저장되었는지 확인
@@ -143,6 +151,7 @@ netstat -an | findstr :3000  # Windows
 **에러**: `Cannot connect to dashboard` 또는 빈 페이지
 
 **해결 방법**:
+
 1. 대시보드가 시작되었는지 확인:
    ```bash
    npx -y @pimzino/spec-workflow-mcp@latest /path --dashboard
@@ -160,11 +169,13 @@ netstat -an | findstr :3000  # Windows
 **에러**: `Error: listen EADDRINUSE: address already in use :::3000`
 
 **해결 방법**:
+
 1. 다른 포트 사용:
    ```bash
    npx -y @pimzino/spec-workflow-mcp@latest /path --dashboard --port 3456
    ```
 2. 포트를 사용하는 프로세스 찾아 종료:
+
    ```bash
    # macOS/Linux
    lsof -i :3000
@@ -174,6 +185,7 @@ netstat -an | findstr :3000  # Windows
    netstat -ano | findstr :3000
    taskkill /PID [PID] /F
    ```
+
 3. 임시 포트 사용 (--port 플래그 생략):
    ```bash
    npx -y @pimzino/spec-workflow-mcp@latest /path --dashboard
@@ -184,6 +196,7 @@ netstat -an | findstr :3000  # Windows
 **에러**: `WebSocket connection lost` 또는 실시간 업데이트가 작동하지 않음
 
 **해결 방법**:
+
 1. 브라우저 페이지 새로고침
 2. 방화벽이 WebSocket을 차단하는지 확인
 3. 대시보드와 MCP 서버가 동일한 프로젝트에서 실행되는지 확인
@@ -195,6 +208,7 @@ netstat -an | findstr :3000  # Windows
 **증상**: 변경사항이 실시간으로 반영되지 않음
 
 **해결 방법**:
+
 1. 브라우저 강력 새로고침 (Ctrl+Shift+R 또는 Cmd+Shift+R)
 2. 브라우저 캐시 삭제
 3. WebSocket 연결 상태 확인 (녹색으로 표시되어야 함)
@@ -212,6 +226,7 @@ netstat -an | findstr :3000  # Windows
 **에러**: 대시보드에 승인 알림이 없음
 
 **해결 방법**:
+
 1. MCP 서버와 함께 대시보드가 실행 중인지 확인:
    ```bash
    # 별도로 실행
@@ -231,6 +246,7 @@ netstat -an | findstr :3000  # Windows
 **에러**: 승인 버튼이 작동하지 않음
 
 **해결 방법**:
+
 1. 브라우저 콘솔에서 JavaScript 에러 확인
 2. 올바른 spec 페이지에 있는지 확인
 3. 문서가 승인 대기 상태인지 확인
@@ -243,6 +259,7 @@ netstat -an | findstr :3000  # Windows
 **에러**: Spec 문서가 파일 시스템에 나타나지 않음
 
 **해결 방법**:
+
 1. 쓰기 권한 확인:
    ```bash
    touch .specflow/test.txt
@@ -262,6 +279,7 @@ netstat -an | findstr :3000  # Windows
 **에러**: spec 생성 시 `EACCES` 또는 `Permission denied`
 
 **해결 방법**:
+
 1. 디렉토리 권한 수정:
    ```bash
    chmod -R 755 .specflow  # macOS/Linux
@@ -280,6 +298,7 @@ netstat -an | findstr :3000  # Windows
 **에러**: Activity Bar에 Spec Workflow 아이콘이 나타나지 않음
 
 **해결 방법**:
+
 1. 확장이 설치되었는지 확인:
    - 확장 열기 (Ctrl+Shift+X)
    - "Spec Workflow MCP" 검색
@@ -295,6 +314,7 @@ netstat -an | findstr :3000  # Windows
 **에러**: 명령이 실패하거나 에러 표시
 
 **해결 방법**:
+
 1. `.specflow`를 포함하는 프로젝트 폴더 열기
 2. VSCode가 올바른 작업 공간을 사용하는지 확인
 3. 특정 에러에 대한 확장 로그 보기
@@ -311,6 +331,7 @@ netstat -an | findstr :3000  # Windows
 **에러**: config.toml의 설정이 적용되지 않음
 
 **해결 방법**:
+
 1. TOML 구문 확인:
    ```bash
    # TOML 검증기 설치
@@ -321,6 +342,7 @@ netstat -an | findstr :3000  # Windows
    - 기본값: `.specflow/config.toml`
    - 사용자 정의: `--config` 플래그 사용
 3. 구문 에러가 없는지 확인:
+
    ```toml
    # 올바름
    port = 3000
@@ -336,7 +358,9 @@ netstat -an | findstr :3000  # Windows
 **에러**: `--port`와 같은 플래그가 무시됨
 
 **해결 방법**:
+
 1. 인수 순서 확인:
+
    ```bash
    # 올바름
    npx -y @pimzino/spec-workflow-mcp@latest /path --dashboard --port 3000
@@ -344,6 +368,7 @@ netstat -an | findstr :3000  # Windows
    # 잘못됨
    npx -y @pimzino/spec-workflow-mcp@latest --dashboard /path --port 3000
    ```
+
 2. 플래그 값이 유효한지 확인:
    - Port: 1024-65535
    - Language: en, ja, zh, es, pt, de, fr, ru, it, ko, ar
@@ -356,6 +381,7 @@ netstat -an | findstr :3000  # Windows
 **증상**: 대시보드 또는 도구가 느리게 응답
 
 **해결 방법**:
+
 1. 시스템 리소스 확인:
    ```bash
    # CPU 및 메모리 사용량
@@ -377,6 +403,7 @@ netstat -an | findstr :3000  # Windows
 ### 높은 메모리 사용량
 
 **해결 방법**:
+
 1. 주기적으로 서비스 재시작
 2. 대시보드 새로고침 빈도 제한:
    ```json
@@ -391,6 +418,7 @@ netstat -an | findstr :3000  # Windows
 ### 기업 프록시 뒤
 
 **해결 방법**:
+
 1. npm 프록시 구성:
    ```bash
    npm config set proxy http://proxy.company.com:8080
@@ -405,6 +433,7 @@ netstat -an | findstr :3000  # Windows
 ### 방화벽이 연결 차단
 
 **해결 방법**:
+
 1. 방화벽을 통해 Node.js 허용
 2. 0.0.0.0 대신 localhost 사용
 3. 특정 포트 규칙 구성
@@ -415,9 +444,11 @@ netstat -an | findstr :3000  # Windows
 ### Windows
 
 #### 경로 형식 문제
+
 **에러**: `Invalid path` 또는 경로를 찾을 수 없음
 
 **해결 방법**:
+
 ```bash
 # 슬래시 사용
 npx -y @pimzino/spec-workflow-mcp@latest C:/Users/name/project
@@ -427,9 +458,11 @@ npx -y @pimzino/spec-workflow-mcp@latest "C:\\Users\\name\\project"
 ```
 
 #### PowerShell 실행 정책
+
 **에러**: `cannot be loaded because running scripts is disabled`
 
 **해결 방법**:
+
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
@@ -437,9 +470,11 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ### macOS
 
 #### Gatekeeper 차단
+
 **에러**: `cannot be opened because the developer cannot be verified`
 
 **해결 방법**:
+
 1. 시스템 환경설정 → 보안 및 개인정보 보호 → 허용
 2. 또는 격리 제거:
    ```bash
@@ -449,9 +484,11 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ### Linux
 
 #### 누락된 종속성
+
 **에러**: `shared library not found`
 
 **해결 방법**:
+
 ```bash
 # Ubuntu/Debian
 sudo apt-get update
@@ -468,6 +505,7 @@ sudo yum groupinstall "Development Tools"
 문제를 보고할 때 다음을 포함하세요:
 
 1. **시스템 정보**:
+
    ```bash
    node --version
    npm --version

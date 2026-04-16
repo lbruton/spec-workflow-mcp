@@ -20,6 +20,7 @@ O dashboard web é uma aplicação web em tempo real que fornece acesso visual �
 ### Iniciando o Dashboard
 
 #### Dashboard Standalone
+
 ```bash
 # Usa porta efêmera
 npx -y @pimzino/spec-workflow-mcp@latest /path/to/project --dashboard
@@ -29,6 +30,7 @@ npx -y @pimzino/spec-workflow-mcp@latest /path/to/project --dashboard --port 300
 ```
 
 #### Com Servidor MCP
+
 ```bash
 # Executar servidor MCP e dashboard separadamente (recomendado)
 # Terminal 1: Iniciar dashboard
@@ -119,18 +121,19 @@ Acesse orientação do projeto:
 
 #### Atalhos de Teclado
 
-| Atalho | Ação |
-|----------|--------|
+| Atalho    | Ação                          |
+| --------- | ----------------------------- |
 | `Alt + S` | Focar lista de especificações |
-| `Alt + T` | Ver tarefas |
-| `Alt + R` | Ver requisitos |
-| `Alt + D` | Ver design |
-| `Alt + A` | Abrir diálogo de aprovação |
-| `Esc` | Fechar diálogo |
+| `Alt + T` | Ver tarefas                   |
+| `Alt + R` | Ver requisitos                |
+| `Alt + D` | Ver design                    |
+| `Alt + A` | Abrir diálogo de aprovação    |
+| `Esc`     | Fechar diálogo                |
 
 #### Estrutura de URL
 
 Links diretos para visualizações específicas:
+
 - `/` - Dashboard inicial
 - `/spec/{name}` - Especificação específica
 - `/spec/{name}/requirements` - Documento de requisitos
@@ -164,6 +167,7 @@ O dashboard usa WebSockets para atualizações ao vivo:
 #### Configurações de Tema
 
 Alterne entre modos claro e escuro:
+
 - Clique no ícone de tema no cabeçalho
 - Persiste entre sessões
 - Respeita preferência do sistema
@@ -171,11 +175,13 @@ Alterne entre modos claro e escuro:
 #### Seleção de Idioma
 
 Mude o idioma da interface:
+
 1. Clique no ícone de configurações
 2. Selecione idioma no dropdown
 3. Interface atualiza imediatamente
 
 Idiomas suportados:
+
 - English (en)
 - Japanese (ja)
 - Chinese (zh)
@@ -191,6 +197,7 @@ Idiomas suportados:
 #### Opções de Exibição
 
 Personalize preferências de visualização:
+
 - Cards de especificação compactos/expandidos
 - Mostrar/ocultar tarefas concluídas
 - Tamanho da fonte do documento
@@ -208,6 +215,7 @@ Instale do Marketplace do VSCode:
 4. Recarregue o VSCode
 
 Ou via linha de comando:
+
 ```bash
 code --install-extension Pimzino.specflow-mcp
 ```
@@ -303,31 +311,31 @@ Configure nas configurações do VSCode:
 
 #### Descrições de Configuração
 
-| Configuração | Descrição | Padrão |
-|---------|-------------|---------|
-| `language` | Idioma da interface | "en" |
-| `notifications.enabled` | Mostrar notificações | true |
-| `notifications.sound` | Reproduzir alertas sonoros | true |
-| `notifications.volume` | Volume do som (0-1) | 0.5 |
-| `archive.showInExplorer` | Mostrar especificações arquivadas | true |
-| `tasks.autoRefresh` | Auto-atualizar tarefas | true |
-| `tasks.refreshInterval` | Intervalo de atualização (ms) | 5000 |
-| `theme.followVSCode` | Combinar tema do VSCode | true |
+| Configuração             | Descrição                         | Padrão |
+| ------------------------ | --------------------------------- | ------ |
+| `language`               | Idioma da interface               | "en"   |
+| `notifications.enabled`  | Mostrar notificações              | true   |
+| `notifications.sound`    | Reproduzir alertas sonoros        | true   |
+| `notifications.volume`   | Volume do som (0-1)               | 0.5    |
+| `archive.showInExplorer` | Mostrar especificações arquivadas | true   |
+| `tasks.autoRefresh`      | Auto-atualizar tarefas            | true   |
+| `tasks.refreshInterval`  | Intervalo de atualização (ms)     | 5000   |
+| `theme.followVSCode`     | Combinar tema do VSCode           | true   |
 
 ### Comandos da Extensão
 
 Disponíveis na Paleta de Comandos (Ctrl+Shift+P):
 
-| Comando | Descrição |
-|---------|-------------|
-| `Spec Workflow: Create Spec` | Iniciar nova especificação |
-| `Spec Workflow: List Specs` | Mostrar todas as especificações |
-| `Spec Workflow: View Dashboard` | Abrir dashboard web |
-| `Spec Workflow: Archive Spec` | Mover para arquivo |
-| `Spec Workflow: Restore Spec` | Restaurar do arquivo |
-| `Spec Workflow: Refresh` | Recarregar dados da especificação |
-| `Spec Workflow: Show Steering` | Ver documentos de direcionamento |
-| `Spec Workflow: Export Spec` | Exportar para markdown |
+| Comando                         | Descrição                         |
+| ------------------------------- | --------------------------------- |
+| `Spec Workflow: Create Spec`    | Iniciar nova especificação        |
+| `Spec Workflow: List Specs`     | Mostrar todas as especificações   |
+| `Spec Workflow: View Dashboard` | Abrir dashboard web               |
+| `Spec Workflow: Archive Spec`   | Mover para arquivo                |
+| `Spec Workflow: Restore Spec`   | Restaurar do arquivo              |
+| `Spec Workflow: Refresh`        | Recarregar dados da especificação |
+| `Spec Workflow: Show Steering`  | Ver documentos de direcionamento  |
+| `Spec Workflow: Export Spec`    | Exportar para markdown            |
 
 ### Notificações Sonoras
 
@@ -339,6 +347,7 @@ A extensão inclui alertas de áudio para:
 - **Atualizações** - Notificação suave
 
 Configure nas configurações:
+
 ```json
 {
   "specWorkflow.notifications.sound": true,
@@ -348,20 +357,20 @@ Configure nas configurações:
 
 ## Comparação de Recursos
 
-| Recurso | Dashboard Web | Extensão VSCode |
-|---------|--------------|------------------|
-| Ver especificações | ✅ | ✅ |
-| Gerenciar tarefas | ✅ | ✅ |
-| Aprovações | ✅ | ✅ |
-| Atualizações em tempo real | ✅ | ✅ |
-| Sistema de arquivo | ❌ | ✅ |
-| Notificações sonoras | ❌ | ✅ |
-| Integração com editor | ❌ | ✅ |
-| Menus de contexto | ❌ | ✅ |
-| Atalhos de teclado | Limitado | Completo |
-| Multi-projeto | Manual | Automático |
-| Acesso offline | ❌ | ✅ |
-| Opções de exportação | Básico | Avançado |
+| Recurso                    | Dashboard Web | Extensão VSCode |
+| -------------------------- | ------------- | --------------- |
+| Ver especificações         | ✅            | ✅              |
+| Gerenciar tarefas          | ✅            | ✅              |
+| Aprovações                 | ✅            | ✅              |
+| Atualizações em tempo real | ✅            | ✅              |
+| Sistema de arquivo         | ❌            | ✅              |
+| Notificações sonoras       | ❌            | ✅              |
+| Integração com editor      | ❌            | ✅              |
+| Menus de contexto          | ❌            | ✅              |
+| Atalhos de teclado         | Limitado      | Completo        |
+| Multi-projeto              | Manual        | Automático      |
+| Acesso offline             | ❌            | ✅              |
+| Opções de exportação       | Básico        | Avançado        |
 
 ## Escolhendo a Interface Certa
 
@@ -447,6 +456,7 @@ O dashboard é responsivo:
 ### Extensão VSCode
 
 Herda acessibilidade do VSCode:
+
 - Suporte a leitor de tela
 - Navegação por teclado
 - Temas de alto contraste
@@ -480,27 +490,28 @@ Herda acessibilidade do VSCode:
 
 ### Problemas do Dashboard
 
-| Problema | Solução |
-|-------|----------|
-| Não carrega | Verifique se servidor está rodando, verifique URL |
-| Sem atualizações | Verifique conexão WebSocket, atualize página |
-| Aprovação não funcionando | Garanta que dashboard e MCP estão conectados |
-| Estilo quebrado | Limpe cache do navegador, verifique console |
+| Problema                  | Solução                                           |
+| ------------------------- | ------------------------------------------------- |
+| Não carrega               | Verifique se servidor está rodando, verifique URL |
+| Sem atualizações          | Verifique conexão WebSocket, atualize página      |
+| Aprovação não funcionando | Garanta que dashboard e MCP estão conectados      |
+| Estilo quebrado           | Limpe cache do navegador, verifique console       |
 
 ### Problemas da Extensão
 
-| Problema | Solução |
-|-------|----------|
+| Problema                     | Solução                                      |
+| ---------------------------- | -------------------------------------------- |
 | Não mostrando especificações | Verifique se projeto tem diretório .specflow |
-| Comandos não funcionando | Recarregue janela do VSCode |
-| Sem notificações | Verifique configurações da extensão |
-| Arquivo não visível | Habilite nas configurações |
+| Comandos não funcionando     | Recarregue janela do VSCode                  |
+| Sem notificações             | Verifique configurações da extensão          |
+| Arquivo não visível          | Habilite nas configurações                   |
 
 ## Uso Avançado
 
 ### URL Personalizada do Dashboard
 
 Configure em múltiplos terminais:
+
 ```bash
 # Terminal 1: Servidor MCP
 npx -y @pimzino/spec-workflow-mcp@latest /project

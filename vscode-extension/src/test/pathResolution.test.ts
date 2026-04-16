@@ -5,176 +5,186 @@ import * as os from 'os';
 
 // Test the path resolution logic directly without VSCode context
 suite('Path Resolution Logic Tests', () => {
-	let tempDir: string;
+  let tempDir: string;
 
-	suiteSetup(async () => {
-		// Create a temporary directory structure for testing
-		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'specflow-test-'));
-		
-		// Create test directory structure
-		const specWorkflowDir = path.join(tempDir, '.specflow');
-		const specsDir = path.join(specWorkflowDir, 'specs');
-		const testDir = path.join(specWorkflowDir, 'test');
-		
-		fs.mkdirSync(specWorkflowDir, { recursive: true });
-		fs.mkdirSync(specsDir, { recursive: true });
-		fs.mkdirSync(testDir, { recursive: true });
-		
-		// Create test files
-		fs.writeFileSync(path.join(specsDir, 'tasks.md'), '# Test Tasks');
-		fs.writeFileSync(path.join(testDir, 'tasks.md'), '# Test Tasks in Test Dir');
-		fs.writeFileSync(path.join(tempDir, 'root-tasks.md'), '# Root Tasks');
-		fs.writeFileSync(path.join(tempDir, '.specflow', 'direct-tasks.md'), '# Direct Tasks');
-	});
+  suiteSetup(async () => {
+    // Create a temporary directory structure for testing
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'specflow-test-'));
 
-	suiteTeardown(() => {
-		// Clean up temporary directory
-		if (tempDir && fs.existsSync(tempDir)) {
-			fs.rmSync(tempDir, { recursive: true, force: true });
-		}
-	});
+    // Create test directory structure
+    const specWorkflowDir = path.join(tempDir, '.specflow');
+    const specsDir = path.join(specWorkflowDir, 'specs');
+    const testDir = path.join(specWorkflowDir, 'test');
 
-	// Simulate the improved path resolution logic (matching the updated implementation)
-	async function resolveApprovalFilePath(filePath: string, workspaceRoot: string): Promise<string | null> {
-		// Normalize path separators for cross-platform compatibility
-		const normalizedFilePath = filePath.replace(/\\/g, '/');
-		const candidates: string[] = [];
+    fs.mkdirSync(specWorkflowDir, { recursive: true });
+    fs.mkdirSync(specsDir, { recursive: true });
+    fs.mkdirSync(testDir, { recursive: true });
 
-		// 1) If path is already absolute, try it directly first
-		if (path.isAbsolute(filePath)) {
-			candidates.push(filePath);
-		}
+    // Create test files
+    fs.writeFileSync(path.join(specsDir, 'tasks.md'), '# Test Tasks');
+    fs.writeFileSync(path.join(testDir, 'tasks.md'), '# Test Tasks in Test Dir');
+    fs.writeFileSync(path.join(tempDir, 'root-tasks.md'), '# Root Tasks');
+    fs.writeFileSync(path.join(tempDir, '.specflow', 'direct-tasks.md'), '# Direct Tasks');
+  });
 
-		// 2) As provided relative to project root (most common case for paths like ".specflow/test/tasks.md")
-		candidates.push(path.join(workspaceRoot, normalizedFilePath));
+  suiteTeardown(() => {
+    // Clean up temporary directory
+    if (tempDir && fs.existsSync(tempDir)) {
+      fs.rmSync(tempDir, { recursive: true, force: true });
+    }
+  });
 
-		// 3) Handle paths that start with ".specflow/" - these are already correctly rooted
-		if (normalizedFilePath.startsWith('.specflow/')) {
-			// Path is already relative to project root, don't double-add .specflow
-			candidates.push(path.join(workspaceRoot, normalizedFilePath));
-			
-			// Also try without the leading dot for legacy compatibility
-			const withoutDot = normalizedFilePath.substring(1); // Remove leading "."
-			candidates.push(path.join(workspaceRoot, withoutDot));
-		} else if (normalizedFilePath.startsWith('specflow/')) {
-			// Handle case where path might not have leading dot
-			candidates.push(path.join(workspaceRoot, '.' + normalizedFilePath));
-			candidates.push(path.join(workspaceRoot, normalizedFilePath));
-		} else if (!normalizedFilePath.includes('specflow')) {
-			// If path doesn't contain specflow at all, try adding it
-			candidates.push(path.join(workspaceRoot, '.specflow', normalizedFilePath));
-		}
+  // Simulate the improved path resolution logic (matching the updated implementation)
+  async function resolveApprovalFilePath(
+    filePath: string,
+    workspaceRoot: string,
+  ): Promise<string | null> {
+    // Normalize path separators for cross-platform compatibility
+    const normalizedFilePath = filePath.replace(/\\/g, '/');
+    const candidates: string[] = [];
 
-		// 4) Handle Windows-style paths with backslashes
-		if (filePath.includes('\\') && filePath !== normalizedFilePath) {
-			candidates.push(path.join(workspaceRoot, filePath));
-		}
+    // 1) If path is already absolute, try it directly first
+    if (path.isAbsolute(filePath)) {
+      candidates.push(filePath);
+    }
 
-		// 5) Try common spec document locations as fallback
-		const fileName = path.basename(normalizedFilePath);
-		const specWorkflowRoot = path.join(workspaceRoot, '.specflow');
+    // 2) As provided relative to project root (most common case for paths like ".specflow/test/tasks.md")
+    candidates.push(path.join(workspaceRoot, normalizedFilePath));
 
-		// Try in various common subdirectories
-		const commonDirs = ['specs', 'test', 'tasks', 'requirements', 'design'];
-		for (const dir of commonDirs) {
-			candidates.push(path.join(specWorkflowRoot, dir, fileName));
-		}
+    // 3) Handle paths that start with ".specflow/" - these are already correctly rooted
+    if (normalizedFilePath.startsWith('.specflow/')) {
+      // Path is already relative to project root, don't double-add .specflow
+      candidates.push(path.join(workspaceRoot, normalizedFilePath));
 
-		// Try with spec document structure if filePath looks like a spec document
-		if (fileName.match(/\.(md|txt)$/)) {
-			const baseName = path.basename(fileName, path.extname(fileName));
-			for (const dir of commonDirs) {
-				candidates.push(path.join(specWorkflowRoot, dir, baseName, fileName));
-			}
-		}
+      // Also try without the leading dot for legacy compatibility
+      const withoutDot = normalizedFilePath.substring(1); // Remove leading "."
+      candidates.push(path.join(workspaceRoot, withoutDot));
+    } else if (normalizedFilePath.startsWith('specflow/')) {
+      // Handle case where path might not have leading dot
+      candidates.push(path.join(workspaceRoot, '.' + normalizedFilePath));
+      candidates.push(path.join(workspaceRoot, normalizedFilePath));
+    } else if (!normalizedFilePath.includes('specflow')) {
+      // If path doesn't contain specflow at all, try adding it
+      candidates.push(path.join(workspaceRoot, '.specflow', normalizedFilePath));
+    }
 
-		// Remove duplicates while preserving order
-		const uniqueCandidates = [...new Set(candidates)];
+    // 4) Handle Windows-style paths with backslashes
+    if (filePath.includes('\\') && filePath !== normalizedFilePath) {
+      candidates.push(path.join(workspaceRoot, filePath));
+    }
 
-		// Test each candidate path
-		for (const candidate of uniqueCandidates) {
-			try {
-				await fs.promises.access(candidate);
-				return candidate;
-			} catch {
-				// File doesn't exist at this location, continue to next candidate
-			}
-		}
+    // 5) Try common spec document locations as fallback
+    const fileName = path.basename(normalizedFilePath);
+    const specWorkflowRoot = path.join(workspaceRoot, '.specflow');
 
-		return null;
-	}
+    // Try in various common subdirectories
+    const commonDirs = ['specs', 'test', 'tasks', 'requirements', 'design'];
+    for (const dir of commonDirs) {
+      candidates.push(path.join(specWorkflowRoot, dir, fileName));
+    }
 
-	test('should resolve paths with forward slashes', async () => {
-		const testPath = '.specflow/specs/tasks.md';
-		const result = await resolveApprovalFilePath(testPath, tempDir);
-		
-		assert.ok(result, 'Should resolve path with forward slashes');
-		assert.ok(result.includes('specs'), 'Should resolve to specs directory');
-		assert.ok(result.includes('tasks.md'), 'Should resolve to tasks.md file');
-	});
+    // Try with spec document structure if filePath looks like a spec document
+    if (fileName.match(/\.(md|txt)$/)) {
+      const baseName = path.basename(fileName, path.extname(fileName));
+      for (const dir of commonDirs) {
+        candidates.push(path.join(specWorkflowRoot, dir, baseName, fileName));
+      }
+    }
 
-	test('should resolve paths with backslashes (Windows style)', async () => {
-		const testPath = '.specflow\\test\\tasks.md';
-		const result = await resolveApprovalFilePath(testPath, tempDir);
-		
-		assert.ok(result, 'Should resolve path with backslashes');
-		assert.ok(result.includes('test'), 'Should resolve to test directory');
-		assert.ok(result.includes('tasks.md'), 'Should resolve to tasks.md file');
-	});
+    // Remove duplicates while preserving order
+    const uniqueCandidates = [...new Set(candidates)];
 
-	test('should resolve relative paths to project root', async () => {
-		const testPath = 'root-tasks.md';
-		const result = await resolveApprovalFilePath(testPath, tempDir);
-		
-		assert.ok(result, 'Should resolve relative path');
-		assert.ok(result.includes('root-tasks.md'), 'Should resolve to root file');
-	});
+    // Test each candidate path
+    for (const candidate of uniqueCandidates) {
+      try {
+        await fs.promises.access(candidate);
+        return candidate;
+      } catch {
+        // File doesn't exist at this location, continue to next candidate
+      }
+    }
 
-	test('should resolve paths without .specflow prefix', async () => {
-		const testPath = 'direct-tasks.md';
-		const result = await resolveApprovalFilePath(testPath, tempDir);
-		
-		assert.ok(result, 'Should resolve path without .specflow prefix');
-		assert.ok(result.includes('.specflow'), 'Should resolve under .specflow directory');
-		assert.ok(result.includes('direct-tasks.md'), 'Should resolve to direct-tasks.md file');
-	});
+    return null;
+  }
 
-	test('should handle filename-only resolution', async () => {
-		const testPath = 'tasks.md';
-		const result = await resolveApprovalFilePath(testPath, tempDir);
-		
-		assert.ok(result, 'Should resolve filename-only path');
-		assert.ok(result.includes('tasks.md'), 'Should resolve to tasks.md file');
-		// Should find one of the tasks.md files (either in specs or test directory)
-		assert.ok(result.includes('specs') || result.includes('test'), 'Should resolve to either specs or test directory');
-	});
+  test('should resolve paths with forward slashes', async () => {
+    const testPath = '.specflow/specs/tasks.md';
+    const result = await resolveApprovalFilePath(testPath, tempDir);
 
-	test('should handle missing files gracefully', async () => {
-		const testPath = '.specflow/nonexistent/file.md';
-		const result = await resolveApprovalFilePath(testPath, tempDir);
-		
-		assert.strictEqual(result, null, 'Should return null for nonexistent files');
-	});
+    assert.ok(result, 'Should resolve path with forward slashes');
+    assert.ok(result.includes('specs'), 'Should resolve to specs directory');
+    assert.ok(result.includes('tasks.md'), 'Should resolve to tasks.md file');
+  });
 
-	test('should handle mixed path separators', async () => {
-		const testPath = '.specflow/test\\tasks.md';
-		const result = await resolveApprovalFilePath(testPath, tempDir);
-		
-		assert.ok(result, 'Should resolve path with mixed separators');
-		assert.ok(result.includes('test'), 'Should resolve to test directory');
-		assert.ok(result.includes('tasks.md'), 'Should resolve to tasks.md file');
-	});
+  test('should resolve paths with backslashes (Windows style)', async () => {
+    const testPath = '.specflow\\test\\tasks.md';
+    const result = await resolveApprovalFilePath(testPath, tempDir);
 
-	test('should resolve the specific failing case: .specflow/test/tasks.md', async () => {
-		const testPath = '.specflow/test/tasks.md';
-		const result = await resolveApprovalFilePath(testPath, tempDir);
-		
-		assert.ok(result, 'Should resolve the specific failing case');
-		assert.ok(result.includes('test'), 'Should resolve to test directory');
-		assert.ok(result.includes('tasks.md'), 'Should resolve to tasks.md file');
-		
-		// Verify the resolved path actually points to the test directory file
-		const expectedPath = path.join(tempDir, '.specflow', 'test', 'tasks.md');
-		assert.strictEqual(path.resolve(result), path.resolve(expectedPath), 'Should resolve to the exact expected path');
-	});
+    assert.ok(result, 'Should resolve path with backslashes');
+    assert.ok(result.includes('test'), 'Should resolve to test directory');
+    assert.ok(result.includes('tasks.md'), 'Should resolve to tasks.md file');
+  });
+
+  test('should resolve relative paths to project root', async () => {
+    const testPath = 'root-tasks.md';
+    const result = await resolveApprovalFilePath(testPath, tempDir);
+
+    assert.ok(result, 'Should resolve relative path');
+    assert.ok(result.includes('root-tasks.md'), 'Should resolve to root file');
+  });
+
+  test('should resolve paths without .specflow prefix', async () => {
+    const testPath = 'direct-tasks.md';
+    const result = await resolveApprovalFilePath(testPath, tempDir);
+
+    assert.ok(result, 'Should resolve path without .specflow prefix');
+    assert.ok(result.includes('.specflow'), 'Should resolve under .specflow directory');
+    assert.ok(result.includes('direct-tasks.md'), 'Should resolve to direct-tasks.md file');
+  });
+
+  test('should handle filename-only resolution', async () => {
+    const testPath = 'tasks.md';
+    const result = await resolveApprovalFilePath(testPath, tempDir);
+
+    assert.ok(result, 'Should resolve filename-only path');
+    assert.ok(result.includes('tasks.md'), 'Should resolve to tasks.md file');
+    // Should find one of the tasks.md files (either in specs or test directory)
+    assert.ok(
+      result.includes('specs') || result.includes('test'),
+      'Should resolve to either specs or test directory',
+    );
+  });
+
+  test('should handle missing files gracefully', async () => {
+    const testPath = '.specflow/nonexistent/file.md';
+    const result = await resolveApprovalFilePath(testPath, tempDir);
+
+    assert.strictEqual(result, null, 'Should return null for nonexistent files');
+  });
+
+  test('should handle mixed path separators', async () => {
+    const testPath = '.specflow/test\\tasks.md';
+    const result = await resolveApprovalFilePath(testPath, tempDir);
+
+    assert.ok(result, 'Should resolve path with mixed separators');
+    assert.ok(result.includes('test'), 'Should resolve to test directory');
+    assert.ok(result.includes('tasks.md'), 'Should resolve to tasks.md file');
+  });
+
+  test('should resolve the specific failing case: .specflow/test/tasks.md', async () => {
+    const testPath = '.specflow/test/tasks.md';
+    const result = await resolveApprovalFilePath(testPath, tempDir);
+
+    assert.ok(result, 'Should resolve the specific failing case');
+    assert.ok(result.includes('test'), 'Should resolve to test directory');
+    assert.ok(result.includes('tasks.md'), 'Should resolve to tasks.md file');
+
+    // Verify the resolved path actually points to the test directory file
+    const expectedPath = path.join(tempDir, '.specflow', 'test', 'tasks.md');
+    assert.strictEqual(
+      path.resolve(result),
+      path.resolve(expectedPath),
+      'Should resolve to the exact expected path',
+    );
+  });
 });

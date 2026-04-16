@@ -19,16 +19,19 @@ A comprehensive guide with examples and best practices for interacting with Spec
 ### Basic Spec Creation
 
 #### Simple Request
+
 ```
 "Create a spec for user authentication"
 ```
 
 The AI will create:
+
 - Requirements document
 - Design document (after approval)
 - Task breakdown (after design approval)
 
 #### Detailed Request
+
 ```
 "Create a spec called payment-processing with:
 - Credit card payments via Stripe
@@ -39,6 +42,7 @@ The AI will create:
 ```
 
 #### From Existing Documentation
+
 ```
 "Create a spec from the PRD in @product-requirements.md"
 ```
@@ -50,6 +54,7 @@ The AI will create:
 ### Advanced Spec Creation
 
 #### With Technical Constraints
+
 ```
 "Create a spec for real-time notifications that:
 - Uses WebSockets for live updates
@@ -60,6 +65,7 @@ The AI will create:
 ```
 
 #### With Acceptance Criteria
+
 ```
 "Create a spec for search functionality with these acceptance criteria:
 - Results appear within 200ms
@@ -70,6 +76,7 @@ The AI will create:
 ```
 
 #### Microservice Specification
+
 ```
 "Create a spec for an inventory microservice that:
 - Exposes REST API
@@ -84,6 +91,7 @@ The AI will create:
 ### Listing and Status
 
 #### Get Overview
+
 ```
 "List all my specs"
 "Show me all specs and their progress"
@@ -92,6 +100,7 @@ The AI will create:
 ```
 
 #### Specific Status
+
 ```
 "Show the status of the user-auth spec"
 "What's the progress on payment-processing?"
@@ -100,6 +109,7 @@ The AI will create:
 ```
 
 #### Filtering
+
 ```
 "Show me specs that are over 50% complete"
 "List specs waiting for my approval"
@@ -110,6 +120,7 @@ The AI will create:
 ### Document Management
 
 #### Viewing Documents
+
 ```
 "Show me the requirements for user-auth"
 "Display the design document for payments"
@@ -118,6 +129,7 @@ The AI will create:
 ```
 
 #### Updating Documents
+
 ```
 "Update the user-auth requirements to include 2FA"
 "Revise the payment design to use Stripe Connect"
@@ -130,6 +142,7 @@ The AI will create:
 ### Individual Tasks
 
 #### Basic Implementation
+
 ```
 "Implement task 1.2 from user-auth"
 "Complete task 2.1.3 in the payment spec"
@@ -137,6 +150,7 @@ The AI will create:
 ```
 
 #### With Context
+
 ```
 "Implement task 1.2 from user-auth using TypeScript and Express"
 "Complete the database migration task using Prisma"
@@ -146,6 +160,7 @@ The AI will create:
 ### Batch Implementation
 
 #### By Section
+
 ```
 "Implement all database tasks from user-auth"
 "Complete all frontend tasks in the dashboard spec"
@@ -153,6 +168,7 @@ The AI will create:
 ```
 
 #### By Priority
+
 ```
 "Implement all critical tasks first"
 "Complete the MVP tasks from user-profile"
@@ -160,6 +176,7 @@ The AI will create:
 ```
 
 #### Sequential
+
 ```
 "Implement tasks 1.1 through 1.5 from user-auth"
 "Complete all subtasks under section 2"
@@ -169,6 +186,7 @@ The AI will create:
 ### Implementation Strategies
 
 #### Test-Driven
+
 ```
 "For task 1.2, write tests first then implement"
 "Implement task 2.1 with full test coverage"
@@ -176,6 +194,7 @@ The AI will create:
 ```
 
 #### With Documentation
+
 ```
 "Implement task 1.3 and document the API"
 "Complete the authentication task with inline comments"
@@ -187,6 +206,7 @@ The AI will create:
 ### Creating Steering
 
 #### Complete Set
+
 ```
 "Create steering documents for my e-commerce project"
 "Set up steering for a SaaS application"
@@ -194,6 +214,7 @@ The AI will create:
 ```
 
 #### Individual Documents
+
 ```
 "Create a product steering document focusing on user experience"
 "Create technical steering for a microservices architecture"
@@ -201,6 +222,7 @@ The AI will create:
 ```
 
 #### From Context
+
 ```
 "Create steering documents based on @project-brief.md"
 "Generate steering from our technical decisions in @architecture.md"
@@ -219,6 +241,7 @@ The AI will create:
 ### Requesting Feedback
 
 #### With Specific Concerns
+
 ```
 "Request approval for user-auth requirements - particularly check the security section"
 "Ask for review of the payment design - focus on the error handling"
@@ -226,6 +249,7 @@ The AI will create:
 ```
 
 #### Revision Requests
+
 ```
 "The requirements need more detail on:
 - Error handling scenarios
@@ -237,6 +261,7 @@ Please revise and resubmit"
 ### Approval Decisions
 
 #### Approving
+
 ```
 "Approve the user-auth requirements"
 "The design looks good, approve it"
@@ -244,6 +269,7 @@ Please revise and resubmit"
 ```
 
 #### Requesting Changes
+
 ```
 "Request changes to the requirements:
 - Add multi-tenant support
@@ -252,6 +278,7 @@ Please revise and resubmit"
 ```
 
 #### Rejecting
+
 ```
 "Reject the current design - we need to use event-driven architecture instead"
 "Start over with the requirements - the scope is too broad"
@@ -262,6 +289,7 @@ Please revise and resubmit"
 ### Reporting Bugs
 
 #### Detailed Report
+
 ```
 "Create a bug report:
 Title: Login fails with special characters
@@ -273,6 +301,7 @@ Environment: Production"
 ```
 
 #### From Error Logs
+
 ```
 "Create a bug report from this error: [paste stack trace]"
 "Document this bug from the Sentry alert: [link]"
@@ -281,6 +310,7 @@ Environment: Production"
 ### Bug Resolution
 
 #### Investigation
+
 ```
 "Investigate the root cause of bug #45"
 "Analyze why the payment webhook is failing"
@@ -288,6 +318,7 @@ Environment: Production"
 ```
 
 #### Fix Implementation
+
 ```
 "Create a fix for bug #45 in user authentication"
 "Implement a solution for the payment timeout issue"
@@ -305,11 +336,13 @@ Requirements and designs often evolve during implementation. When this happens, 
 The AI has access to comprehensive task refresh instructions through the refresh-tasks prompt. Simply inform the AI about your changes:
 
 #### Basic Task Refresh
+
 ```
 "The requirements have been updated. Please refresh tasks.md to align with the current requirements.md and design.md."
 ```
 
 #### Detailed Task Refresh with Context
+
 ```
 "I've updated the spec with the following changes:
 - Removed the reporting module
@@ -324,6 +357,7 @@ Please refresh tasks.md following the task refresh process:
 ```
 
 #### Architecture Change Requiring Migration
+
 ```
 "We're switching from REST API to GraphQL. Several REST endpoints are already implemented. Please update tasks.md with:
 1. All completed REST work preserved
@@ -365,22 +399,26 @@ When you request a task refresh, the AI will:
 ### Example Scenarios
 
 #### Feature Removal
+
 ```
 "We've decided to remove the reporting module from the spec. Update tasks.md accordingly."
 ```
 
 Expected AI behavior:
+
 - Keep all completed reporting tasks with their [x] status
 - Keep all in-progress reporting tasks with their [-] status
 - Remove only pending [ ] reporting tasks
 - Add note: "_Note: Reporting feature removed from spec but completed work preserved_"
 
 #### Architecture Change with Completed Work
+
 ```
 "We're switching from MongoDB to PostgreSQL. Update the pending database tasks. Note that we've already implemented MongoDB schemas and connection logic."
 ```
 
 Expected AI behavior:
+
 - Preserve all completed MongoDB tasks exactly as written
 - Preserve all in-progress MongoDB tasks exactly as written
 - Add new migration tasks immediately after completed MongoDB work:
@@ -394,11 +432,13 @@ Expected AI behavior:
 - Maintain task numbering sequence
 
 #### Feature Addition
+
 ```
 "Add social login to the authentication spec. The requirements and design have been updated."
 ```
 
 Expected AI behavior:
+
 - Analyze current task structure for logical insertion point
 - Add new social login tasks with appropriate numbering
 - Reference the specific requirements for social login
@@ -410,11 +450,13 @@ Expected AI behavior:
 When architecture changes affect already-implemented code:
 
 #### REST to GraphQL Migration
+
 ```
 "We're changing from REST to GraphQL. Several REST endpoints are already implemented."
 ```
 
 Expected task additions:
+
 - Preserve completed REST endpoint tasks
 - Add GraphQL schema definition tasks
 - Add resolver implementation tasks
@@ -423,11 +465,13 @@ Expected task additions:
 - Add cleanup tasks to remove REST endpoints after GraphQL is verified
 
 #### Monolith to Microservices Split
+
 ```
 "We're splitting the monolithic user service into separate auth and profile services."
 ```
 
 Expected task additions:
+
 - Preserve completed monolithic service tasks
 - Add service separation tasks
 - Add inter-service communication tasks
@@ -456,16 +500,19 @@ Migration tasks should clearly indicate their purpose:
 When informing the AI about spec changes:
 
 #### Be Specific About Changes and Impact
+
 ```
 "The payment processing requirements have changed. Stripe is now required instead of PayPal. We've already implemented PayPal webhook handlers. Please update tasks.md to reflect this change, including migration tasks."
 ```
 
 #### Provide Context for Preservation and Migration
+
 ```
 "Although we're moving from MongoDB to PostgreSQL, keep all completed MongoDB tasks since that work is already done. Add migration tasks to transition the implemented MongoDB code to PostgreSQL."
 ```
 
 #### Request Validation
+
 ```
 "After updating tasks.md, confirm that all requirements in requirements.md have corresponding tasks, migration paths exist for architecture changes, and that no pending tasks exist for removed features."
 ```
@@ -497,6 +544,7 @@ The AI will then follow the comprehensive refresh instructions to update your ta
 ### Multi-Spec Workflows
 
 #### Related Specs
+
 ```
 "Create a spec for admin-dashboard that integrates with:
 - user-management spec
@@ -505,6 +553,7 @@ The AI will then follow the comprehensive refresh instructions to update your ta
 ```
 
 #### Spec Dependencies
+
 ```
 "Create a spec for notifications that depends on:
 - user-auth being complete
@@ -515,6 +564,7 @@ The AI will then follow the comprehensive refresh instructions to update your ta
 ### Incremental Development
 
 #### MVP First
+
 ```
 "Create an MVP spec for user-profiles with just:
 - Basic profile creation
@@ -524,6 +574,7 @@ The AI will then follow the comprehensive refresh instructions to update your ta
 ```
 
 #### Enhancement Specs
+
 ```
 "Create an enhancement spec for user-auth adding:
 - Social login (Google, GitHub)
@@ -535,6 +586,7 @@ The AI will then follow the comprehensive refresh instructions to update your ta
 ### Complex Scenarios
 
 #### Migration Specs
+
 ```
 "Create a spec for migrating from MongoDB to PostgreSQL:
 - Document current schema
@@ -544,6 +596,7 @@ The AI will then follow the comprehensive refresh instructions to update your ta
 ```
 
 #### Refactoring Specs
+
 ```
 "Create a refactoring spec to:
 - Split the monolith into services
@@ -553,6 +606,7 @@ The AI will then follow the comprehensive refresh instructions to update your ta
 ```
 
 #### Performance Specs
+
 ```
 "Create a performance optimization spec:
 - Profile current bottlenecks
@@ -564,6 +618,7 @@ The AI will then follow the comprehensive refresh instructions to update your ta
 ## Workflow Combinations
 
 ### Complete Feature Flow
+
 ```
 1. "Create steering documents for the project"
 2. "Create a spec for user authentication"
@@ -576,6 +631,7 @@ The AI will then follow the comprehensive refresh instructions to update your ta
 ```
 
 ### Parallel Development
+
 ```
 "While I review the requirements, start drafting the API design"
 "Create specs for both frontend and backend in parallel"
@@ -583,6 +639,7 @@ The AI will then follow the comprehensive refresh instructions to update your ta
 ```
 
 ### Iterative Refinement
+
 ```
 1. "Create initial spec for search"
 2. "Implement basic search (tasks 1-3)"
@@ -594,6 +651,7 @@ The AI will then follow the comprehensive refresh instructions to update your ta
 ## Context-Aware Prompts
 
 ### Using Project Context
+
 ```
 "Create a spec that follows our existing patterns"
 "Implement this task consistent with our codebase"
@@ -601,6 +659,7 @@ The AI will then follow the comprehensive refresh instructions to update your ta
 ```
 
 ### Referencing Other Specs
+
 ```
 "Create a spec similar to user-auth but for admin authentication"
 "Use the same design patterns as in the payment spec"
@@ -608,6 +667,7 @@ The AI will then follow the comprehensive refresh instructions to update your ta
 ```
 
 ### Building on Previous Work
+
 ```
 "Extend the user-auth spec to include team management"
 "Add GraphQL support to the existing REST API spec"
@@ -617,28 +677,34 @@ The AI will then follow the comprehensive refresh instructions to update your ta
 ## Tips for Effective Prompting
 
 ### Be Specific
+
 ❌ **Vague**: "Create a login spec"
 ✅ **Specific**: "Create a spec for email/password login with 2FA, remember me, and password reset"
 
 ### Provide Context
+
 ❌ **No context**: "Implement the task"
 ✅ **With context**: "Implement task 1.2 using our existing Express middleware and PostgreSQL database"
 
 ### Set Clear Expectations
+
 ❌ **Unclear**: "Make it better"
 ✅ **Clear**: "Improve the design to handle 10x current traffic with response times under 200ms"
 
 ### Use Incremental Requests
+
 ❌ **Too much**: "Create 5 specs and implement everything"
 ✅ **Incremental**: "Create the user-auth spec first, then we'll review before moving to the next"
 
 ### Reference Existing Work
+
 ❌ **Starting fresh**: "Create a new payment system"
 ✅ **Building on**: "Enhance our payment spec to add subscription billing"
 
 ## Common Patterns Library
 
 ### CRUD Operations
+
 ```
 "Create a spec for CRUD operations on products including:
 - Create with validation
@@ -648,6 +714,7 @@ The AI will then follow the comprehensive refresh instructions to update your ta
 ```
 
 ### Authentication & Authorization
+
 ```
 "Create an auth spec with:
 - JWT-based authentication
@@ -658,6 +725,7 @@ The AI will then follow the comprehensive refresh instructions to update your ta
 ```
 
 ### Real-time Features
+
 ```
 "Create a spec for real-time chat:
 - WebSocket connections
@@ -668,6 +736,7 @@ The AI will then follow the comprehensive refresh instructions to update your ta
 ```
 
 ### File Management
+
 ```
 "Create a file upload spec:
 - Chunked uploads for large files
@@ -678,6 +747,7 @@ The AI will then follow the comprehensive refresh instructions to update your ta
 ```
 
 ### Analytics & Reporting
+
 ```
 "Create an analytics spec:
 - Event tracking
@@ -690,6 +760,7 @@ The AI will then follow the comprehensive refresh instructions to update your ta
 ## Troubleshooting Prompts
 
 ### When Things Go Wrong
+
 ```
 "Why is this spec not showing up?"
 "Debug why the task isn't completing"
@@ -698,6 +769,7 @@ The AI will then follow the comprehensive refresh instructions to update your ta
 ```
 
 ### Getting Unstuck
+
 ```
 "What should I do next?"
 "Show me what's blocking progress"

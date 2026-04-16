@@ -33,6 +33,7 @@ npm install
 ```
 
 هذا يثبت:
+
 - MCP SDK
 - TypeScript وأدوات البناء
 - Express لخادم لوحة التحكم
@@ -51,15 +52,15 @@ npm run build
 
 ### الأوامر الأساسية
 
-| الأمر | الوصف |
-|---------|-------------|
-| `npm run dev` | البدء في وضع التطوير مع إعادة التحميل التلقائي |
-| `npm run build` | بناء حزمة الإنتاج |
-| `npm start` | تشغيل خادم الإنتاج |
-| `npm test` | تشغيل مجموعة الاختبارات |
-| `npm run clean` | إزالة القطع الأثرية للبناء |
-| `npm run lint` | تشغيل مدقق الكود |
-| `npm run format` | تنسيق الكود باستخدام Prettier |
+| الأمر            | الوصف                                          |
+| ---------------- | ---------------------------------------------- |
+| `npm run dev`    | البدء في وضع التطوير مع إعادة التحميل التلقائي |
+| `npm run build`  | بناء حزمة الإنتاج                              |
+| `npm start`      | تشغيل خادم الإنتاج                             |
+| `npm test`       | تشغيل مجموعة الاختبارات                        |
+| `npm run clean`  | إزالة القطع الأثرية للبناء                     |
+| `npm run lint`   | تشغيل مدقق الكود                               |
+| `npm run format` | تنسيق الكود باستخدام Prettier                  |
 
 ### وضع التطوير
 
@@ -68,6 +69,7 @@ npm run dev
 ```
 
 الميزات:
+
 - إعادة التجميع التلقائي عند تغيير الملفات
 - إعادة التحميل الساخن للوحة التحكم
 - رسائل خطأ مفصلة
@@ -80,6 +82,7 @@ npm run clean && npm run build
 ```
 
 التحسينات:
+
 - JavaScript مصغر
 - حجم الحزمة محسّن
 - معالجة أخطاء الإنتاج
@@ -122,26 +125,32 @@ Client (AI) ↔ MCP Protocol ↔ Server ↔ File System
 ### المكونات الرئيسية
 
 #### 1. خادم MCP (`src/index.ts`)
+
 - يتعامل مع اتصالات بروتوكول MCP
 - يعالج طلبات الأدوات
 - يدير حالة المشروع
 - عمليات نظام الملفات
 
 #### 2. خادم لوحة التحكم (`src/server.ts`)
+
 - يخدم لوحة تحكم الويب
 - اتصالات WebSocket
 - التحديثات الفورية
 - نقاط نهاية HTTP API
 
 #### 3. الأدوات (`src/tools/`)
+
 كل أداة عبارة عن وحدة منفصلة:
+
 - التحقق من صحة المدخلات
 - منطق الأعمال
 - عمليات الملفات
 - تنسيق الاستجابة
 
 #### 4. الأوامر (`src/prompts/`)
+
 سلاسل القوالب لـ:
+
 - توليد المستندات
 - إرشادات سير العمل
 - رسائل الخطأ
@@ -164,9 +173,9 @@ export const myNewTool: Tool = {
     type: 'object',
     properties: {
       param1: { type: 'string', description: 'وصف المعامل' },
-      param2: { type: 'number', optional: true }
+      param2: { type: 'number', optional: true },
     },
-    required: ['param1']
+    required: ['param1'],
   },
   handler: async (params) => {
     // تطبيق الأداة
@@ -176,9 +185,9 @@ export const myNewTool: Tool = {
 
     return {
       success: true,
-      data: 'استجابة الأداة'
+      data: 'استجابة الأداة',
     };
-  }
+  },
 };
 ```
 
@@ -212,10 +221,14 @@ server.registerTool(myNewTool);
 ```javascript
 document.getElementById('new-action').addEventListener('click', () => {
   // منطق الميزة
-  ws.send(JSON.stringify({
-    type: 'new-action',
-    data: { /* ... */ }
-  }));
+  ws.send(
+    JSON.stringify({
+      type: 'new-action',
+      data: {
+        /* ... */
+      },
+    }),
+  );
 });
 ```
 
@@ -260,7 +273,7 @@ import { myTool } from './my-tool';
 describe('myTool', () => {
   it('يجب معالجة المدخلات بشكل صحيح', async () => {
     const result = await myTool.handler({
-      param1: 'test'
+      param1: 'test',
     });
 
     expect(result.success).toBe(true);
@@ -269,7 +282,7 @@ describe('myTool', () => {
 
   it('يجب معالجة الأخطاء', async () => {
     const result = await myTool.handler({
-      param1: null
+      param1: null,
     });
 
     expect(result.success).toBe(false);
@@ -397,6 +410,7 @@ console.log('تحديث الحالة:', newState);
 - `chore:` الصيانة
 
 أمثلة:
+
 ```
 feat: add approval revision workflow
 fix: resolve dashboard WebSocket reconnection issue
@@ -416,11 +430,13 @@ docs: update configuration guide
 ### حزمة NPM
 
 1. **تحديث الإصدار**:
+
    ```bash
    npm version patch|minor|major
    ```
 
 2. **بناء الحزمة**:
+
    ```bash
    npm run build
    ```
@@ -435,6 +451,7 @@ docs: update configuration guide
 1. **تحديث إصدار الإضافة** في `vscode-extension/package.json`
 
 2. **بناء الإضافة**:
+
    ```bash
    cd vscode-extension
    npm run package
@@ -490,12 +507,12 @@ if (safePath.includes('..')) {
 
 ### أخطاء البناء الشائعة
 
-| الخطأ | الحل |
-|-------|----------|
-| أخطاء TypeScript | قم بتشغيل `npm run build` لرؤية أخطاء مفصلة |
-| الوحدة غير موجودة | تحقق من الاستيرادات وقم بتشغيل `npm install` |
-| المنفذ قيد الاستخدام بالفعل | غيّر المنفذ أو أنهِ العملية الموجودة |
-| فشل اتصال WebSocket | تحقق من تشغيل الخادم وصحة المنفذ |
+| الخطأ                       | الحل                                         |
+| --------------------------- | -------------------------------------------- |
+| أخطاء TypeScript            | قم بتشغيل `npm run build` لرؤية أخطاء مفصلة  |
+| الوحدة غير موجودة           | تحقق من الاستيرادات وقم بتشغيل `npm install` |
+| المنفذ قيد الاستخدام بالفعل | غيّر المنفذ أو أنهِ العملية الموجودة         |
+| فشل اتصال WebSocket         | تحقق من تشغيل الخادم وصحة المنفذ             |
 
 ### نصائح التطوير
 

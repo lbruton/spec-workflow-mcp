@@ -31,6 +31,7 @@ Pide a tu asistente de IA que cree una especificación:
 ```
 
 La IA automáticamente:
+
 1. Creará un documento de requisitos
 2. Diseñará el enfoque técnico
 3. Desglosará la implementación en tareas
@@ -64,6 +65,7 @@ Usa tu PRD o documentos de diseño existentes:
 ```
 
 Retorna:
+
 - Nombres de especificaciones
 - Estado actual
 - Porcentaje de progreso
@@ -76,6 +78,7 @@ Retorna:
 ```
 
 Proporciona:
+
 - Estado de aprobación de requisitos
 - Estado de aprobación de diseño
 - Progreso de completitud de tareas
@@ -84,6 +87,7 @@ Proporciona:
 ### Ver Documentos de Especificación
 
 Usa el panel de control o extensión VSCode para:
+
 - Leer documentos de requisitos
 - Revisar documentos de diseño
 - Explorar listas de tareas
@@ -94,6 +98,7 @@ Usa el panel de control o extensión VSCode para:
 ### Estructura de Tareas
 
 Las tareas están organizadas jerárquicamente:
+
 - **1.0** - Secciones principales
   - **1.1** - Subtareas
   - **1.2** - Subtareas
@@ -102,11 +107,13 @@ Las tareas están organizadas jerárquicamente:
 ### Implementar Tareas
 
 #### Método 1: Implementación Directa
+
 ```
 "Implementa la tarea 1.2 de la especificación user-auth"
 ```
 
 #### Método 2: Copiar desde el Panel
+
 1. Abrir el panel de control
 2. Navegar a tu especificación
 3. Hacer clic en pestaña "Tareas"
@@ -114,6 +121,7 @@ Las tareas están organizadas jerárquicamente:
 5. Pegar en tu conversación de IA
 
 #### Método 3: Implementación en Lote
+
 ```
 "Implementa todas las tareas de configuración de base de datos de la especificación user-auth"
 ```
@@ -121,6 +129,7 @@ Las tareas están organizadas jerárquicamente:
 ### Estado de Tareas
 
 Las tareas tienen tres estados:
+
 - ⏳ **Pendiente** - No iniciada
 - 🔄 **En Progreso** - Actualmente en trabajo
 - ✅ **Completada** - Terminada
@@ -158,6 +167,7 @@ Cuando los documentos estén listos para revisión:
 ```
 
 Crea:
+
 - Descripción del bug
 - Pasos para reproducir
 - Comportamiento esperado vs actual
@@ -170,6 +180,7 @@ Crea:
 ```
 
 Genera:
+
 - Análisis de causa raíz
 - Plan de implementación de corrección
 - Requisitos de prueba
@@ -180,6 +191,7 @@ Genera:
 ### Usar Plantillas
 
 Spec Workflow incluye plantillas para:
+
 - Documentos de requisitos
 - Documentos de diseño
 - Listas de tareas
@@ -194,12 +206,15 @@ Crea tus propias plantillas en `.specflow/templates/`:
 # Plantilla de Característica Personalizada
 
 ## Descripción General
+
 [Descripción de la característica]
 
 ## Historias de Usuario
+
 [Historias de usuario]
 
 ## Requisitos Técnicos
+
 [Detalles técnicos]
 ```
 
@@ -214,6 +229,7 @@ Crea guía de proyecto de alto nivel:
 ```
 
 Genera:
+
 - **Orientación de producto** - Visión y objetivos
 - **Orientación técnica** - Decisiones de arquitectura
 - **Orientación de estructura** - Organización del proyecto
@@ -221,6 +237,7 @@ Genera:
 ### Sistema de Archivo
 
 Gestiona especificaciones completadas:
+
 - Mover especificaciones terminadas a archivo
 - Mantener espacio de trabajo activo limpio
 - Acceder a especificaciones archivadas en cualquier momento
@@ -239,6 +256,7 @@ Cambiar idioma de interfaz:
 ### 1. Comenzar con Documentos de Orientación
 
 Antes de crear especificaciones:
+
 ```
 "Crea documentos de orientación para guiar el proyecto"
 ```
@@ -246,6 +264,7 @@ Antes de crear especificaciones:
 ### 2. Ser Específico en Requisitos
 
 Bueno:
+
 ```
 "Crea una especificación para autenticación de usuarios con:
 - Login email/contraseña
@@ -255,6 +274,7 @@ Bueno:
 ```
 
 No ideal:
+
 ```
 "Crea una especificación de login"
 ```
@@ -262,6 +282,7 @@ No ideal:
 ### 3. Revisar Antes de Implementar
 
 Siempre revisar y aprobar:
+
 1. Documento de requisitos
 2. Documento de diseño
 3. Desglose de tareas
@@ -275,6 +296,7 @@ Siempre revisar y aprobar:
 ### 5. Usar el Panel de Control
 
 El panel proporciona:
+
 - Seguimiento visual de progreso
 - Navegación fácil de documentos
 - Acciones rápidas de aprobación
@@ -336,6 +358,7 @@ El panel proporciona:
 ### Conciencia Contextual
 
 El asistente de IA automáticamente:
+
 - Conoce tu estructura de proyecto
 - Entiende relaciones de especificaciones
 - Rastrea progreso de implementación
@@ -344,6 +367,7 @@ El asistente de IA automáticamente:
 ### Comandos en Lenguaje Natural
 
 Habla naturalmente:
+
 - "¿Qué especificaciones tengo?"
 - "Muéstrame lo que falta hacer"
 - "Comienza a trabajar en la siguiente tarea"
@@ -352,6 +376,7 @@ Habla naturalmente:
 ### Flujo de Trabajo Continuo
 
 La IA mantiene contexto entre sesiones:
+
 - Reanudar donde dejaste
 - Referenciar decisiones previas
 - Construir sobre trabajo existente

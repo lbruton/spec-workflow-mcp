@@ -33,6 +33,7 @@ npm install
 ```
 
 这将安装：
+
 - MCP SDK
 - TypeScript 和构建工具
 - Express 用于仪表板服务器
@@ -51,15 +52,15 @@ npm run build
 
 ### 核心命令
 
-| 命令 | 描述 |
-|---------|-------------|
-| `npm run dev` | 以开发模式启动，支持自动重载 |
-| `npm run build` | 构建生产包 |
-| `npm start` | 运行生产服务器 |
-| `npm test` | 运行测试套件 |
-| `npm run clean` | 删除构建产物 |
-| `npm run lint` | 运行代码检查器 |
-| `npm run format` | 使用 Prettier 格式化代码 |
+| 命令             | 描述                         |
+| ---------------- | ---------------------------- |
+| `npm run dev`    | 以开发模式启动，支持自动重载 |
+| `npm run build`  | 构建生产包                   |
+| `npm start`      | 运行生产服务器               |
+| `npm test`       | 运行测试套件                 |
+| `npm run clean`  | 删除构建产物                 |
+| `npm run lint`   | 运行代码检查器               |
+| `npm run format` | 使用 Prettier 格式化代码     |
 
 ### 开发模式
 
@@ -68,6 +69,7 @@ npm run dev
 ```
 
 功能：
+
 - 文件更改时自动重新编译
 - 仪表板热重载
 - 详细错误消息
@@ -80,6 +82,7 @@ npm run clean && npm run build
 ```
 
 优化：
+
 - 压缩的 JavaScript
 - 优化的包大小
 - 生产错误处理
@@ -122,26 +125,32 @@ spec-workflow-mcp/
 ### 关键组件
 
 #### 1. MCP 服务器（`src/index.ts`）
+
 - 处理 MCP 协议通信
 - 处理工具请求
 - 管理项目状态
 - 文件系统操作
 
 #### 2. 仪表板服务器（`src/server.ts`）
+
 - 提供 Web 仪表板服务
 - WebSocket 连接
 - 实时更新
 - HTTP API 端点
 
 #### 3. 工具（`src/tools/`）
+
 每个工具都是一个独立模块：
+
 - 输入验证
 - 业务逻辑
 - 文件操作
 - 响应格式化
 
 #### 4. 提示（`src/prompts/`）
+
 用于以下的模板字符串：
+
 - 文档生成
 - 工作流程指导
 - 错误消息
@@ -164,9 +173,9 @@ export const myNewTool: Tool = {
     type: 'object',
     properties: {
       param1: { type: 'string', description: '参数描述' },
-      param2: { type: 'number', optional: true }
+      param2: { type: 'number', optional: true },
     },
-    required: ['param1']
+    required: ['param1'],
   },
   handler: async (params) => {
     // 工具实现
@@ -176,9 +185,9 @@ export const myNewTool: Tool = {
 
     return {
       success: true,
-      data: '工具响应'
+      data: '工具响应',
     };
-  }
+  },
 };
 ```
 
@@ -212,10 +221,14 @@ server.registerTool(myNewTool);
 ```javascript
 document.getElementById('new-action').addEventListener('click', () => {
   // 功能逻辑
-  ws.send(JSON.stringify({
-    type: 'new-action',
-    data: { /* ... */ }
-  }));
+  ws.send(
+    JSON.stringify({
+      type: 'new-action',
+      data: {
+        /* ... */
+      },
+    }),
+  );
 });
 ```
 
@@ -260,7 +273,7 @@ import { myTool } from './my-tool';
 describe('myTool', () => {
   it('应正确处理输入', async () => {
     const result = await myTool.handler({
-      param1: 'test'
+      param1: 'test',
     });
 
     expect(result.success).toBe(true);
@@ -269,7 +282,7 @@ describe('myTool', () => {
 
   it('应处理错误', async () => {
     const result = await myTool.handler({
-      param1: null
+      param1: null,
     });
 
     expect(result.success).toBe(false);
@@ -397,6 +410,7 @@ console.log('状态更新:', newState);
 - `chore:` 维护
 
 示例：
+
 ```
 feat: add approval revision workflow
 fix: resolve dashboard WebSocket reconnection issue
@@ -416,11 +430,13 @@ docs: update configuration guide
 ### NPM 包
 
 1. **更新版本**：
+
    ```bash
    npm version patch|minor|major
    ```
 
 2. **构建包**：
+
    ```bash
    npm run build
    ```
@@ -435,6 +451,7 @@ docs: update configuration guide
 1. **更新扩展版本**，在 `vscode-extension/package.json` 中
 
 2. **构建扩展**：
+
    ```bash
    cd vscode-extension
    npm run package
@@ -490,12 +507,12 @@ if (safePath.includes('..')) {
 
 ### 常见构建错误
 
-| 错误 | 解决方案 |
-|-------|----------|
-| TypeScript 错误 | 运行 `npm run build` 查看详细错误 |
-| 找不到模块 | 检查导入并运行 `npm install` |
-| 端口已被使用 | 更改端口或终止现有进程 |
-| WebSocket 连接失败 | 检查服务器是否运行且端口正确 |
+| 错误               | 解决方案                          |
+| ------------------ | --------------------------------- |
+| TypeScript 错误    | 运行 `npm run build` 查看详细错误 |
+| 找不到模块         | 检查导入并运行 `npm install`      |
+| 端口已被使用       | 更改端口或终止现有进程            |
+| WebSocket 连接失败 | 检查服务器是否运行且端口正确      |
 
 ### 开发技巧
 

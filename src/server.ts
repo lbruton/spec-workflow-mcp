@@ -6,7 +6,7 @@ import {
   ListPromptsRequestSchema,
   GetPromptRequestSchema,
   McpError,
-  ErrorCode
+  ErrorCode,
 } from '@modelcontextprotocol/sdk/types.js';
 import { registerTools, handleToolCall } from './tools/index.js';
 import { registerPrompts, handlePromptList, handlePromptGet } from './prompts/index.js';
@@ -22,7 +22,7 @@ import { fileURLToPath } from 'url';
 
 export class SpecWorkflowMCPServer {
   private server: Server;
-  private projectPath!: string;   // workflowRootPath for .specflow operations
+  private projectPath!: string; // workflowRootPath for .specflow operations
   private workspacePath!: string; // workspace/worktree path for identity in registry
   private projectRegistry: ProjectRegistry;
   private lang?: string;
@@ -38,22 +38,28 @@ export class SpecWorkflowMCPServer {
     const prompts = registerPrompts();
 
     // Create tools capability object with each tool name
-    const toolsCapability = tools.reduce((acc, tool) => {
-      acc[tool.name] = {};
-      return acc;
-    }, {} as Record<string, {}>);
+    const toolsCapability = tools.reduce(
+      (acc, tool) => {
+        acc[tool.name] = {};
+        return acc;
+      },
+      {} as Record<string, {}>,
+    );
 
-    this.server = new Server({
-      name: 'specflow',
-      version: packageJson.version
-    }, {
-      capabilities: {
-        tools: toolsCapability,
-        prompts: {
-          listChanged: true
-        }
-      }
-    });
+    this.server = new Server(
+      {
+        name: 'specflow',
+        version: packageJson.version,
+      },
+      {
+        capabilities: {
+          tools: toolsCapability,
+          prompts: {
+            listChanged: true,
+          },
+        },
+      },
+    );
 
     this.projectRegistry = new ProjectRegistry();
   }
@@ -83,26 +89,35 @@ export class SpecWorkflowMCPServer {
       const __dirname = dirname(fileURLToPath(import.meta.url));
       const packageJsonPath = join(__dirname, '..', 'package.json');
       const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
-      const workspaceInitializer = new WorkspaceInitializer(this.projectPath, packageJson.version, config);
+      const workspaceInitializer = new WorkspaceInitializer(
+        this.projectPath,
+        packageJson.version,
+        config,
+      );
       await workspaceInitializer.initializeWorkspace();
 
       // Check for and run migration if needed
       if (await needsMigration(this.projectPath, config)) {
         console.error('Migrating existing .specflow/ content to DocVault...');
         const migrationResult = await migrateToDocVault(this.projectPath, config);
-        console.error(`Migration complete: ${migrationResult.migratedDirs.length} migrated, ${migrationResult.skippedDirs.length} skipped, ${migrationResult.errors.length} errors`);
+        console.error(
+          `Migration complete: ${migrationResult.migratedDirs.length} migrated, ${migrationResult.skippedDirs.length} skipped, ${migrationResult.errors.length} errors`,
+        );
       }
 
       // Register this project in the global registry
       // Use DocVault specflow root (where specs/approvals/steering live) as the
       // workflowRootPath, not the git root. The dashboard uses this path to find
       // spec documents, approvals, and steering files.
-      const projectId = await this.projectRegistry.registerProject(this.workspacePath, process.pid, {
-        workflowRootPath: config.specflowRoot
-      });
+      const projectId = await this.projectRegistry.registerProject(
+        this.workspacePath,
+        process.pid,
+        {
+          workflowRootPath: config.specflowRoot,
+        },
+      );
       console.error(`Project registered: ${projectId} (workflow root: ${config.specflowRoot})`);
       projectInitialized = true;
-
     } catch (error: any) {
       // Project initialization failed — enter degraded mode instead of crashing.
       // This allows the MCP server to start and report the error via tool calls,
@@ -113,7 +128,9 @@ export class SpecWorkflowMCPServer {
       console.error(`  Error: ${initError}`);
       console.error(`  Hint: Launch specflow with an explicit project path, e.g.:`);
       console.error(`    npx -y @lbruton/specflow@latest /path/to/your/project`);
-      console.error(`  The MCP server will start, but tools will return errors until a valid project is configured.`);
+      console.error(
+        `  The MCP server will start, but tools will return errors until a valid project is configured.`,
+      );
     }
 
     // Try to get the dashboard URL from session manager
@@ -132,7 +149,7 @@ export class SpecWorkflowMCPServer {
     const context: any = {
       projectPath: this.projectPath,
       dashboardUrl: dashboardUrl,
-      lang: this.lang
+      lang: this.lang,
     };
 
     if (!projectInitialized) {
@@ -177,26 +194,29 @@ export class SpecWorkflowMCPServer {
   private setupHandlers(context: any) {
     // Tool handlers
     this.server.setRequestHandler(ListToolsRequestSchema, async () => ({
-      tools: registerTools()
+      tools: registerTools(),
     }));
 
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
       // In degraded mode, return a clear error for every tool call
       if (context.degraded) {
         return {
-          content: [{
-            type: 'text' as const,
-            text: `SpecFlow MCP server is running in degraded mode — no valid project found.\n\n` +
-              `Error: ${context.degradedReason}\n\n` +
-              `The server was launched without a valid project path. To fix this:\n` +
-              `1. Ensure your MCP config passes the project directory as an argument:\n` +
-              `   npx -y @lbruton/specflow@latest .\n` +
-              `2. Or specify an absolute path:\n` +
-              `   npx -y @lbruton/specflow@latest /path/to/your/project\n` +
-              `3. Ensure the project has a .specflow/config.json file\n\n` +
-              `Current path: ${context.projectPath}`
-          }],
-          isError: true
+          content: [
+            {
+              type: 'text' as const,
+              text:
+                `SpecFlow MCP server is running in degraded mode — no valid project found.\n\n` +
+                `Error: ${context.degradedReason}\n\n` +
+                `The server was launched without a valid project path. To fix this:\n` +
+                `1. Ensure your MCP config passes the project directory as an argument:\n` +
+                `   npx -y @lbruton/specflow@latest .\n` +
+                `2. Or specify an absolute path:\n` +
+                `   npx -y @lbruton/specflow@latest /path/to/your/project\n` +
+                `3. Ensure the project has a .specflow/config.json file\n\n` +
+                `Current path: ${context.projectPath}`,
+            },
+          ],
+          isError: true,
         };
       }
 
@@ -220,24 +240,23 @@ export class SpecWorkflowMCPServer {
       // In degraded mode, return a helpful error for prompt requests too
       if (context.degraded) {
         return {
-          messages: [{
-            role: 'user' as const,
-            content: {
-              type: 'text' as const,
-              text: `SpecFlow MCP server is in degraded mode — no valid project found at: ${context.projectPath}\n` +
-                `Error: ${context.degradedReason}\n` +
-                `Fix: Add the project path to your MCP config args, e.g.: npx -y @lbruton/specflow@latest .`
-            }
-          }]
+          messages: [
+            {
+              role: 'user' as const,
+              content: {
+                type: 'text' as const,
+                text:
+                  `SpecFlow MCP server is in degraded mode — no valid project found at: ${context.projectPath}\n` +
+                  `Error: ${context.degradedReason}\n` +
+                  `Fix: Add the project path to your MCP config args, e.g.: npx -y @lbruton/specflow@latest .`,
+              },
+            },
+          ],
         };
       }
 
       try {
-        return await handlePromptGet(
-          request.params.name,
-          request.params.arguments || {},
-          context
-        );
+        return await handlePromptGet(request.params.name, request.params.arguments || {}, context);
       } catch (error: any) {
         throw new McpError(ErrorCode.InternalError, error.message);
       }
@@ -267,7 +286,9 @@ export class SpecWorkflowMCPServer {
           // Ignore errors during cleanup
         }
       } else {
-        console.error('Docker mode: skipping project unregistration (projects persist across sessions)');
+        console.error(
+          'Docker mode: skipping project unregistration (projects persist across sessions)',
+        );
       }
 
       // Stop MCP server

@@ -19,7 +19,10 @@ export const DEFAULT_SECURITY_CONFIG: SecurityConfig = {
   auditLogEnabled: true,
   auditLogRetentionDays: 30,
   corsEnabled: true,
-  allowedOrigins: [`http://localhost:${DEFAULT_DASHBOARD_PORT}`, `http://127.0.0.1:${DEFAULT_DASHBOARD_PORT}`]
+  allowedOrigins: [
+    `http://localhost:${DEFAULT_DASHBOARD_PORT}`,
+    `http://127.0.0.1:${DEFAULT_DASHBOARD_PORT}`,
+  ],
 };
 
 // Default Vite dev server port (used when running frontend in dev mode)
@@ -31,7 +34,11 @@ export const VITE_DEV_PORT = 5173;
  * @returns Array of allowed origin URLs
  */
 export function generateAllowedOrigins(port: number): string[] {
-  const origins = [`http://localhost:${port}`, `http://127.0.0.1:${port}`, 'https://specdash.lbruton.cc'];
+  const origins = [
+    `http://localhost:${port}`,
+    `http://127.0.0.1:${port}`,
+    'https://specdash.lbruton.cc',
+  ];
 
   // In non-production environments, also allow Vite dev server origin (port 5173)
   // The Vite proxy forwards requests but preserves the Origin header
@@ -49,9 +56,11 @@ export function generateAllowedOrigins(port: number): string[] {
  * @returns true if the address is localhost (127.x.x.x, localhost, or ::1)
  */
 export function isLocalhostAddress(address: string): boolean {
-  return address === 'localhost' ||
-         address === '::1' || // IPv6 localhost
-         address.startsWith('127.'); // Any 127.x.x.x address (includes 127.0.0.1)
+  return (
+    address === 'localhost' ||
+    address === '::1' || // IPv6 localhost
+    address.startsWith('127.')
+  ); // Any 127.x.x.x address (includes 127.0.0.1)
 }
 
 /**
@@ -60,7 +69,10 @@ export function isLocalhostAddress(address: string): boolean {
  * @param userConfig - Optional user-provided security configuration overrides
  * @param port - The port the dashboard is running on (used to generate dynamic allowedOrigins)
  */
-export function getSecurityConfig(userConfig?: Partial<SecurityConfig>, port?: number): SecurityConfig {
+export function getSecurityConfig(
+  userConfig?: Partial<SecurityConfig>,
+  port?: number,
+): SecurityConfig {
   const actualPort = port || DEFAULT_DASHBOARD_PORT;
 
   // Generate dynamic allowedOrigins based on the actual port if not explicitly provided
@@ -69,7 +81,7 @@ export function getSecurityConfig(userConfig?: Partial<SecurityConfig>, port?: n
   const config = {
     ...DEFAULT_SECURITY_CONFIG,
     allowedOrigins: dynamicAllowedOrigins,
-    ...userConfig
+    ...userConfig,
   };
 
   return config;
@@ -105,7 +117,7 @@ export class RateLimiter {
     const requests = this.requests.get(clientId) || [];
 
     // Filter to requests within the current window
-    const recentRequests = requests.filter(timestamp => now - timestamp < windowMs);
+    const recentRequests = requests.filter((timestamp) => now - timestamp < windowMs);
 
     // Check if limit exceeded
     if (recentRequests.length >= maxRequests) {
@@ -138,7 +150,7 @@ export class RateLimiter {
           .send({
             error: 'Too Many Requests',
             message: `Rate limit exceeded. Maximum ${this.config.rateLimitPerMinute} requests per minute.`,
-            retryAfter: result.retryAfter
+            retryAfter: result.retryAfter,
           });
       }
     };
@@ -152,7 +164,7 @@ export class RateLimiter {
     const windowMs = 60000;
 
     for (const [clientId, requests] of this.requests.entries()) {
-      const recentRequests = requests.filter(timestamp => now - timestamp < windowMs);
+      const recentRequests = requests.filter((timestamp) => now - timestamp < windowMs);
       if (recentRequests.length === 0) {
         this.requests.delete(clientId);
       } else {
@@ -242,18 +254,23 @@ export class AuditLogger {
             actor: request.ip || 'unknown',
             action: `${request.method} ${request.url}`,
             resource: request.url,
-            result: reply.statusCode < 400 ? 'success' : reply.statusCode === 401 || reply.statusCode === 403 ? 'denied' : 'failure',
+            result:
+              reply.statusCode < 400
+                ? 'success'
+                : reply.statusCode === 401 || reply.statusCode === 403
+                  ? 'denied'
+                  : 'failure',
             details: {
               statusCode: reply.statusCode,
               duration: Date.now() - startTime,
-              userAgent: request.headers['user-agent']
-            }
+              userAgent: request.headers['user-agent'],
+            },
           };
 
           // Fire and forget - don't await to avoid blocking
           this.log(entry).catch(() => {});
         },
-        () => {} // Ignore errors from reply.then
+        () => {}, // Ignore errors from reply.then
       );
     };
   }
@@ -286,7 +303,7 @@ export function createSecurityHeadersMiddleware(port?: number) {
     // connect-src allows WebSocket connections to the dashboard on the actual port
     reply.header(
       'Content-Security-Policy',
-      `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data:; connect-src ${connectSrc}; frame-src https://polldash.lbruton.cc;`
+      `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data:; connect-src ${connectSrc}; frame-src https://polldash.lbruton.cc;`,
     );
   };
 }
@@ -316,7 +333,6 @@ export function getCorsConfig(config: SecurityConfig) {
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type']
+    allowedHeaders: ['Content-Type'],
   };
 }
-

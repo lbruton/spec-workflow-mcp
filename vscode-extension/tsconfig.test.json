@@ -16,14 +16,6 @@
     "sourceMap": true,
     "declaration": false
   },
-  "include": [
-    "src/test/**/*.ts",
-    "src/extension/**/*.ts",
-    "src/extension.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "webview-dist"
-  ]
+  "include": ["src/test/**/*.ts", "src/extension/**/*.ts", "src/extension.ts"],
+  "exclude": ["node_modules", "dist", "webview-dist"]
 }

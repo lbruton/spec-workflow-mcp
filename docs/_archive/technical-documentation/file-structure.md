@@ -5,13 +5,14 @@
 ## 📁 Directory Layout
 
 ### Project Root Structure
+
 ```
 project-root/
 ├── .specflow/                    # All MCP workflow data
-│   ├── specs/                         # Specification documents  
+│   ├── specs/                         # Specification documents
 │   │   └── feature-name/              # Individual specification
 │   │       ├── requirements.md        # Phase 1: Requirements
-│   │       ├── design.md             # Phase 2: Design  
+│   │       ├── design.md             # Phase 2: Design
 │   │       └── tasks.md              # Phase 3: Tasks
 │   ├── steering/                      # Project guidance documents
 │   │   ├── product.md                # Product vision & strategy
@@ -32,15 +33,16 @@ project-root/
 
 **Core Implementation Files** (locations confirmed from codebase analysis):
 
-| File Path | Purpose | Key Features |
-|-----------|---------|--------------|
-| `src/server.ts:74-85` | MCP server initialization | Tool registration, project registry |
-| `src/core/path-utils.ts:12-35` | Cross-platform paths | Windows/Unix path handling |
-| `src/core/project-registry.ts:96-114` | Project registration | Global project tracking |
-| `src/dashboard/approval-storage.ts:20-45` | Human approval system | JSON file persistence |
-| `src/dashboard/multi-server.ts:45-200` | Multi-project dashboard | WebSocket, file watching |
+| File Path                                 | Purpose                   | Key Features                        |
+| ----------------------------------------- | ------------------------- | ----------------------------------- |
+| `src/server.ts:74-85`                     | MCP server initialization | Tool registration, project registry |
+| `src/core/path-utils.ts:12-35`            | Cross-platform paths      | Windows/Unix path handling          |
+| `src/core/project-registry.ts:96-114`     | Project registration      | Global project tracking             |
+| `src/dashboard/approval-storage.ts:20-45` | Human approval system     | JSON file persistence               |
+| `src/dashboard/multi-server.ts:45-200`    | Multi-project dashboard   | WebSocket, file watching            |
 
 **Template System** (static content, no AI generation):
+
 ```
 src/
 ├── core/                             # Core business logic
@@ -105,7 +107,8 @@ src/
 └── types.ts                        # TypeScript type definitions
 ```
 
-### VS Code Extension Structure  
+### VS Code Extension Structure
+
 ```
 vscode-extension/
 ├── src/
@@ -145,19 +148,22 @@ vscode-extension/
 ## 📋 File Naming Conventions
 
 ### Specification Names
+
 - **Format**: `kebab-case` (lowercase with hyphens)
 - **Examples**: ✅ `user-authentication`, `payment-flow`, `admin-dashboard`
 - **Invalid**: ❌ `UserAuth`, `payment_flow`, `Admin Dashboard`
 
 ### Document Files
+
 - **Requirements**: `requirements.md`
-- **Design**: `design.md` 
+- **Design**: `design.md`
 - **Tasks**: `tasks.md`
 - **Product**: `product.md`
 - **Tech**: `tech.md`
 - **Structure**: `structure.md`
 
 ### Approval Files
+
 - **Format**: `{spec-name}-{document}-{timestamp}.json`
 - **Example**: `user-auth-requirements-20241215-143022.json`
 - **Auto-generated**: System creates these automatically
@@ -210,7 +216,7 @@ const specPath = PathUtils.getSpecPath('/project', 'user-auth');
 const reqPath = join(specPath, 'requirements.md');
 // Result: /project/.specflow/specs/user-auth/requirements.md
 
-// Get relative path for API responses  
+// Get relative path for API responses
 const relativePath = PathUtils.toUnixPath(reqPath.replace(projectPath, ''));
 // Result: .specflow/specs/user-auth/requirements.md
 ```
@@ -228,14 +234,14 @@ const directories = [
   '.specflow/specs/',
   '.specflow/steering/',
   '.specflow/archive/',
-  '.specflow/archive/specs/'
+  '.specflow/archive/specs/',
 ];
 
 // Directories created on-demand
 const onDemandDirectories = [
   '.specflow/approvals/',
   '.specflow/approvals/{spec-name}/',
-  '.specflow/specs/{spec-name}/'
+  '.specflow/specs/{spec-name}/',
 ];
 ```
 
@@ -245,16 +251,16 @@ const onDemandDirectories = [
 export async function validateProjectPath(projectPath: string): Promise<string> {
   // Resolve to absolute path
   const absolutePath = resolve(projectPath);
-  
+
   // Check if path exists
   await access(absolutePath, constants.F_OK);
-  
+
   // Ensure it's a directory
   const stats = await stat(absolutePath);
   if (!stats.isDirectory()) {
     throw new Error(`Project path is not a directory: ${absolutePath}`);
   }
-  
+
   return absolutePath;
 }
 ```
@@ -267,10 +273,10 @@ export class SpecArchiveService {
   async archiveSpec(specName: string): Promise<void> {
     const sourceDir = PathUtils.getSpecPath(this.projectPath, specName);
     const archiveDir = PathUtils.getArchiveSpecPath(this.projectPath, specName);
-    
+
     // Move spec to archive
     await fs.rename(sourceDir, archiveDir);
-    
+
     // Clean up approvals
     const approvalsDir = PathUtils.getSpecApprovalPath(this.projectPath, specName);
     await fs.rm(approvalsDir, { recursive: true, force: true });
@@ -294,11 +300,13 @@ export class SpecArchiveService {
 ### Security Considerations
 
 **File Access Restrictions**:
+
 - ✅ Read/Write: Only within `.specflow/` directory
 - ✅ Read-Only: Project files (for analysis)
 - ❌ Forbidden: System directories, parent directory traversal
 
 **Path Traversal Prevention**:
+
 ```typescript
 // All paths are normalized and validated
 const safePath = normalize(join(projectPath, '.specflow', userInput));
@@ -313,26 +321,26 @@ if (!safePath.startsWith(projectPath)) {
 
 ### File Size Limits
 
-| File Type | Typical Size | Max Recommended |
-|-----------|-------------|-----------------|
-| Requirements | 5-20 KB | 100 KB |
-| Design | 10-50 KB | 200 KB |
-| Tasks | 5-30 KB | 150 KB |
-| Steering Docs | 5-20 KB | 100 KB |
-| Approval Data | < 1 KB | 5 KB |
-| Session Data | < 1 KB | 2 KB |
+| File Type     | Typical Size | Max Recommended |
+| ------------- | ------------ | --------------- |
+| Requirements  | 5-20 KB      | 100 KB          |
+| Design        | 10-50 KB     | 200 KB          |
+| Tasks         | 5-30 KB      | 150 KB          |
+| Steering Docs | 5-20 KB      | 100 KB          |
+| Approval Data | < 1 KB       | 5 KB            |
+| Session Data  | < 1 KB       | 2 KB            |
 
 ### Disk Usage Estimation
 
 ```typescript
 // Typical project disk usage
 interface DiskUsage {
-  singleSpec: '50-200 KB';      // All 3 documents
-  steeringDocs: '20-100 KB';    // All steering documents  
-  approvalData: '1-10 KB';      // Per approval workflow
-  sessionData: '< 1 KB';        // Session tracking
-  totalTypical: '100-500 KB';   // For small-medium project
-  totalLarge: '1-5 MB';         // For large project with many specs
+  singleSpec: '50-200 KB'; // All 3 documents
+  steeringDocs: '20-100 KB'; // All steering documents
+  approvalData: '1-10 KB'; // Per approval workflow
+  sessionData: '< 1 KB'; // Session tracking
+  totalTypical: '100-500 KB'; // For small-medium project
+  totalLarge: '1-5 MB'; // For large project with many specs
 }
 ```
 

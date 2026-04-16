@@ -14,11 +14,15 @@ export function registerTools(): Tool[] {
     specStatusTool,
     approvalsTool,
     logImplementationTool,
-    specListTool
+    specListTool,
   ];
 }
 
-export async function handleToolCall(name: string, args: any, context: ToolContext): Promise<MCPToolResponse> {
+export async function handleToolCall(
+  name: string,
+  args: any,
+  context: ToolContext,
+): Promise<MCPToolResponse> {
   let response: ToolResponse;
   let isError = false;
 
@@ -48,12 +52,11 @@ export async function handleToolCall(name: string, args: any, context: ToolConte
 
     // Check if the response indicates an error
     isError = !response.success;
-
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     response = {
       success: false,
-      message: `Tool execution failed: ${errorMessage}`
+      message: `Tool execution failed: ${errorMessage}`,
     };
     isError = true;
   }

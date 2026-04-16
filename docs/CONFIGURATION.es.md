@@ -12,11 +12,11 @@ npx -y @pimzino/spec-workflow-mcp@latest [ruta-proyecto] [opciones]
 
 ### Opciones Disponibles
 
-| Opción | Descripción | Ejemplo |
-|--------|-------------|---------|
-| `--help` | Mostrar información completa de uso | `npx -y @pimzino/spec-workflow-mcp@latest --help` |
-| `--dashboard` | Ejecutar en modo solo panel de control (puerto predeterminado: 5000) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard` |
-| `--port <número>` | Especificar puerto personalizado del panel (1024-65535) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080` |
+| Opción            | Descripción                                                          | Ejemplo                                                            |
+| ----------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `--help`          | Mostrar información completa de uso                                  | `npx -y @pimzino/spec-workflow-mcp@latest --help`                  |
+| `--dashboard`     | Ejecutar en modo solo panel de control (puerto predeterminado: 5000) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard`             |
+| `--port <número>` | Especificar puerto personalizado del panel (1024-65535)              | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080` |
 
 ### Notas Importantes
 
@@ -29,12 +29,14 @@ npx -y @pimzino/spec-workflow-mcp@latest [ruta-proyecto] [opciones]
 ### Flujo de Trabajo Típico
 
 1. **Iniciar el Panel de Control** (hazlo primero, solo una vez):
+
 ```bash
 # Usa el puerto predeterminado 5000
 npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 ```
 
 2. **Iniciar Servidores MCP** (uno por proyecto, en terminales separados):
+
 ```bash
 # Proyecto 1
 npx -y @pimzino/spec-workflow-mcp@latest ~/projects/app1
@@ -63,11 +65,12 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 Sobrescribir el directorio de estado global predeterminado (`~/.specflow-mcp`). Esto es útil para entornos en sandbox donde `$HOME` es de solo lectura.
 
-| Variable | Predeterminado | Descripción |
-|----------|---------|-------------|
+| Variable             | Predeterminado    | Descripción                               |
+| -------------------- | ----------------- | ----------------------------------------- |
 | `SPEC_WORKFLOW_HOME` | `~/.specflow-mcp` | Directorio para archivos de estado global |
 
 **Archivos almacenados en este directorio:**
+
 - `activeProjects.json` - Registro de proyectos
 - `activeSession.json` - Información de sesión del panel
 - `settings.json` - Configuración global
@@ -98,6 +101,7 @@ SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@la
 ## Gestión de Sesión del Panel de Control
 
 El panel de control almacena su información de sesión en `~/.specflow-mcp/activeSession.json` (o `$SPEC_WORKFLOW_HOME/activeSession.json` si está configurado). Este archivo:
+
 - Fuerza una sola instancia del panel
 - Permite a los servidores MCP descubrir el panel en ejecución
 - Se limpia automáticamente cuando el panel se detiene
@@ -177,12 +181,12 @@ debounceMs = 300
 
 #### Configuración Básica
 
-| Opción | Tipo | Predeterminado | Descripción |
-|--------|------|---------|-------------|
-| `projectDir` | string | Directorio actual | Ruta del directorio del proyecto |
-| `port` | number | Efímero | Puerto del panel (1024-65535) |
-| `dashboardOnly` | boolean | false | Ejecutar panel sin servidor MCP |
-| `lang` | string | "en" | Idioma de la interfaz |
+| Opción          | Tipo    | Predeterminado    | Descripción                      |
+| --------------- | ------- | ----------------- | -------------------------------- |
+| `projectDir`    | string  | Directorio actual | Ruta del directorio del proyecto |
+| `port`          | number  | Efímero           | Puerto del panel (1024-65535)    |
+| `dashboardOnly` | boolean | false             | Ejecutar panel sin servidor MCP  |
+| `lang`          | string  | "en"              | Idioma de la interfaz            |
 
 > **Nota**: La opción `autoStartDashboard` fue eliminada en v2.0.0. El panel ahora usa un modo multi-proyecto unificado accesible mediante la bandera `--dashboard`.
 
@@ -203,11 +207,13 @@ debounceMs = 300
 ### Crear una Configuración Personalizada
 
 1. Copiar la configuración de ejemplo:
+
 ```bash
 cp .specflow/config.example.toml .specflow/config.toml
 ```
 
 2. Editar la configuración:
+
 ```toml
 # Mi configuración de proyecto
 projectDir = "/Users/minombre/proyectos/miapp"
@@ -216,6 +222,7 @@ lang = "es"
 ```
 
 3. Usar la configuración:
+
 ```bash
 # Usa .specflow/config.toml automáticamente
 npx -y @pimzino/spec-workflow-mcp@latest
@@ -262,6 +269,7 @@ verboseLogging = true
 ```
 
 Uso:
+
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest --config dev-config.toml
 ```
@@ -280,6 +288,7 @@ verboseLogging = false
 ```
 
 Uso:
+
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ```
@@ -293,6 +302,7 @@ Los puertos deben estar entre 1024 y 65535.
 ### Puertos Efímeros
 
 Cuando no se especifica un puerto, el sistema selecciona automáticamente un puerto efímero disponible. Esto se recomienda para:
+
 - Entornos de desarrollo
 - Múltiples proyectos simultáneos
 - Evitar conflictos de puertos
@@ -300,6 +310,7 @@ Cuando no se especifica un puerto, el sistema selecciona automáticamente un pue
 ### Puertos Fijos
 
 Usa puertos fijos cuando necesites:
+
 - URLs consistentes para marcadores
 - Integración con otras herramientas
 - Colaboración en equipo con configuraciones compartidas
@@ -367,11 +378,13 @@ La extensión para VSCode tiene su propia configuración:
 ### La Configuración No Se Carga
 
 1. **Verificar ubicación del archivo:**
+
    ```bash
    ls -la .specflow/config.toml
    ```
 
 2. **Validar sintaxis TOML:**
+
    ```bash
    # Instalar herramienta CLI toml
    npm install -g @iarna/toml
@@ -388,12 +401,12 @@ La extensión para VSCode tiene su propia configuración:
 
 ### Problemas Comunes
 
-| Problema | Solución |
-|-------|----------|
-| Puerto ya en uso | Usar puerto diferente u omitir para efímero |
+| Problema                               | Solución                                            |
+| -------------------------------------- | --------------------------------------------------- |
+| Puerto ya en uso                       | Usar puerto diferente u omitir para efímero         |
 | Archivo de configuración no encontrado | Verificar ruta y usar ruta absoluta si es necesario |
-| Sintaxis TOML inválida | Validar con linter TOML |
-| Configuración no se aplica | Verificar precedencia de configuración |
+| Sintaxis TOML inválida                 | Validar con linter TOML                             |
+| Configuración no se aplica             | Verificar precedencia de configuración              |
 
 ## Mejores Prácticas
 

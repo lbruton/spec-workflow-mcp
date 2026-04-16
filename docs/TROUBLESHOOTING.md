@@ -5,6 +5,7 @@ This guide helps you resolve common issues with Spec Workflow MCP.
 ## Quick Diagnostics
 
 ### Check Installation
+
 ```bash
 # Verify npm package is accessible
 npx -y @pimzino/spec-workflow-mcp@latest --help
@@ -17,6 +18,7 @@ ls -la .specflow  # or 'dir .specflow' on Windows
 ```
 
 ### Check Services
+
 ```bash
 # Test MCP server
 npx -y @pimzino/spec-workflow-mcp@latest /path/to/project
@@ -38,6 +40,7 @@ netstat -an | findstr :3000  # Windows
 **Error**: `npm ERR! 404 Not Found - @pimzino/spec-workflow-mcp@latest`
 
 **Solutions**:
+
 1. Check internet connection
 2. Clear npm cache:
    ```bash
@@ -58,6 +61,7 @@ netstat -an | findstr :3000  # Windows
 **Error**: `EACCES: permission denied`
 
 **Solutions**:
+
 1. **macOS/Linux**: Use proper npm permissions:
    ```bash
    npm config set prefix ~/.npm-global
@@ -79,6 +83,7 @@ netstat -an | findstr :3000  # Windows
 **Error**: `Failed to start MCP server`
 
 **Solutions**:
+
 1. Check Node.js version:
    ```bash
    node --version  # Should be 18.0 or higher
@@ -104,6 +109,7 @@ netstat -an | findstr :3000  # Windows
 **Solutions**:
 
 1. **Claude Desktop**: Check configuration file:
+
    ```json
    {
      "mcpServers": {
@@ -116,6 +122,7 @@ netstat -an | findstr :3000  # Windows
    ```
 
 2. **Claude Code CLI**: Verify setup:
+
    ```bash
    claude mcp list  # Check if spec-workflow is listed
    claude mcp remove spec-workflow  # Remove if exists
@@ -131,6 +138,7 @@ netstat -an | findstr :3000  # Windows
 **Error**: `Tool 'spec-workflow' not found`
 
 **Solutions**:
+
 1. Restart your AI tool completely
 2. Check MCP server is running (look for process)
 3. Verify configuration is saved correctly
@@ -143,6 +151,7 @@ netstat -an | findstr :3000  # Windows
 **Error**: `Cannot connect to dashboard` or blank page
 
 **Solutions**:
+
 1. Verify dashboard is started:
    ```bash
    npx -y @pimzino/spec-workflow-mcp@latest /path --dashboard
@@ -160,11 +169,13 @@ netstat -an | findstr :3000  # Windows
 **Error**: `Error: listen EADDRINUSE: address already in use :::3000`
 
 **Solutions**:
+
 1. Use a different port:
    ```bash
    npx -y @pimzino/spec-workflow-mcp@latest /path --dashboard --port 3456
    ```
 2. Find and kill the process using the port:
+
    ```bash
    # macOS/Linux
    lsof -i :3000
@@ -174,6 +185,7 @@ netstat -an | findstr :3000  # Windows
    netstat -ano | findstr :3000
    taskkill /PID [PID] /F
    ```
+
 3. Use ephemeral port (omit --port flag):
    ```bash
    npx -y @pimzino/spec-workflow-mcp@latest /path --dashboard
@@ -184,6 +196,7 @@ netstat -an | findstr :3000  # Windows
 **Error**: `WebSocket connection lost` or real-time updates not working
 
 **Solutions**:
+
 1. Refresh the browser page
 2. Check if firewall is blocking WebSocket
 3. Verify dashboard and MCP server are running from same project
@@ -195,6 +208,7 @@ netstat -an | findstr :3000  # Windows
 **Symptoms**: Changes not reflected in real-time
 
 **Solutions**:
+
 1. Hard refresh browser (Ctrl+Shift+R or Cmd+Shift+R)
 2. Clear browser cache
 3. Check WebSocket connection status (should show green)
@@ -212,6 +226,7 @@ netstat -an | findstr :3000  # Windows
 **Error**: No approval notifications in dashboard
 
 **Solutions**:
+
 1. Ensure dashboard is running alongside MCP server:
    ```bash
    # Run both separately
@@ -231,6 +246,7 @@ netstat -an | findstr :3000  # Windows
 **Error**: Approval buttons not working
 
 **Solutions**:
+
 1. Check browser console for JavaScript errors
 2. Verify you're on the correct spec page
 3. Ensure document has pending approval status
@@ -243,6 +259,7 @@ netstat -an | findstr :3000  # Windows
 **Error**: Spec documents not appearing in file system
 
 **Solutions**:
+
 1. Check write permissions:
    ```bash
    touch .specflow/test.txt
@@ -262,6 +279,7 @@ netstat -an | findstr :3000  # Windows
 **Error**: `EACCES` or `Permission denied` when creating specs
 
 **Solutions**:
+
 1. Fix directory permissions:
    ```bash
    chmod -R 755 .specflow  # macOS/Linux
@@ -280,6 +298,7 @@ netstat -an | findstr :3000  # Windows
 **Error**: Spec Workflow icon not appearing in Activity Bar
 
 **Solutions**:
+
 1. Verify extension is installed:
    - Open Extensions (Ctrl+Shift+X)
    - Search "Spec Workflow MCP"
@@ -295,6 +314,7 @@ netstat -an | findstr :3000  # Windows
 **Error**: Commands fail or show errors
 
 **Solutions**:
+
 1. Open project folder that contains `.specflow`
 2. Check VSCode is using correct workspace
 3. View extension logs for specific errors
@@ -311,6 +331,7 @@ netstat -an | findstr :3000  # Windows
 **Error**: Settings in config.toml not being applied
 
 **Solutions**:
+
 1. Verify TOML syntax:
    ```bash
    # Install TOML validator
@@ -321,6 +342,7 @@ netstat -an | findstr :3000  # Windows
    - Default: `.specflow/config.toml`
    - Custom: Use `--config` flag
 3. Ensure no syntax errors:
+
    ```toml
    # Correct
    port = 3000
@@ -336,7 +358,9 @@ netstat -an | findstr :3000  # Windows
 **Error**: Flags like `--port` being ignored
 
 **Solutions**:
+
 1. Check argument order:
+
    ```bash
    # Correct
    npx -y @pimzino/spec-workflow-mcp@latest /path --dashboard --port 3000
@@ -344,6 +368,7 @@ netstat -an | findstr :3000  # Windows
    # Wrong
    npx -y @pimzino/spec-workflow-mcp@latest --dashboard /path --port 3000
    ```
+
 2. Ensure flag values are valid:
    - Port: 1024-65535
    - Language: en, ja, zh, es, pt, de, fr, ru, it, ko, ar
@@ -356,6 +381,7 @@ netstat -an | findstr :3000  # Windows
 **Symptoms**: Dashboard or tools responding slowly
 
 **Solutions**:
+
 1. Check system resources:
    ```bash
    # CPU and memory usage
@@ -377,6 +403,7 @@ netstat -an | findstr :3000  # Windows
 ### High Memory Usage
 
 **Solutions**:
+
 1. Restart services periodically
 2. Limit dashboard refresh rate:
    ```json
@@ -391,6 +418,7 @@ netstat -an | findstr :3000  # Windows
 ### Behind Corporate Proxy
 
 **Solutions**:
+
 1. Configure npm proxy:
    ```bash
    npm config set proxy http://proxy.company.com:8080
@@ -405,6 +433,7 @@ netstat -an | findstr :3000  # Windows
 ### Firewall Blocking Connections
 
 **Solutions**:
+
 1. Allow Node.js through firewall
 2. Use localhost instead of 0.0.0.0
 3. Configure specific port rules
@@ -415,9 +444,11 @@ netstat -an | findstr :3000  # Windows
 ### Windows
 
 #### Path Format Issues
+
 **Error**: `Invalid path` or path not found
 
 **Solutions**:
+
 ```bash
 # Use forward slashes
 npx -y @pimzino/spec-workflow-mcp@latest C:/Users/name/project
@@ -427,9 +458,11 @@ npx -y @pimzino/spec-workflow-mcp@latest "C:\\Users\\name\\project"
 ```
 
 #### PowerShell Execution Policy
+
 **Error**: `cannot be loaded because running scripts is disabled`
 
 **Solutions**:
+
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
@@ -437,9 +470,11 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ### macOS
 
 #### Gatekeeper Blocking
+
 **Error**: `cannot be opened because the developer cannot be verified`
 
 **Solutions**:
+
 1. System Preferences → Security & Privacy → Allow
 2. Or remove quarantine:
    ```bash
@@ -449,9 +484,11 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ### Linux
 
 #### Missing Dependencies
+
 **Error**: `shared library not found`
 
 **Solutions**:
+
 ```bash
 # Ubuntu/Debian
 sudo apt-get update
@@ -468,6 +505,7 @@ sudo yum groupinstall "Development Tools"
 When reporting issues, include:
 
 1. **System Information**:
+
    ```bash
    node --version
    npm --version

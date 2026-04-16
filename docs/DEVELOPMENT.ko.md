@@ -33,6 +33,7 @@ npm install
 ```
 
 다음이 설치됩니다:
+
 - MCP SDK
 - TypeScript 및 빌드 도구
 - 대시보드 서버용 Express
@@ -51,15 +52,15 @@ npm run build
 
 ### 핵심 명령어
 
-| 명령어 | 설명 |
-|---------|-------------|
-| `npm run dev` | 자동 리로드로 개발 모드 시작 |
-| `npm run build` | 프로덕션 번들 빌드 |
-| `npm start` | 프로덕션 서버 실행 |
-| `npm test` | 테스트 스위트 실행 |
-| `npm run clean` | 빌드 산출물 제거 |
-| `npm run lint` | 코드 린터 실행 |
-| `npm run format` | Prettier로 코드 포맷팅 |
+| 명령어           | 설명                         |
+| ---------------- | ---------------------------- |
+| `npm run dev`    | 자동 리로드로 개발 모드 시작 |
+| `npm run build`  | 프로덕션 번들 빌드           |
+| `npm start`      | 프로덕션 서버 실행           |
+| `npm test`       | 테스트 스위트 실행           |
+| `npm run clean`  | 빌드 산출물 제거             |
+| `npm run lint`   | 코드 린터 실행               |
+| `npm run format` | Prettier로 코드 포맷팅       |
 
 ### 개발 모드
 
@@ -68,6 +69,7 @@ npm run dev
 ```
 
 기능:
+
 - 파일 변경 시 자동 재컴파일
 - 대시보드용 핫 리로드
 - 상세한 오류 메시지
@@ -80,6 +82,7 @@ npm run clean && npm run build
 ```
 
 최적화:
+
 - 압축된 JavaScript
 - 최적화된 번들 크기
 - 프로덕션 오류 처리
@@ -122,26 +125,32 @@ Client (AI) ↔ MCP Protocol ↔ Server ↔ File System
 ### 주요 구성 요소
 
 #### 1. MCP 서버 (`src/index.ts`)
+
 - MCP 프로토콜 통신 처리
 - 도구 요청 처리
 - 프로젝트 상태 관리
 - 파일 시스템 작업
 
 #### 2. 대시보드 서버 (`src/server.ts`)
+
 - 웹 대시보드 제공
 - WebSocket 연결
 - 실시간 업데이트
 - HTTP API 엔드포인트
 
 #### 3. 도구 (`src/tools/`)
+
 각 도구는 별도 모듈:
+
 - 입력 검증
 - 비즈니스 로직
 - 파일 작업
 - 응답 포맷팅
 
 #### 4. 프롬프트 (`src/prompts/`)
+
 다음을 위한 템플릿 문자열:
+
 - 문서 생성
 - 워크플로우 가이드
 - 오류 메시지
@@ -164,9 +173,9 @@ export const myNewTool: Tool = {
     type: 'object',
     properties: {
       param1: { type: 'string', description: '매개변수 설명' },
-      param2: { type: 'number', optional: true }
+      param2: { type: 'number', optional: true },
     },
-    required: ['param1']
+    required: ['param1'],
   },
   handler: async (params) => {
     // 도구 구현
@@ -176,9 +185,9 @@ export const myNewTool: Tool = {
 
     return {
       success: true,
-      data: '도구 응답'
+      data: '도구 응답',
     };
-  }
+  },
 };
 ```
 
@@ -212,10 +221,14 @@ server.registerTool(myNewTool);
 ```javascript
 document.getElementById('new-action').addEventListener('click', () => {
   // 기능 로직
-  ws.send(JSON.stringify({
-    type: 'new-action',
-    data: { /* ... */ }
-  }));
+  ws.send(
+    JSON.stringify({
+      type: 'new-action',
+      data: {
+        /* ... */
+      },
+    }),
+  );
 });
 ```
 
@@ -260,7 +273,7 @@ import { myTool } from './my-tool';
 describe('myTool', () => {
   it('should process input correctly', async () => {
     const result = await myTool.handler({
-      param1: 'test'
+      param1: 'test',
     });
 
     expect(result.success).toBe(true);
@@ -269,7 +282,7 @@ describe('myTool', () => {
 
   it('should handle errors', async () => {
     const result = await myTool.handler({
-      param1: null
+      param1: null,
     });
 
     expect(result.success).toBe(false);
@@ -397,6 +410,7 @@ conventional commits 따르기:
 - `chore:` 유지보수
 
 예제:
+
 ```
 feat: add approval revision workflow
 fix: resolve dashboard WebSocket reconnection issue
@@ -416,11 +430,13 @@ docs: update configuration guide
 ### NPM 패키지
 
 1. **버전 업데이트**:
+
    ```bash
    npm version patch|minor|major
    ```
 
 2. **패키지 빌드**:
+
    ```bash
    npm run build
    ```
@@ -435,6 +451,7 @@ docs: update configuration guide
 1. **`vscode-extension/package.json`에서 확장 프로그램 버전 업데이트**
 
 2. **확장 프로그램 빌드**:
+
    ```bash
    cd vscode-extension
    npm run package
@@ -490,11 +507,11 @@ if (safePath.includes('..')) {
 
 ### 일반적인 빌드 오류
 
-| 오류 | 해결책 |
-|-------|----------|
-| TypeScript 오류 | 상세 오류를 보려면 `npm run build` 실행 |
-| 모듈을 찾을 수 없음 | 가져오기 확인 및 `npm install` 실행 |
-| 포트가 이미 사용 중 | 포트 변경 또는 기존 프로세스 종료 |
+| 오류                | 해결책                                  |
+| ------------------- | --------------------------------------- |
+| TypeScript 오류     | 상세 오류를 보려면 `npm run build` 실행 |
+| 모듈을 찾을 수 없음 | 가져오기 확인 및 `npm install` 실행     |
+| 포트가 이미 사용 중 | 포트 변경 또는 기존 프로세스 종료       |
 | WebSocket 연결 실패 | 서버가 실행 중이고 포트가 올바른지 확인 |
 
 ### 개발 팁

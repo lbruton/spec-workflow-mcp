@@ -15,18 +15,21 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     private readonly _extensionUri: vscode.Uri,
     private readonly _specWorkflowService: SpecWorkflowService,
     private readonly _context: vscode.ExtensionContext,
-    outputChannel: vscode.OutputChannel
+    outputChannel: vscode.OutputChannel,
   ) {
     this.logger = new Logger(outputChannel);
 
     // Initialize _previousApprovals BEFORE setting up file watcher
     // This prevents false "new approval" notifications on first change
-    this._specWorkflowService.getApprovals().then(approvals => {
-      this._previousApprovals = approvals;
-      console.log(`SidebarProvider: Initialized with ${approvals.length} existing approvals`);
-    }).catch(err => {
-      console.error('SidebarProvider: Failed to initialize previous approvals:', err);
-    });
+    this._specWorkflowService
+      .getApprovals()
+      .then((approvals) => {
+        this._previousApprovals = approvals;
+        console.log(`SidebarProvider: Initialized with ${approvals.length} existing approvals`);
+      })
+      .catch((err) => {
+        console.error('SidebarProvider: Failed to initialize previous approvals:', err);
+      });
 
     // Set up automatic approval updates when files change
     this._specWorkflowService.setOnApprovalsChanged(() => {
@@ -73,8 +76,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       enableScripts: true,
       localResourceRoots: [
         this._extensionUri,
-        vscode.Uri.joinPath(this._extensionUri, 'webview-dist')
-      ]
+        vscode.Uri.joinPath(this._extensionUri, 'webview-dist'),
+      ],
     };
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
@@ -113,7 +116,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           await this.rejectRequest(message.id, message.response);
           break;
         case 'request-revision-request':
-          await this.requestRevisionRequest(message.id, message.response, message.annotations, message.comments);
+          await this.requestRevisionRequest(
+            message.id,
+            message.response,
+            message.annotations,
+            message.comments,
+          );
           break;
         case 'batch-approve':
           await this.batchApprove(message.ids, message.response);
@@ -195,7 +203,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
     // Initialize data
     this.refreshAllData();
-    
+
     // Process any queued messages now that view is ready
     this.processMessageQueue();
   }
@@ -215,7 +223,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       console.log(`SidebarProvider: Processing ${this._messageQueue.length} queued messages`);
       const messages = [...this._messageQueue];
       this._messageQueue = [];
-      messages.forEach(message => {
+      messages.forEach((message) => {
         console.log(`SidebarProvider: Sending queued message ${message.type}`);
         this._view!.webview.postMessage(message);
       });
@@ -234,15 +242,17 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   }
 
   private async sendSpecs() {
-    if (!this._view) {return;}
-    
+    if (!this._view) {
+      return;
+    }
+
     try {
       console.log('SidebarProvider: Loading specs...');
       const specs = await this._specWorkflowService.getAllSpecs();
       console.log(`SidebarProvider: Sending ${specs.length} specs to webview`);
       this._view.webview.postMessage({
         type: 'specs-updated',
-        data: specs
+        data: specs,
       });
     } catch (error) {
       console.error('SidebarProvider: Failed to load specs:', error);
@@ -251,7 +261,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   }
 
   private async sendTasks(specName: string) {
-    if (!this._view) {return;}
+    if (!this._view) {
+      return;
+    }
 
     try {
       this.logger.log(`SidebarProvider: Getting tasks for spec: ${specName}`);
@@ -260,15 +272,26 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         specName: taskData?.specName,
         total: taskData?.total,
         taskListCount: taskData?.taskList?.length,
-        sampleTask2_2: taskData?.taskList?.find(t => t.id === '2.2'),
-        allTasksWithMetadata: taskData?.taskList?.filter(t => 
-          t.requirements?.length || t.implementationDetails?.length || t.files?.length || t.purposes?.length || t.leverage
-        ).map(t => ({ id: t.id, requirements: t.requirements, implementationDetails: t.implementationDetails }))
+        sampleTask2_2: taskData?.taskList?.find((t) => t.id === '2.2'),
+        allTasksWithMetadata: taskData?.taskList
+          ?.filter(
+            (t) =>
+              t.requirements?.length ||
+              t.implementationDetails?.length ||
+              t.files?.length ||
+              t.purposes?.length ||
+              t.leverage,
+          )
+          .map((t) => ({
+            id: t.id,
+            requirements: t.requirements,
+            implementationDetails: t.implementationDetails,
+          })),
       });
-      
+
       this._view.webview.postMessage({
         type: 'tasks-updated',
-        data: taskData
+        data: taskData,
       });
       this.logger.log('SidebarProvider: Sent tasks-updated message to webview');
     } catch (error) {
@@ -280,7 +303,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   private async sendTasksForSpec(specName: string) {
     // Send tasks update for a specific spec in real-time
     // Only send if this spec is currently selected to avoid unnecessary updates
-    console.log(`sendTasksForSpec: Called for spec ${specName}, currentSelected: ${this._currentSelectedSpec}`);
+    console.log(
+      `sendTasksForSpec: Called for spec ${specName}, currentSelected: ${this._currentSelectedSpec}`,
+    );
     if (!this._view || this._currentSelectedSpec !== specName) {
       console.log(`sendTasksForSpec: Skipping - no view or spec not selected`);
       return;
@@ -288,16 +313,23 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
     try {
       const taskData = await this._specWorkflowService.getTaskProgress(specName);
-      console.log('sendTasksForSpec: Task data received from service:', JSON.stringify({
-        specName: taskData?.specName,
-        total: taskData?.total,
-        taskListCount: taskData?.taskList?.length,
-        sampleTask2_2: taskData?.taskList?.find(t => t.id === '2.2')
-      }, null, 2));
-      
+      console.log(
+        'sendTasksForSpec: Task data received from service:',
+        JSON.stringify(
+          {
+            specName: taskData?.specName,
+            total: taskData?.total,
+            taskListCount: taskData?.taskList?.length,
+            sampleTask2_2: taskData?.taskList?.find((t) => t.id === '2.2'),
+          },
+          null,
+          2,
+        ),
+      );
+
       this._view.webview.postMessage({
         type: 'tasks-updated',
-        data: taskData
+        data: taskData,
       });
       console.log(`sendTasksForSpec: Sent real-time task update for spec: ${specName}`);
     } catch (error) {
@@ -309,7 +341,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   private async sendSpecDocumentsForSpec(specName: string) {
     // Send spec documents update for a specific spec in real-time
     // Only send if this spec is currently selected to avoid unnecessary updates
-    console.log(`sendSpecDocumentsForSpec: Called for spec ${specName}, currentSelected: ${this._currentSelectedSpec}`);
+    console.log(
+      `sendSpecDocumentsForSpec: Called for spec ${specName}, currentSelected: ${this._currentSelectedSpec}`,
+    );
     if (!this._view || this._currentSelectedSpec !== specName) {
       console.log(`sendSpecDocumentsForSpec: Skipping - no view or spec not selected`);
       return;
@@ -318,12 +352,14 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     try {
       const documents = await this._specWorkflowService.getSpecDocuments(specName);
       console.log(`sendSpecDocumentsForSpec: Found ${documents.length} documents for ${specName}`);
-      
+
       this._view.webview.postMessage({
         type: 'spec-documents-updated',
-        data: documents
+        data: documents,
       });
-      console.log(`sendSpecDocumentsForSpec: Sent real-time spec documents update for spec: ${specName}`);
+      console.log(
+        `sendSpecDocumentsForSpec: Sent real-time spec documents update for spec: ${specName}`,
+      );
     } catch (error) {
       console.error(`Failed to send real-time spec documents update for spec ${specName}:`, error);
       // Don't show error notification for real-time updates to avoid spam
@@ -335,21 +371,23 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       console.log('=== handleApprovalChanges called ===');
       const currentApprovals = await this._specWorkflowService.getApprovals();
       const pendingCount = currentApprovals.filter((a: any) => a.status === 'pending').length;
-      console.log(`handleApprovalChanges: Found ${currentApprovals.length} approvals (${pendingCount} pending)`);
+      console.log(
+        `handleApprovalChanges: Found ${currentApprovals.length} approvals (${pendingCount} pending)`,
+      );
       console.log('handleApprovalChanges: View available:', !!this._view);
-      
+
       // Check for new pending approvals
       const currentPendingIds = currentApprovals
         .filter((approval: any) => approval.status === 'pending')
         .map((approval: any) => approval.id);
-      
+
       const previousPendingIds = this._previousApprovals
         .filter((approval: any) => approval.status === 'pending')
         .map((approval: any) => approval.id);
 
       // Find newly added pending approvals
-      const newPendingIds = currentPendingIds.filter(id => !previousPendingIds.includes(id));
-      
+      const newPendingIds = currentPendingIds.filter((id) => !previousPendingIds.includes(id));
+
       if (newPendingIds.length > 0) {
         // Show native VS Code notification for each new approval
         for (const approvalId of newPendingIds) {
@@ -358,25 +396,25 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             const result = await vscode.window.showInformationMessage(
               `New approval request: "${approval.title}"`,
               'View Approval',
-              'Dismiss'
+              'Dismiss',
             );
-            
+
             if (result === 'View Approval') {
               // First, ensure the sidebar is visible
               await vscode.commands.executeCommand('workbench.view.extension.specflow');
-              
+
               // Small delay to ensure the webview is initialized
               setTimeout(async () => {
                 // Navigate to approvals tab and select the spec
                 this._currentSelectedSpec = approval.categoryName;
                 await this.sendSelectedSpec();
                 await this.sendApprovals();
-                
+
                 // Send message to webview to switch to approvals tab
                 if (this._view) {
                   this._view.webview.postMessage({
                     type: 'navigate-to-approvals',
-                    data: { specName: approval.categoryName, approvalId: approval.id }
+                    data: { specName: approval.categoryName, approvalId: approval.id },
                   });
                 }
               }, 300);
@@ -387,11 +425,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
       // Update previous approvals for next comparison
       this._previousApprovals = [...currentApprovals];
-      
+
       // Send approvals to webview as usual
       console.log('handleApprovalChanges: Sending updated approvals to webview');
       await this.sendApprovals();
-      
     } catch (error) {
       console.error('Failed to handle approval changes:', error);
       console.log('handleApprovalChanges: Fallback - sending approvals despite error');
@@ -403,11 +440,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     try {
       const approvals = await this._specWorkflowService.getApprovals();
       const pendingCount = approvals.filter((a: any) => a.status === 'pending').length;
-      console.log(`sendApprovals: Loaded ${approvals.length} approvals (${pendingCount} pending), view available: ${!!this._view}`);
-      
+      console.log(
+        `sendApprovals: Loaded ${approvals.length} approvals (${pendingCount} pending), view available: ${!!this._view}`,
+      );
+
       this.postMessageToWebview({
         type: 'approvals-updated',
-        data: approvals
+        data: approvals,
       });
     } catch (error) {
       console.error('sendApprovals: Error loading approvals:', error);
@@ -419,10 +458,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     try {
       const categories = await this._specWorkflowService.getApprovalCategories();
       console.log(`sendApprovalCategories: Loaded ${categories.length} categories`);
-      
+
       this.postMessageToWebview({
         type: 'approval-categories-updated',
-        data: categories
+        data: categories,
       });
     } catch (error) {
       console.error('sendApprovalCategories: Error loading categories:', error);
@@ -431,13 +470,15 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   }
 
   private async sendSteering() {
-    if (!this._view) {return;}
+    if (!this._view) {
+      return;
+    }
 
     try {
       const steering = await this._specWorkflowService.getSteeringStatus();
       this._view.webview.postMessage({
         type: 'steering-updated',
-        data: steering
+        data: steering,
       });
     } catch (error) {
       this.sendError('Failed to load steering: ' + (error as Error).message);
@@ -448,7 +489,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     try {
       console.log(`updateTaskStatus: Updating task ${taskId} to ${status} in spec ${specName}`);
       await this._specWorkflowService.updateTaskStatus(specName, taskId, status);
-      console.log(`updateTaskStatus: Successfully updated task ${taskId}. File watcher will trigger automatic refresh.`);
+      console.log(
+        `updateTaskStatus: Successfully updated task ${taskId}. File watcher will trigger automatic refresh.`,
+      );
       // File watcher will automatically trigger sendTasksForSpec() - no need to manually refresh
       this.sendNotification('Task status updated', 'success');
     } catch (error) {
@@ -486,7 +529,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     }
   }
 
-  private async requestRevisionRequest(id: string, response: string, annotations?: string, comments?: any[]) {
+  private async requestRevisionRequest(
+    id: string,
+    response: string,
+    annotations?: string,
+    comments?: any[],
+  ) {
     try {
       await this._specWorkflowService.requestRevisionRequest(id, response, annotations, comments);
       await this.sendApprovals();
@@ -511,11 +559,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     action: (id: string, response: string) => Promise<void>,
     actionVerb: string,
     actionPastTense: string,
-    response: string
+    response: string,
   ): Promise<void> {
     // Backend batch size validation
     if (ids.length > SidebarProvider.BATCH_SIZE_LIMIT) {
-      this.sendError(`Batch size exceeds limit. Maximum ${SidebarProvider.BATCH_SIZE_LIMIT} items allowed.`);
+      this.sendError(
+        `Batch size exceeds limit. Maximum ${SidebarProvider.BATCH_SIZE_LIMIT} items allowed.`,
+      );
       return;
     }
 
@@ -540,7 +590,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       if (failedCount === 0) {
         this.sendNotification(`${successCount} requests ${actionPastTense}`, 'success');
       } else {
-        this.sendNotification(`${successCount} ${actionPastTense}, ${failedCount} failed`, 'warning');
+        this.sendNotification(
+          `${successCount} ${actionPastTense}, ${failedCount} failed`,
+          'warning',
+        );
       }
     } catch (error) {
       this.sendError(`Failed to batch ${actionVerb}: ` + (error as Error).message);
@@ -553,7 +606,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       (id, resp) => this._specWorkflowService.approveRequest(id, resp),
       'approving',
       'approved',
-      response
+      response,
     );
   }
 
@@ -563,7 +616,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       (id, resp) => this._specWorkflowService.rejectRequest(id, resp),
       'rejecting',
       'rejected',
-      response
+      response,
     );
   }
 
@@ -573,7 +626,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       (id, resp) => this._specWorkflowService.requestRevisionRequest(id, resp),
       'requesting revision for',
       'revised',
-      response
+      response,
     );
   }
 
@@ -620,7 +673,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     if (this._view) {
       this._view.webview.postMessage({
         type: 'error',
-        message
+        message,
       });
     }
   }
@@ -630,21 +683,26 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       this._view.webview.postMessage({
         type: 'notification',
         message,
-        level
+        level,
       });
     }
   }
 
   private async sendSpecDocuments(specName: string) {
-    if (!this._view) {return;}
+    if (!this._view) {
+      return;
+    }
 
     try {
       console.log(`SidebarProvider: Loading documents for spec ${specName}`);
       const documents = await this._specWorkflowService.getSpecDocuments(specName);
-      console.log(`SidebarProvider: Found ${documents.length} documents for ${specName}:`, documents.map(d => `${d.name} (${d.exists ? 'exists' : 'missing'})`));
+      console.log(
+        `SidebarProvider: Found ${documents.length} documents for ${specName}:`,
+        documents.map((d) => `${d.name} (${d.exists ? 'exists' : 'missing'})`),
+      );
       this._view.webview.postMessage({
         type: 'spec-documents-updated',
-        data: documents
+        data: documents,
       });
     } catch (error) {
       console.error('SidebarProvider: Failed to load spec documents:', error);
@@ -653,13 +711,15 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   }
 
   private async sendSteeringDocuments() {
-    if (!this._view) {return;}
+    if (!this._view) {
+      return;
+    }
 
     try {
       const documents = await this._specWorkflowService.getSteeringDocuments();
       this._view.webview.postMessage({
         type: 'steering-documents-updated',
-        data: documents
+        data: documents,
       });
     } catch (error) {
       this.sendError('Failed to load steering documents: ' + (error as Error).message);
@@ -667,7 +727,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   }
 
   private async sendLogs(specName: string) {
-    if (!this._view) {return;}
+    if (!this._view) {
+      return;
+    }
 
     try {
       this.logger.log(`SidebarProvider: Getting logs for spec: ${specName}`);
@@ -675,12 +737,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       this.logger.log('SidebarProvider: Logs data received from service:', {
         specName: logsData?.specName,
         entriesCount: logsData?.entries?.length,
-        stats: logsData?.stats
+        stats: logsData?.stats,
       });
 
       this._view.webview.postMessage({
         type: 'logs-updated',
-        data: logsData
+        data: logsData,
       });
       this.logger.log('SidebarProvider: Sent logs-updated message to webview');
     } catch (error) {
@@ -692,7 +754,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   private async sendLogsForSpec(specName: string) {
     // Send logs update for a specific spec in real-time
     // Only send if this spec is currently selected to avoid unnecessary updates
-    console.log(`sendLogsForSpec: Called for spec ${specName}, currentSelected: ${this._currentSelectedSpec}`);
+    console.log(
+      `sendLogsForSpec: Called for spec ${specName}, currentSelected: ${this._currentSelectedSpec}`,
+    );
     if (!this._view || this._currentSelectedSpec !== specName) {
       console.log(`sendLogsForSpec: Skipping - no view or spec not selected`);
       return;
@@ -703,12 +767,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       console.log(`sendLogsForSpec: Logs data received from service:`, {
         specName: logsData?.specName,
         entriesCount: logsData?.entries?.length,
-        stats: logsData?.stats
+        stats: logsData?.stats,
       });
 
       this._view.webview.postMessage({
         type: 'logs-updated',
-        data: logsData
+        data: logsData,
       });
       console.log(`sendLogsForSpec: Sent real-time log update for spec: ${specName}`);
     } catch (error) {
@@ -718,7 +782,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   }
 
   private async searchLogs(specName: string, query: string) {
-    if (!this._view) {return;}
+    if (!this._view) {
+      return;
+    }
 
     try {
       this.logger.log(`SidebarProvider: Searching logs for spec: ${specName} with query: ${query}`);
@@ -730,8 +796,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         data: {
           specName,
           entries,
-          query
-        }
+          query,
+        },
       });
     } catch (error) {
       console.error('SidebarProvider: Failed to search logs:', error);
@@ -773,18 +839,20 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   }
 
   private async sendSelectedSpec() {
-    if (!this._view) {return;}
+    if (!this._view) {
+      return;
+    }
 
     try {
       const selectedSpec = this._context.globalState.get<string>('selectedSpec', '');
-      
+
       // Track the currently selected spec for real-time updates
       this._currentSelectedSpec = selectedSpec || null;
-      
+
       console.log('SidebarProvider: Sending selected spec:', selectedSpec);
       this._view.webview.postMessage({
         type: 'selected-spec-updated',
-        data: selectedSpec
+        data: selectedSpec,
       });
     } catch (error) {
       console.error('SidebarProvider: Failed to send selected spec:', error);
@@ -794,15 +862,15 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   private async setSelectedSpec(specName: string) {
     try {
       this.logger.log('SidebarProvider: Setting selected spec to:', specName);
-      
+
       // Track the currently selected spec for real-time updates
       this._currentSelectedSpec = specName;
-      
+
       await this._context.globalState.update('selectedSpec', specName);
-      
+
       // Send confirmation back to webview
       await this.sendSelectedSpec();
-      
+
       // Auto-load data for the selected spec
       if (specName) {
         await this.sendTasks(specName);
@@ -815,7 +883,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   }
 
   private async sendConfig() {
-    if (!this._view) { return; }
+    if (!this._view) {
+      return;
+    }
 
     try {
       const config = vscode.workspace.getConfiguration('specWorkflow.notifications.sounds');
@@ -823,12 +893,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         enabled: config.get<boolean>('enabled', true),
         volume: config.get<number>('volume', 0.3),
         approvalSound: config.get<boolean>('approvalSound', true),
-        taskCompletionSound: config.get<boolean>('taskCompletionSound', true)
+        taskCompletionSound: config.get<boolean>('taskCompletionSound', true),
       };
 
       this._view.webview.postMessage({
         type: 'config-updated',
-        data: soundConfig
+        data: soundConfig,
       });
     } catch (error) {
       console.error('SidebarProvider: Failed to get config:', error);
@@ -837,12 +907,24 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   }
 
   private async sendSoundUris() {
-    if (!this._view) { return; }
+    if (!this._view) {
+      return;
+    }
 
     try {
       // Get paths to sound files
-      const approvalSoundPath = vscode.Uri.joinPath(this._extensionUri, 'webview-dist', 'sounds', 'approval-pending.wav');
-      const taskCompletedSoundPath = vscode.Uri.joinPath(this._extensionUri, 'webview-dist', 'sounds', 'task-completed.wav');
+      const approvalSoundPath = vscode.Uri.joinPath(
+        this._extensionUri,
+        'webview-dist',
+        'sounds',
+        'approval-pending.wav',
+      );
+      const taskCompletedSoundPath = vscode.Uri.joinPath(
+        this._extensionUri,
+        'webview-dist',
+        'sounds',
+        'task-completed.wav',
+      );
 
       // Convert to webview URIs
       const approvalSoundUri = this._view.webview.asWebviewUri(approvalSoundPath);
@@ -850,14 +932,14 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
       const soundUris = {
         'approval-pending': approvalSoundUri.toString(),
-        'task-completed': taskCompletedSoundUri.toString()
+        'task-completed': taskCompletedSoundUri.toString(),
       };
 
       console.log('SidebarProvider: Sending sound URIs:', soundUris);
 
       this._view.webview.postMessage({
         type: 'sound-uris-updated',
-        data: soundUris
+        data: soundUris,
       });
     } catch (error) {
       console.error('SidebarProvider: Failed to send sound URIs:', error);
@@ -870,11 +952,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   private async sendArchivedSpecs() {
     try {
       const archivedSpecs = await this._specWorkflowService.getAllArchivedSpecs();
-      console.log(`sendArchivedSpecs: Loaded ${archivedSpecs.length} archived specs, view available: ${!!this._view}`);
-      
+      console.log(
+        `sendArchivedSpecs: Loaded ${archivedSpecs.length} archived specs, view available: ${!!this._view}`,
+      );
+
       this.postMessageToWebview({
         type: 'archived-specs-updated',
-        data: archivedSpecs
+        data: archivedSpecs,
       });
     } catch (error) {
       console.error('sendArchivedSpecs: Error loading archived specs:', error);
@@ -885,31 +969,32 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   private async archiveSpec(specName: string) {
     try {
       console.log(`SidebarProvider: Archiving spec '${specName}'`);
-      
+
       // Show VSCode native confirmation dialog
       const choice = await vscode.window.showWarningMessage(
         `Are you sure you want to archive the specification "${specName}"?`,
         {
-          detail: 'This will:\n• Remove it from all dropdowns and active views\n• Move all spec files to the archive\n• Block archiving if pending approvals exist\n\nYou can unarchive it later from the Documents tab.',
-          modal: true
+          detail:
+            'This will:\n• Remove it from all dropdowns and active views\n• Move all spec files to the archive\n• Block archiving if pending approvals exist\n\nYou can unarchive it later from the Documents tab.',
+          modal: true,
         },
         'Archive',
-        'Cancel'
+        'Cancel',
       );
 
       if (choice !== 'Archive') {
         console.log(`SidebarProvider: User cancelled archiving spec '${specName}'`);
         return;
       }
-      
+
       await this._specWorkflowService.archiveSpec(specName);
-      
+
       // Refresh active specs list and archived specs list
       await this.sendSpecs();
       await this.sendArchivedSpecs();
-      
+
       this.sendNotification(`Spec '${specName}' archived successfully`, 'success');
-      
+
       // If the archived spec was selected, clear the selection
       if (this._currentSelectedSpec === specName) {
         this._currentSelectedSpec = null;
@@ -924,29 +1009,30 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   private async unarchiveSpec(specName: string) {
     try {
       console.log(`SidebarProvider: Unarchiving spec '${specName}'`);
-      
+
       // Show VSCode native confirmation dialog
       const choice = await vscode.window.showWarningMessage(
         `Are you sure you want to unarchive the specification "${specName}"?`,
         {
-          detail: 'This will:\n• Move it back to active specifications\n• Make it available in all dropdowns and views\n• Restore all functionality',
-          modal: true
+          detail:
+            'This will:\n• Move it back to active specifications\n• Make it available in all dropdowns and views\n• Restore all functionality',
+          modal: true,
         },
         'Unarchive',
-        'Cancel'
+        'Cancel',
       );
 
       if (choice !== 'Unarchive') {
         console.log(`SidebarProvider: User cancelled unarchiving spec '${specName}'`);
         return;
       }
-      
+
       await this._specWorkflowService.unarchiveSpec(specName);
-      
+
       // Refresh active specs list and archived specs list
       await this.sendSpecs();
       await this.sendArchivedSpecs();
-      
+
       this.sendNotification(`Spec '${specName}' unarchived successfully`, 'success');
     } catch (error) {
       console.error(`SidebarProvider: Failed to unarchive spec '${specName}':`, error);
@@ -971,7 +1057,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       const language = config.get<string>('language', 'auto');
       this.postMessageToWebview({
         type: 'language-preference-updated',
-        data: language
+        data: language,
       });
     } catch (error) {
       console.error('SidebarProvider: Failed to get language preference:', error);
@@ -985,7 +1071,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       await config.update('language', language, vscode.ConfigurationTarget.Global);
       this.postMessageToWebview({
         type: 'language-preference-updated',
-        data: language
+        data: language,
       });
       console.log(`SidebarProvider: Language preference set to: ${language}`);
     } catch (error) {
@@ -1016,7 +1102,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
       this.postMessageToWebview({
         type: 'workflow-root-updated',
-        data: { path: currentPath, isDefault }
+        data: { path: currentPath, isDefault },
       });
     } catch (error) {
       console.error('SidebarProvider: Failed to get workflow root:', error);
@@ -1052,7 +1138,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         canSelectFolders: true,
         canSelectMany: false,
         openLabel: 'Select .specflow Location',
-        title: 'Select folder containing .specflow'
+        title: 'Select folder containing .specflow',
       });
 
       if (result && result.length > 0) {
@@ -1092,13 +1178,23 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     const stylePathOnDisk = vscode.Uri.joinPath(this._extensionUri, 'webview-dist', 'globals.css');
 
     // Get paths to sound files
-    const approvalSoundPath = vscode.Uri.joinPath(this._extensionUri, 'webview-dist', 'sounds', 'approval-pending.wav');
-    const taskCompletedSoundPath = vscode.Uri.joinPath(this._extensionUri, 'webview-dist', 'sounds', 'task-completed.wav');
+    const approvalSoundPath = vscode.Uri.joinPath(
+      this._extensionUri,
+      'webview-dist',
+      'sounds',
+      'approval-pending.wav',
+    );
+    const taskCompletedSoundPath = vscode.Uri.joinPath(
+      this._extensionUri,
+      'webview-dist',
+      'sounds',
+      'task-completed.wav',
+    );
 
     // And get the uri we use to load this script in the webview
     const scriptUri = webview.asWebviewUri(scriptPathOnDisk);
     const styleUri = webview.asWebviewUri(stylePathOnDisk);
-    
+
     // Convert sound paths to webview URIs
     const approvalSoundUri = webview.asWebviewUri(approvalSoundPath);
     const taskCompletedSoundUri = webview.asWebviewUri(taskCompletedSoundPath);

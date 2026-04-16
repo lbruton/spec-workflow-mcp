@@ -70,7 +70,7 @@ export class JobScheduler {
 
       if (result.itemsDeleted > 0) {
         console.error(
-          `[JobScheduler] Catch-up for "${job.name}": ${result.itemsDeleted} items deleted in ${result.duration}ms`
+          `[JobScheduler] Catch-up for "${job.name}": ${result.itemsDeleted} items deleted in ${result.duration}ms`,
         );
       }
 
@@ -84,12 +84,12 @@ export class JobScheduler {
         duration: result.duration,
         itemsProcessed: result.itemsProcessed,
         itemsDeleted: result.itemsDeleted,
-        error: result.error
+        error: result.error,
       });
 
       // Update lastRun timestamp
       await this.settingsManager.updateJob(job.id, {
-        lastRun: startTime.toISOString()
+        lastRun: startTime.toISOString(),
       });
     } catch (error) {
       console.error(`[JobScheduler] Catch-up failed for "${job.name}":`, error);
@@ -117,7 +117,7 @@ export class JobScheduler {
           const result = await this.executeJob(job);
 
           console.error(
-            `[JobScheduler] Executed "${job.name}": ${result.itemsDeleted} items deleted in ${result.duration}ms`
+            `[JobScheduler] Executed "${job.name}": ${result.itemsDeleted} items deleted in ${result.duration}ms`,
           );
 
           // Record execution history
@@ -130,12 +130,12 @@ export class JobScheduler {
             duration: result.duration,
             itemsProcessed: result.itemsProcessed,
             itemsDeleted: result.itemsDeleted,
-            error: result.error
+            error: result.error,
           });
 
           // Update lastRun timestamp
           await this.settingsManager.updateJob(job.id, {
-            lastRun: startTime.toISOString()
+            lastRun: startTime.toISOString(),
           });
         } catch (error) {
           console.error(`[JobScheduler] Execution failed for "${job.name}":`, error);
@@ -168,7 +168,7 @@ export class JobScheduler {
         if (job.type === 'cleanup-approvals') {
           const { processed, deleted } = await this.cleanupApprovals(
             projectContext.approvalStorage,
-            job.config.daysOld
+            job.config.daysOld,
           );
           itemsProcessed += processed;
           itemsDeleted += deleted;
@@ -176,7 +176,7 @@ export class JobScheduler {
           const { processed, deleted } = await this.cleanupSpecs(
             projectContext.parser,
             projectContext.projectPath,
-            job.config.daysOld
+            job.config.daysOld,
           );
           itemsProcessed += processed;
           itemsDeleted += deleted;
@@ -184,7 +184,7 @@ export class JobScheduler {
           const { processed, deleted } = await this.cleanupArchivedSpecs(
             projectContext.parser,
             projectContext.projectPath,
-            job.config.daysOld
+            job.config.daysOld,
           );
           itemsProcessed += processed;
           itemsDeleted += deleted;
@@ -205,7 +205,7 @@ export class JobScheduler {
       duration: endTime.getTime() - startTime.getTime(),
       itemsProcessed,
       itemsDeleted,
-      error
+      error,
     };
   }
 
@@ -214,7 +214,7 @@ export class JobScheduler {
    */
   private async cleanupApprovals(
     approvalStorage: any,
-    daysOld: number
+    daysOld: number,
   ): Promise<{ processed: number; deleted: number }> {
     const approvals = await approvalStorage.getAllApprovals();
     const now = new Date();
@@ -243,7 +243,7 @@ export class JobScheduler {
   private async cleanupSpecs(
     parser: any,
     projectPath: string,
-    daysOld: number
+    daysOld: number,
   ): Promise<{ processed: number; deleted: number }> {
     const specs = await parser.getAllSpecs();
     const now = new Date();
@@ -274,7 +274,7 @@ export class JobScheduler {
   private async cleanupArchivedSpecs(
     parser: any,
     projectPath: string,
-    daysOld: number
+    daysOld: number,
   ): Promise<{ processed: number; deleted: number }> {
     const archivedSpecs = await parser.getAllArchivedSpecs();
     const now = new Date();

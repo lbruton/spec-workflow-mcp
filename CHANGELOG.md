@@ -114,6 +114,7 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.2.3] - 2026-02-08
 
 ### Added
+
 - **MDX Pre-Render Validation for Approvals** (PR #197) - All markdown files are now validated for MDX compatibility before approval requests are accepted:
   - Approval requests for any `.md` file are blocked if MDX compilation fails, preventing dashboard rendering issues
   - Actionable error messages with line/column references and fix suggestions (e.g., escape `<` as `&lt;` or use inline code)
@@ -125,17 +126,20 @@ The following entries are from the upstream project before the fork diverged.
 - **MDX Validator Module** - New `src/core/mdx-validator.ts` using `@mdx-js/mdx` compile for syntax validation with structured error reporting
 
 ### Dependencies
+
 - Added `@mdx-js/mdx` (^3.1.1) for MDX compilation-based validation
 
 ## [2.2.2] - 2026-02-04
 
 ### Fixed
+
 - **NPX Entrypoint Execution** (PR #195) - Fixed CLI silently not executing when invoked via `npx`:
   - Resolved symlinked paths using `realpathSync()` for proper entrypoint detection
   - `process.argv[1]` returns symlink path while `import.meta.url` returns real path, causing comparison to fail
   - Removed `process.stdin.resume()` in dashboard mode which could suspend the process in some shells
 
 ### Added
+
 - **Markdown Thematic Breaks** - Added support for horizontal rules (`---`) in the dashboard editor:
   - Enabled `thematicBreakPlugin` in MDX editor
   - Added toolbar button for inserting thematic breaks
@@ -143,6 +147,7 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.2.1] - 2026-02-04
 
 ### Fixed
+
 - **NPX Installation Error** (Issue #196) - Fixed "Cannot find package 'ajv'" error when installing via `npx`:
   - Added `ajv`, `ajv-formats`, and `zod` as direct dependencies to ensure proper ESM module resolution
   - These packages are required by `@modelcontextprotocol/sdk` but npm's dependency hoisting in npx environments could fail to resolve them correctly
@@ -151,6 +156,7 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.2.0] - 2026-02-03
 
 ### Added
+
 - **Git Worktree Support** (PR #194) - Separate worktree identity from shared `.spec-workflow` root:
   - Each git worktree now registers as its own project identity in the dashboard
   - Project labels reflect worktree context with `repo · worktree` naming format
@@ -161,6 +167,7 @@ The following entries are from the upstream project before the fork diverged.
   - Backward compatible: legacy registry entries without `workflowRootPath` are normalized automatically
 
 ### Added (Testing)
+
 - Comprehensive test coverage for worktree functionality:
   - Unit tests for CLI argument parsing, git-utils, project-registry, and approval-storage path resolution
   - Integration tests for multi-server approval content resolution
@@ -170,6 +177,7 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.1.12] - 2026-01-29
 
 ### Added
+
 - **Approval Deeplinks** (Issue #192) - Approval requests now return direct URLs to specific approvals:
   - Dashboard URL includes approval ID as query parameter: `/approvals?id={approvalId}`
   - Clicking a deeplink auto-scrolls to the specific approval and highlights it with an amber ring
@@ -179,6 +187,7 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.1.11] - 2026-01-27
 
 ### Fixed
+
 - **Subdirectory Path Resolution** (Issue #189) - Fixed "Path traversal detected" error when starting the MCP server from a subdirectory within a git repository:
   - `git rev-parse --git-common-dir` returns relative paths (e.g., `../../.git`) when run from subdirectories
   - Updated `resolveGitRoot()` to use `path.resolve()` for converting relative paths to absolute paths
@@ -193,6 +202,7 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.1.10] - 2026-01-24
 
 ### Added
+
 - **Bulk Approval Management** (PR #181) - New batch selection and action system for managing multiple approval requests:
   - **Selection Mode** - Toggle to enable multi-select with visual checkboxes on approval items
   - **Select All / Deselect All** - Quick controls to select or clear all visible approval items
@@ -211,6 +221,7 @@ The following entries are from the upstream project before the fork diverged.
   - Updated `--font-sans` and `--font-mono` CSS variables with new fonts and fallback stack
 
 ### Changed
+
 - **Utility Consolidation** - Eliminated duplicate utility functions across the codebase:
   - Created shared `dateUtils.ts` with `formatDate()` and `formatDistanceToNow()` functions
   - Consolidated 5 duplicate `formatDate` implementations from SpecsPage, TasksPage, LogsPage, ApprovalsPage, and SteeringPage
@@ -232,6 +243,7 @@ The following entries are from the upstream project before the fork diverged.
   - Prevents issues where dashboard changes don't appear after rebuild
 
 ### Fixed
+
 - **Changelog Modal Rendering** - Fixed the changelog modal displaying blank content when clicking the version badge:
   - Replaced complex MDXEditor component with lightweight custom markdown renderer
   - Added proper rendering for headers, bullet lists, nested lists, and bold text
@@ -240,6 +252,7 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.1.9] - 2026-01-23
 
 ### Added
+
 - **Git Worktree Support** (GitHub Issue #187) - Specs are now shared across git worktrees:
   - Auto-detects git worktrees and stores specs in the main repository's `.spec-workflow/` directory
   - All worktrees of the same repository share the same specs automatically
@@ -254,18 +267,21 @@ The following entries are from the upstream project before the fork diverged.
   - Enables MCP clients like Claude Code to auto-approve read-only tools and prompt for confirmation on destructive operations
 
 ### Changed
+
 - **Design Tokens Refactor** - Replaced hardcoded colors and styles with design tokens for improved consistency:
   - Updated components including App, ApprovalsAnnotator, KanbanBoard, and others
   - New CSS variables for background, text, and border colors
   - Enhanced visual elements such as buttons, modals, and status indicators
 
 ### Fixed
+
 - **Comments Section Height** - Improved height and layout of the Comments & Feedback section:
   - Increased height from 50vh to 70vh for better visibility
   - Added minimum height constraints to prevent collapsing to content height
   - Comments section now properly stretches to match the annotations panel height
 
 ### Security
+
 - **Dependency Updates** - Fixed 8 vulnerabilities (6 high, 1 moderate, 1 low) via `npm audit fix`:
   - `@modelcontextprotocol/sdk` - ReDoS vulnerability (GHSA-8r9q-7v3j-jr4g)
   - `@remix-run/router` / `react-router` / `react-router-dom` - XSS via Open Redirects (GHSA-2w69-qvjg-hvjx)
@@ -277,6 +293,7 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.1.8] - 2026-01-22
 
 ### Added
+
 - **Side-by-Side Annotation View** (GitHub Issue #179) - New view mode in the Approvals tab that displays source markdown and rendered preview side-by-side:
   - Left panel shows source text with full annotation capability
   - Right panel shows live rendered markdown preview using MDXEditorWrapper
@@ -288,6 +305,7 @@ The following entries are from the upstream project before the fork diverged.
 - **Edit Button on Comment Cards** - Added edit button (pencil icon) to comment cards in the Comments & Feedback section for quick access to edit annotations
 
 ### Changed
+
 - **Text Annotation Library Integration** - Replaced manual highlight implementation with `react-text-annotate-blend` library:
   - More reliable text selection and offset calculation
   - Consistent highlighting between Annotate and Side-by-Side modes
@@ -303,17 +321,20 @@ The following entries are from the upstream project before the fork diverged.
   - White card background with subtle border for cleaner appearance
 
 ### Fixed
+
 - **Highlight Click Handler** - Fixed clicking on highlights to open the edit modal:
   - Improved mark click detection using background color matching
   - Added fallback text-based matching for edge cases
   - Works reliably in both Annotate and Side-by-Side modes
 
 ### Dependencies
+
 - Added `react-text-annotate-blend` (^1.2.0) - React 18 compatible text annotation library
 
 ## [2.1.7] - 2025-12-20
 
 ### Fixed
+
 - **Missing ws Package Dependency** - Fixed `ERR_MODULE_NOT_FOUND` error when running the package via npx:
   - Added `ws` package (^8.18.0) to dependencies (was missing, only @types/ws was in devDependencies)
   - The ws package is required at runtime by `dashboard/multi-server.ts` for WebSocket functionality
@@ -322,6 +343,7 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.1.6] - 2025-12-19
 
 ### Fixed
+
 - **Approvals Tool Path Translation Error** (PR #173) - Fixed error when `PathUtils.translatePath` is called with undefined or null values in the approvals tool:
   - Added defensive checks to `safeTranslatePath` helper function to guard against undefined/null input paths
   - Prevents runtime errors when path translation encounters missing or invalid path values
@@ -330,6 +352,7 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.1.5] - 2025-12-16
 
 ### Fixed
+
 - **Codex CLI Transport Closed on Approvals** (PR #171) - Fixed intermittent "Transport closed" errors when using Codex CLI during approval workflows:
   - Changed `console.log` to `console.error` in approval snapshot creation to prevent stdout contamination
   - MCP protocol requires stdout to be reserved exclusively for JSON-RPC communication
@@ -338,6 +361,7 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.1.4] - 2025-12-14
 
 ### Fixed
+
 - **Dashboard Annotation Word-Level Highlighting** (fixes #169) - Fixed issue where annotating text in the Dashboard Approvals tab would highlight all occurrences of the same text instead of just the specific selection:
   - Added `startOffset` and `endOffset` fields to capture exact character positions when selecting text for annotation
   - Rewrote `renderContentWithAnnotations()` to use position-based highlighting instead of global regex text-matching
@@ -347,6 +371,7 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.1.3] - 2025-12-10
 
 ### Fixed
+
 - **Dashboard Startup Crash for Users with Older Data Files** (fixes #168) - Fixed `Cannot read properties of undefined (reading 'filter')` error that prevented dashboard startup for users upgrading from older versions:
   - Added backward compatibility guard in `project-registry.ts` to ensure `instances` array exists on all registry entries
   - Added backward compatibility guard in `settings-manager.ts` to ensure `automationJobs` array exists in settings
@@ -355,6 +380,7 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.1.2] - 2025-12-10
 
 ### Fixed
+
 - **Dashboard JS/CSS Loading Fails with Custom Port** (fixes #167) - Fixed issue where the dashboard would fail to load JavaScript and CSS assets when using a custom port (e.g., `--port 5002`):
   - CORS `allowedOrigins` was hardcoded to port 5000, blocking requests from other ports
   - CSP `connect-src` directive was missing WebSocket origins for custom ports
@@ -366,6 +392,7 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.1.1] - 2025-12-09
 
 ### Added
+
 - **Enterprise Security Features** (PR #165) - Comprehensive security controls for corporate environments:
   - **Localhost Binding** - Dashboard binds to `127.0.0.1` by default, preventing network exposure
   - **Rate Limiting** - 120 requests/minute per client with automatic cleanup to prevent abuse
@@ -394,11 +421,13 @@ The following entries are from the upstream project before the fork diverged.
 - **Docker Test Script** - Comprehensive `containers/test-docker.sh` script to validate security configurations
 
 ### Changed
+
 - Docker Compose now defaults to localhost-only port binding (`127.0.0.1:5000:5000`)
 - Dashboard displays security configuration status on startup
 - Improved error messages for security configuration issues
 
 ### Fixed
+
 - **Task Notification System Not Working** - Fixed task completion and in-progress notifications not appearing. The notification system now uses WebSocket event data directly instead of making separate API calls, eliminating race conditions and timing issues that prevented notifications from triggering.
 
 - **Templates Shipped with CRLF Line Endings** (fixes #166) - Fixed issue where template files were shipped with Windows-style CRLF line endings, causing git to detect them as modified on Linux/WSL/macOS systems:
@@ -427,6 +456,7 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.1.0] - 2025-12-03
 
 ### Fixed
+
 - **Unsaved Changes Modal Translations** - Added missing translations for the unsaved changes confirmation modal in Steering and Spec document editors across all 11 supported languages (Arabic, German, English, Spanish, French, Italian, Japanese, Korean, Portuguese, Russian, Chinese)
 - **Improved Diff Visibility in Changes Tab** (fixes #158) - Fixed issue where adding a single line would cause all subsequent text to appear as changed:
   - Replaced naive index-based line comparison with proper `diffLines` algorithm from the `diff` library
@@ -434,6 +464,7 @@ The following entries are from the upstream project before the fork diverged.
   - Provides accurate visual diff representation matching user expectations
 
 ### Added
+
 - **MDX Editor Integration** - Replaced basic markdown textareas with a full-featured rich text editor powered by MDXEditor:
   - **Rich Text Editing** - WYSIWYG editing experience with live preview for markdown content
   - **Toolbar Controls** - Full toolbar with formatting options (bold, italic, underline, headings, lists, links, tables, code blocks)
@@ -452,11 +483,13 @@ The following entries are from the upstream project before the fork diverged.
   - Applied to both Steering Documents and Spec Documents editing modals
 
 ### Changed
+
 - Steering document modals now show the editor even for empty/new documents, allowing users to create content directly
 
 ## [2.0.11] - 2025-11-28
 
 ### Changed
+
 - **Flexible Approval Deletion** (PR #119) - Modified approval deletion logic to allow deleting approvals in any non-pending status:
   - Can now delete approvals with status: `approved`, `rejected`, or `needs-revision`
   - Only `pending` approvals are blocked from deletion (still awaiting review)
@@ -467,6 +500,7 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.0.10] - 2025-11-26
 
 ### Added
+
 - **Claude Code Plugin Support** (PR #121) - Added official Claude Code plugin configuration for easy installation from the Claude marketplace:
   - Two plugin variants available: `spec-workflow-mcp` (base) and `spec-workflow-mcp-with-dashboard` (auto-starts dashboard)
   - Plugins use `@latest` tag for automatic updates to newest releases
@@ -486,6 +520,7 @@ The following entries are from the upstream project before the fork diverged.
   - Usage: `SPEC_WORKFLOW_HOME=/workspace/.spec-workflow-mcp npx spec-workflow-mcp /workspace`
 
 ### Fixed
+
 - **Archived Specs Display Content Correctly** (PR #146) - Fixed critical bug where archived specs were not displaying content correctly in the dashboard:
   - Added new API endpoint `/api/projects/:projectId/specs/:name/all/archived` that reads documents from the archive path (`.spec-workflow/archive/specs/{name}/`) instead of the active specs path. This was missed during the multi-project dashboard implementation.
 - **Tasks.md Format Validation** (fixes #151) - Added validation to ensure tasks.md follows the required format before approval:
@@ -498,11 +533,13 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.0.9] - 2025-11-19
 
 ### Fixed
+
 - **Republished Clean Package** - Version 2.0.8 accidentally included uncommitted frontend changes. This version contains only the committed code from PR #143.
 
 ## [2.0.8] - 2025-11-18
 
 ### Fixed
+
 - **Dashboard "No Projects Available" Error After Spec Edits** (PR #143, fixes #142) - Fixed critical bug where editing spec documents caused the dashboard to show "No Projects Available" and the MCP client to report "Transport closed" errors:
   - Added error handling to async event handlers in `multi-server.ts` that were causing unhandled promise rejections
   - Added error handlers to all `chokidar` file watchers to prevent watcher crashes
@@ -515,9 +552,11 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.0.7] - 2025-11-10
 
 ### BREAKING CHANGES
+
 - **Removed `get-implementation-logs` tool** - This tool is no longer available. AI agents should use native tools (grep/ripgrep) and Read to search implementation logs instead.
 
 ### Fixed
+
 - **Volume Control Regression** (PR #141) - Fixed critical volume control regression from NotificationProvider context split through 6 progressive commits:
   1. Fixed volume icon always showing as muted by updating VolumeControl component to use both `useNotifications()` (actions) and `useNotificationState()` (state)
   2. Fixed stale closure bug where `handleTaskUpdate` callback had stale reference to `playNotificationSound`, and changed volume/sound settings storage from sessionStorage to localStorage for persistence
@@ -539,6 +578,7 @@ The following entries are from the upstream project before the fork diverged.
   - Added `.dockerignore`, `containers/.env.example`, and updated `containers/example.mcp.json`
 
 ### Changed
+
 - **Implementation Logs Format Migration** (PRs #136, #137, #138) - Logs are now stored as individual markdown files instead of a single JSON file for improved scalability and direct agent accessibility.
   - Old format: `.spec-workflow/specs/{spec-name}/implementation-log.json`
   - New format: `.spec-workflow/specs/{spec-name}/Implementation Logs/*.md`
@@ -549,11 +589,13 @@ The following entries are from the upstream project before the fork diverged.
 - Added validation for taskId and idValue in markdown log parser to match VSCode extension behavior.
 
 ### Added
+
 - **Automatic Migration System** - New `ImplementationLogMigrator` utility class handles automatic conversion of existing JSON logs to markdown format.
 - **Migration Logging** - Migration process is logged to `~/.spec-workflow-mcp/migration.log` for debugging and transparency.
 - **Howler.js Audio Library** - Added howler@2.2.4 dependency for reliable, cross-browser notification sounds with proper volume control.
 
 ### Improved
+
 - **Agent Discovery** - AI agents can now directly grep implementation logs without special tool calls, making discovery faster and more intuitive.
 - **Log Readability** - Markdown format is more human-readable and can be directly edited if needed.
 - **Scalability** - Individual markdown files prevent performance degradation when dealing with thousands of implementation logs.
@@ -563,11 +605,13 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.0.6] - 2025-11-08
 
 ### Changed
+
 - Removed creation of `config.example.toml` file during workspace initialization as it is no longer needed or used.
 
 ## [2.0.5] - 2025-11-08
 
 ### Fixed
+
 - Fixed tools not respecting the project directory specified at server startup. Tools now use the server context's `projectPath` by default instead of requiring it as a mandatory argument.
 - AI agents no longer need to pass `projectPath` to tools, preventing files from being created in the wrong directory (e.g., current working directory instead of the configured project directory).
 - Updated `spec-status`, `get-implementation-logs`, `log-implementation`, and `approvals` tools to use context fallback pattern.
@@ -576,6 +620,7 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.0.4] - 2025-11-08
 
 ### Fixed
+
 - Fixed dashboard startup failure with "Unexpected end of JSON input" error on macOS/Linux when configuration files were empty or corrupted.
 - Added proper JSON parsing error handling to catch `SyntaxError` in addition to `ENOENT` errors.
 - Implemented automatic initialization of JSON files with valid default content on first use.
@@ -585,11 +630,13 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.0.3]
 
 ### Changed
+
 - Updated all MCP tool responses to respond in TOON format instead of JSON for token savings and effeciency. (More Info: https://github.com/toon-format/toon)
 
 ## [2.0.2] - 2025-11-06
 
 ### Changed
+
 - Improved the get-implementation-logs tool description and instructions to help agents understand how to use the tool.
 - Removed deprecated --AutoStartDashboard flag
 - Removed config.toml support as it is no longer needed.
@@ -599,6 +646,7 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.0.1] - 2025-11-06
 
 ### Fixed
+
 - Fixed a Critical bug where approval records were not being saved correctly on approval and blocking the full process.
 - Fixed a bug with dropdowns in the dashboard causing unecassary horizontal scrollbars.
 - Fixed a bug where diff viewer for approvals was not working.
@@ -606,29 +654,34 @@ The following entries are from the upstream project before the fork diverged.
 ## [2.0.0] - 2025-11-03
 
 ### Added
+
 - Added NEW Unified Multi-Project Dashboard Implementation!
 - 'ESC' key now closes all dialogs and modals in the dashboard.
 - Implementation Log functionality added to the dashboard for each spec, AI Agents will now log detailed information about the implementation of each task. This information is then used by future AI agents to discover existing code and avoid duplication / mistakes when implementing new tasks especially when each task is dependant on the previous task.
 
 ### Changed
+
 - Re-designed the dashboard to be more user friendly and intuitive.
   - Added a new sidebar menu for the dashboard instead of header navigation.
 
-
 ### Announcement
+
 - Deprecated the `--AutoStartDashboard` flag as it is no longer needed.
 
 ## [1.0.1] - 2025-09-24
 
 ### Changed
+
 - Removed references to a headless mode that would confuse confusion for the agent in rare instances where the user would only start the dashboard after beginning the spec workflow.
 - Some UI / UX improvements to the dashboard.
 
 ### Fixed
+
 - Fixed a bug where users couldnt start multiple instances of the Dashboard within the same project.
 - Some UI / UX fixes to the dashboard, mainly around locale and missing translations.
 
 ### Added
+
 - Added NEW Diff Viewer to the dashboard for approvals!
 - Added NEW Kanban View to the dashboard for tasks!
 
@@ -637,6 +690,7 @@ The following entries are from the upstream project before the fork diverged.
 **NOTE: This version brings major architectural changes to the project. However they are non breaking changes.**
 
 ### Changes
+
 - Replaced various filesystem binded tools with elaborate instructions and changes to the workflow to allow AI agents to create documents and manage the project without the need for filesystem tools.
   **Its worth noting this change should improve the accuracy of AI agents following the workflow. Its important to also note this has only been tested with Claude Sonnet 4, Claude Opus 4.1 and GPT 5**
 - I have added the ability to use custom spec / steering document templates which is aimed at allowing users to customize the documents to their own needs. This is aimed at Power Users but everyone is welcome to use it.
@@ -644,10 +698,10 @@ The following entries are from the upstream project before the fork diverged.
 
 **There are no plans to revert back to the previous architecture. We have made this decision to improve the accuracy of AI agents following the workflow as well as improve the maintainability of the project. If you wish to use the old architecture, you can still do so by running an older version of the MCP server however please note that in the event of a change to the MCP working directory structure, the dashboard or VSCode extension will not work as expected.**
 
-
 ## [0.0.33] - 2025-09-10
 
 ### Added
+
 - **TOML Configuration File Support** - The MCP server now supports configuration via TOML files
   - Default config location: `<project-dir>/.spec-workflow/config.toml`
   - All command-line parameters can now be configured in the TOML file
@@ -666,12 +720,14 @@ The following entries are from the upstream project before the fork diverged.
 ## [0.0.32] - 2025-09-10
 
 ### Fixed
+
 - Removed localizations for MCP server tools as I have reason to believe they were causing confusion and issues with agents understanding the tools and their purposes as well as responses.
 - Improved get-template-context tool description to include a note about the template structure must be adhered to at all times and the next step to use the template for the specific document.
 
 ## [0.0.31] - 2025-09-09
 
 ### Fixed
+
 - Fixed "ReferenceError: t is not defined" errors in multiple components:
   - `SearchableSpecDropdown` in TasksPage (Task management dropdown)
   - `CommentModal` in VSCode extension (Comment editing interface)
@@ -688,15 +744,18 @@ The following entries are from the upstream project before the fork diverged.
 ## [0.0.30] - 2025-09-09
 
 ### Fixed
+
 - Fixed a bug where some translations were not being loaded correctly (Specifically for Approval / Annotations).
 - Fixed a bug where some languages didnt have the correct translation keys.
 
 ## [0.0.29] - 2025-09-08
 
 ### Improved
+
 - Improved localization support for all components.
 
 ### Added
+
 - **Multi-Language Support Expansion** - Added comprehensive translations for 8 new languages
   - Spanish (es) 🇪🇸 translations for all components
   - Portuguese (pt) 🇧🇷 translations for all components
@@ -710,12 +769,14 @@ The following entries are from the upstream project before the fork diverged.
   - Updated language selectors in both dashboard and VSCode extension to include all new languages
 
 ### Enhanced
+
 - **i18n Infrastructure** - Updated validation and build processes to support 11 total languages
   - Enhanced validation script to check all supported languages for consistency
   - Updated all i18n configurations to register new language resources
   - Added comprehensive i18n structure documentation explaining the three translation contexts
 
 ### Technical Changes
+
 - Updated SUPPORTED_LANGUAGES arrays across all three components
 - Added flag emoji representations for improved language selection UX
 - Maintained backward compatibility with existing English, Japanese, and Chinese translations
@@ -724,6 +785,7 @@ The following entries are from the upstream project before the fork diverged.
 ## [0.0.28] - 2025-09-08
 
 ### Added
+
 - **AI Prompt Generation for Tasks** - Enhanced task management with structured AI prompts
   - Added `prompt` field to ParsedTask interface for custom AI guidance
   - Task parser now extracts `_Prompt:` metadata from tasks.md files
@@ -735,11 +797,13 @@ The following entries are from the upstream project before the fork diverged.
   - Added Prompt to UI for previewing the prompt for the task in a collapsible section
 
 ### Enhanced
+
 - **Task Template** - Added AI instructions for generating structured prompts with Role | Task | Restrictions | Success format
 - **Multi-language Support** - Extended localization with prompt-related keys for better user experience
 - **UI/UX Improvements** - Copy buttons now provide context-aware prompts for improved AI agent guidance
 
 ### Fixed
+
 - **Volume Slider Alignment** - Fixed misaligned volume slider dot in web dashboard
   - Corrected CSS styling to properly center the 16px slider thumb on the track
   - Reduced track height from 8px to 4px for better visual proportion
@@ -753,6 +817,7 @@ The following entries are from the upstream project before the fork diverged.
 ## [0.0.27] - 2025-09-08
 
 ### Added
+
 - **Chinese (zh) Language Support** - Comprehensive Chinese translations for multi-language support
   - Complete Chinese translations for all MCP server tools and messages
   - Chinese translations for dashboard frontend interface
@@ -763,12 +828,14 @@ The following entries are from the upstream project before the fork diverged.
 ## [0.0.26] - 2025-09-08
 
 ### Fixed
+
 - **MCP Server Mode** - Prevent stdout contamination that caused JSON parsing errors in MCP clients
   - Replaced console.log with console.error for diagnostic messages
   - Ensures stdout is reserved exclusively for JSON-RPC protocol communication
   - Fixes issue #71 where MCP clients couldn't parse server responses
 
 ### Added
+
 - **Tasks UI Filtering and Sorting** - Enhanced task management with advanced filtering and sorting capabilities
   - Status filtering options (All, Pending, In Progress, Completed) with real-time task counts
   - Multiple sorting options (Default Order, By Status, By Task ID, By Description)
@@ -794,6 +861,7 @@ The following entries are from the upstream project before the fork diverged.
   - Build-time validation script ensuring translation consistency
 
 ### Technical Changes
+
 - Implemented Mustache templating for safe string interpolation in translations
 - Added LRU cache with 10MB memory limit and 1-hour TTL for performance
 - Integrated locale file copying into build process for all components
@@ -803,6 +871,7 @@ The following entries are from the upstream project before the fork diverged.
 - Added support for VITE_I18N_DYNAMIC environment variable for lazy loading
 
 ### Improved
+
 - Reduced initial bundle size with optional dynamic translation loading
 - Better error handling with locale-specific fallback mechanisms
 - Production-ready error sanitization to prevent information disclosure
@@ -810,6 +879,7 @@ The following entries are from the upstream project before the fork diverged.
 ## [0.0.25] - 2025-09-07
 
 ### Added
+
 - **MCP Prompts Support** - Implemented full Model Context Protocol prompts capability
   - Added 6 interactive prompts for spec-driven development workflows
   - `create-spec` - Interactive spec document creation with guided workflow
@@ -823,6 +893,7 @@ The following entries are from the upstream project before the fork diverged.
 - **Context Integration** - Prompts include project context, dashboard URLs, and tool recommendations
 
 ### Technical Changes
+
 - Added `src/prompts/` module with prompt definitions and handlers
 - Updated server capabilities to declare prompts support with `listChanged` flag
 - Added `ListPromptsRequestSchema` and `GetPromptRequestSchema` handlers
@@ -831,56 +902,66 @@ The following entries are from the upstream project before the fork diverged.
 ## [0.0.24] - 2025-09-07
 
 ### Fixed
+
 - Fixed get-approval-status tool to include comments in response data, enabling AI tools to access approval comments for better context understanding.
 
 ## [0.0.23] - 2025-08-27
 
 ### Improved
+
 - Added correct tool definitions to the server capabilities.
 - Refined spec-workflow-guide tool instructions condensing instructions by 50% whilst guarenteeing the same effectiveness.
 - Added workflow mermaid flowcharts to the spec-workflow-guide tool to help agents visualize the workflow.
 - Refined all the tool descriptions to remove ambiguity and make them more concise, additionally adding intrustions to each one to give the agent an idea of when to use the tool.
 
 ### Fixed
+
 - Fixed Steering Doc workflow where the agent would attempt to provide all 3 documents in a single approval.
 - Removed Steering guide from spec-workflow-guide tool and ensured steering-guide tool is called for steering document creation.
 - Added direct support for steering documents in the request-approval tool as there wasnt direct support for it and the agents were just working around it.
 
 ### Misc
+
 - Removed MCP resource definition as this was part of the initial developement workflow but was not required in the end.
 
 ## [0.0.22] - 2025-08-25
 
 ### Improved
+
 - Dashboard browser tab now displays the actual project name (e.g., "spec-workflow-mcp Dashboard") instead of generic "Spec Dashboard (React)"
 - Tab title dynamically updates based on the resolved project directory name for better identification when multiple dashboards are open
 
 ## [0.0.21] - 2025-08-25
 
 ### Fixed
+
 - Fixed dashboard displaying "." as project name when using `--project-dir .` by resolving the path to show actual directory name
 
 ## [0.0.20] - 2025-08-22
 
 ### Added
+
 - Added `--AutoStartDashboard` flag to automatically start and open dashboard when running MCP server
 - Added `--port` parameter support for MCP server mode (previously only worked with `--dashboard` mode)
 - Added comprehensive `--help` command with usage examples and parameter documentation
 - Added validation for unknown command-line flags with helpful error messages
 
 ### Improved
+
 - Enhanced shutdown behavior messaging for MCP server mode
 - Removed duplicate console logging when using custom ports
 - Updated README with AutoStartDashboard configuration examples for all MCP clients
 - Clarified that MCP server lifecycle is controlled by the MCP client (not Ctrl+C)
 
 ### Fixed
+
 - Fixed issue where browser would attempt to open twice with AutoStartDashboard
 - Fixed duplicate "Using custom port" messages in console output
 
 ## [0.0.19] - 2025-08-21
 
 ### Fixed
+
 - Fixed MCP server shutdown issues where server process would stay running after MCP client disconnects
 - Added proper stdio transport onclose handler to detect client disconnection
 - Added stdin monitoring for additional disconnect detection safety
@@ -889,56 +970,67 @@ The following entries are from the upstream project before the fork diverged.
 ## [0.0.18] - 2025-08-17
 
 ### Improvements
+
 - Selected spec on tasks page is now persisted across page refreshes and now allows for deeplinking.
 
 ## [0.0.17] - 2025-08-17
 
 ### Bug Fixes
+
 - Fixed a bug where request approval tool would fail when starting the MCP server without a projectdir. (wasnt really a bug as projectdir was recommended but I have made this more robust).
 
 ## [0.0.16] - 2025-08-15
 
 ### Bug Fixes
+
 - Fixed a bug where the dashboard would not automatically update task status when the MCP tool was called and a refresh was required to view new status.
 
 ## [0.0.15] - 2025-08-15
 
 ### Improvements
+
 - Moved to custom alert & prompt modals rather than window.alert and window.prompt. This should fix issues with dashboard showing prompts in VSCode Simple Browser
 - Moved highlight color picker to the comment modal rather than having it in the comments list.
 
 ### New Features
+
 - Added Notification Volume Slider.
 
 ## [0.0.14] - 2025-08-14
 
 ### Added
+
 - Added a new 'refresh-tasks' tool to help align the task list with the current requirements and design. This is particularly useful if you make changes to the requirements / design docs mid integration.
 
 ### Misc
+
 - Removed some legacy markdown files that were left over from initial development.
 
 ## [0.0.13] - 2025-08-13
 
 ### Added
+
 - Added support for relative project paths and the use of tilde (~) in project paths. Below path formats are now supported:
-    - npx -y @pimzino/spec-workflow-mcp ~/my-project
-    - npx -y @pimzino/spec-workflow-mcp ./relative-path
-    - npx -y @pimzino/spec-workflow-mcp /absolute/path
+  - npx -y @pimzino/spec-workflow-mcp ~/my-project
+  - npx -y @pimzino/spec-workflow-mcp ./relative-path
+  - npx -y @pimzino/spec-workflow-mcp /absolute/path
 
 ## [0.0.12] - 2025-08-11
 
 ### Fixed
+
 - Fixed a bug with prose containers which would limit rendered content from fully displaying in the view modals.
 - Fixed a bug with package version not showing in the header / mobile menu.
 
 ## [0.0.11] - 2025-08-11
 
 ### Fixed
+
 - Page refresh on websocket updates. Pages will no longer reset on websocket updates.
 - Dashboard accessibility improvements.
 
 ### Added
+
 - Optimized dashboard for tablets.
 - Users can now specify a custom port for the dashboard web server using the `--port` parameter. If not specified, an ephemeral port will be used.
 - Added the ability to change task status directly from the task page in the dashboard.
@@ -946,75 +1038,86 @@ The following entries are from the upstream project before the fork diverged.
 ## [0.0.10] - 2025-08-10
 
 ### Added
+
 - **Initial Multi-Language Framework** - Established foundational support for internationalization
   - Set up i18n infrastructure to support future language translations
   - Implemented framework for dynamic language switching across components
   - Laid groundwork for comprehensive multi-language support later expanded in v0.0.26-0.0.29
 
 ### Fixed
+
 - Fixed bug with spec steering page not displaying correctly on smaller screens (mobile devices).
 
 ## [0.0.9] - 2025-08-10
 
 ### Fixed
+
 - Clipboard API wasnt working in HTTP contexts over LAN. Added fallback method using `document.execCommand('copy')` for browsers without clipboard API access.
 
 ### Changed
+
 - Updated copy prompt to only include task id and spec name.
 - Improved copy button feedback with visual success/error states and colored indicators.
 - Dashboard --> Updated viewport to 80% screen width in desktop and 90% on mobile devices.
 
 ### Added
+
 - Spec document editor directly in the dashboard.
 - Spec archiving and unarchiving in the dashboard.
 - Steering document page for creating, viewing and editing steering documents directly from the dashboard.
 
-
 ## [0.0.8] - 2025-08-09
 
 ### Updated
-- Rebuilt the web dashboard with a mobile first responsive design bringing you the following improvements:
-    - Responsive Design
-    - Improved UI / UX
-    - Improved Performance
-    - Disconnected from MCP server - must be started manually
-    - Can now run multiple MCP server instances for the same project on a single dashboard instance
 
+- Rebuilt the web dashboard with a mobile first responsive design bringing you the following improvements:
+  - Responsive Design
+  - Improved UI / UX
+  - Improved Performance
+  - Disconnected from MCP server - must be started manually
+  - Can now run multiple MCP server instances for the same project on a single dashboard instance
 
 **NOTE: This is a breaking change. The dashboard will no longer auto start and must be manually run. Please review the README for updated instructions.**
 
 ## [0.0.7] - 2025-08-08
 
 ### Fixed
+
 - Fixed a bug with the task parser / manage-tasks tool refusing to find tasks.
 
 ### Updated
+
 - Improved the task parser and created a task parser utility function to be shared across tools and UI.
 
 ## [0.0.6] - 2025-08-08
 
 ### Updated
+
 - Refined the spec workflow guide to remove any ambiguity, made it more concise.
 - Refined manage-tasks tool description.
 - Refined request-approval tool description and next steps output.
 - Refined create-spec-doc tool next steps output.
 
 ### Added
+
 - Imporoved dashboard task parser and task counter to support Parent/Child task relationships otherwise known as subtasks.
-    - Parent tasks if only including a name will be parsed as a Task Section Heading in the dashboard.
-    - The parser should now be more flexible to handle tasks in various formats as long as they still follow the same checklist, task name, and status format at the very least.
+  - Parent tasks if only including a name will be parsed as a Task Section Heading in the dashboard.
+  - The parser should now be more flexible to handle tasks in various formats as long as they still follow the same checklist, task name, and status format at the very least.
 
 ## [0.0.5] - 2025-08-07
 
 ### Updated
+
 - Refined spec workflow to include conditional web search for the design phase to ensure the agent is providing the best possible for all phases.
 
 ### Fixed
+
 - Improved task progress cards to display all task information in the card.
 
 ## [0.0.4] - 2025-08-07
 
 ### Fixed
+
 - Fixed clipboard copying functionality in dashboard for HTTP contexts (non-HTTPS environments)
 - Added fallback clipboard method using `document.execCommand('copy')` for browsers without clipboard API access
 - Improved copy button feedback with visual success/error states and colored indicators
@@ -1024,15 +1127,18 @@ The following entries are from the upstream project before the fork diverged.
 ## [0.0.3] - 2025-08-07
 
 ### Updated
+
 - Updated README.md with example natural language prompts that will trigger the various tools.
 - task-template.md updated to remove atomic task requirements and format guidelines and moved them to the spec workflow guide tool.
 - Refined instructions for the agent to output the dashboard URL to the user.
 - Removed the Steering Document Compliance section from tasks-template.md for simplification.
 
 ### Added
+
 - I have added a session.json in the .spec-workflow directory that stores the dashboard URL and the process ID of the dashboard server. This allows the agent to retrieve the dashboard URL as well as the user if required. Note: This should help users one headless systems where the dashboard us unable to auto load, you can retrieve the session information from the json file.
 
 ### Fixed
+
 - Misc fixes cause HEAP out of memory issues on the server causing the server to crash when running more than one instance.
 
 ### Added
@@ -1040,12 +1146,14 @@ The following entries are from the upstream project before the fork diverged.
 ## [0.0.2] - 2025-08-07
 
 ### Updated
+
 - Updated README.md with showcase videos on youtube.
 - Removed testing mcp.json file that was left over from initial development.
 
 ## [0.0.1] - 2025-08-07
 
 ### Added
+
 - MCP server implementation with 13 tools for spec-driven development
 - Sequential workflow enforcement (Requirements → Design → Tasks)
 - Real-time web dashboard with WebSocket updates

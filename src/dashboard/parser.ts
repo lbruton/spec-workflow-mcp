@@ -9,7 +9,6 @@ export interface ParsedSpec extends SpecData {
   displayName: string;
 }
 
-
 export class SpecParser {
   private projectPath: string;
   private specsPath: string;
@@ -30,8 +29,8 @@ export class SpecParser {
     try {
       await access(this.specsPath);
       const entries = await readdir(this.specsPath, { withFileTypes: true });
-      const specDirs = entries.filter(entry => entry.isDirectory());
-      
+      const specDirs = entries.filter((entry) => entry.isDirectory());
+
       const specs: ParsedSpec[] = [];
       for (const dir of specDirs) {
         const spec = await this.getSpec(dir.name);
@@ -39,7 +38,7 @@ export class SpecParser {
           specs.push(spec);
         }
       }
-      
+
       return specs.sort((a, b) => a.name.localeCompare(b.name));
     } catch {
       return [];
@@ -50,8 +49,8 @@ export class SpecParser {
     try {
       await access(this.archiveSpecsPath);
       const entries = await readdir(this.archiveSpecsPath, { withFileTypes: true });
-      const specDirs = entries.filter(entry => entry.isDirectory());
-      
+      const specDirs = entries.filter((entry) => entry.isDirectory());
+
       const specs: ParsedSpec[] = [];
       for (const dir of specDirs) {
         const spec = await this.getArchivedSpec(dir.name);
@@ -59,7 +58,7 @@ export class SpecParser {
           specs.push(spec);
         }
       }
-      
+
       return specs.sort((a, b) => a.name.localeCompare(b.name));
     } catch {
       return [];
@@ -84,8 +83,8 @@ export class SpecParser {
           design: { exists: false },
           tasks: { exists: false },
           readinessReport: { exists: false },
-          implementation: { exists: false }
-        }
+          implementation: { exists: false },
+        },
       };
 
       // Get directory stats
@@ -158,7 +157,7 @@ export class SpecParser {
         spec.taskProgress = {
           total: taskProgress.total,
           completed: taskProgress.completed,
-          pending: taskProgress.pending
+          pending: taskProgress.pending,
         };
       } catch {}
 
@@ -166,7 +165,10 @@ export class SpecParser {
       try {
         await access(readinessReportPath);
         spec.phases.readinessReport.exists = true;
-        spec.phases.readinessReport.approved = await this.isPhaseApproved(name, 'readiness-report.md');
+        spec.phases.readinessReport.approved = await this.isPhaseApproved(
+          name,
+          'readiness-report.md',
+        );
         const rrStats = await stat(readinessReportPath);
         spec.phases.readinessReport.lastModified = rrStats.mtime.toISOString();
 
@@ -202,8 +204,8 @@ export class SpecParser {
           design: { exists: false },
           tasks: { exists: false },
           readinessReport: { exists: false },
-          implementation: { exists: false }
-        }
+          implementation: { exists: false },
+        },
       };
 
       // Get directory stats
@@ -276,7 +278,7 @@ export class SpecParser {
         spec.taskProgress = {
           total: taskProgress.total,
           completed: taskProgress.completed,
-          pending: taskProgress.pending
+          pending: taskProgress.pending,
         };
       } catch {}
 
@@ -284,7 +286,10 @@ export class SpecParser {
       try {
         await access(readinessReportPath);
         spec.phases.readinessReport.exists = true;
-        spec.phases.readinessReport.approved = await this.isPhaseApproved(name, 'readiness-report.md');
+        spec.phases.readinessReport.approved = await this.isPhaseApproved(
+          name,
+          'readiness-report.md',
+        );
         const rrStats = await stat(readinessReportPath);
         spec.phases.readinessReport.lastModified = rrStats.mtime.toISOString();
 
@@ -302,15 +307,14 @@ export class SpecParser {
     }
   }
 
-
   async getProjectSteeringStatus(): Promise<SteeringStatus> {
     const status: SteeringStatus = {
       exists: false,
       documents: {
         product: false,
         tech: false,
-        structure: false
-      }
+        structure: false,
+      },
     };
 
     try {
@@ -336,12 +340,10 @@ export class SpecParser {
       // Get last modified time for steering directory
       const steeringStats = await stat(this.steeringPath);
       status.lastModified = steeringStats.mtime.toISOString();
-
     } catch {}
 
     return status;
   }
-
 
   private async isPhaseApproved(specName: string, filename: string): Promise<boolean> {
     try {
@@ -350,7 +352,7 @@ export class SpecParser {
         specName,
         '.snapshots',
         filename,
-        'metadata.json'
+        'metadata.json',
       );
       const metaContent = await readFile(metaPath, 'utf-8');
       const meta = JSON.parse(metaContent);
@@ -365,7 +367,7 @@ export class SpecParser {
   private formatDisplayName(kebabCase: string): string {
     return kebabCase
       .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
   }
 }

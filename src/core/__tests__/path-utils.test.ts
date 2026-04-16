@@ -68,13 +68,11 @@ describe('PathUtils.translatePath', () => {
     });
 
     it('should translate matching path', () => {
-      expect(PathUtils.translatePath('/Users/dev/myproject'))
-        .toBe('/projects/myproject');
+      expect(PathUtils.translatePath('/Users/dev/myproject')).toBe('/projects/myproject');
     });
 
     it('should translate nested paths', () => {
-      expect(PathUtils.translatePath('/Users/dev/code/app/src'))
-        .toBe('/projects/code/app/src');
+      expect(PathUtils.translatePath('/Users/dev/code/app/src')).toBe('/projects/code/app/src');
     });
 
     it('should not translate non-matching path', () => {
@@ -114,32 +112,28 @@ describe('PathUtils.translatePath', () => {
       process.env.SPEC_WORKFLOW_HOST_PATH_PREFIX = '/Users/dev/';
       process.env.SPEC_WORKFLOW_CONTAINER_PATH_PREFIX = '/projects';
 
-      expect(PathUtils.translatePath('/Users/dev/myproject'))
-        .toBe('/projects/myproject');
+      expect(PathUtils.translatePath('/Users/dev/myproject')).toBe('/projects/myproject');
     });
 
     it('should handle trailing slash in container prefix', () => {
       process.env.SPEC_WORKFLOW_HOST_PATH_PREFIX = '/Users/dev';
       process.env.SPEC_WORKFLOW_CONTAINER_PATH_PREFIX = '/projects/';
 
-      expect(PathUtils.translatePath('/Users/dev/myproject'))
-        .toBe('/projects/myproject');
+      expect(PathUtils.translatePath('/Users/dev/myproject')).toBe('/projects/myproject');
     });
 
     it('should handle trailing slashes in both prefixes', () => {
       process.env.SPEC_WORKFLOW_HOST_PATH_PREFIX = '/Users/dev/';
       process.env.SPEC_WORKFLOW_CONTAINER_PATH_PREFIX = '/projects/';
 
-      expect(PathUtils.translatePath('/Users/dev/myproject'))
-        .toBe('/projects/myproject');
+      expect(PathUtils.translatePath('/Users/dev/myproject')).toBe('/projects/myproject');
     });
 
     it('should handle multiple trailing slashes', () => {
       process.env.SPEC_WORKFLOW_HOST_PATH_PREFIX = '/Users/dev///';
       process.env.SPEC_WORKFLOW_CONTAINER_PATH_PREFIX = '/projects';
 
-      expect(PathUtils.translatePath('/Users/dev/myproject'))
-        .toBe('/projects/myproject');
+      expect(PathUtils.translatePath('/Users/dev/myproject')).toBe('/projects/myproject');
     });
   });
 
@@ -213,8 +207,7 @@ describe('PathUtils.reverseTranslatePath', () => {
     });
 
     it('should reverse translate matching path', () => {
-      expect(PathUtils.reverseTranslatePath('/projects/myproject'))
-        .toBe('/Users/dev/myproject');
+      expect(PathUtils.reverseTranslatePath('/projects/myproject')).toBe('/Users/dev/myproject');
     });
 
     it('should not reverse translate non-matching path', () => {
@@ -281,16 +274,14 @@ describe('PathUtils case sensitivity', () => {
       process.env.SPEC_WORKFLOW_CONTAINER_PATH_PREFIX = '/projects';
 
       // Lowercase 'dev' should match uppercase 'Dev' prefix
-      expect(PathUtils.translatePath('/Users/dev/myproject'))
-        .toBe('/projects/myproject');
+      expect(PathUtils.translatePath('/Users/dev/myproject')).toBe('/projects/myproject');
     });
 
     it('should match mixed case paths', () => {
       process.env.SPEC_WORKFLOW_HOST_PATH_PREFIX = '/users/DEV';
       process.env.SPEC_WORKFLOW_CONTAINER_PATH_PREFIX = '/PROJECTS';
 
-      expect(PathUtils.translatePath('/Users/Dev/App'))
-        .toBe('/PROJECTS/App');
+      expect(PathUtils.translatePath('/Users/Dev/App')).toBe('/PROJECTS/App');
     });
   }
 });
@@ -313,8 +304,7 @@ describe('PathUtils Windows backslash handling', () => {
     process.env.SPEC_WORKFLOW_HOST_PATH_PREFIX = 'C:\\Users\\dev';
     process.env.SPEC_WORKFLOW_CONTAINER_PATH_PREFIX = '/projects';
 
-    expect(PathUtils.translatePath('C:\\Users\\dev\\myproject'))
-      .toBe('/projects/myproject');
+    expect(PathUtils.translatePath('C:\\Users\\dev\\myproject')).toBe('/projects/myproject');
   });
 
   it('should handle mixed separators', () => {
@@ -322,16 +312,14 @@ describe('PathUtils Windows backslash handling', () => {
     process.env.SPEC_WORKFLOW_CONTAINER_PATH_PREFIX = '/projects';
 
     // Mixed forward and back slashes
-    expect(PathUtils.translatePath('C:\\Users\\dev/myproject/src'))
-      .toBe('/projects/myproject/src');
+    expect(PathUtils.translatePath('C:\\Users\\dev/myproject/src')).toBe('/projects/myproject/src');
   });
 
   it('should normalize double slashes', () => {
     process.env.SPEC_WORKFLOW_HOST_PATH_PREFIX = '/Users/dev';
     process.env.SPEC_WORKFLOW_CONTAINER_PATH_PREFIX = '/projects';
 
-    expect(PathUtils.translatePath('/Users/dev//myproject///src'))
-      .toBe('/projects/myproject/src');
+    expect(PathUtils.translatePath('/Users/dev//myproject///src')).toBe('/projects/myproject/src');
   });
 });
 
@@ -518,9 +506,7 @@ describe('PathUtils.getGlobalTemplatesPath', () => {
   });
 
   it('should throw when not configured', () => {
-    expect(() => PathUtils.getGlobalTemplatesPath()).toThrow(
-      /DocVault not configured/,
-    );
+    expect(() => PathUtils.getGlobalTemplatesPath()).toThrow(/DocVault not configured/);
   });
 });
 

@@ -4,7 +4,8 @@ import { tmpdir } from 'os';
 
 const DASHBOARD_PORT = 5084;
 const FRONTEND_PORT = 5184;
-const SPEC_WORKFLOW_HOME = process.env.SPEC_WORKFLOW_HOME || join(tmpdir(), 'specwf-e2e-worktree-state');
+const SPEC_WORKFLOW_HOME =
+  process.env.SPEC_WORKFLOW_HOME || join(tmpdir(), 'specwf-e2e-worktree-state');
 
 // Share the same global state path between test workers and spawned web servers.
 process.env.SPEC_WORKFLOW_HOME = SPEC_WORKFLOW_HOME;
@@ -36,8 +37,8 @@ export default defineConfig({
       timeout: 120000,
       env: {
         ...process.env,
-        SPEC_WORKFLOW_HOME
-      }
+        SPEC_WORKFLOW_HOME,
+      },
     },
     {
       command: `npm run dev:dashboard -- --host 127.0.0.1 --port ${FRONTEND_PORT}`,
@@ -47,8 +48,8 @@ export default defineConfig({
       env: {
         ...process.env,
         SPEC_WORKFLOW_HOME,
-        VITE_DASHBOARD_PORT: String(DASHBOARD_PORT)
-      }
-    }
-  ]
+        VITE_DASHBOARD_PORT: String(DASHBOARD_PORT),
+      },
+    },
+  ],
 });

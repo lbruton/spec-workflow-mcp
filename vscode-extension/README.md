@@ -40,6 +40,7 @@ A VSCode extension that provides an integrated dashboard for managing Spec-Workf
 ## Archive Management
 
 Specifications can be archived to keep dropdown menus clean and organized:
+
 - Switch between **Active** and **Archived** views in the Specs tab
 - Archive completed specifications to remove them from active dropdowns
 - Unarchive specifications when needed
@@ -66,6 +67,7 @@ Specifications can be archived to keep dropdown menus clean and organized:
 ## Development
 
 This extension is built with:
+
 - React 19 with TypeScript
 - Vite for webview bundling
 - Tailwind CSS v4 for styling
@@ -77,6 +79,7 @@ This extension is built with:
 ### 0.0.1
 
 Initial release of Spec Workflow MCP Extension:
+
 - **Dashboard Integration**: Complete sidebar dashboard with real-time updates
 - **Specification Management**: Active/archived spec organization with archive workflow
 - **Task Tracking**: Interactive task management with status updates

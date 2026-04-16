@@ -4,20 +4,20 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 
 /**
  * Dynamic Import Configuration for i18n
- * 
+ *
  * When to use dynamic imports:
  * - Large applications with many language files (>100KB per language)
  * - Applications where users typically use only one language
  * - When initial load time is critical
- * 
+ *
  * Trade-offs:
  * - Pros: Smaller initial bundle size, faster initial page load
  * - Cons: Slight delay when switching languages for the first time
- * 
+ *
  * To enable dynamic imports:
  * 1. Set VITE_I18N_DYNAMIC=true in your .env file
  * 2. Import from './i18n-dynamic' instead of './i18n' in main.tsx
- * 
+ *
  * Example:
  * ```typescript
  * // main.tsx

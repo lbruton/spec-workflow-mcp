@@ -81,18 +81,33 @@ async function getJson<T>(url: string): Promise<T> {
 }
 
 async function postJson(url: string, body: any) {
-  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
   return { ok: res.ok, status: res.status };
 }
 
-async function postJsonWithData<T>(url: string, body: any): Promise<{ ok: boolean; status: number; data?: T }> {
-  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+async function postJsonWithData<T>(
+  url: string,
+  body: any,
+): Promise<{ ok: boolean; status: number; data?: T }> {
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
   const data = res.ok ? await res.json() : undefined;
   return { ok: res.ok, status: res.status, data };
 }
 
 async function putJson(url: string, body: any) {
-  const res = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const res = await fetch(url, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
   return { ok: res.ok, status: res.status, data: res.ok ? await res.json() : null };
 }
 
@@ -110,26 +125,62 @@ type ApiDataContextType = {
 // Actions context contains stable functions that rarely change
 type ApiActionsContextType = {
   reloadAll: () => Promise<void>;
-  getAllSpecDocuments: (name: string) => Promise<Record<string, { content: string; lastModified: string } | null>>;
-  getAllArchivedSpecDocuments: (name: string) => Promise<Record<string, { content: string; lastModified: string } | null>>;
+  getAllSpecDocuments: (
+    name: string,
+  ) => Promise<Record<string, { content: string; lastModified: string } | null>>;
+  getAllArchivedSpecDocuments: (
+    name: string,
+  ) => Promise<Record<string, { content: string; lastModified: string } | null>>;
   getSpecTasksProgress: (name: string) => Promise<any>;
-  updateTaskStatus: (specName: string, taskId: string, status: 'pending' | 'in-progress' | 'completed') => Promise<{ ok: boolean; status: number; data?: any }>;
-  approvalsAction: (id: string, action: 'approve' | 'reject' | 'needs-revision' | 'concerns', payload: any) => Promise<{ ok: boolean; status: number }>;
-  approvalsActionBatch: (ids: string[], action: 'approve' | 'reject', response?: string) => Promise<{ ok: boolean; status: number; data?: BatchApprovalResult }>;
-  approvalsUndoBatch: (ids: string[]) => Promise<{ ok: boolean; status: number; data?: BatchApprovalResult }>;
+  updateTaskStatus: (
+    specName: string,
+    taskId: string,
+    status: 'pending' | 'in-progress' | 'completed',
+  ) => Promise<{ ok: boolean; status: number; data?: any }>;
+  approvalsAction: (
+    id: string,
+    action: 'approve' | 'reject' | 'needs-revision' | 'concerns',
+    payload: any,
+  ) => Promise<{ ok: boolean; status: number }>;
+  approvalsActionBatch: (
+    ids: string[],
+    action: 'approve' | 'reject',
+    response?: string,
+  ) => Promise<{ ok: boolean; status: number; data?: BatchApprovalResult }>;
+  approvalsUndoBatch: (
+    ids: string[],
+  ) => Promise<{ ok: boolean; status: number; data?: BatchApprovalResult }>;
   getApprovalContent: (id: string) => Promise<{ content: string; filePath?: string }>;
   getApprovalSnapshots: (id: string) => Promise<DocumentSnapshot[]>;
   getApprovalSnapshot: (id: string, version: number) => Promise<DocumentSnapshot>;
-  getApprovalDiff: (id: string, fromVersion: number, toVersion?: number | 'current') => Promise<DiffResult>;
+  getApprovalDiff: (
+    id: string,
+    fromVersion: number,
+    toVersion?: number | 'current',
+  ) => Promise<DiffResult>;
   captureApprovalSnapshot: (id: string) => Promise<{ success: boolean; message: string }>;
-  saveSpecDocument: (name: string, document: string, content: string) => Promise<{ ok: boolean; status: number }>;
-  saveArchivedSpecDocument: (name: string, document: string, content: string) => Promise<{ ok: boolean; status: number }>;
+  saveSpecDocument: (
+    name: string,
+    document: string,
+    content: string,
+  ) => Promise<{ ok: boolean; status: number }>;
+  saveArchivedSpecDocument: (
+    name: string,
+    document: string,
+    content: string,
+  ) => Promise<{ ok: boolean; status: number }>;
   archiveSpec: (name: string) => Promise<{ ok: boolean; status: number }>;
   unarchiveSpec: (name: string) => Promise<{ ok: boolean; status: number }>;
   getSteeringDocument: (name: string) => Promise<{ content: string; lastModified: string }>;
   saveSteeringDocument: (name: string, content: string) => Promise<{ ok: boolean; status: number }>;
-  addImplementationLog: (specName: string, logData: any) => Promise<{ ok: boolean; status: number; data?: any }>;
-  getImplementationLogs: (specName: string, query?: { taskId?: string; search?: string }) => Promise<{ entries: ImplementationLogEntry[] }>;
+  addImplementationLog: (
+    specName: string,
+    logData: any,
+  ) => Promise<{ ok: boolean; status: number; data?: any }>;
+  getImplementationLogs: (
+    specName: string,
+    query?: { taskId?: string; search?: string },
+  ) => Promise<{ entries: ImplementationLogEntry[] }>;
   getImplementationLogStats: (specName: string, taskId: string) => Promise<any>;
   getChangelog: (version: string) => Promise<{ content: string }>;
 };
@@ -158,7 +209,9 @@ export function ApiProvider({ initial, projectId, children }: ApiProviderProps) 
       getJson<SpecSummary[]>(`/api/projects/${encodeURIComponent(projectId)}/specs`),
       getJson<SpecSummary[]>(`/api/projects/${encodeURIComponent(projectId)}/specs/archived`),
       getJson<Approval[]>(`/api/projects/${encodeURIComponent(projectId)}/approvals`),
-      getJson<ProjectInfo>(`/api/projects/${encodeURIComponent(projectId)}/info`).catch(() => ({ projectName: 'Project' } as ProjectInfo)),
+      getJson<ProjectInfo>(`/api/projects/${encodeURIComponent(projectId)}/info`).catch(
+        () => ({ projectName: 'Project' }) as ProjectInfo,
+      ),
     ]);
     setSpecs(s);
     setArchivedSpecs(as);
@@ -193,19 +246,21 @@ export function ApiProvider({ initial, projectId, children }: ApiProviderProps) 
     const handleSpecUpdate = (data: { specs?: SpecSummary[]; archivedSpecs?: SpecSummary[] }) => {
       // Only update if data actually changed (deep equality check)
       if (data.specs) {
-        setSpecs(prevSpecs => {
+        setSpecs((prevSpecs) => {
           // Check if arrays are identical to avoid unnecessary updates
           if (prevSpecs.length !== data.specs!.length) return data.specs!;
 
           // Check if any spec changed by comparing key properties
           const hasChanges = data.specs!.some((newSpec, index) => {
             const prevSpec = prevSpecs[index];
-            return !prevSpec ||
-                   prevSpec.name !== newSpec.name ||
-                   prevSpec.displayName !== newSpec.displayName ||
-                   prevSpec.status !== newSpec.status ||
-                   prevSpec.lastModified !== newSpec.lastModified ||
-                   JSON.stringify(prevSpec.taskProgress) !== JSON.stringify(newSpec.taskProgress);
+            return (
+              !prevSpec ||
+              prevSpec.name !== newSpec.name ||
+              prevSpec.displayName !== newSpec.displayName ||
+              prevSpec.status !== newSpec.status ||
+              prevSpec.lastModified !== newSpec.lastModified ||
+              JSON.stringify(prevSpec.taskProgress) !== JSON.stringify(newSpec.taskProgress)
+            );
           });
 
           return hasChanges ? data.specs! : prevSpecs;
@@ -213,7 +268,7 @@ export function ApiProvider({ initial, projectId, children }: ApiProviderProps) 
       }
 
       if (data.archivedSpecs) {
-        setArchivedSpecs(prevArchived => {
+        setArchivedSpecs((prevArchived) => {
           if (prevArchived.length !== data.archivedSpecs!.length) return data.archivedSpecs!;
 
           const hasChanges = data.archivedSpecs!.some((newSpec, index) => {
@@ -227,15 +282,17 @@ export function ApiProvider({ initial, projectId, children }: ApiProviderProps) 
     };
 
     const handleApprovalUpdate = (data: Approval[]) => {
-      setApprovals(prevApprovals => {
+      setApprovals((prevApprovals) => {
         // Only update if approvals changed
         if (prevApprovals.length !== data.length) return data;
 
         const hasChanges = data.some((newApproval, index) => {
           const prevApproval = prevApprovals[index];
-          return !prevApproval ||
-                 prevApproval.id !== newApproval.id ||
-                 prevApproval.status !== newApproval.status;
+          return (
+            !prevApproval ||
+            prevApproval.id !== newApproval.id ||
+            prevApproval.status !== newApproval.status
+          );
         });
 
         return hasChanges ? data : prevApprovals;
@@ -243,7 +300,7 @@ export function ApiProvider({ initial, projectId, children }: ApiProviderProps) 
     };
 
     const handleSteeringUpdate = (data: any) => {
-      setSteeringDocuments(prevDocs => {
+      setSteeringDocuments((prevDocs) => {
         // Simple deep equality check for steering documents
         if (JSON.stringify(prevDocs) === JSON.stringify(data)) {
           return prevDocs;
@@ -265,14 +322,17 @@ export function ApiProvider({ initial, projectId, children }: ApiProviderProps) 
   }, [subscribe, unsubscribe]);
 
   // Memoize data context - changes when state updates
-  const dataValue = useMemo<ApiDataContextType>(() => ({
-    specs,
-    archivedSpecs,
-    approvals,
-    info,
-    steeringDocuments,
-    projectId,
-  }), [specs, archivedSpecs, approvals, info, steeringDocuments, projectId]);
+  const dataValue = useMemo<ApiDataContextType>(
+    () => ({
+      specs,
+      archivedSpecs,
+      approvals,
+      info,
+      steeringDocuments,
+      projectId,
+    }),
+    [specs, archivedSpecs, approvals, info, steeringDocuments, projectId],
+  );
 
   // Memoize actions context - stable functions that rarely change
   const actionsValue = useMemo<ApiActionsContextType>(() => {
@@ -289,8 +349,8 @@ export function ApiProvider({ initial, projectId, children }: ApiProviderProps) 
         approvalsUndoBatch: async () => ({ ok: false, status: 400 }),
         getApprovalContent: async () => ({ content: '' }),
         getApprovalSnapshots: async () => [],
-        getApprovalSnapshot: async () => ({} as any),
-        getApprovalDiff: async () => ({} as any),
+        getApprovalSnapshot: async () => ({}) as any,
+        getApprovalDiff: async () => ({}) as any,
         captureApprovalSnapshot: async () => ({ success: false, message: 'No project selected' }),
         saveSpecDocument: async () => ({ ok: false, status: 400 }),
         saveArchivedSpecDocument: async () => ({ ok: false, status: 400 }),
@@ -309,31 +369,63 @@ export function ApiProvider({ initial, projectId, children }: ApiProviderProps) 
 
     return {
       reloadAll,
-      getAllSpecDocuments: (name: string) => getJson(`${prefix}/specs/${encodeURIComponent(name)}/all`),
-      getAllArchivedSpecDocuments: (name: string) => getJson(`${prefix}/specs/${encodeURIComponent(name)}/all/archived`),
-      getSpecTasksProgress: (name: string) => getJson(`${prefix}/specs/${encodeURIComponent(name)}/tasks/progress`),
-      updateTaskStatus: (specName: string, taskId: string, status: 'pending' | 'in-progress' | 'completed') =>
-        putJson(`${prefix}/specs/${encodeURIComponent(specName)}/tasks/${encodeURIComponent(taskId)}/status`, { status }),
-      approvalsAction: (id, action, body) => postJson(`${prefix}/approvals/${encodeURIComponent(id)}/${action}`, body),
-      approvalsActionBatch: (ids, action, response) => postJsonWithData<BatchApprovalResult>(`${prefix}/approvals/batch/${action}`, { ids, response }),
-      approvalsUndoBatch: (ids) => postJsonWithData<BatchApprovalResult>(`${prefix}/approvals/batch/undo`, { ids }),
-      getApprovalContent: (id: string) => getJson(`${prefix}/approvals/${encodeURIComponent(id)}/content`),
-      getApprovalSnapshots: (id: string) => getJson(`${prefix}/approvals/${encodeURIComponent(id)}/snapshots`),
-      getApprovalSnapshot: (id: string, version: number) => getJson(`${prefix}/approvals/${encodeURIComponent(id)}/snapshots/${version}`),
+      getAllSpecDocuments: (name: string) =>
+        getJson(`${prefix}/specs/${encodeURIComponent(name)}/all`),
+      getAllArchivedSpecDocuments: (name: string) =>
+        getJson(`${prefix}/specs/${encodeURIComponent(name)}/all/archived`),
+      getSpecTasksProgress: (name: string) =>
+        getJson(`${prefix}/specs/${encodeURIComponent(name)}/tasks/progress`),
+      updateTaskStatus: (
+        specName: string,
+        taskId: string,
+        status: 'pending' | 'in-progress' | 'completed',
+      ) =>
+        putJson(
+          `${prefix}/specs/${encodeURIComponent(specName)}/tasks/${encodeURIComponent(taskId)}/status`,
+          { status },
+        ),
+      approvalsAction: (id, action, body) =>
+        postJson(`${prefix}/approvals/${encodeURIComponent(id)}/${action}`, body),
+      approvalsActionBatch: (ids, action, response) =>
+        postJsonWithData<BatchApprovalResult>(`${prefix}/approvals/batch/${action}`, {
+          ids,
+          response,
+        }),
+      approvalsUndoBatch: (ids) =>
+        postJsonWithData<BatchApprovalResult>(`${prefix}/approvals/batch/undo`, { ids }),
+      getApprovalContent: (id: string) =>
+        getJson(`${prefix}/approvals/${encodeURIComponent(id)}/content`),
+      getApprovalSnapshots: (id: string) =>
+        getJson(`${prefix}/approvals/${encodeURIComponent(id)}/snapshots`),
+      getApprovalSnapshot: (id: string, version: number) =>
+        getJson(`${prefix}/approvals/${encodeURIComponent(id)}/snapshots/${version}`),
       getApprovalDiff: (id: string, fromVersion: number, toVersion?: number | 'current') => {
         const to = toVersion === undefined ? 'current' : toVersion;
-        return getJson(`${prefix}/approvals/${encodeURIComponent(id)}/diff?from=${fromVersion}&to=${to}`);
+        return getJson(
+          `${prefix}/approvals/${encodeURIComponent(id)}/diff?from=${fromVersion}&to=${to}`,
+        );
       },
-      captureApprovalSnapshot: (id: string) => postJson(`${prefix}/approvals/${encodeURIComponent(id)}/snapshot`, {}),
+      captureApprovalSnapshot: (id: string) =>
+        postJson(`${prefix}/approvals/${encodeURIComponent(id)}/snapshot`, {}),
       saveSpecDocument: (name: string, document: string, content: string) =>
-        putJson(`${prefix}/specs/${encodeURIComponent(name)}/${encodeURIComponent(document)}`, { content }),
+        putJson(`${prefix}/specs/${encodeURIComponent(name)}/${encodeURIComponent(document)}`, {
+          content,
+        }),
       saveArchivedSpecDocument: (name: string, document: string, content: string) =>
-        putJson(`${prefix}/specs/${encodeURIComponent(name)}/${encodeURIComponent(document)}/archived`, { content }),
-      archiveSpec: (name: string) => postJson(`${prefix}/specs/${encodeURIComponent(name)}/archive`, {}),
-      unarchiveSpec: (name: string) => postJson(`${prefix}/specs/${encodeURIComponent(name)}/unarchive`, {}),
-      getSteeringDocument: (name: string) => getJson(`${prefix}/steering/${encodeURIComponent(name)}`),
-      saveSteeringDocument: (name: string, content: string) => putJson(`${prefix}/steering/${encodeURIComponent(name)}`, { content }),
-      addImplementationLog: (specName: string, logData: any) => postJson(`${prefix}/specs/${encodeURIComponent(specName)}/implementation-log`, logData),
+        putJson(
+          `${prefix}/specs/${encodeURIComponent(name)}/${encodeURIComponent(document)}/archived`,
+          { content },
+        ),
+      archiveSpec: (name: string) =>
+        postJson(`${prefix}/specs/${encodeURIComponent(name)}/archive`, {}),
+      unarchiveSpec: (name: string) =>
+        postJson(`${prefix}/specs/${encodeURIComponent(name)}/unarchive`, {}),
+      getSteeringDocument: (name: string) =>
+        getJson(`${prefix}/steering/${encodeURIComponent(name)}`),
+      saveSteeringDocument: (name: string, content: string) =>
+        putJson(`${prefix}/steering/${encodeURIComponent(name)}`, { content }),
+      addImplementationLog: (specName: string, logData: any) =>
+        postJson(`${prefix}/specs/${encodeURIComponent(specName)}/implementation-log`, logData),
       getImplementationLogs: (specName: string, query?: { taskId?: string; search?: string }) => {
         let url = `${prefix}/specs/${encodeURIComponent(specName)}/implementation-log`;
         const params = new URLSearchParams();
@@ -342,16 +434,18 @@ export function ApiProvider({ initial, projectId, children }: ApiProviderProps) 
         if (params.toString()) url += `?${params.toString()}`;
         return getJson(url);
       },
-      getImplementationLogStats: (specName: string, taskId: string) => getJson(`${prefix}/specs/${encodeURIComponent(specName)}/implementation-log/task/${encodeURIComponent(taskId)}/stats`),
-      getChangelog: (version: string) => getJson(`${prefix}/changelog/${encodeURIComponent(version)}`),
+      getImplementationLogStats: (specName: string, taskId: string) =>
+        getJson(
+          `${prefix}/specs/${encodeURIComponent(specName)}/implementation-log/task/${encodeURIComponent(taskId)}/stats`,
+        ),
+      getChangelog: (version: string) =>
+        getJson(`${prefix}/changelog/${encodeURIComponent(version)}`),
     };
   }, [projectId, reloadAll]);
 
   return (
     <ApiActionsContext.Provider value={actionsValue}>
-      <ApiDataContext.Provider value={dataValue}>
-        {children}
-      </ApiDataContext.Provider>
+      <ApiDataContext.Provider value={dataValue}>{children}</ApiDataContext.Provider>
     </ApiActionsContext.Provider>
   );
 }
@@ -377,5 +471,3 @@ export function useApi(): ApiDataContextType & ApiActionsContextType {
   const actions = useApiActions();
   return { ...data, ...actions };
 }
-
-

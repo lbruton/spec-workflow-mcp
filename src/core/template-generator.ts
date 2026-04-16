@@ -49,7 +49,11 @@ async function fileExists(filePath: string): Promise<boolean> {
 async function readDefaultTemplate(projectPath: string, templateName: string): Promise<string> {
   if (PathUtils.isDocVaultConfigured()) {
     // Tier 1: Project-level DocVault override
-    const projectTemplate = join(PathUtils.getWorkflowRoot(projectPath), 'templates', `${templateName}.md`);
+    const projectTemplate = join(
+      PathUtils.getWorkflowRoot(projectPath),
+      'templates',
+      `${templateName}.md`,
+    );
     const projectContent = await safeReadFile(projectTemplate);
     if (projectContent !== null) return projectContent;
 
@@ -281,7 +285,10 @@ function replaceTasksClosingSection(template: string, conventions: ProjectConven
   // Match the ## Standard Closing Tasks section to end of file
   const sectionRegex = /## Standard Closing Tasks\n[\s\S]*$/;
   if (sectionRegex.test(template)) {
-    return template.replace(sectionRegex, replacement.replace(/^## Standard Closing Tasks\n/, '## Standard Closing Tasks\n'));
+    return template.replace(
+      sectionRegex,
+      replacement.replace(/^## Standard Closing Tasks\n/, '## Standard Closing Tasks\n'),
+    );
   }
 
   // If no Standard Closing Tasks section found, append it
@@ -331,7 +338,7 @@ export async function writeUserTemplates(
   const tasksPath = join(userTemplatesDir, 'tasks-template.md');
 
   // Check if either user-template already exists — if so, do not overwrite
-  if (await fileExists(designPath) || await fileExists(tasksPath)) {
+  if ((await fileExists(designPath)) || (await fileExists(tasksPath))) {
     return;
   }
 

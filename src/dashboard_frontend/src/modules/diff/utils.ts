@@ -26,19 +26,19 @@ export function computeBasicDiff(oldContent: string, newContent: string): DiffRe
           type: 'normal',
           oldLineNumber: i + 1,
           newLineNumber: i + 1,
-          content: oldLine
+          content: oldLine,
         });
       } else {
         changes++;
         diffLines.push({
           type: 'delete',
           oldLineNumber: i + 1,
-          content: oldLine
+          content: oldLine,
         });
         diffLines.push({
           type: 'add',
           newLineNumber: i + 1,
-          content: newLine
+          content: newLine,
         });
       }
     } else if (oldLine !== undefined) {
@@ -46,14 +46,14 @@ export function computeBasicDiff(oldContent: string, newContent: string): DiffRe
       diffLines.push({
         type: 'delete',
         oldLineNumber: i + 1,
-        content: oldLine
+        content: oldLine,
       });
     } else if (newLine !== undefined) {
       additions++;
       diffLines.push({
         type: 'add',
         newLineNumber: i + 1,
-        content: newLine
+        content: newLine,
       });
     }
   }
@@ -62,13 +62,15 @@ export function computeBasicDiff(oldContent: string, newContent: string): DiffRe
     additions,
     deletions,
     changes,
-    chunks: [{
-      oldStart: 1,
-      oldLines: oldLines.length,
-      newStart: 1,
-      newLines: newLines.length,
-      lines: diffLines
-    }]
+    chunks: [
+      {
+        oldStart: 1,
+        oldLines: oldLines.length,
+        newStart: 1,
+        newLines: newLines.length,
+        lines: diffLines,
+      },
+    ],
   };
 }
 
@@ -81,7 +83,7 @@ export function getDiffStats(diff: DiffResult) {
     deletions: diff.deletions,
     changes: diff.changes,
     total: diff.additions + diff.deletions + diff.changes,
-    chunks: diff.chunks.length
+    chunks: diff.chunks.length,
   };
 }
 
@@ -109,7 +111,7 @@ export function formatSnapshotTimestamp(timestamp: string): string {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   }
 }
@@ -145,31 +147,31 @@ export function getSnapshotTriggerColor(trigger: DocumentSnapshot['trigger']): {
       return {
         bg: 'bg-blue-50 dark:bg-blue-900/20',
         text: 'text-blue-700 dark:text-blue-300',
-        border: 'border-blue-200 dark:border-blue-800'
+        border: 'border-blue-200 dark:border-blue-800',
       };
     case 'revision_requested':
       return {
         bg: 'bg-orange-50 dark:bg-orange-900/20',
         text: 'text-orange-700 dark:text-orange-300',
-        border: 'border-orange-200 dark:border-orange-800'
+        border: 'border-orange-200 dark:border-orange-800',
       };
     case 'approved':
       return {
         bg: 'bg-green-50 dark:bg-green-900/20',
         text: 'text-green-700 dark:text-green-300',
-        border: 'border-green-200 dark:border-green-800'
+        border: 'border-green-200 dark:border-green-800',
       };
     case 'manual':
       return {
         bg: 'bg-gray-50 dark:bg-gray-900/20',
         text: 'text-gray-700 dark:text-gray-300',
-        border: 'border-gray-200 dark:border-gray-800'
+        border: 'border-gray-200 dark:border-gray-800',
       };
     default:
       return {
         bg: 'bg-gray-50 dark:bg-gray-900/20',
         text: 'text-gray-700 dark:text-gray-300',
-        border: 'border-gray-200 dark:border-gray-800'
+        border: 'border-gray-200 dark:border-gray-800',
       };
   }
 }
@@ -195,9 +197,7 @@ export function hasDiffChanges(diff: DiffResult): boolean {
  * Filter diff lines by type
  */
 export function filterDiffLines(diff: DiffResult, types: DiffLine['type'][]): DiffLine[] {
-  return diff.chunks.flatMap(chunk =>
-    chunk.lines.filter(line => types.includes(line.type))
-  );
+  return diff.chunks.flatMap((chunk) => chunk.lines.filter((line) => types.includes(line.type)));
 }
 
 /**
@@ -221,7 +221,7 @@ export function getContextLines(lines: DiffLine[], contextSize: number = 3): Dif
   // Add context around each change
   const includedIndices = new Set<number>();
 
-  changeIndices.forEach(changeIndex => {
+  changeIndices.forEach((changeIndex) => {
     const start = Math.max(0, changeIndex - contextSize);
     const end = Math.min(lines.length - 1, changeIndex + contextSize);
 
@@ -233,7 +233,7 @@ export function getContextLines(lines: DiffLine[], contextSize: number = 3): Dif
   // Convert to sorted array and build result
   const sortedIndices = Array.from(includedIndices).sort((a, b) => a - b);
 
-  sortedIndices.forEach(index => {
+  sortedIndices.forEach((index) => {
     result.push(lines[index]);
   });
 
@@ -250,8 +250,8 @@ export function mapLineNumbers(diff: DiffResult): {
   const oldToNew = new Map<number, number>();
   const newToOld = new Map<number, number>();
 
-  diff.chunks.forEach(chunk => {
-    chunk.lines.forEach(line => {
+  diff.chunks.forEach((chunk) => {
+    chunk.lines.forEach((line) => {
       if (line.oldLineNumber && line.newLineNumber) {
         oldToNew.set(line.oldLineNumber, line.newLineNumber);
         newToOld.set(line.newLineNumber, line.oldLineNumber);

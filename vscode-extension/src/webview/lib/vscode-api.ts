@@ -46,7 +46,13 @@ export type WebviewMessage =
   | { type: 'save-document'; specName: string; docType: string; content: string }
   | { type: 'approve-request'; id: string; response: string }
   | { type: 'reject-request'; id: string; response: string }
-  | { type: 'request-revision-request'; id: string; response: string; annotations?: string; comments?: any[] }
+  | {
+      type: 'request-revision-request';
+      id: string;
+      response: string;
+      annotations?: string;
+      comments?: any[];
+    }
   | { type: 'get-approval-content'; id: string }
   | { type: 'batch-approve'; ids: string[]; response: string }
   | { type: 'batch-reject'; ids: string[]; response: string }
@@ -307,7 +313,7 @@ class VsCodeApiService {
   private notifyListeners(type: string, message: ExtensionMessage) {
     const listeners = this.messageListeners.get(type);
     if (listeners) {
-      listeners.forEach(callback => callback(message));
+      listeners.forEach((callback) => callback(message));
     }
   }
 

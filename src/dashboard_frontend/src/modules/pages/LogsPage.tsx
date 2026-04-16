@@ -13,7 +13,7 @@ import {
   LinkIcon,
   BeakerIcon,
   ChevronRightIcon,
-  ChevronDownIcon
+  ChevronDownIcon,
 } from '@heroicons/react/24/solid';
 import { formatDate } from '../../lib/dateUtils';
 
@@ -48,7 +48,7 @@ function ArtifactSection({
   icon: IconComponent,
   items,
   type,
-  color
+  color,
 }: {
   title: string;
   icon: React.ComponentType<{ className: string }>;
@@ -67,7 +67,7 @@ function ArtifactSection({
     function: 'bg-green-50 dark:bg-green-900/20',
     class: 'bg-orange-50 dark:bg-orange-900/20',
     integration: 'bg-indigo-50 dark:bg-indigo-900/20',
-    test: 'bg-teal-50 dark:bg-teal-900/20'
+    test: 'bg-teal-50 dark:bg-teal-900/20',
   }[type];
 
   const textColor = {
@@ -76,7 +76,7 @@ function ArtifactSection({
     function: 'text-green-700 dark:text-green-300',
     class: 'text-orange-700 dark:text-orange-300',
     integration: 'text-indigo-700 dark:text-indigo-300',
-    test: 'text-teal-700 dark:text-teal-300'
+    test: 'text-teal-700 dark:text-teal-300',
   }[type];
 
   return (
@@ -105,7 +105,10 @@ function ArtifactSection({
               {type === 'api' && (
                 <div className="space-y-1">
                   <div className="font-mono text-xs">
-                    <span className="font-bold text-blue-600 dark:text-blue-400">{item.method}</span> {item.path}
+                    <span className="font-bold text-blue-600 dark:text-blue-400">
+                      {item.method}
+                    </span>{' '}
+                    {item.path}
                   </div>
                   <div className="text-[var(--text-muted)]">{item.purpose}</div>
                   {item.requestFormat && (
@@ -160,9 +163,13 @@ function ArtifactSection({
                   )}
                   <div className="text-xs">
                     {item.isExported ? (
-                      <span className="text-green-600 dark:text-green-400 font-semibold">{t('logsPage.artifacts.details.exported')}</span>
+                      <span className="text-green-600 dark:text-green-400 font-semibold">
+                        {t('logsPage.artifacts.details.exported')}
+                      </span>
                     ) : (
-                      <span className="text-[var(--text-muted)]">{t('logsPage.artifacts.details.private')}</span>
+                      <span className="text-[var(--text-muted)]">
+                        {t('logsPage.artifacts.details.private')}
+                      </span>
                     )}
                   </div>
                   <div className="text-xs bg-[var(--surface-inset)] px-2 py-1 rounded-lg font-mono w-fit">
@@ -184,9 +191,13 @@ function ArtifactSection({
                   )}
                   <div className="text-xs">
                     {item.isExported ? (
-                      <span className="text-green-600 dark:text-green-400 font-semibold">{t('logsPage.artifacts.details.exported')}</span>
+                      <span className="text-green-600 dark:text-green-400 font-semibold">
+                        {t('logsPage.artifacts.details.exported')}
+                      </span>
                     ) : (
-                      <span className="text-[var(--text-muted)]">{t('logsPage.artifacts.details.private')}</span>
+                      <span className="text-[var(--text-muted)]">
+                        {t('logsPage.artifacts.details.private')}
+                      </span>
                     )}
                   </div>
                   <div className="text-xs bg-[var(--surface-inset)] px-2 py-1 rounded-lg font-mono w-fit">
@@ -216,18 +227,26 @@ function ArtifactSection({
                     {item.name}
                   </div>
                   <div className="flex items-center gap-2 text-xs">
-                    <span className={`px-1.5 py-0.5 rounded font-medium ${
-                      item.status === 'passed' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
-                      item.status === 'failed' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
-                      'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
-                    }`}>
+                    <span
+                      className={`px-1.5 py-0.5 rounded font-medium ${
+                        item.status === 'passed'
+                          ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                          : item.status === 'failed'
+                            ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                            : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+                      }`}
+                    >
                       {item.status}
                     </span>
                     <span className="text-[var(--text-muted)]">{item.type}</span>
                     <span className="text-[var(--text-faint)]">{item.framework}</span>
                   </div>
                   <div className="text-xs text-[var(--text-muted)]">
-                    {t('logsPage.artifacts.details.testResults', { passed: item.passed, failed: item.failed, total: item.total })}
+                    {t('logsPage.artifacts.details.testResults', {
+                      passed: item.passed,
+                      failed: item.failed,
+                      total: item.total,
+                    })}
                   </div>
                   {item.duration && (
                     <div className="text-xs text-[var(--text-faint)]">
@@ -257,7 +276,15 @@ function ArtifactSection({
   );
 }
 
-function SearchableSpecDropdown({ specs, selected, onSelect }: { specs: any[]; selected: string; onSelect: (value: string) => void }) {
+function SearchableSpecDropdown({
+  specs,
+  selected,
+  onSelect,
+}: {
+  specs: any[];
+  selected: string;
+  onSelect: (value: string) => void;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -266,13 +293,14 @@ function SearchableSpecDropdown({ specs, selected, onSelect }: { specs: any[]; s
   const filteredSpecs = useMemo(() => {
     if (!search.trim()) return specs;
     const searchLower = search.toLowerCase();
-    return specs.filter(spec =>
-      spec.displayName.toLowerCase().includes(searchLower) ||
-      spec.name.toLowerCase().includes(searchLower)
+    return specs.filter(
+      (spec) =>
+        spec.displayName.toLowerCase().includes(searchLower) ||
+        spec.name.toLowerCase().includes(searchLower),
     );
   }, [specs, search]);
 
-  const selectedSpec = specs.find(s => s.name === selected);
+  const selectedSpec = specs.find((s) => s.name === selected);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -387,23 +415,41 @@ function LogEntryCard({ entry }: LogEntryProps) {
         <div className="border-t border-[var(--border-default)] p-4 space-y-4">
           {/* Code Statistics */}
           <div>
-            <h4 className="text-sm font-semibold text-[var(--text-secondary)] mb-2">{t('logsPage.stats.title')}</h4>
+            <h4 className="text-sm font-semibold text-[var(--text-secondary)] mb-2">
+              {t('logsPage.stats.title')}
+            </h4>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="bg-[var(--status-success-muted)] rounded-lg p-2">
-                <div className="text-xs text-[var(--text-muted)]">{t('logsPage.stats.linesAdded')}</div>
-                <div className="text-lg font-semibold text-[var(--status-success)] font-mono tabular-nums">+{entry.statistics.linesAdded}</div>
+                <div className="text-xs text-[var(--text-muted)]">
+                  {t('logsPage.stats.linesAdded')}
+                </div>
+                <div className="text-lg font-semibold text-[var(--status-success)] font-mono tabular-nums">
+                  +{entry.statistics.linesAdded}
+                </div>
               </div>
               <div className="bg-[var(--status-error-muted)] rounded-lg p-2">
-                <div className="text-xs text-[var(--text-muted)]">{t('logsPage.stats.linesRemoved')}</div>
-                <div className="text-lg font-semibold text-[var(--status-error)] font-mono tabular-nums">-{entry.statistics.linesRemoved}</div>
+                <div className="text-xs text-[var(--text-muted)]">
+                  {t('logsPage.stats.linesRemoved')}
+                </div>
+                <div className="text-lg font-semibold text-[var(--status-error)] font-mono tabular-nums">
+                  -{entry.statistics.linesRemoved}
+                </div>
               </div>
               <div className="bg-[var(--status-info-muted)] rounded-lg p-2">
-                <div className="text-xs text-[var(--text-muted)]">{t('logsPage.stats.filesChanged')}</div>
-                <div className="text-lg font-semibold text-[var(--status-info)] font-mono tabular-nums">{entry.statistics.filesChanged}</div>
+                <div className="text-xs text-[var(--text-muted)]">
+                  {t('logsPage.stats.filesChanged')}
+                </div>
+                <div className="text-lg font-semibold text-[var(--status-info)] font-mono tabular-nums">
+                  {entry.statistics.filesChanged}
+                </div>
               </div>
               <div className="bg-[var(--accent-secondary-muted)] rounded-lg p-2">
-                <div className="text-xs text-[var(--text-muted)]">{t('logsPage.stats.netChange')}</div>
-                <div className="text-lg font-semibold text-[var(--accent-secondary)] font-mono tabular-nums">{entry.statistics.linesAdded - entry.statistics.linesRemoved}</div>
+                <div className="text-xs text-[var(--text-muted)]">
+                  {t('logsPage.stats.netChange')}
+                </div>
+                <div className="text-lg font-semibold text-[var(--accent-secondary)] font-mono tabular-nums">
+                  {entry.statistics.linesAdded - entry.statistics.linesRemoved}
+                </div>
               </div>
             </div>
           </div>
@@ -411,7 +457,9 @@ function LogEntryCard({ entry }: LogEntryProps) {
           {/* Files Modified */}
           {entry.filesModified.length > 0 && (
             <div>
-              <h4 className="text-sm font-semibold text-[var(--text-secondary)] mb-2">{t('logsPage.files.modified')} ({entry.filesModified.length})</h4>
+              <h4 className="text-sm font-semibold text-[var(--text-secondary)] mb-2">
+                {t('logsPage.files.modified')} ({entry.filesModified.length})
+              </h4>
               <div className="space-y-1">
                 {entry.filesModified.map((file, idx) => (
                   <div key={idx} className="text-sm text-[var(--text-muted)] flex items-center">
@@ -428,7 +476,9 @@ function LogEntryCard({ entry }: LogEntryProps) {
           {/* Files Created */}
           {entry.filesCreated.length > 0 && (
             <div>
-              <h4 className="text-sm font-semibold text-[var(--text-secondary)] mb-2">{t('logsPage.files.created')} ({entry.filesCreated.length})</h4>
+              <h4 className="text-sm font-semibold text-[var(--text-secondary)] mb-2">
+                {t('logsPage.files.created')} ({entry.filesCreated.length})
+              </h4>
               <div className="space-y-1">
                 {entry.filesCreated.map((file, idx) => (
                   <div key={idx} className="text-sm text-[var(--text-muted)] flex items-center">
@@ -527,7 +577,9 @@ export function LogsPage() {
   const [search, setSearch] = useState<string>(searchParams.get('search') || '');
   const [taskFilter, setTaskFilter] = useState<string>(searchParams.get('task') || '');
   const [sortBy, setSortBy] = useState<string>(searchParams.get('sort') || 'timestamp');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>((searchParams.get('order') as 'asc' | 'desc') || 'desc');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>(
+    (searchParams.get('order') as 'asc' | 'desc') || 'desc',
+  );
   const [logs, setLogs] = useState<ImplementationLogEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
@@ -535,9 +587,9 @@ export function LogsPage() {
   const specs = api.specs;
 
   // Create storage key for per-spec sort preferences
-  const storageKey = useMemo(() =>
-    selectedSpec ? `spec-workflow:logs-preferences:${selectedSpec}` : null,
-    [selectedSpec]
+  const storageKey = useMemo(
+    () => (selectedSpec ? `spec-workflow:logs-preferences:${selectedSpec}` : null),
+    [selectedSpec],
   );
 
   // Load sort preferences from localStorage when spec changes
@@ -578,17 +630,21 @@ export function LogsPage() {
     setLoading(true);
     setError('');
 
-    api.getImplementationLogs(selectedSpec, {
-      taskId: taskFilter || undefined,
-      search: search || undefined
-    }).then(result => {
-      setLogs(result.entries || []);
-    }).catch(err => {
-      setError('Failed to load implementation logs');
-      console.error(err);
-    }).finally(() => {
-      setLoading(false);
-    });
+    api
+      .getImplementationLogs(selectedSpec, {
+        taskId: taskFilter || undefined,
+        search: search || undefined,
+      })
+      .then((result) => {
+        setLogs(result.entries || []);
+      })
+      .catch((err) => {
+        setError('Failed to load implementation logs');
+        console.error(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSpec, search, taskFilter]);
 
@@ -634,7 +690,7 @@ export function LogsPage() {
     let result = logs;
 
     if (taskFilter) {
-      result = result.filter(log => log.taskId === taskFilter);
+      result = result.filter((log) => log.taskId === taskFilter);
     }
 
     // Apply sorting
@@ -647,7 +703,7 @@ export function LogsPage() {
           break;
         case 'taskId': {
           // Parse task IDs for proper numeric sorting (handles "1", "2.1", "10")
-          const parseTaskId = (id: string) => id.split('.').map(p => parseInt(p, 10) || 0);
+          const parseTaskId = (id: string) => id.split('.').map((p) => parseInt(p, 10) || 0);
           const aIdParts = parseTaskId(a.taskId);
           const bIdParts = parseTaskId(b.taskId);
           for (let i = 0; i < Math.max(aIdParts.length, bIdParts.length); i++) {
@@ -676,7 +732,7 @@ export function LogsPage() {
   }, [logs, taskFilter, sortBy, sortOrder]);
 
   const uniqueTasks = useMemo(() => {
-    return Array.from(new Set(logs.map(log => log.taskId))).sort();
+    return Array.from(new Set(logs.map((log) => log.taskId))).sort();
   }, [logs]);
 
   const stats = useMemo(() => {
@@ -684,10 +740,9 @@ export function LogsPage() {
       totalEntries: logs.length,
       totalLinesAdded: logs.reduce((sum, log) => sum + (log.statistics?.linesAdded || 0), 0),
       totalLinesRemoved: logs.reduce((sum, log) => sum + (log.statistics?.linesRemoved || 0), 0),
-      totalFiles: new Set(logs.flatMap(log => [
-        ...(log.filesModified || []),
-        ...(log.filesCreated || [])
-      ])).size
+      totalFiles: new Set(
+        logs.flatMap((log) => [...(log.filesModified || []), ...(log.filesCreated || [])]),
+      ).size,
     };
   }, [logs]);
 
@@ -698,9 +753,14 @@ export function LogsPage() {
       description: t('logsPage.sort.timestampDesc'),
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
         </svg>
-      )
+      ),
     },
     {
       id: 'taskId',
@@ -708,9 +768,14 @@ export function LogsPage() {
       description: t('logsPage.sort.taskIdDesc'),
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
+          />
         </svg>
-      )
+      ),
     },
     {
       id: 'linesAdded',
@@ -720,7 +785,7 @@ export function LogsPage() {
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
         </svg>
-      )
+      ),
     },
     {
       id: 'filesChanged',
@@ -728,17 +793,24 @@ export function LogsPage() {
       description: t('logsPage.sort.filesChangedDesc'),
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
         </svg>
-      )
-    }
+      ),
+    },
   ];
 
   return (
     <div className="w-full h-full flex flex-col bg-[var(--surface-page)]">
       {/* Header */}
       <div className="bg-[var(--surface-panel)] border-b border-[var(--border-default)] p-4 md:p-6">
-        <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-6">{t('logsPage.header.title')}</h1>
+        <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-6">
+          {t('logsPage.header.title')}
+        </h1>
 
         {/* Controls */}
         <div className="space-y-4">
@@ -781,8 +853,8 @@ export function LogsPage() {
                 >
                   {t('logsPage.filter.all')} ({logs.length})
                 </button>
-                {uniqueTasks.map(taskId => {
-                  const count = logs.filter(log => log.taskId === taskId).length;
+                {uniqueTasks.map((taskId) => {
+                  const count = logs.filter((log) => log.taskId === taskId).length;
                   return (
                     <button
                       key={taskId}
@@ -808,20 +880,36 @@ export function LogsPage() {
         <div className="bg-[var(--surface-panel)] border-b border-[var(--border-default)] px-4 md:px-6 py-4">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="bg-[var(--status-info-muted)] rounded-lg p-3">
-              <div className="text-xs text-[var(--text-muted)] font-medium">{t('logsPage.stats.totalEntries')}</div>
-              <div className="text-2xl font-bold text-[var(--status-info)] font-mono tabular-nums">{stats.totalEntries}</div>
+              <div className="text-xs text-[var(--text-muted)] font-medium">
+                {t('logsPage.stats.totalEntries')}
+              </div>
+              <div className="text-2xl font-bold text-[var(--status-info)] font-mono tabular-nums">
+                {stats.totalEntries}
+              </div>
             </div>
             <div className="bg-[var(--status-success-muted)] rounded-lg p-3">
-              <div className="text-xs text-[var(--text-muted)] font-medium">{t('logsPage.stats.linesAdded')}</div>
-              <div className="text-2xl font-bold text-[var(--status-success)] font-mono tabular-nums">+{stats.totalLinesAdded}</div>
+              <div className="text-xs text-[var(--text-muted)] font-medium">
+                {t('logsPage.stats.linesAdded')}
+              </div>
+              <div className="text-2xl font-bold text-[var(--status-success)] font-mono tabular-nums">
+                +{stats.totalLinesAdded}
+              </div>
             </div>
             <div className="bg-[var(--status-error-muted)] rounded-lg p-3">
-              <div className="text-xs text-[var(--text-muted)] font-medium">{t('logsPage.stats.linesRemoved')}</div>
-              <div className="text-2xl font-bold text-[var(--status-error)] font-mono tabular-nums">-{stats.totalLinesRemoved}</div>
+              <div className="text-xs text-[var(--text-muted)] font-medium">
+                {t('logsPage.stats.linesRemoved')}
+              </div>
+              <div className="text-2xl font-bold text-[var(--status-error)] font-mono tabular-nums">
+                -{stats.totalLinesRemoved}
+              </div>
             </div>
             <div className="bg-[var(--accent-secondary-muted)] rounded-lg p-3">
-              <div className="text-xs text-[var(--text-muted)] font-medium">{t('logsPage.stats.filesChanged')}</div>
-              <div className="text-2xl font-bold text-[var(--accent-secondary)] font-mono tabular-nums">{stats.totalFiles}</div>
+              <div className="text-xs text-[var(--text-muted)] font-medium">
+                {t('logsPage.stats.filesChanged')}
+              </div>
+              <div className="text-2xl font-bold text-[var(--accent-secondary)] font-mono tabular-nums">
+                {stats.totalFiles}
+              </div>
             </div>
           </div>
         </div>
@@ -847,9 +935,7 @@ export function LogsPage() {
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <p className="text-[var(--text-muted)]">
-                {search || taskFilter
-                  ? t('logsPage.empty.noResults')
-                  : t('logsPage.empty.noLogs')}
+                {search || taskFilter ? t('logsPage.empty.noResults') : t('logsPage.empty.noLogs')}
               </p>
             </div>
           </div>

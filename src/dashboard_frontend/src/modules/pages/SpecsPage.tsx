@@ -7,8 +7,23 @@ import { useTranslation } from 'react-i18next';
 import { useNotifications } from '../notifications/NotificationProvider';
 import { formatDate } from '../../lib/dateUtils';
 
-function SpecModal({ spec, isOpen, onClose, isArchived }: { spec: any; isOpen: boolean; onClose: () => void; isArchived?: boolean }) {
-  const { getAllSpecDocuments, getAllArchivedSpecDocuments, saveSpecDocument, saveArchivedSpecDocument } = useApi();
+function SpecModal({
+  spec,
+  isOpen,
+  onClose,
+  isArchived,
+}: {
+  spec: any;
+  isOpen: boolean;
+  onClose: () => void;
+  isArchived?: boolean;
+}) {
+  const {
+    getAllSpecDocuments,
+    getAllArchivedSpecDocuments,
+    saveSpecDocument,
+    saveArchivedSpecDocument,
+  } = useApi();
   const { t } = useTranslation();
   const [selectedDoc, setSelectedDoc] = useState<string>('requirements');
   const [content, setContent] = useState<string>('');
@@ -17,12 +32,14 @@ function SpecModal({ spec, isOpen, onClose, isArchived }: { spec: any; isOpen: b
   const [saving, setSaving] = useState<boolean>(false);
   const [saved, setSaved] = useState<boolean>(false);
   const [saveError, setSaveError] = useState<string>('');
-  const [allDocuments, setAllDocuments] = useState<Record<string, { content: string; lastModified: string } | null>>({});
+  const [allDocuments, setAllDocuments] = useState<
+    Record<string, { content: string; lastModified: string } | null>
+  >({});
   const [confirmCloseModalOpen, setConfirmCloseModalOpen] = useState<boolean>(false);
 
   const phases = spec?.phases || {};
-  const availableDocs = ['discovery', 'requirements', 'design', 'tasks'].filter(doc =>
-    phases[doc] && phases[doc].exists
+  const availableDocs = ['discovery', 'requirements', 'design', 'tasks'].filter(
+    (doc) => phases[doc] && phases[doc].exists,
   );
 
   // Set default document to first available
@@ -42,9 +59,9 @@ function SpecModal({ spec, isOpen, onClose, isArchived }: { spec: any; isOpen: b
 
     let active = true;
     setLoading(true);
-    
+
     const getDocuments = isArchived ? getAllArchivedSpecDocuments : getAllSpecDocuments;
-    
+
     getDocuments(spec.name)
       .then((docs) => {
         if (active) {
@@ -62,7 +79,9 @@ function SpecModal({ spec, isOpen, onClose, isArchived }: { spec: any; isOpen: b
         }
       });
 
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [isOpen, spec, isArchived, getAllSpecDocuments, getAllArchivedSpecDocuments]);
 
   // Update content when selected document changes (but not during saves)
@@ -87,23 +106,23 @@ function SpecModal({ spec, isOpen, onClose, isArchived }: { spec: any; isOpen: b
   // Save function for editor
   const handleSave = useCallback(async () => {
     if (!spec || !selectedDoc || !editContent) return;
-    
+
     setSaving(true);
     setSaveError('');
-    
+
     try {
       const saveFunction = isArchived ? saveArchivedSpecDocument : saveSpecDocument;
       const result = await saveFunction(spec.name, selectedDoc, editContent);
       if (result.ok) {
         setSaved(true);
         // Update the documents state to reflect the save
-        setAllDocuments(prev => ({
+        setAllDocuments((prev) => ({
           ...prev,
           [selectedDoc]: {
             ...prev[selectedDoc]!,
             content: editContent,
-            lastModified: new Date().toISOString()
-          }
+            lastModified: new Date().toISOString(),
+          },
         }));
         // Update content state to match what was saved
         setContent(editContent);
@@ -158,8 +177,19 @@ function SpecModal({ spec, isOpen, onClose, isArchived }: { spec: any; isOpen: b
       return (
         <div className="flex items-center justify-center py-12">
           <svg className="animate-spin h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
           </svg>
           <span className="ml-2">{t('common.loadingContent')}</span>
         </div>
@@ -192,7 +222,9 @@ function SpecModal({ spec, isOpen, onClose, isArchived }: { spec: any; isOpen: b
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4 md:p-6">
-      <div className={`bg-[var(--surface-panel)] rounded-lg shadow-xl w-full max-w-7xl flex flex-col h-[95vh] max-h-[95vh] overflow-hidden`}>
+      <div
+        className={`bg-[var(--surface-panel)] rounded-lg shadow-xl w-full max-w-7xl flex flex-col h-[95vh] max-h-[95vh] overflow-hidden`}
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 md:p-8 border-b border-[var(--border-default)]">
           <div className="flex-1 min-w-0">
@@ -202,15 +234,26 @@ function SpecModal({ spec, isOpen, onClose, isArchived }: { spec: any; isOpen: b
               </h2>
               {isArchived && (
                 <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400 rounded-full">
-                  <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8l4 4 4-4m0 6l-4 4-4-4" />
+                  <svg
+                    className="w-3 h-3 mr-1"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M5 8l4 4 4-4m0 6l-4 4-4-4"
+                    />
                   </svg>
                   {t('specsPage.modal.archivedBadge')}
                 </span>
               )}
             </div>
             <p className="text-sm text-[var(--text-secondary)] mt-1 hidden sm:block">
-              {isArchived ? `${t('specsPage.modal.archivedNotice')} • ` : ''}{t('common.lastModified', { date: formatDate(spec.lastModified, undefined, t) })}
+              {isArchived ? `${t('specsPage.modal.archivedNotice')} • ` : ''}
+              {t('common.lastModified', { date: formatDate(spec.lastModified, undefined, t) })}
             </p>
           </div>
           <button
@@ -219,21 +262,28 @@ function SpecModal({ spec, isOpen, onClose, isArchived }: { spec: any; isOpen: b
             aria-label={t('specsPage.modal.closeAria')}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
 
         {/* Document Switcher */}
         <div className="flex items-center gap-2 p-4 border-b border-[var(--border-default)] bg-[var(--surface-sunken)]">
-          <label className="text-sm font-medium text-[var(--text-secondary)] whitespace-nowrap">{t('specsPage.modal.docLabel')}</label>
+          <label className="text-sm font-medium text-[var(--text-secondary)] whitespace-nowrap">
+            {t('specsPage.modal.docLabel')}
+          </label>
           <select
             value={selectedDoc}
             onChange={(e) => setSelectedDoc(e.target.value)}
             className="flex-1 sm:flex-none px-3 py-1.5 text-sm rounded-lg border border-[var(--border-default)] bg-[var(--surface-panel)] text-[var(--text-primary)] focus:ring-2 focus:ring-[var(--interactive-primary)] focus:border-[var(--interactive-primary)]"
             aria-label={t('specsPage.modal.docSelectAria')}
           >
-            {availableDocs.map(doc => (
+            {availableDocs.map((doc) => (
               <option key={doc} value={doc}>
                 {t(`specsPage.documents.${doc}`)}
               </option>
@@ -245,8 +295,18 @@ function SpecModal({ spec, isOpen, onClose, isArchived }: { spec: any; isOpen: b
         <div className="flex-1 overflow-hidden">
           {availableDocs.length === 0 ? (
             <div className="text-center py-12 text-[var(--text-muted)]">
-              <svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              <svg
+                className="mx-auto h-12 w-12 text-gray-400 mb-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
               </svg>
               <p className="text-lg font-medium">{t('specsPage.empty.title')}</p>
               <p className="text-sm">{t('specsPage.empty.description')}</p>
@@ -272,7 +332,17 @@ function SpecModal({ spec, isOpen, onClose, isArchived }: { spec: any; isOpen: b
   );
 }
 
-function SpecCard({ spec, onOpenModal, isArchived, onArchiveToggle }: { spec: any; onOpenModal: (spec: any) => void; isArchived: boolean; onArchiveToggle: (spec: any) => void }) {
+function SpecCard({
+  spec,
+  onOpenModal,
+  isArchived,
+  onArchiveToggle,
+}: {
+  spec: any;
+  onOpenModal: (spec: any) => void;
+  isArchived: boolean;
+  onArchiveToggle: (spec: any) => void;
+}) {
   const { t } = useTranslation();
   const progress = spec.taskProgress?.total
     ? Math.round((spec.taskProgress.completed / spec.taskProgress.total) * 100)
@@ -293,28 +363,42 @@ function SpecCard({ spec, onOpenModal, isArchived, onArchiveToggle }: { spec: an
       <div className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <h3 className={`text-lg font-medium mb-2 ${
-              spec.status === 'completed'
-                ? 'text-[var(--text-secondary)]'
-                : 'text-[var(--text-primary)]'
-            }`}>
+            <h3
+              className={`text-lg font-medium mb-2 ${
+                spec.status === 'completed'
+                  ? 'text-[var(--text-secondary)]'
+                  : 'text-[var(--text-primary)]'
+              }`}
+            >
               {spec.displayName}
             </h3>
-            <div className={`flex items-center space-x-4 text-sm ${
-              spec.status === 'completed'
-                ? 'text-[var(--text-muted)]'
-                : 'text-[var(--text-secondary)]'
-            }`}>
+            <div
+              className={`flex items-center space-x-4 text-sm ${
+                spec.status === 'completed'
+                  ? 'text-[var(--text-muted)]'
+                  : 'text-[var(--text-secondary)]'
+              }`}
+            >
               <span className="flex items-center gap-1">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
                 {formatDate(spec.lastModified)}
               </span>
               {spec.taskProgress && (
                 <span className="flex items-center gap-1">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                    />
                   </svg>
                   {spec.taskProgress.completed} / {spec.taskProgress.total} tasks
                 </span>
@@ -329,21 +413,50 @@ function SpecCard({ spec, onOpenModal, isArchived, onArchiveToggle }: { spec: an
                   ? 'text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-900/20'
                   : 'text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:text-orange-400 dark:hover:text-orange-300 dark:hover:bg-orange-900/20'
               }`}
-              title={isArchived ? t('specsPage.unarchive.confirmButton') : t('specsPage.archive.confirmButton')}
+              title={
+                isArchived
+                  ? t('specsPage.unarchive.confirmButton')
+                  : t('specsPage.archive.confirmButton')
+              }
             >
               {isArchived ? (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"
+                  />
                 </svg>
               ) : (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8l4 4 4-4m0 6l-4 4-4-4" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 8l4 4 4-4m0 6l-4 4-4-4"
+                  />
                 </svg>
               )}
             </button>
-            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            <svg
+              className="w-5 h-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+              />
             </svg>
           </div>
         </div>
@@ -354,7 +467,7 @@ function SpecCard({ spec, onOpenModal, isArchived, onArchiveToggle }: { spec: an
             <div className="w-full bg-[var(--surface-sunken)] rounded-full h-2">
               <div
                 className="bg-[var(--interactive-primary)] h-2 rounded-full transition-all duration-300"
-                style={{"width": `${progress}%`} as React.CSSProperties}
+                style={{ width: `${progress}%` } as React.CSSProperties}
               />
             </div>
             <p className="text-xs text-[var(--text-muted)] mt-1">
@@ -367,7 +480,17 @@ function SpecCard({ spec, onOpenModal, isArchived, onArchiveToggle }: { spec: an
   );
 }
 
-function SpecTableRow({ spec, onOpenModal, isArchived, onArchiveToggle }: { spec: any; onOpenModal: (spec: any) => void; isArchived: boolean; onArchiveToggle: (spec: any) => void }) {
+function SpecTableRow({
+  spec,
+  onOpenModal,
+  isArchived,
+  onArchiveToggle,
+}: {
+  spec: any;
+  onOpenModal: (spec: any) => void;
+  isArchived: boolean;
+  onArchiveToggle: (spec: any) => void;
+}) {
   const { t } = useTranslation();
   const progress = spec.taskProgress?.total
     ? Math.round((spec.taskProgress.completed / spec.taskProgress.total) * 100)
@@ -387,21 +510,31 @@ function SpecTableRow({ spec, onOpenModal, isArchived, onArchiveToggle }: { spec
       <td className="px-4 py-4">
         <div className="flex items-center">
           <div className="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
-            <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            <svg
+              className="w-5 h-5 text-blue-600 dark:text-blue-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
             </svg>
           </div>
           <div className="ml-4">
-            <div className={`text-sm font-medium ${
-              spec.status === 'completed'
-                ? 'text-[var(--text-secondary)]'
-                : 'text-[var(--text-primary)]'
-            }`}>
+            <div
+              className={`text-sm font-medium ${
+                spec.status === 'completed'
+                  ? 'text-[var(--text-secondary)]'
+                  : 'text-[var(--text-primary)]'
+              }`}
+            >
               {spec.displayName}
             </div>
-            <div className="text-sm text-[var(--text-secondary)]">
-              {spec.name}
-            </div>
+            <div className="text-sm text-[var(--text-secondary)]">{spec.name}</div>
           </div>
         </div>
       </td>
@@ -411,7 +544,7 @@ function SpecTableRow({ spec, onOpenModal, isArchived, onArchiveToggle }: { spec
             <div className="w-20 bg-[var(--surface-sunken)] rounded-full h-2">
               <div
                 className="bg-[var(--interactive-primary)] h-2 rounded-full transition-all duration-300"
-                style={{"width": `${progress}%`} as React.CSSProperties}
+                style={{ width: `${progress}%` } as React.CSSProperties}
               />
             </div>
             <span className="text-sm text-[var(--text-secondary)] whitespace-nowrap">
@@ -419,9 +552,7 @@ function SpecTableRow({ spec, onOpenModal, isArchived, onArchiveToggle }: { spec
             </span>
           </div>
         ) : (
-          <span className="text-sm text-[var(--text-muted)]">
-            {t('specsPage.noTasks')}
-          </span>
+          <span className="text-sm text-[var(--text-muted)]">{t('specsPage.noTasks')}</span>
         )}
       </td>
       <td className="px-4 py-4 text-sm text-[var(--text-secondary)]">
@@ -436,21 +567,50 @@ function SpecTableRow({ spec, onOpenModal, isArchived, onArchiveToggle }: { spec
                 ? 'text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-900/20'
                 : 'text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:text-orange-400 dark:hover:text-orange-300 dark:hover:bg-orange-900/20'
             }`}
-            title={isArchived ? t('specsPage.unarchive.confirmButton') : t('specsPage.archive.confirmButton')}
+            title={
+              isArchived
+                ? t('specsPage.unarchive.confirmButton')
+                : t('specsPage.archive.confirmButton')
+            }
           >
             {isArchived ? (
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"
+                />
               </svg>
             ) : (
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8l4 4 4-4m0 6l-4 4-4-4" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M5 8l4 4 4-4m0 6l-4 4-4-4"
+                />
               </svg>
             )}
           </button>
-          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          <svg
+            className="w-5 h-5 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+            />
           </svg>
         </div>
       </td>
@@ -469,7 +629,9 @@ function Content() {
   const [archiveTarget, setArchiveTarget] = useState<any | null>(null);
   const { t } = useTranslation();
 
-  useEffect(() => { reloadAll(); }, [reloadAll]);
+  useEffect(() => {
+    reloadAll();
+  }, [reloadAll]);
 
   const handleArchiveToggle = useCallback((spec: any) => {
     setArchiveTarget(spec);
@@ -480,8 +642,12 @@ function Content() {
     const isArchived = activeTab === 'archived';
     const displayName = archiveTarget.displayName;
     const action = isArchived ? unarchiveSpec : archiveSpec;
-    const successKey = isArchived ? 'specsPage.unarchive.successMessage' : 'specsPage.archive.successMessage';
-    const errorKey = isArchived ? 'specsPage.unarchive.errorMessage' : 'specsPage.archive.errorMessage';
+    const successKey = isArchived
+      ? 'specsPage.unarchive.successMessage'
+      : 'specsPage.archive.successMessage';
+    const errorKey = isArchived
+      ? 'specsPage.unarchive.errorMessage'
+      : 'specsPage.archive.errorMessage';
 
     const result = await action(archiveTarget.name);
     if (result.ok) {
@@ -495,36 +661,42 @@ function Content() {
   const currentSpecs = activeTab === 'active' ? specs : archivedSpecs;
 
   // Sorting function
-  const sortSpecs = useCallback((specs: any[]) => {
-    if (sortBy === 'default') {
-      return specs;
-    }
-
-    return [...specs].sort((a, b) => {
-      let compareValue = 0;
-
-      switch (sortBy) {
-        case 'name':
-          compareValue = a.displayName.localeCompare(b.displayName);
-          break;
-        case 'progress':
-          const aProgress = a.taskProgress?.total ? (a.taskProgress.completed / a.taskProgress.total) : 0;
-          const bProgress = b.taskProgress?.total ? (b.taskProgress.completed / b.taskProgress.total) : 0;
-          compareValue = aProgress - bProgress;
-          break;
-        case 'lastModified':
-          const aDate = new Date(a.lastModified || 0).getTime();
-          const bDate = new Date(b.lastModified || 0).getTime();
-          compareValue = aDate - bDate;
-          break;
-        default:
-          return 0;
+  const sortSpecs = useCallback(
+    (specs: any[]) => {
+      if (sortBy === 'default') {
+        return specs;
       }
 
-      return sortOrder === 'asc' ? compareValue : -compareValue;
-    });
-  }, [sortBy, sortOrder]);
+      return [...specs].sort((a, b) => {
+        let compareValue = 0;
 
+        switch (sortBy) {
+          case 'name':
+            compareValue = a.displayName.localeCompare(b.displayName);
+            break;
+          case 'progress':
+            const aProgress = a.taskProgress?.total
+              ? a.taskProgress.completed / a.taskProgress.total
+              : 0;
+            const bProgress = b.taskProgress?.total
+              ? b.taskProgress.completed / b.taskProgress.total
+              : 0;
+            compareValue = aProgress - bProgress;
+            break;
+          case 'lastModified':
+            const aDate = new Date(a.lastModified || 0).getTime();
+            const bDate = new Date(b.lastModified || 0).getTime();
+            compareValue = aDate - bDate;
+            break;
+          default:
+            return 0;
+        }
+
+        return sortOrder === 'asc' ? compareValue : -compareValue;
+      });
+    },
+    [sortBy, sortOrder],
+  );
 
   // Combined filtering and sorting
   const filtered = useMemo(() => {
@@ -533,9 +705,10 @@ function Content() {
     // Apply text search filter
     const q = query.trim().toLowerCase();
     if (q) {
-      result = result.filter((s) => s.displayName.toLowerCase().includes(q) || s.name.toLowerCase().includes(q));
+      result = result.filter(
+        (s) => s.displayName.toLowerCase().includes(q) || s.name.toLowerCase().includes(q),
+      );
     }
-
 
     // Apply sorting
     result = sortSpecs(result);
@@ -543,12 +716,10 @@ function Content() {
     return result;
   }, [currentSpecs, query, sortSpecs]);
 
-
   const handleSortChange = (sort: string, order: string) => {
     setSortBy(sort);
     setSortOrder(order as 'asc' | 'desc');
   };
-
 
   // Sort options for specs
   const specSortOptions = [
@@ -558,9 +729,14 @@ function Content() {
       description: t('specsPage.sort.defaultOrderDesc'),
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
         </svg>
-      )
+      ),
     },
     {
       id: 'name',
@@ -568,9 +744,14 @@ function Content() {
       description: t('specsPage.sort.nameDesc'),
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
+          />
         </svg>
-      )
+      ),
     },
     {
       id: 'progress',
@@ -578,9 +759,14 @@ function Content() {
       description: t('specsPage.sort.progressDesc'),
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M13 10V3L4 14h7v7l9-11h-7z"
+          />
         </svg>
-      )
+      ),
     },
     {
       id: 'lastModified',
@@ -588,25 +774,31 @@ function Content() {
       description: t('specsPage.sort.lastModifiedDesc'),
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
         </svg>
-      )
-    }
+      ),
+    },
   ];
 
   return (
     <div className="grid gap-4">
       <div className="bg-[var(--surface-panel)] border border-[var(--border-default)] rounded-lg p-4">
         <div className="mb-4">
-          <h2 className="text-lg sm:text-xl font-semibold text-[var(--text-primary)]">{t('specsPage.header.title')}</h2>
+          <h2 className="text-lg sm:text-xl font-semibold text-[var(--text-primary)]">
+            {t('specsPage.header.title')}
+          </h2>
           <p className="text-sm text-[var(--text-secondary)] mt-1">
             {activeTab === 'active'
               ? t('specsPage.header.subtitle.active')
-              : t('specsPage.header.subtitle.archived')
-            }
+              : t('specsPage.header.subtitle.archived')}
           </p>
         </div>
-        
+
         {/* Tab Navigation and Controls */}
         <div>
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 py-2">
@@ -635,7 +827,11 @@ function Content() {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <input
                 className="min-w-[140px] md:min-w-[160px] px-3 py-2 md:px-4 md:py-2 rounded-lg bg-[var(--surface-panel)] border border-[var(--border-default)] text-[var(--text-primary)] focus:ring-2 focus:ring-[var(--interactive-primary)] focus:border-[var(--interactive-primary)] transition-colors"
-                placeholder={activeTab === 'active' ? t('specsPage.search.placeholder.active') : t('specsPage.search.placeholder.archived')}
+                placeholder={
+                  activeTab === 'active'
+                    ? t('specsPage.search.placeholder.active')
+                    : t('specsPage.search.placeholder.archived')
+                }
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
               />
@@ -699,8 +895,18 @@ function Content() {
         {/* Empty State */}
         {filtered.length === 0 && (
           <div className="text-center py-12 mt-8 border-t border-[var(--border-default)]">
-            <svg className="mx-auto h-12 w-12 text-[var(--text-muted)] mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            <svg
+              className="mx-auto h-12 w-12 text-[var(--text-muted)] mb-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
             </svg>
             <p className="text-lg font-medium text-[var(--text-primary)] mb-2">
               {query ? t('specsPage.empty.noResults') : t('specsPage.empty.title')}
@@ -723,17 +929,20 @@ function Content() {
         isOpen={!!archiveTarget}
         onClose={() => setArchiveTarget(null)}
         onConfirm={confirmArchiveToggle}
-        title={activeTab === 'archived'
-          ? t('specsPage.unarchive.confirmTitle')
-          : t('specsPage.archive.confirmTitle')
+        title={
+          activeTab === 'archived'
+            ? t('specsPage.unarchive.confirmTitle')
+            : t('specsPage.archive.confirmTitle')
         }
-        message={activeTab === 'archived'
-          ? t('specsPage.unarchive.confirmMessage', { name: archiveTarget?.displayName })
-          : t('specsPage.archive.confirmMessage', { name: archiveTarget?.displayName })
+        message={
+          activeTab === 'archived'
+            ? t('specsPage.unarchive.confirmMessage', { name: archiveTarget?.displayName })
+            : t('specsPage.archive.confirmMessage', { name: archiveTarget?.displayName })
         }
-        confirmText={activeTab === 'archived'
-          ? t('specsPage.unarchive.confirmButton')
-          : t('specsPage.archive.confirmButton')
+        confirmText={
+          activeTab === 'archived'
+            ? t('specsPage.unarchive.confirmButton')
+            : t('specsPage.archive.confirmButton')
         }
         variant={activeTab === 'archived' ? 'default' : 'danger'}
       />
@@ -744,4 +953,3 @@ function Content() {
 export function SpecsPage() {
   return <Content />;
 }
-

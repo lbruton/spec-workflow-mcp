@@ -27,6 +27,7 @@ I documenti steering forniscono una guida di alto livello che mantiene il tuo pr
 Questo genera tre documenti chiave:
 
 #### 1. Steering Prodotto (`steering/product.md`)
+
 - Visione e missione prodotto
 - Utenti target e persona
 - Funzionalità principali e priorità
@@ -34,6 +35,7 @@ Questo genera tre documenti chiave:
 - Non-obiettivi e vincoli
 
 #### 2. Steering Tecnico (`steering/tech.md`)
+
 - Decisioni architetturali
 - Scelte stack tecnologico
 - Requisiti prestazioni
@@ -41,6 +43,7 @@ Questo genera tre documenti chiave:
 - Approccio scalabilità
 
 #### 3. Steering Struttura (`steering/structure.md`)
+
 - Organizzazione progetto
 - Convenzioni file e cartelle
 - Standard naming
@@ -69,6 +72,7 @@ Requisiti → Design → Task
 **Scopo**: Definire COSA deve essere costruito
 
 **Contenuti**:
+
 - Panoramica funzionalità
 - User stories
 - Requisiti funzionali
@@ -77,6 +81,7 @@ Requisiti → Design → Task
 - Vincoli e assunzioni
 
 **Esempio Creazione**:
+
 ```
 "Crea requisiti per un sistema notifiche utente che supporti:
 - Notifiche email
@@ -91,6 +96,7 @@ Requisiti → Design → Task
 **Scopo**: Definire COME verrà costruito
 
 **Contenuti**:
+
 - Architettura tecnica
 - Design componenti
 - Modelli dati
@@ -105,6 +111,7 @@ Requisiti → Design → Task
 **Scopo**: Definire i PASSI per costruirlo
 
 **Contenuti**:
+
 - Suddivisione task gerarchica
 - Dipendenze
 - Stime sforzo
@@ -112,6 +119,7 @@ Requisiti → Design → Task
 - Requisiti testing
 
 **Esempio Struttura**:
+
 ```
 1.0 Setup Database
   1.1 Crea tabelle notifiche
@@ -145,18 +153,21 @@ Requisiti → Design → Task
 ### Prendere Decisioni di Approvazione
 
 #### Quando Approvare
+
 - Requisiti sono completi e chiari
 - Design risolve problema dichiarato
 - Task sono logici e completi
 - Nessuna preoccupazione o gap importante
 
 #### Quando Richiedere Modifiche
+
 - Mancano dettagli importanti
 - Specifiche poco chiare
 - Approccio migliore disponibile
 - Serve allineamento con standard
 
 #### Quando Rifiutare
+
 - Incomprensione fondamentale
 - Approccio completamente sbagliato
 - Richiede ripensamento completo
@@ -164,6 +175,7 @@ Requisiti → Design → Task
 ### Fornire Feedback Efficace
 
 Buon feedback:
+
 ```
 "Il flusso autenticazione dovrebbe usare token JWT invece di sessioni.
 Aggiungi rate limiting agli endpoint API.
@@ -171,6 +183,7 @@ Includi gestione errori per fallimenti rete."
 ```
 
 Feedback scarso:
+
 ```
 "Questo non sembra giusto. Sistemalo."
 ```
@@ -180,7 +193,9 @@ Feedback scarso:
 ### Strategia Esecuzione Task
 
 #### Implementazione Sequenziale
+
 Migliore per task dipendenti:
+
 ```
 "Implementa task 1.1 dalla specifica user-auth"
 "Ora implementa task 1.2"
@@ -188,13 +203,17 @@ Migliore per task dipendenti:
 ```
 
 #### Implementazione Parallela
+
 Per task indipendenti:
+
 ```
 "Implementa tutti i task UI dalla specifica dashboard mentre lavoro sul backend"
 ```
 
 #### Implementazione Basata su Sezioni
+
 Per raggruppamenti logici:
+
 ```
 "Implementa tutti i task database dalla specifica payment"
 ```
@@ -202,6 +221,7 @@ Per raggruppamenti logici:
 ### Tracciamento Progressi
 
 Monitora implementazione tramite:
+
 - Vista task dashboard
 - Barre progressi
 - Indicatori stato
@@ -210,6 +230,7 @@ Monitora implementazione tramite:
 ### Gestione Blocchi
 
 Quando bloccato:
+
 1. Documenta il blocco
 2. Crea sub-task per risoluzione
 3. Passa a task paralleli se possibile
@@ -222,11 +243,13 @@ Quando bloccato:
 Dopo implementazione:
 
 1. **Unit Testing**
+
    ```
    "Crea unit test per il servizio notifiche"
    ```
 
 2. **Integration Testing**
+
    ```
    "Crea integration test per gli endpoint API"
    ```
@@ -239,6 +262,7 @@ Dopo implementazione:
 ### Aggiornamenti Documentazione
 
 Mantieni documentazione aggiornata:
+
 ```
 "Aggiorna documentazione API per i nuovi endpoint"
 "Aggiungi esempi uso al README"
@@ -275,11 +299,13 @@ your-project/
 ### Convenzioni Naming
 
 **Nomi Specifiche**:
+
 - Usa kebab-case: `user-authentication`
 - Sii descrittivo: `payment-processing` non `payments`
 - Evita versioni: `user-profile` non `user-profile-v2`
 
 **Nomi Documenti**:
+
 - Sempre: `requirements.md`, `design.md`, `tasks.md`
 - Consistente tra tutte le specifiche
 
@@ -296,6 +322,7 @@ Per funzionalità in evoluzione:
 5. Costruisci su lavoro esistente
 
 Esempio:
+
 ```
 "Crea specifica enhancement per user-auth che aggiunga:
 - Login social (Google, Facebook)
@@ -306,16 +333,19 @@ Esempio:
 ### Workflow Refactoring
 
 1. **Documenta Stato Corrente**
+
    ```
    "Crea specifica che documenti sistema autenticazione corrente"
    ```
 
 2. **Progetta Miglioramenti**
+
    ```
    "Progetta refactoring per migliorare prestazioni autenticazione"
    ```
 
 3. **Pianifica Migrazione**
+
    ```
    "Crea task migrazione per il refactoring"
    ```
@@ -328,21 +358,25 @@ Esempio:
 ### Workflow Risoluzione Bug
 
 1. **Bug Report**
+
    ```
    "Crea bug report per problema timeout login"
    ```
 
 2. **Investigazione**
+
    ```
    "Investiga causa radice del bug #45"
    ```
 
 3. **Design Soluzione**
+
    ```
    "Progetta correzione per problema timeout"
    ```
 
 4. **Implementazione**
+
    ```
    "Implementa correzione bug"
    ```
@@ -357,17 +391,20 @@ Esempio:
 ### 1. Mantieni Granularità Specifica
 
 **Buono**: Una specifica per funzionalità
+
 - `user-authentication`
 - `payment-processing`
 - `notification-system`
 
 **Scarso**: Specifiche troppo ampie
+
 - `backend-system`
 - `all-features`
 
 ### 2. Creazione Documento Sequenziale
 
 Segui sempre l'ordine:
+
 1. Requisiti (cosa)
 2. Design (come)
 3. Task (passi)
@@ -384,6 +421,7 @@ Non saltare mai avanti.
 ### 4. Mantieni Specifiche Aggiornate
 
 Quando requisiti cambiano:
+
 ```
 "Aggiorna requisiti per user-auth per includere supporto SSO"
 ```
@@ -391,6 +429,7 @@ Quando requisiti cambiano:
 ### 5. Usa Terminologia Consistente
 
 Mantieni consistenza in:
+
 - Nomi specifiche
 - Nomi componenti
 - Terminologia API
@@ -399,6 +438,7 @@ Mantieni consistenza in:
 ### 6. Archivia Specifiche Completate
 
 Mantieni pulito workspace:
+
 ```
 "Archivia specifica user-auth completata"
 ```
@@ -434,6 +474,7 @@ Mantieni pulito workspace:
 ### Specifiche Diventano Troppo Grandi
 
 **Soluzione**: Dividi in specifiche più piccole
+
 ```
 "Dividi specifica e-commerce in:
 - product-catalog
@@ -445,6 +486,7 @@ Mantieni pulito workspace:
 ### Requisiti Poco Chiari
 
 **Soluzione**: Richiedi chiarimenti
+
 ```
 "I requisiti necessitano più dettagli su:
 - Ruoli e permessi utente
@@ -455,6 +497,7 @@ Mantieni pulito workspace:
 ### Design Non Corrisponde a Requisiti
 
 **Soluzione**: Richiedi revisione
+
 ```
 "Il design non affronta requisito multi-tenancy.
 Rivedi per includere isolamento tenant."

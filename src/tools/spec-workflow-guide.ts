@@ -11,19 +11,22 @@ Call this tool FIRST when users request spec creation, feature development, or m
   inputSchema: {
     type: 'object',
     properties: {},
-    additionalProperties: false
+    additionalProperties: false,
   },
   annotations: {
     title: 'Spec Workflow Guide',
     readOnlyHint: true,
-  }
+  },
 };
 
-export async function specWorkflowGuideHandler(args: any, context: ToolContext): Promise<ToolResponse> {
+export async function specWorkflowGuideHandler(
+  args: any,
+  context: ToolContext,
+): Promise<ToolResponse> {
   // Dashboard URL is populated from registry in server.ts
-  const dashboardMessage = context.dashboardUrl ?
-    `Monitor progress on dashboard: ${context.dashboardUrl}` :
-    'Please start the dashboard with: specflow --dashboard';
+  const dashboardMessage = context.dashboardUrl
+    ? `Monitor progress on dashboard: ${context.dashboardUrl}`
+    : 'Please start the dashboard with: specflow --dashboard';
 
   return {
     success: true,
@@ -31,15 +34,15 @@ export async function specWorkflowGuideHandler(args: any, context: ToolContext):
     data: {
       guide: getSpecWorkflowGuide(PathUtils.getWorkflowRoot(context.projectPath)),
       dashboardUrl: context.dashboardUrl,
-      dashboardAvailable: !!context.dashboardUrl
+      dashboardAvailable: !!context.dashboardUrl,
     },
     nextSteps: [
       'Follow sequence: Requirements → Design → Tasks → Implementation',
       'Read the current phase template from the resolved workflow root',
       'Request approval after each document',
       'Use MCP tools only',
-      dashboardMessage
-    ]
+      dashboardMessage,
+    ],
   };
 }
 

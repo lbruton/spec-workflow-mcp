@@ -5,7 +5,7 @@ export const SPEC_WORKFLOW_SHARED_ROOT_ENV = 'SPEC_WORKFLOW_SHARED_ROOT';
 const GIT_EXEC_OPTIONS: ExecSyncOptionsWithStringEncoding = {
   encoding: 'utf-8',
   stdio: ['pipe', 'pipe', 'pipe'],
-  timeout: 5000
+  timeout: 5000,
 };
 
 /**
@@ -19,7 +19,7 @@ export function resolveGitWorkspaceRoot(projectPath: string): string {
   try {
     const workspaceRoot = execSync('git rev-parse --show-toplevel', {
       cwd: projectPath,
-      ...GIT_EXEC_OPTIONS
+      ...GIT_EXEC_OPTIONS,
     }).trim();
 
     return workspaceRoot || projectPath;
@@ -46,7 +46,7 @@ export function resolveGitRoot(projectPath: string): string {
     // Get the git common directory (main repo's .git folder)
     const gitCommonDir = execSync('git rev-parse --git-common-dir', {
       cwd: projectPath,
-      ...GIT_EXEC_OPTIONS
+      ...GIT_EXEC_OPTIONS,
     }).trim();
 
     // In main repo, returns ".git" - no change needed
@@ -83,7 +83,7 @@ export function isGitWorktree(projectPath: string): boolean {
   try {
     const gitCommonDir = execSync('git rev-parse --git-common-dir', {
       cwd: projectPath,
-      ...GIT_EXEC_OPTIONS
+      ...GIT_EXEC_OPTIONS,
     }).trim();
     return gitCommonDir !== '.git';
   } catch {

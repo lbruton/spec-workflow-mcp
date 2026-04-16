@@ -11,7 +11,7 @@ export class FileWatcher {
   private _disposables: vscode.Disposable[] = [];
   private _onFileChanged = new vscode.EventEmitter<FileChangeEvent>();
   private _watcher: vscode.FileSystemWatcher | null = null;
-  
+
   public readonly onFileChanged = this._onFileChanged.event;
 
   constructor() {
@@ -19,7 +19,7 @@ export class FileWatcher {
     this._disposables.push(
       vscode.workspace.onDidChangeWorkspaceFolders(() => {
         this.updateWatcher();
-      })
+      }),
     );
 
     this.updateWatcher();
@@ -38,24 +38,21 @@ export class FileWatcher {
     }
 
     const workspaceRoot = workspaceFolders[0].uri.fsPath;
-    const specWorkflowPattern = new vscode.RelativePattern(
-      workspaceRoot,
-      '.specflow/**/*'
-    );
+    const specWorkflowPattern = new vscode.RelativePattern(workspaceRoot, '.specflow/**/*');
 
     // Create new watcher for .specflow directory
     this._watcher = vscode.workspace.createFileSystemWatcher(specWorkflowPattern);
 
     // Listen for file events
-    this._watcher.onDidCreate(uri => {
+    this._watcher.onDidCreate((uri) => {
       this.emitFileChange('created', uri);
     });
 
-    this._watcher.onDidChange(uri => {
+    this._watcher.onDidChange((uri) => {
       this.emitFileChange('changed', uri);
     });
 
-    this._watcher.onDidDelete(uri => {
+    this._watcher.onDidDelete((uri) => {
       this.emitFileChange('deleted', uri);
     });
 
@@ -76,7 +73,7 @@ export class FileWatcher {
       this._onFileChanged.fire({
         type,
         uri,
-        relativePath
+        relativePath,
       });
     }
   }
@@ -84,25 +81,21 @@ export class FileWatcher {
   private isRelevantFile(relativePath: string): boolean {
     // Only watch for changes in spec files, steering files, and approvals
     const normalizedPath = relativePath.replace(/\\/g, '/');
-    
+
     return (
       // Spec documents
-      normalizedPath.includes('.specflow/specs/') && 
-      (normalizedPath.endsWith('.md') || normalizedPath.endsWith('.json')) ||
-      
+      (normalizedPath.includes('.specflow/specs/') &&
+        (normalizedPath.endsWith('.md') || normalizedPath.endsWith('.json'))) ||
       // Steering documents
-      normalizedPath.includes('.specflow/steering/') && 
-      normalizedPath.endsWith('.md') ||
-      
+      (normalizedPath.includes('.specflow/steering/') && normalizedPath.endsWith('.md')) ||
       // Approval files
-      normalizedPath.includes('.specflow/approvals/') && 
-      normalizedPath.endsWith('.json')
+      (normalizedPath.includes('.specflow/approvals/') && normalizedPath.endsWith('.json'))
     );
   }
 
   public getWatchedFileType(relativePath: string): 'spec' | 'steering' | 'approval' | null {
     const normalizedPath = relativePath.replace(/\\/g, '/');
-    
+
     if (normalizedPath.includes('.specflow/specs/')) {
       return 'spec';
     } else if (normalizedPath.includes('.specflow/steering/')) {
@@ -110,7 +103,7 @@ export class FileWatcher {
     } else if (normalizedPath.includes('.specflow/approvals/')) {
       return 'approval';
     }
-    
+
     return null;
   }
 
@@ -121,7 +114,7 @@ export class FileWatcher {
   }
 
   dispose() {
-    this._disposables.forEach(d => d.dispose());
+    this._disposables.forEach((d) => d.dispose());
     this._onFileChanged.dispose();
   }
 }

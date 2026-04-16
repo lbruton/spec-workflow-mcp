@@ -12,11 +12,11 @@ npx -y @pimzino/spec-workflow-mcp@latest [project-path] [opzioni]
 
 ### Opzioni Disponibili
 
-| Opzione | Descrizione | Esempio |
-|--------|-------------|---------|
-| `--help` | Mostra informazioni complete sull'uso | `npx -y @pimzino/spec-workflow-mcp@latest --help` |
-| `--dashboard` | Esegui solo modalità dashboard (porta predefinita: 5000) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard` |
-| `--port <numero>` | Specifica porta dashboard personalizzata (1024-65535) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080` |
+| Opzione           | Descrizione                                              | Esempio                                                            |
+| ----------------- | -------------------------------------------------------- | ------------------------------------------------------------------ |
+| `--help`          | Mostra informazioni complete sull'uso                    | `npx -y @pimzino/spec-workflow-mcp@latest --help`                  |
+| `--dashboard`     | Esegui solo modalità dashboard (porta predefinita: 5000) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard`             |
+| `--port <numero>` | Specifica porta dashboard personalizzata (1024-65535)    | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080` |
 
 ### Note Importanti
 
@@ -29,12 +29,14 @@ npx -y @pimzino/spec-workflow-mcp@latest [project-path] [opzioni]
 ### Flusso di Lavoro Tipico
 
 1. **Avvia la Dashboard** (fallo prima, solo una volta):
+
 ```bash
 # Usa la porta predefinita 5000
 npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 ```
 
 2. **Avvia i Server MCP** (uno per progetto, in terminali separati):
+
 ```bash
 # Progetto 1
 npx -y @pimzino/spec-workflow-mcp@latest ~/projects/app1
@@ -63,11 +65,12 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 Sostituisci la directory di stato globale predefinita (`~/.specflow-mcp`). Questo è utile per ambienti sandboxed dove `$HOME` è in sola lettura.
 
-| Variabile | Predefinito | Descrizione |
-|----------|---------|-------------|
+| Variabile            | Predefinito       | Descrizione                         |
+| -------------------- | ----------------- | ----------------------------------- |
 | `SPEC_WORKFLOW_HOME` | `~/.specflow-mcp` | Directory per file di stato globale |
 
 **File memorizzati in questa directory:**
+
 - `activeProjects.json` - Registro dei progetti
 - `activeSession.json` - Info sessione dashboard
 - `settings.json` - Impostazioni globali
@@ -98,6 +101,7 @@ SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@la
 ## Gestione Sessione Dashboard
 
 La dashboard memorizza le informazioni di sessione in `~/.specflow-mcp/activeSession.json` (o `$SPEC_WORKFLOW_HOME/activeSession.json` se impostato). Questo file:
+
 - Applica l'istanza singola della dashboard
 - Consente ai server MCP di scoprire la dashboard in esecuzione
 - Si pulisce automaticamente quando la dashboard si ferma
@@ -177,12 +181,12 @@ debounceMs = 300
 
 #### Impostazioni Base
 
-| Opzione | Tipo | Predefinito | Descrizione |
-|--------|------|---------|-------------|
-| `projectDir` | string | Directory corrente | Percorso directory progetto |
-| `port` | number | Effimera | Porta dashboard (1024-65535) |
-| `dashboardOnly` | boolean | false | Esegui dashboard senza server MCP |
-| `lang` | string | "en" | Lingua interfaccia |
+| Opzione         | Tipo    | Predefinito        | Descrizione                       |
+| --------------- | ------- | ------------------ | --------------------------------- |
+| `projectDir`    | string  | Directory corrente | Percorso directory progetto       |
+| `port`          | number  | Effimera           | Porta dashboard (1024-65535)      |
+| `dashboardOnly` | boolean | false              | Esegui dashboard senza server MCP |
+| `lang`          | string  | "en"               | Lingua interfaccia                |
 
 > **Nota**: L'opzione `autoStartDashboard` è stata rimossa nella v2.0.0. La dashboard ora usa una modalità multi-progetto unificata accessibile tramite il flag `--dashboard`.
 
@@ -203,11 +207,13 @@ debounceMs = 300
 ### Creare una Configurazione Personalizzata
 
 1. Copia la configurazione di esempio:
+
 ```bash
 cp .specflow/config.example.toml .specflow/config.toml
 ```
 
 2. Modifica la configurazione:
+
 ```toml
 # Configurazione del mio progetto
 projectDir = "/Users/myname/projects/myapp"
@@ -216,6 +222,7 @@ lang = "it"
 ```
 
 3. Usa la configurazione:
+
 ```bash
 # Usa automaticamente .specflow/config.toml
 npx -y @pimzino/spec-workflow-mcp@latest
@@ -262,6 +269,7 @@ verboseLogging = true
 ```
 
 Uso:
+
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest --config dev-config.toml
 ```
@@ -280,6 +288,7 @@ verboseLogging = false
 ```
 
 Uso:
+
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ```
@@ -293,6 +302,7 @@ Le porte devono essere comprese tra 1024 e 65535.
 ### Porte Effimere
 
 Quando non viene specificata alcuna porta, il sistema seleziona automaticamente una porta effimera disponibile. Questo è consigliato per:
+
 - Ambienti di sviluppo
 - Progetti multipli simultanei
 - Evitare conflitti di porta
@@ -300,6 +310,7 @@ Quando non viene specificata alcuna porta, il sistema seleziona automaticamente 
 ### Porte Fisse
 
 Usa porte fisse quando hai bisogno di:
+
 - URL coerenti per i segnalibri
 - Integrazione con altri strumenti
 - Collaborazione di team con configurazioni condivise
@@ -367,11 +378,13 @@ L'estensione VSCode ha le proprie impostazioni:
 ### Configurazione Non Caricata
 
 1. **Verifica posizione file:**
+
    ```bash
    ls -la .specflow/config.toml
    ```
 
 2. **Valida sintassi TOML:**
+
    ```bash
    # Installa strumento CLI toml
    npm install -g @iarna/toml
@@ -388,12 +401,12 @@ L'estensione VSCode ha le proprie impostazioni:
 
 ### Problemi Comuni
 
-| Problema | Soluzione |
-|-------|----------|
-| Porta già in uso | Usa porta diversa o ometti per effimera |
-| File config non trovato | Verifica percorso e usa percorso assoluto se necessario |
-| Sintassi TOML non valida | Valida con linter TOML |
-| Impostazioni non applicate | Verifica precedenza configurazione |
+| Problema                   | Soluzione                                               |
+| -------------------------- | ------------------------------------------------------- |
+| Porta già in uso           | Usa porta diversa o ometti per effimera                 |
+| File config non trovato    | Verifica percorso e usa percorso assoluto se necessario |
+| Sintassi TOML non valida   | Valida con linter TOML                                  |
+| Impostazioni non applicate | Verifica precedenza configurazione                      |
 
 ## Best Practice
 

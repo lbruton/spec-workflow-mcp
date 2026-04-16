@@ -10,10 +10,10 @@ export class SpecParser {
   async getAllSpecs(): Promise<SpecData[]> {
     const specs: SpecData[] = [];
     const specsPath = PathUtils.getSpecPath(this.projectPath, '');
-    
+
     try {
       const entries = await readdir(specsPath, { withFileTypes: true });
-      
+
       for (const entry of entries) {
         if (entry.isDirectory()) {
           const spec = await this.getSpec(entry.name);
@@ -26,19 +26,19 @@ export class SpecParser {
       // Directory doesn't exist yet
       return [];
     }
-    
+
     return specs;
   }
 
   async getSpec(name: string): Promise<SpecData | null> {
     const specPath = PathUtils.getSpecPath(this.projectPath, name);
-    
+
     try {
       const stats = await stat(specPath);
       if (!stats.isDirectory()) {
         return null;
       }
-      
+
       // Read all phase files
       const discovery = await this.getPhaseStatus(specPath, 'discovery.md');
       const requirements = await this.getPhaseStatus(specPath, 'requirements.md');
@@ -68,35 +68,34 @@ export class SpecParser {
           tasks,
           readinessReport,
           implementation: {
-            exists: taskProgress ? taskProgress.completed > 0 : false
-          }
+            exists: taskProgress ? taskProgress.completed > 0 : false,
+          },
         },
-        taskProgress
+        taskProgress,
       };
     } catch (error) {
       return null;
     }
   }
 
-
   async getProjectSteeringStatus(): Promise<SteeringStatus> {
     const steeringPath = PathUtils.getSteeringPath(this.projectPath);
-    
+
     try {
       const stats = await stat(steeringPath);
-      
+
       const productExists = await this.fileExists(join(steeringPath, 'product.md'));
       const techExists = await this.fileExists(join(steeringPath, 'tech.md'));
       const structureExists = await this.fileExists(join(steeringPath, 'structure.md'));
-      
+
       return {
         exists: stats.isDirectory(),
         documents: {
           product: productExists,
           tech: techExists,
-          structure: structureExists
+          structure: structureExists,
         },
-        lastModified: stats.mtime.toISOString()
+        lastModified: stats.mtime.toISOString(),
       };
     } catch (error) {
       return {
@@ -104,8 +103,8 @@ export class SpecParser {
         documents: {
           product: false,
           tech: false,
-          structure: false
-        }
+          structure: false,
+        },
       };
     }
   }
@@ -122,11 +121,11 @@ export class SpecParser {
         exists: true,
         approved,
         lastModified: stats.mtime.toISOString(),
-        content
+        content,
       };
     } catch (error) {
       return {
-        exists: false
+        exists: false,
       };
     }
   }
@@ -139,7 +138,7 @@ export class SpecParser {
         specName,
         '.snapshots',
         filename,
-        'metadata.json'
+        'metadata.json',
       );
       const metaContent = await readFile(metaPath, 'utf-8');
       const meta = JSON.parse(metaContent);

@@ -12,10 +12,10 @@ npx -y @pimzino/spec-workflow-mcp@latest [project-path] [options]
 
 ### 사용 가능한 옵션
 
-| 옵션 | 설명 | 예제 |
-|--------|-------------|---------|
-| `--help` | 포괄적인 사용 정보 표시 | `npx -y @pimzino/spec-workflow-mcp@latest --help` |
-| `--dashboard` | 대시보드 전용 모드 실행 (기본 포트: 5000) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard` |
+| 옵션              | 설명                                        | 예제                                                               |
+| ----------------- | ------------------------------------------- | ------------------------------------------------------------------ |
+| `--help`          | 포괄적인 사용 정보 표시                     | `npx -y @pimzino/spec-workflow-mcp@latest --help`                  |
+| `--dashboard`     | 대시보드 전용 모드 실행 (기본 포트: 5000)   | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard`             |
 | `--port <number>` | 사용자 지정 대시보드 포트 지정 (1024-65535) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080` |
 
 ### 중요 참고사항
@@ -29,12 +29,14 @@ npx -y @pimzino/spec-workflow-mcp@latest [project-path] [options]
 ### 일반적인 워크플로우
 
 1. **대시보드 시작** (먼저 한 번만 수행):
+
 ```bash
 # 기본 포트 5000 사용
 npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 ```
 
 2. **MCP 서버 시작** (프로젝트당 하나, 별도 터미널에서):
+
 ```bash
 # 프로젝트 1
 npx -y @pimzino/spec-workflow-mcp@latest ~/projects/app1
@@ -63,11 +65,12 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 기본 전역 상태 디렉터리(`~/.specflow-mcp`)를 재정의합니다. `$HOME`이 읽기 전용인 샌드박스 환경에 유용합니다.
 
-| 변수 | 기본값 | 설명 |
-|----------|---------|-------------|
+| 변수                 | 기본값            | 설명                           |
+| -------------------- | ----------------- | ------------------------------ |
 | `SPEC_WORKFLOW_HOME` | `~/.specflow-mcp` | 전역 상태 파일을 위한 디렉터리 |
 
 **이 디렉터리에 저장되는 파일:**
+
 - `activeProjects.json` - 프로젝트 레지스트리
 - `activeSession.json` - 대시보드 세션 정보
 - `settings.json` - 전역 설정
@@ -98,6 +101,7 @@ SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@la
 ## 대시보드 세션 관리
 
 대시보드는 세션 정보를 `~/.specflow-mcp/activeSession.json`(또는 설정된 경우 `$SPEC_WORKFLOW_HOME/activeSession.json`)에 저장합니다. 이 파일은:
+
 - 단일 대시보드 인스턴스 강제 적용
 - MCP 서버가 실행 중인 대시보드를 찾을 수 있도록 허용
 - 대시보드가 중지되면 자동으로 정리
@@ -177,12 +181,12 @@ debounceMs = 300
 
 #### 기본 설정
 
-| 옵션 | 유형 | 기본값 | 설명 |
-|--------|------|---------|-------------|
-| `projectDir` | string | 현재 디렉터리 | 프로젝트 디렉터리 경로 |
-| `port` | number | 임시 | 대시보드 포트 (1024-65535) |
-| `dashboardOnly` | boolean | false | MCP 서버 없이 대시보드 실행 |
-| `lang` | string | "en" | 인터페이스 언어 |
+| 옵션            | 유형    | 기본값        | 설명                        |
+| --------------- | ------- | ------------- | --------------------------- |
+| `projectDir`    | string  | 현재 디렉터리 | 프로젝트 디렉터리 경로      |
+| `port`          | number  | 임시          | 대시보드 포트 (1024-65535)  |
+| `dashboardOnly` | boolean | false         | MCP 서버 없이 대시보드 실행 |
+| `lang`          | string  | "en"          | 인터페이스 언어             |
 
 > **참고**: `autoStartDashboard` 옵션은 v2.0.0에서 제거되었습니다. 대시보드는 이제 `--dashboard` 플래그를 통해 액세스할 수 있는 통합 다중 프로젝트 모드를 사용합니다.
 
@@ -203,11 +207,13 @@ debounceMs = 300
 ### 사용자 지정 구성 생성
 
 1. 예제 구성 복사:
+
 ```bash
 cp .specflow/config.example.toml .specflow/config.toml
 ```
 
 2. 구성 편집:
+
 ```toml
 # 내 프로젝트 구성
 projectDir = "/Users/myname/projects/myapp"
@@ -216,6 +222,7 @@ lang = "en"
 ```
 
 3. 구성 사용:
+
 ```bash
 # .specflow/config.toml 자동 사용
 npx -y @pimzino/spec-workflow-mcp@latest
@@ -262,6 +269,7 @@ verboseLogging = true
 ```
 
 사용법:
+
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest --config dev-config.toml
 ```
@@ -280,6 +288,7 @@ verboseLogging = false
 ```
 
 사용법:
+
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ```
@@ -293,6 +302,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ### 임시 포트
 
 포트가 지정되지 않은 경우 시스템이 자동으로 사용 가능한 임시 포트를 선택합니다. 다음에 권장됩니다:
+
 - 개발 환경
 - 여러 동시 프로젝트
 - 포트 충돌 방지
@@ -300,6 +310,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ### 고정 포트
 
 다음이 필요할 때 고정 포트 사용:
+
 - 북마크를 위한 일관된 URL
 - 다른 도구와의 통합
 - 공유 구성을 통한 팀 협업
@@ -367,11 +378,13 @@ VSCode 확장 프로그램에는 자체 설정이 있습니다:
 ### 구성이 로드되지 않음
 
 1. **파일 위치 확인:**
+
    ```bash
    ls -la .specflow/config.toml
    ```
 
 2. **TOML 구문 검증:**
+
    ```bash
    # TOML CLI 도구 설치
    npm install -g @iarna/toml
@@ -388,12 +401,12 @@ VSCode 확장 프로그램에는 자체 설정이 있습니다:
 
 ### 일반적인 문제
 
-| 문제 | 해결책 |
-|-------|----------|
-| 포트가 이미 사용 중 | 다른 포트 사용 또는 임시 포트 사용을 위해 생략 |
-| 구성 파일을 찾을 수 없음 | 경로 확인 및 필요한 경우 절대 경로 사용 |
-| 잘못된 TOML 구문 | TOML 린터로 검증 |
-| 설정이 적용되지 않음 | 구성 우선순위 확인 |
+| 문제                     | 해결책                                         |
+| ------------------------ | ---------------------------------------------- |
+| 포트가 이미 사용 중      | 다른 포트 사용 또는 임시 포트 사용을 위해 생략 |
+| 구성 파일을 찾을 수 없음 | 경로 확인 및 필요한 경우 절대 경로 사용        |
+| 잘못된 TOML 구문         | TOML 린터로 검증                               |
+| 설정이 적용되지 않음     | 구성 우선순위 확인                             |
 
 ## 모범 사례
 

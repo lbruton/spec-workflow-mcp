@@ -41,7 +41,10 @@ export class ApprovalEditorService {
     this.setupEventListeners();
   }
 
-  static getInstance(specWorkflowService: SpecWorkflowService, extensionUri: vscode.Uri): ApprovalEditorService {
+  static getInstance(
+    specWorkflowService: SpecWorkflowService,
+    extensionUri: vscode.Uri,
+  ): ApprovalEditorService {
     if (!ApprovalEditorService.instance) {
       ApprovalEditorService.instance = new ApprovalEditorService(specWorkflowService, extensionUri);
     }
@@ -50,61 +53,77 @@ export class ApprovalEditorService {
 
   private initializeDecorationTypes() {
     // Decoration for pending approval sections
-    this.decorationTypes.set('pending', vscode.window.createTextEditorDecorationType({
-      backgroundColor: APPROVAL_STATUS_COLORS.pending.bg,
-      border: `1px solid ${APPROVAL_STATUS_COLORS.pending.border}`,
-      borderRadius: DECORATION_BORDER_RADIUS,
-      isWholeLine: false
-    }));
+    this.decorationTypes.set(
+      'pending',
+      vscode.window.createTextEditorDecorationType({
+        backgroundColor: APPROVAL_STATUS_COLORS.pending.bg,
+        border: `1px solid ${APPROVAL_STATUS_COLORS.pending.border}`,
+        borderRadius: DECORATION_BORDER_RADIUS,
+        isWholeLine: false,
+      }),
+    );
 
     // Decoration for approved sections
-    this.decorationTypes.set('approved', vscode.window.createTextEditorDecorationType({
-      backgroundColor: APPROVAL_STATUS_COLORS.approved.bg,
-      border: `1px solid ${APPROVAL_STATUS_COLORS.approved.border}`,
-      borderRadius: DECORATION_BORDER_RADIUS,
-      isWholeLine: false
-    }));
+    this.decorationTypes.set(
+      'approved',
+      vscode.window.createTextEditorDecorationType({
+        backgroundColor: APPROVAL_STATUS_COLORS.approved.bg,
+        border: `1px solid ${APPROVAL_STATUS_COLORS.approved.border}`,
+        borderRadius: DECORATION_BORDER_RADIUS,
+        isWholeLine: false,
+      }),
+    );
 
     // Decoration for rejected sections
-    this.decorationTypes.set('rejected', vscode.window.createTextEditorDecorationType({
-      backgroundColor: APPROVAL_STATUS_COLORS.rejected.bg,
-      border: `1px solid ${APPROVAL_STATUS_COLORS.rejected.border}`,
-      borderRadius: DECORATION_BORDER_RADIUS,
-      isWholeLine: false
-    }));
+    this.decorationTypes.set(
+      'rejected',
+      vscode.window.createTextEditorDecorationType({
+        backgroundColor: APPROVAL_STATUS_COLORS.rejected.bg,
+        border: `1px solid ${APPROVAL_STATUS_COLORS.rejected.border}`,
+        borderRadius: DECORATION_BORDER_RADIUS,
+        isWholeLine: false,
+      }),
+    );
 
     // Decoration for sections needing revision
-    this.decorationTypes.set('needs-revision', vscode.window.createTextEditorDecorationType({
-      backgroundColor: APPROVAL_STATUS_COLORS['needs-revision'].bg,
-      border: `1px solid ${APPROVAL_STATUS_COLORS['needs-revision'].border}`,
-      borderRadius: DECORATION_BORDER_RADIUS,
-      isWholeLine: false
-    }));
+    this.decorationTypes.set(
+      'needs-revision',
+      vscode.window.createTextEditorDecorationType({
+        backgroundColor: APPROVAL_STATUS_COLORS['needs-revision'].bg,
+        border: `1px solid ${APPROVAL_STATUS_COLORS['needs-revision'].border}`,
+        borderRadius: DECORATION_BORDER_RADIUS,
+        isWholeLine: false,
+      }),
+    );
 
     // Decoration for commented sections
-    this.decorationTypes.set('commented', vscode.window.createTextEditorDecorationType({
-      backgroundColor: APPROVAL_STATUS_COLORS.commented.bg,
-      border: `1px solid ${APPROVAL_STATUS_COLORS.commented.border}`,
-      borderRadius: DECORATION_BORDER_RADIUS,
-      isWholeLine: false
-    }));
+    this.decorationTypes.set(
+      'commented',
+      vscode.window.createTextEditorDecorationType({
+        backgroundColor: APPROVAL_STATUS_COLORS.commented.bg,
+        border: `1px solid ${APPROVAL_STATUS_COLORS.commented.border}`,
+        borderRadius: DECORATION_BORDER_RADIUS,
+        isWholeLine: false,
+      }),
+    );
   }
 
-
-  private getOrCreateCommentDecorationType(comment: ApprovalComment): vscode.TextEditorDecorationType {
+  private getOrCreateCommentDecorationType(
+    comment: ApprovalComment,
+  ): vscode.TextEditorDecorationType {
     const decorationKey = `comment-${comment.id}`;
-    
+
     if (this.commentDecorationTypes.has(decorationKey)) {
       return this.commentDecorationTypes.get(decorationKey)!;
     }
 
     const color = comment.highlightColor || generateRandomColor();
-    
+
     const decorationType = vscode.window.createTextEditorDecorationType({
       backgroundColor: color.bg,
       border: `1px solid ${color.border}`,
       borderRadius: DECORATION_BORDER_RADIUS,
-      isWholeLine: false
+      isWholeLine: false,
     });
 
     this.commentDecorationTypes.set(decorationKey, decorationType);
@@ -128,7 +147,10 @@ export class ApprovalEditorService {
     });
   }
 
-  async handleAddCommentToActiveSelection(args?: { range: vscode.Range; selectedText: string }): Promise<void> {
+  async handleAddCommentToActiveSelection(args?: {
+    range: vscode.Range;
+    selectedText: string;
+  }): Promise<void> {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
       vscode.window.showErrorMessage(localize('error.noActiveEditor', 'No active editor found'));
@@ -138,7 +160,7 @@ export class ApprovalEditorService {
     // Get range and selected text from args or current selection
     let range: vscode.Range;
     let selectedText: string;
-    
+
     if (args) {
       range = args.range;
       selectedText = args.selectedText;
@@ -146,7 +168,12 @@ export class ApprovalEditorService {
       // Fallback to current selection if no args provided
       const selection = editor.selection;
       if (selection.isEmpty) {
-        vscode.window.showWarningMessage(localize('error.noTextSelection', 'No text selection found. Please select text and try again.'));
+        vscode.window.showWarningMessage(
+          localize(
+            'error.noTextSelection',
+            'No text selection found. Please select text and try again.',
+          ),
+        );
         return;
       }
       range = selection;
@@ -163,7 +190,7 @@ export class ApprovalEditorService {
       selection,
       onSave: async (comment: string, color: HighlightColor) => {
         await this.addCommentToSelection(editor, comment, color);
-      }
+      },
     });
   }
 
@@ -172,24 +199,30 @@ export class ApprovalEditorService {
       // Resolve the file path using the same strategy as MCP server
       const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
       if (!workspaceRoot) {
-        vscode.window.showErrorMessage(localize('error.noWorkspaceFolder', 'No workspace folder found'));
+        vscode.window.showErrorMessage(
+          localize('error.noWorkspaceFolder', 'No workspace folder found'),
+        );
         return null;
       }
 
       const resolvedFilePath = await this.resolveApprovalFilePath(approval.filePath, workspaceRoot);
       if (!resolvedFilePath) {
-        const errorMsg = localize('error.fileNotFoundForApproval', 'Could not find file for approval "{0}". Original path: {1}. Check the Developer Console (Help -> Toggle Developer Tools) for detailed path resolution attempts.', approval.title, approval.filePath);
-        
+        const errorMsg = localize(
+          'error.fileNotFoundForApproval',
+          'Could not find file for approval "{0}". Original path: {1}. Check the Developer Console (Help -> Toggle Developer Tools) for detailed path resolution attempts.',
+          approval.title,
+          approval.filePath,
+        );
+
         const openDevConsole = localize('action.openDevConsole', 'Open Dev Console');
         const cancel = localize('action.cancel', 'Cancel');
 
-        vscode.window.showErrorMessage(errorMsg, openDevConsole, cancel)
-          .then(selection => {
-            if (selection === openDevConsole) {
-              vscode.commands.executeCommand('workbench.action.toggleDevTools');
-            }
-          });
-        
+        vscode.window.showErrorMessage(errorMsg, openDevConsole, cancel).then((selection) => {
+          if (selection === openDevConsole) {
+            vscode.commands.executeCommand('workbench.action.toggleDevTools');
+          }
+        });
+
         return null;
       }
 
@@ -197,7 +230,7 @@ export class ApprovalEditorService {
       const document = await vscode.workspace.openTextDocument(resolvedFilePath);
       const editor = await vscode.window.showTextDocument(document, {
         preview: false,
-        preserveFocus: false
+        preserveFocus: false,
       });
 
       // Store the approval context
@@ -205,7 +238,8 @@ export class ApprovalEditorService {
         approval,
         document,
         editor,
-        decorationType: this.decorationTypes.get(approval.status) || this.decorationTypes.get('pending')!
+        decorationType:
+          this.decorationTypes.get(approval.status) || this.decorationTypes.get('pending')!,
       };
 
       this.activeApprovalEditors.set(approval.id, context);
@@ -218,12 +252,21 @@ export class ApprovalEditorService {
 
       return editor;
     } catch (error) {
-      vscode.window.showErrorMessage(localize('error.failedToOpenApprovalFile', 'Failed to open approval file: {0}', String(error)));
+      vscode.window.showErrorMessage(
+        localize(
+          'error.failedToOpenApprovalFile',
+          'Failed to open approval file: {0}',
+          String(error),
+        ),
+      );
       return null;
     }
   }
 
-  private async resolveApprovalFilePath(filePath: string, workspaceRoot: string): Promise<string | null> {
+  private async resolveApprovalFilePath(
+    filePath: string,
+    workspaceRoot: string,
+  ): Promise<string | null> {
     const fs = require('fs').promises;
 
     // Normalize path separators for cross-platform compatibility
@@ -244,18 +287,18 @@ export class ApprovalEditorService {
     if (normalizedFilePath.startsWith('.specflow/')) {
       // Path is already relative to project root, don't double-add .specflow
       candidates.push(path.join(workspaceRoot, normalizedFilePath));
-      
+
       // CRITICAL FIX: Handle the specs directory structure
       // If path is like ".specflow/test/tasks.md", also try ".specflow/specs/test/tasks.md"
       const pathAfterSpecWorkflow = normalizedFilePath.substring('.specflow/'.length);
       if (pathAfterSpecWorkflow && !pathAfterSpecWorkflow.startsWith('specs/')) {
         candidates.push(path.join(workspaceRoot, '.specflow', 'specs', pathAfterSpecWorkflow));
       }
-      
+
       // Also try without the leading dot for legacy compatibility
       const withoutDot = normalizedFilePath.substring(1); // Remove leading "."
       candidates.push(path.join(workspaceRoot, withoutDot));
-      
+
       // And try the specs variant without the leading dot
       if (pathAfterSpecWorkflow && !pathAfterSpecWorkflow.startsWith('specs/')) {
         candidates.push(path.join(workspaceRoot, 'specflow', 'specs', pathAfterSpecWorkflow));
@@ -274,7 +317,7 @@ export class ApprovalEditorService {
     } else if (!normalizedFilePath.includes('specflow')) {
       // If path doesn't contain specflow at all, try adding it
       candidates.push(path.join(workspaceRoot, '.specflow', normalizedFilePath));
-      
+
       // Also try under specs directory
       candidates.push(path.join(workspaceRoot, '.specflow', 'specs', normalizedFilePath));
     }
@@ -323,14 +366,15 @@ export class ApprovalEditorService {
     console.error(`❌ Failed to resolve approval file path: "${filePath}"`);
     console.error(`Workspace root: ${workspaceRoot}`);
     console.error(`All attempted paths (${uniqueCandidates.length}):`, uniqueCandidates);
-    
+
     return null;
   }
 
   updateEditorDecorations(editor: vscode.TextEditor) {
     // Find approval context for this editor
-    const approvalContext = Array.from(this.activeApprovalEditors.values())
-      .find(context => context.document === editor.document);
+    const approvalContext = Array.from(this.activeApprovalEditors.values()).find(
+      (context) => context.document === editor.document,
+    );
 
     if (!approvalContext) {
       return;
@@ -353,18 +397,19 @@ export class ApprovalEditorService {
 
   private clearEditorDecorations(editor: vscode.TextEditor) {
     // Clear status decorations
-    this.decorationTypes.forEach(decorationType => {
+    this.decorationTypes.forEach((decorationType) => {
       editor.setDecorations(decorationType, []);
     });
-    
+
     // Clear comment decorations
-    this.commentDecorationTypes.forEach(decorationType => {
+    this.commentDecorationTypes.forEach((decorationType) => {
       editor.setDecorations(decorationType, []);
     });
   }
 
   private applyStatusDecorations(editor: vscode.TextEditor, approval: ApprovalData) {
-    const decorationType = this.decorationTypes.get(approval.status) || this.decorationTypes.get('pending')!;
+    const decorationType =
+      this.decorationTypes.get(approval.status) || this.decorationTypes.get('pending')!;
 
     // Create a simple approval mode indicator
     const headerDecoration: vscode.DecorationOptions = {
@@ -376,9 +421,10 @@ export class ApprovalEditorService {
           color: 'rgba(40, 167, 69, 0.8)',
           fontStyle: 'italic',
           margin: '0',
-          textDecoration: 'none; display: block; text-align: right; font-size: 12px; padding: 2px 5px; background: rgba(40, 167, 69, 0.1); border-radius: 3px;'
-        }
-      }
+          textDecoration:
+            'none; display: block; text-align: right; font-size: 12px; padding: 2px 5px; background: rgba(40, 167, 69, 0.1); border-radius: 3px;',
+        },
+      },
     };
 
     editor.setDecorations(decorationType, [headerDecoration]);
@@ -389,20 +435,23 @@ export class ApprovalEditorService {
       return;
     }
 
-    approval.comments.forEach(comment => {
+    approval.comments.forEach((comment) => {
       const decorationType = this.getOrCreateCommentDecorationType(comment);
       const decorations: vscode.DecorationOptions[] = [];
 
       // Support multi-line selections
       if (comment.startLine !== undefined && comment.endLine !== undefined) {
-        const startLine = Math.max(0, Math.min(comment.startLine - 1, editor.document.lineCount - 1));
+        const startLine = Math.max(
+          0,
+          Math.min(comment.startLine - 1, editor.document.lineCount - 1),
+        );
         const endLine = Math.max(0, Math.min(comment.endLine - 1, editor.document.lineCount - 1));
-        
+
         // Create decorations for each line in the range
         for (let lineNum = startLine; lineNum <= endLine; lineNum++) {
           const line = editor.document.lineAt(lineNum);
           let range: vscode.Range;
-          
+
           if (startLine === endLine) {
             // Single line - use the full line range
             range = line.range;
@@ -419,10 +468,10 @@ export class ApprovalEditorService {
 
           decorations.push({
             range,
-            hoverMessage: this.createCommentHoverMessage(comment)
+            hoverMessage: this.createCommentHoverMessage(comment),
           });
         }
-      } 
+      }
       // Backward compatibility - single line number (deprecated)
       else if (comment.lineNumber !== undefined && comment.lineNumber > 0) {
         const line = Math.max(0, Math.min(comment.lineNumber - 1, editor.document.lineCount - 1));
@@ -430,7 +479,7 @@ export class ApprovalEditorService {
 
         decorations.push({
           range: lineRange,
-          hoverMessage: this.createCommentHoverMessage(comment)
+          hoverMessage: this.createCommentHoverMessage(comment),
         });
       }
 
@@ -450,7 +499,7 @@ export class ApprovalEditorService {
       backgroundColor: 'rgba(255, 235, 59, 0.1)',
       border: '1px solid rgba(255, 235, 59, 0.3)',
       borderRadius: '2px',
-      isWholeLine: false
+      isWholeLine: false,
     });
 
     const annotationDecoration: vscode.DecorationOptions = {
@@ -462,9 +511,9 @@ export class ApprovalEditorService {
           color: 'rgba(255, 193, 7, 0.8)',
           fontStyle: 'italic',
           margin: '0 0 5px 0',
-          textDecoration: 'none; display: block;'
-        }
-      }
+          textDecoration: 'none; display: block;',
+        },
+      },
     };
 
     editor.setDecorations(annotationDecorationType, [annotationDecoration]);
@@ -472,10 +521,14 @@ export class ApprovalEditorService {
 
   private getStatusColor(status: string): string {
     switch (status) {
-      case 'approved': return 'rgba(40, 167, 69, 0.8)';
-      case 'rejected': return 'rgba(220, 53, 69, 0.8)';
-      case 'needs-revision': return 'rgba(255, 87, 34, 0.8)';
-      default: return 'rgba(255, 193, 7, 0.8)';
+      case 'approved':
+        return 'rgba(40, 167, 69, 0.8)';
+      case 'rejected':
+        return 'rgba(220, 53, 69, 0.8)';
+      case 'needs-revision':
+        return 'rgba(255, 87, 34, 0.8)';
+      default:
+        return 'rgba(255, 193, 7, 0.8)';
     }
   }
 
@@ -485,14 +538,20 @@ export class ApprovalEditorService {
 
     message.appendMarkdown(`### ${localize('commentHover.title', 'Comment')}\n\n`);
     message.appendMarkdown(`${comment.text}\n\n`);
-    message.appendMarkdown(`**${localize('commentHover.created', 'Created')}**: ${new Date(comment.timestamp).toLocaleString()}\n\n`);
+    message.appendMarkdown(
+      `**${localize('commentHover.created', 'Created')}**: ${new Date(comment.timestamp).toLocaleString()}\n\n`,
+    );
 
     // Add action buttons
     const editComment = localize('commentHover.edit', 'Edit Comment');
     const deleteComment = localize('commentHover.delete', 'Delete Comment');
     message.appendMarkdown(`---\n\n`);
-    message.appendMarkdown(`[${editComment}](command:spec-workflow.editComment?${encodeURIComponent(JSON.stringify({commentId: comment.id}))}) | `);
-    message.appendMarkdown(`[${deleteComment}](command:spec-workflow.deleteComment?${encodeURIComponent(JSON.stringify({commentId: comment.id}))})`);
+    message.appendMarkdown(
+      `[${editComment}](command:spec-workflow.editComment?${encodeURIComponent(JSON.stringify({ commentId: comment.id }))}) | `,
+    );
+    message.appendMarkdown(
+      `[${deleteComment}](command:spec-workflow.deleteComment?${encodeURIComponent(JSON.stringify({ commentId: comment.id }))})`,
+    );
 
     return message;
   }
@@ -501,20 +560,32 @@ export class ApprovalEditorService {
     const message = new vscode.MarkdownString();
     message.isTrusted = true;
 
-    message.appendMarkdown(`## 📋 ${localize('approvalHover.title', 'Approval')}: ${approval.title}\n\n`);
-    message.appendMarkdown(`**${localize('approvalHover.status', 'Status')}**: ${approval.status.toUpperCase()}\n\n`);
-    message.appendMarkdown(`**${localize('approvalHover.created', 'Created')}**: ${new Date(approval.createdAt).toLocaleString()}\n\n`);
+    message.appendMarkdown(
+      `## 📋 ${localize('approvalHover.title', 'Approval')}: ${approval.title}\n\n`,
+    );
+    message.appendMarkdown(
+      `**${localize('approvalHover.status', 'Status')}**: ${approval.status.toUpperCase()}\n\n`,
+    );
+    message.appendMarkdown(
+      `**${localize('approvalHover.created', 'Created')}**: ${new Date(approval.createdAt).toLocaleString()}\n\n`,
+    );
 
     if (approval.response) {
-      message.appendMarkdown(`**${localize('approvalHover.response', 'Response')}**: ${approval.response}\n\n`);
+      message.appendMarkdown(
+        `**${localize('approvalHover.response', 'Response')}**: ${approval.response}\n\n`,
+      );
     }
 
     if (approval.annotations) {
-      message.appendMarkdown(`**${localize('approvalHover.annotations', 'Annotations')}**: ${approval.annotations}\n\n`);
+      message.appendMarkdown(
+        `**${localize('approvalHover.annotations', 'Annotations')}**: ${approval.annotations}\n\n`,
+      );
     }
 
     if (approval.comments && approval.comments.length > 0) {
-      message.appendMarkdown(`**${localize('approvalHover.comments', 'Comments')}**: ${localize('approvalHover.commentsCount', '{0} comment(s)', approval.comments.length)}\n\n`);
+      message.appendMarkdown(
+        `**${localize('approvalHover.comments', 'Comments')}**: ${localize('approvalHover.commentsCount', '{0} comment(s)', approval.comments.length)}\n\n`,
+      );
     }
 
     // Add action buttons
@@ -522,26 +593,40 @@ export class ApprovalEditorService {
     const reject = localize('approvalHover.reject', 'Reject');
     const requestRevision = localize('approvalHover.requestRevision', 'Request Revision');
     message.appendMarkdown(`---\n\n`);
-    message.appendMarkdown(`[${approve}](command:spec-workflow.approveFromEditor?${encodeURIComponent(JSON.stringify({id: approval.id}))}) | `);
-    message.appendMarkdown(`[${reject}](command:spec-workflow.rejectFromEditor?${encodeURIComponent(JSON.stringify({id: approval.id}))}) | `);
-    message.appendMarkdown(`[${requestRevision}](command:spec-workflow.requestRevisionFromEditor?${encodeURIComponent(JSON.stringify({id: approval.id}))})`);
+    message.appendMarkdown(
+      `[${approve}](command:spec-workflow.approveFromEditor?${encodeURIComponent(JSON.stringify({ id: approval.id }))}) | `,
+    );
+    message.appendMarkdown(
+      `[${reject}](command:spec-workflow.rejectFromEditor?${encodeURIComponent(JSON.stringify({ id: approval.id }))}) | `,
+    );
+    message.appendMarkdown(
+      `[${requestRevision}](command:spec-workflow.requestRevisionFromEditor?${encodeURIComponent(JSON.stringify({ id: approval.id }))})`,
+    );
 
     return message;
   }
 
   private showApprovalInfo(approval: ApprovalData) {
-    const message = localize('approvalInfo.message', '📋 Approval: {0} ({1})', approval.title, approval.status);
+    const message = localize(
+      'approvalInfo.message',
+      '📋 Approval: {0} ({1})',
+      approval.title,
+      approval.status,
+    );
     const viewDetails = localize('approvalInfo.viewDetails', 'View Details');
     const close = localize('approvalInfo.close', 'Close');
-    vscode.window.showInformationMessage(message, viewDetails, close)
-      .then(selection => {
-        if (selection === viewDetails) {
-          // Could open a detailed view or sidebar
-        }
-      });
+    vscode.window.showInformationMessage(message, viewDetails, close).then((selection) => {
+      if (selection === viewDetails) {
+        // Could open a detailed view or sidebar
+      }
+    });
   }
 
-  async addCommentToSelection(editor: vscode.TextEditor, commentText: string, highlightColor?: HighlightColor): Promise<boolean> {
+  async addCommentToSelection(
+    editor: vscode.TextEditor,
+    commentText: string,
+    highlightColor?: HighlightColor,
+  ): Promise<boolean> {
     const approval = this.getActiveApprovalForEditor(editor);
     if (!approval) {
       return false;
@@ -549,7 +634,9 @@ export class ApprovalEditorService {
 
     const selection = editor.selection;
     if (selection.isEmpty) {
-      vscode.window.showWarningMessage(localize('error.noTextSelectionForComment', 'Please select text to add a comment'));
+      vscode.window.showWarningMessage(
+        localize('error.noTextSelectionForComment', 'Please select text to add a comment'),
+      );
       return false;
     }
 
@@ -569,7 +656,7 @@ export class ApprovalEditorService {
       // Keep lineNumber for backward compatibility
       lineNumber: startLine,
       timestamp: new Date().toISOString(),
-      resolved: false
+      resolved: false,
     };
 
     // Add comment to approval data
@@ -592,7 +679,7 @@ export class ApprovalEditorService {
       return false;
     }
 
-    const comment = approval.comments.find(c => c.id === commentId);
+    const comment = approval.comments.find((c) => c.id === commentId);
     if (!comment) {
       return false;
     }
@@ -603,7 +690,7 @@ export class ApprovalEditorService {
     await this.saveApprovalData(approval);
 
     // Update decorations for all editors showing this approval
-    this.activeApprovalEditors.forEach(context => {
+    this.activeApprovalEditors.forEach((context) => {
       if (context.approval.id === approval.id) {
         this.updateEditorDecorations(context.editor);
       }
@@ -630,7 +717,7 @@ export class ApprovalEditorService {
 
   private notifyApprovalDataChanged(approval: ApprovalData) {
     // Update all editors showing this approval
-    this.activeApprovalEditors.forEach(context => {
+    this.activeApprovalEditors.forEach((context) => {
       if (context.approval.id === approval.id) {
         // Update the context with new data
         context.approval = approval;
@@ -653,7 +740,9 @@ export class ApprovalEditorService {
       if (!approvalPath) {
         // Approval was deleted, close the editor
         this.closeApprovalEditor(approvalId);
-        vscode.window.showInformationMessage(localize('info.approvalDeleted', 'Approval "{0}" was deleted', context.approval.title));
+        vscode.window.showInformationMessage(
+          localize('info.approvalDeleted', 'Approval "{0}" was deleted', context.approval.title),
+        );
         return;
       }
 
@@ -664,10 +753,18 @@ export class ApprovalEditorService {
       // Verify the file still exists at the expected location
       const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
       if (workspaceRoot && updatedApproval.filePath) {
-        const resolvedPath = await this.resolveApprovalFilePath(updatedApproval.filePath, workspaceRoot);
+        const resolvedPath = await this.resolveApprovalFilePath(
+          updatedApproval.filePath,
+          workspaceRoot,
+        );
         if (!resolvedPath) {
           vscode.window.showWarningMessage(
-            localize('warning.fileForApprovalNotFound', 'File for approval "{0}" could not be found: {1}', updatedApproval.title, updatedApproval.filePath)
+            localize(
+              'warning.fileForApprovalNotFound',
+              'File for approval "{0}" could not be found: {1}',
+              updatedApproval.title,
+              updatedApproval.filePath,
+            ),
           );
         }
       }
@@ -680,24 +777,36 @@ export class ApprovalEditorService {
 
       // Show notification about external changes
       const refresh = localize('action.refresh', 'Refresh');
-      vscode.window.showInformationMessage(
-        localize('info.approvalUpdatedExternally', 'Approval "{0}" was updated externally', updatedApproval.title),
-        refresh
-      ).then(selection => {
-        if (selection === refresh) {
-          this.updateEditorDecorations(context.editor);
-        }
-      });
-
+      vscode.window
+        .showInformationMessage(
+          localize(
+            'info.approvalUpdatedExternally',
+            'Approval "{0}" was updated externally',
+            updatedApproval.title,
+          ),
+          refresh,
+        )
+        .then((selection) => {
+          if (selection === refresh) {
+            this.updateEditorDecorations(context.editor);
+          }
+        });
     } catch (error) {
       console.error(`Failed to handle external approval change for ${approvalId}:`, error);
-      vscode.window.showErrorMessage(localize('error.externalChangeFailed', 'Failed to handle external approval change: {0}', String(error)));
+      vscode.window.showErrorMessage(
+        localize(
+          'error.externalChangeFailed',
+          'Failed to handle external approval change: {0}',
+          String(error),
+        ),
+      );
     }
   }
 
   getActiveApprovalForEditor(editor: vscode.TextEditor): ApprovalData | null {
-    const context = Array.from(this.activeApprovalEditors.values())
-      .find(ctx => ctx.editor === editor);
+    const context = Array.from(this.activeApprovalEditors.values()).find(
+      (ctx) => ctx.editor === editor,
+    );
     return context?.approval || null;
   }
 
@@ -705,15 +814,15 @@ export class ApprovalEditorService {
     const context = this.activeApprovalEditors.get(approvalId);
     if (context) {
       // Clear status decorations
-      Object.values(this.decorationTypes).forEach(decorationType => {
+      Object.values(this.decorationTypes).forEach((decorationType) => {
         context.editor.setDecorations(decorationType, []);
       });
-      
+
       // Clear comment decorations
-      this.commentDecorationTypes.forEach(decorationType => {
+      this.commentDecorationTypes.forEach((decorationType) => {
         context.editor.setDecorations(decorationType, []);
       });
-      
+
       this.activeApprovalEditors.delete(approvalId);
     }
   }
@@ -721,9 +830,9 @@ export class ApprovalEditorService {
   dispose() {
     // Clear all decorations and contexts
     this.activeApprovalEditors.clear();
-    this.decorationTypes.forEach(decorationType => decorationType.dispose());
+    this.decorationTypes.forEach((decorationType) => decorationType.dispose());
     this.decorationTypes.clear();
-    this.commentDecorationTypes.forEach(decorationType => decorationType.dispose());
+    this.commentDecorationTypes.forEach((decorationType) => decorationType.dispose());
     this.commentDecorationTypes.clear();
   }
 }

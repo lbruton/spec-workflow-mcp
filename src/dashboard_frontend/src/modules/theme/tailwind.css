@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @plugin "@tailwindcss/typography";
 
 @variant dark (.dark &);
@@ -20,7 +20,9 @@
 }
 
 .card-hover {
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .card-hover:hover {
@@ -54,7 +56,9 @@
 
 .btn:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px var(--surface-base), 0 0 0 4px var(--border-focus);
+  box-shadow:
+    0 0 0 2px var(--surface-base),
+    0 0 0 4px var(--border-focus);
 }
 
 .btn-secondary {
@@ -69,7 +73,9 @@
   font-size: var(--text-sm);
   font-weight: var(--font-medium);
   cursor: pointer;
-  transition: background var(--transition-fast), border-color var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast);
 }
 
 .btn-secondary:hover {
@@ -89,7 +95,9 @@
   font-size: var(--text-sm);
   font-weight: var(--font-medium);
   cursor: pointer;
-  transition: background var(--transition-fast), color var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
 }
 
 .btn-ghost:hover {
@@ -121,10 +129,18 @@
    4-level text hierarchy
    ============================================================================= */
 
-.text-primary { color: var(--text-primary); }
-.text-secondary { color: var(--text-secondary); }
-.muted { color: var(--text-muted); }
-.text-faint { color: var(--text-faint); }
+.text-primary {
+  color: var(--text-primary);
+}
+.text-secondary {
+  color: var(--text-secondary);
+}
+.muted {
+  color: var(--text-muted);
+}
+.text-faint {
+  color: var(--text-faint);
+}
 
 /* =============================================================================
    DATA DISPLAY UTILITIES
@@ -209,12 +225,24 @@
   flex-shrink: 0;
 }
 
-.status-indicator-success { background: var(--status-success); }
-.status-indicator-warning { background: var(--status-warning); }
-.status-indicator-error { background: var(--status-error); }
-.status-indicator-info { background: var(--status-info); }
-.status-indicator-pending { background: var(--status-pending); }
-.status-indicator-in-progress { background: var(--status-in-progress); }
+.status-indicator-success {
+  background: var(--status-success);
+}
+.status-indicator-warning {
+  background: var(--status-warning);
+}
+.status-indicator-error {
+  background: var(--status-error);
+}
+.status-indicator-info {
+  background: var(--status-info);
+}
+.status-indicator-pending {
+  background: var(--status-pending);
+}
+.status-indicator-in-progress {
+  background: var(--status-in-progress);
+}
 
 /* =============================================================================
    FORM COMPONENTS
@@ -228,7 +256,9 @@
   border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
   font-size: var(--text-sm);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .input:hover {
@@ -266,7 +296,9 @@
 }
 
 .drop-zone {
-  transition: border-color var(--transition-fast), background var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast);
 }
 
 .drop-zone-active {
@@ -278,34 +310,68 @@
    SURFACE UTILITIES
    ============================================================================= */
 
-.surface-base { background: var(--surface-base); }
-.surface-panel { background: var(--surface-panel); }
-.surface-elevated { background: var(--surface-elevated); }
-.surface-inset { background: var(--surface-inset); }
+.surface-base {
+  background: var(--surface-base);
+}
+.surface-panel {
+  background: var(--surface-panel);
+}
+.surface-elevated {
+  background: var(--surface-elevated);
+}
+.surface-inset {
+  background: var(--surface-inset);
+}
 
 /* =============================================================================
    BORDER UTILITIES
    ============================================================================= */
 
-.border-default { border-color: var(--border-default); }
-.border-strong { border-color: var(--border-strong); }
+.border-default {
+  border-color: var(--border-default);
+}
+.border-strong {
+  border-color: var(--border-strong);
+}
 
 /* =============================================================================
    SPACING UTILITIES (using design tokens)
    ============================================================================= */
 
-.gap-1 { gap: var(--space-1); }
-.gap-2 { gap: var(--space-2); }
-.gap-3 { gap: var(--space-3); }
-.gap-4 { gap: var(--space-4); }
-.gap-6 { gap: var(--space-6); }
-.gap-8 { gap: var(--space-8); }
+.gap-1 {
+  gap: var(--space-1);
+}
+.gap-2 {
+  gap: var(--space-2);
+}
+.gap-3 {
+  gap: var(--space-3);
+}
+.gap-4 {
+  gap: var(--space-4);
+}
+.gap-6 {
+  gap: var(--space-6);
+}
+.gap-8 {
+  gap: var(--space-8);
+}
 
-.p-1 { padding: var(--space-1); }
-.p-2 { padding: var(--space-2); }
-.p-3 { padding: var(--space-3); }
-.p-4 { padding: var(--space-4); }
-.p-6 { padding: var(--space-6); }
+.p-1 {
+  padding: var(--space-1);
+}
+.p-2 {
+  padding: var(--space-2);
+}
+.p-3 {
+  padding: var(--space-3);
+}
+.p-4 {
+  padding: var(--space-4);
+}
+.p-6 {
+  padding: var(--space-6);
+}
 
 /* =============================================================================
    MODAL OVERLAY
@@ -375,9 +441,15 @@
   transition: width var(--transition-normal);
 }
 
-.progress-fill-success { background: var(--status-success); }
-.progress-fill-warning { background: var(--status-warning); }
-.progress-fill-error { background: var(--status-error); }
+.progress-fill-success {
+  background: var(--status-success);
+}
+.progress-fill-warning {
+  background: var(--status-warning);
+}
+.progress-fill-error {
+  background: var(--status-error);
+}
 
 /* =============================================================================
    NAVIGATION
@@ -392,7 +464,9 @@
   color: var(--text-muted);
   font-size: var(--text-sm);
   text-decoration: none;
-  transition: background var(--transition-fast), color var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
 }
 
 .nav-item:hover {
@@ -440,8 +514,12 @@
    ============================================================================= */
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {

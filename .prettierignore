@@ -1,6 +1,10 @@
 # Build output
 dist/
 coverage/
+vscode-extension/webview-dist/
+
+# GitHub workflows — OAuth token lacks workflow scope to push these
+.github/
 
 # Package artifacts
 *.tgz

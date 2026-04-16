@@ -31,7 +31,7 @@ lang = "ja"
       await fs.writeFile(configPath, configContent);
 
       const result = loadConfigFromPath(configPath);
-      
+
       expect(result.error).toBeUndefined();
       expect(result.config).not.toBeNull();
       expect(result.config?.port).toBe(8080);
@@ -49,7 +49,7 @@ allowExternalAccess = true
       await fs.writeFile(configPath, configContent);
 
       const result = loadConfigFromPath(configPath);
-      
+
       expect(result.error).toBeUndefined();
       expect(result.config).not.toBeNull();
       expect(result.config?.bindAddress).toBe('0.0.0.0');
@@ -69,7 +69,7 @@ auditLogEnabled = false
       await fs.writeFile(configPath, configContent);
 
       const result = loadConfigFromPath(configPath);
-      
+
       expect(result.error).toBeUndefined();
       expect(result.config).not.toBeNull();
       expect(result.config?.security?.rateLimitEnabled).toBe(true);
@@ -79,7 +79,7 @@ auditLogEnabled = false
 
     it('should error if config file not found', () => {
       const result = loadConfigFromPath(join(testDir, 'nonexistent.toml'));
-      
+
       expect(result.config).toBeNull();
       expect(result.error).toContain('not found');
     });
@@ -89,7 +89,7 @@ auditLogEnabled = false
       await fs.writeFile(configPath, 'port = 80');
 
       const result = loadConfigFromPath(configPath);
-      
+
       expect(result.config).toBeNull();
       expect(result.error).toContain('Invalid port');
     });
@@ -99,7 +99,7 @@ auditLogEnabled = false
       await fs.writeFile(configPath, 'port = 70000');
 
       const result = loadConfigFromPath(configPath);
-      
+
       expect(result.config).toBeNull();
       expect(result.error).toContain('Invalid port');
     });
@@ -113,7 +113,7 @@ bindAddress = "127.0.0.1"
         await fs.writeFile(configPath, configContent);
 
         const result = loadConfigFromPath(configPath);
-        
+
         expect(result.error).toBeUndefined();
         expect(result.config?.bindAddress).toBe('127.0.0.1');
       });
@@ -126,7 +126,7 @@ bindAddress = "localhost"
         await fs.writeFile(configPath, configContent);
 
         const result = loadConfigFromPath(configPath);
-        
+
         expect(result.error).toBeUndefined();
         expect(result.config?.bindAddress).toBe('localhost');
       });
@@ -139,7 +139,7 @@ bindAddress = "::1"
         await fs.writeFile(configPath, configContent);
 
         const result = loadConfigFromPath(configPath);
-        
+
         expect(result.error).toBeUndefined();
         expect(result.config?.bindAddress).toBe('::1');
       });
@@ -152,7 +152,7 @@ bindAddress = "127.0.0.2"
         await fs.writeFile(configPath, configContent);
 
         const result = loadConfigFromPath(configPath);
-        
+
         expect(result.error).toBeUndefined();
         expect(result.config?.bindAddress).toBe('127.0.0.2');
       });
@@ -165,7 +165,7 @@ bindAddress = "0.0.0.0"
         await fs.writeFile(configPath, configContent);
 
         const result = loadConfigFromPath(configPath);
-        
+
         expect(result.config).toBeNull();
         expect(result.error).toContain('non-localhost');
         expect(result.error).toContain('allowExternalAccess');
@@ -179,7 +179,7 @@ bindAddress = "192.168.1.100"
         await fs.writeFile(configPath, configContent);
 
         const result = loadConfigFromPath(configPath);
-        
+
         expect(result.config).toBeNull();
         expect(result.error).toContain('non-localhost');
       });
@@ -193,7 +193,7 @@ allowExternalAccess = true
         await fs.writeFile(configPath, configContent);
 
         const result = loadConfigFromPath(configPath);
-        
+
         expect(result.error).toBeUndefined();
         expect(result.config?.bindAddress).toBe('0.0.0.0');
         expect(result.config?.allowExternalAccess).toBe(true);
@@ -208,7 +208,7 @@ allowExternalAccess = false
         await fs.writeFile(configPath, configContent);
 
         const result = loadConfigFromPath(configPath);
-        
+
         expect(result.config).toBeNull();
         expect(result.error).toContain('non-localhost');
       });
@@ -224,7 +224,7 @@ rateLimitPerMinute = 0
         await fs.writeFile(configPath, configContent);
 
         const result = loadConfigFromPath(configPath);
-        
+
         expect(result.config).toBeNull();
         expect(result.error).toContain('rateLimitPerMinute');
       });
@@ -238,7 +238,7 @@ auditLogRetentionDays = -5
         await fs.writeFile(configPath, configContent);
 
         const result = loadConfigFromPath(configPath);
-        
+
         expect(result.config).toBeNull();
         expect(result.error).toContain('auditLogRetentionDays');
       });
@@ -248,7 +248,7 @@ auditLogRetentionDays = -5
   describe('loadConfigFile', () => {
     it('should return null config when no config file exists', async () => {
       const result = loadConfigFile(testDir);
-      
+
       expect(result.config).toBeNull();
       expect(result.configPath).toBeNull();
       expect(result.error).toBeUndefined();
@@ -260,7 +260,7 @@ auditLogRetentionDays = -5
       await fs.writeFile(join(configDir, 'config.toml'), 'port = 9000');
 
       const result = loadConfigFile(testDir);
-      
+
       expect(result.error).toBeUndefined();
       expect(result.config?.port).toBe(9000);
     });
@@ -270,7 +270,7 @@ auditLogRetentionDays = -5
       await fs.writeFile(customPath, 'port = 7777');
 
       const result = loadConfigFile(testDir, customPath);
-      
+
       expect(result.error).toBeUndefined();
       expect(result.config?.port).toBe(7777);
     });
@@ -280,17 +280,17 @@ auditLogRetentionDays = -5
     it('should return CLI args when file config is null', () => {
       const cliArgs: Partial<SpecWorkflowConfig> = { port: 5000 };
       const merged = mergeConfigs(null, cliArgs);
-      
+
       expect(merged.port).toBe(5000);
     });
 
     it('should use file config when CLI args are empty', () => {
       const fileConfig: SpecWorkflowConfig = {
         port: 8080,
-        lang: 'en'
+        lang: 'en',
       };
       const merged = mergeConfigs(fileConfig, {});
-      
+
       expect(merged.port).toBe(8080);
       expect(merged.lang).toBe('en');
     });
@@ -299,13 +299,13 @@ auditLogRetentionDays = -5
       const fileConfig: SpecWorkflowConfig = {
         port: 8080,
         lang: 'en',
-        bindAddress: '127.0.0.1'
+        bindAddress: '127.0.0.1',
       };
       const cliArgs: Partial<SpecWorkflowConfig> = {
-        port: 5000
+        port: 5000,
       };
       const merged = mergeConfigs(fileConfig, cliArgs);
-      
+
       expect(merged.port).toBe(5000); // CLI override
       expect(merged.lang).toBe('en'); // File config preserved
       expect(merged.bindAddress).toBe('127.0.0.1'); // File config preserved
@@ -313,17 +313,16 @@ auditLogRetentionDays = -5
 
     it('should not override with undefined CLI args', () => {
       const fileConfig: SpecWorkflowConfig = {
-        port: 8080
+        port: 8080,
       };
       const cliArgs: Partial<SpecWorkflowConfig> = {
         port: undefined,
-        lang: 'ja'
+        lang: 'ja',
       };
       const merged = mergeConfigs(fileConfig, cliArgs);
-      
+
       expect(merged.port).toBe(8080); // Not overridden by undefined
       expect(merged.lang).toBe('ja');
     });
   });
 });
-

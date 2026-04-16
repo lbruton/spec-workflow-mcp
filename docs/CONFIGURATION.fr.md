@@ -12,11 +12,11 @@ npx -y @pimzino/spec-workflow-mcp@latest [chemin-projet] [options]
 
 ### Options disponibles
 
-| Option | Description | Exemple |
-|--------|-------------|---------|
-| `--help` | Afficher les informations d'utilisation complètes | `npx -y @pimzino/spec-workflow-mcp@latest --help` |
-| `--dashboard` | Exécuter en mode tableau de bord uniquement (port par défaut : 5000) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard` |
-| `--port <numéro>` | Spécifier un port personnalisé pour le tableau de bord (1024-65535) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080` |
+| Option            | Description                                                          | Exemple                                                            |
+| ----------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `--help`          | Afficher les informations d'utilisation complètes                    | `npx -y @pimzino/spec-workflow-mcp@latest --help`                  |
+| `--dashboard`     | Exécuter en mode tableau de bord uniquement (port par défaut : 5000) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard`             |
+| `--port <numéro>` | Spécifier un port personnalisé pour le tableau de bord (1024-65535)  | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080` |
 
 ### Notes importantes
 
@@ -29,12 +29,14 @@ npx -y @pimzino/spec-workflow-mcp@latest [chemin-projet] [options]
 ### Flux de travail typique
 
 1. **Démarrer le tableau de bord** (faites ceci en premier, une seule fois) :
+
 ```bash
 # Utilise le port par défaut 5000
 npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 ```
 
 2. **Démarrer les serveurs MCP** (un par projet, dans des terminaux séparés) :
+
 ```bash
 # Projet 1
 npx -y @pimzino/spec-workflow-mcp@latest ~/projets/app1
@@ -63,11 +65,12 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 Remplace le répertoire d'état global par défaut (`~/.specflow-mcp`). Ceci est utile pour les environnements isolés où `$HOME` est en lecture seule.
 
-| Variable | Défaut | Description |
-|----------|---------|-------------|
+| Variable             | Défaut            | Description                                 |
+| -------------------- | ----------------- | ------------------------------------------- |
 | `SPEC_WORKFLOW_HOME` | `~/.specflow-mcp` | Répertoire pour les fichiers d'état globaux |
 
 **Fichiers stockés dans ce répertoire :**
+
 - `activeProjects.json` - Registre des projets
 - `activeSession.json` - Informations de session du tableau de bord
 - `settings.json` - Paramètres globaux
@@ -98,6 +101,7 @@ SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@la
 ## Gestion de session du tableau de bord
 
 Le tableau de bord stocke ses informations de session dans `~/.specflow-mcp/activeSession.json` (ou `$SPEC_WORKFLOW_HOME/activeSession.json` si défini). Ce fichier :
+
 - Impose une instance unique de tableau de bord
 - Permet aux serveurs MCP de découvrir le tableau de bord en cours d'exécution
 - Se nettoie automatiquement lorsque le tableau de bord s'arrête
@@ -177,12 +181,12 @@ debounceMs = 300
 
 #### Paramètres de base
 
-| Option | Type | Défaut | Description |
-|--------|------|---------|-------------|
-| `projectDir` | string | Répertoire actuel | Chemin du répertoire du projet |
-| `port` | number | Éphémère | Port du tableau de bord (1024-65535) |
-| `dashboardOnly` | boolean | false | Exécuter le tableau de bord sans serveur MCP |
-| `lang` | string | "en" | Langue de l'interface |
+| Option          | Type    | Défaut            | Description                                  |
+| --------------- | ------- | ----------------- | -------------------------------------------- |
+| `projectDir`    | string  | Répertoire actuel | Chemin du répertoire du projet               |
+| `port`          | number  | Éphémère          | Port du tableau de bord (1024-65535)         |
+| `dashboardOnly` | boolean | false             | Exécuter le tableau de bord sans serveur MCP |
+| `lang`          | string  | "en"              | Langue de l'interface                        |
 
 > **Remarque** : L'option `autoStartDashboard` a été supprimée dans la v2.0.0. Le tableau de bord utilise désormais un mode multi-projet unifié accessible via le flag `--dashboard`.
 
@@ -203,11 +207,13 @@ debounceMs = 300
 ### Créer une configuration personnalisée
 
 1. Copiez l'exemple de configuration :
+
 ```bash
 cp .specflow/config.example.toml .specflow/config.toml
 ```
 
 2. Modifiez la configuration :
+
 ```toml
 # Configuration de mon projet
 projectDir = "/Users/monnom/projets/monapp"
@@ -216,6 +222,7 @@ lang = "fr"
 ```
 
 3. Utilisez la configuration :
+
 ```bash
 # Utilise .specflow/config.toml automatiquement
 npx -y @pimzino/spec-workflow-mcp@latest
@@ -262,6 +269,7 @@ verboseLogging = true
 ```
 
 Utilisation :
+
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest --config dev-config.toml
 ```
@@ -280,6 +288,7 @@ verboseLogging = false
 ```
 
 Utilisation :
+
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ```
@@ -293,6 +302,7 @@ Les ports doivent être entre 1024 et 65535.
 ### Ports éphémères
 
 Lorsqu'aucun port n'est spécifié, le système sélectionne automatiquement un port éphémère disponible. Ceci est recommandé pour :
+
 - Les environnements de développement
 - Plusieurs projets simultanés
 - Éviter les conflits de ports
@@ -300,6 +310,7 @@ Lorsqu'aucun port n'est spécifié, le système sélectionne automatiquement un 
 ### Ports fixes
 
 Utilisez des ports fixes lorsque vous avez besoin de :
+
 - URL cohérentes pour les signets
 - Intégration avec d'autres outils
 - Collaboration d'équipe avec des configurations partagées
@@ -367,11 +378,13 @@ L'extension VSCode a ses propres paramètres :
 ### La configuration ne se charge pas
 
 1. **Vérifiez l'emplacement du fichier :**
+
    ```bash
    ls -la .specflow/config.toml
    ```
 
 2. **Validez la syntaxe TOML :**
+
    ```bash
    # Installez l'outil CLI toml
    npm install -g @iarna/toml
@@ -388,12 +401,12 @@ L'extension VSCode a ses propres paramètres :
 
 ### Problèmes courants
 
-| Problème | Solution |
-|-------|----------|
-| Port déjà utilisé | Utilisez un port différent ou omettez pour éphémère |
+| Problème                             | Solution                                                      |
+| ------------------------------------ | ------------------------------------------------------------- |
+| Port déjà utilisé                    | Utilisez un port différent ou omettez pour éphémère           |
 | Fichier de configuration introuvable | Vérifiez le chemin et utilisez un chemin absolu si nécessaire |
-| Syntaxe TOML invalide | Validez avec un linter TOML |
-| Les paramètres ne s'appliquent pas | Vérifiez la priorité de configuration |
+| Syntaxe TOML invalide                | Validez avec un linter TOML                                   |
+| Les paramètres ne s'appliquent pas   | Vérifiez la priorité de configuration                         |
 
 ## Bonnes pratiques
 

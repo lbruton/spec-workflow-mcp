@@ -25,11 +25,13 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 **戻り値**: 完全なワークフローを説明するMarkdownガイド
 
 **使用例**:
+
 ```
 "仕様ワークフローガイドを表示して"
 ```
 
 **レスポンスに含まれる内容**:
+
 - ワークフロー概要
 - ステップバイステップのプロセス
 - ベストプラクティス
@@ -44,11 +46,13 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 **戻り値**: ステアリングドキュメント作成のMarkdownガイド
 
 **使用例**:
+
 ```
 "ステアリングドキュメントの作成方法を表示して"
 ```
 
 **レスポンスに含まれる内容**:
+
 - ステアリングドキュメントのタイプ
 - 作成プロセス
 - コンテンツガイドライン
@@ -62,14 +66,15 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 
 **パラメータ**:
 
-| パラメータ | タイプ | 必須 | 説明 |
-|-----------|------|----------|-------------|
-| specName | string | はい | 仕様の名前（ケバブケース） |
-| docType | string | はい | タイプ: "requirements"、"design"、または"tasks" |
-| content | string | はい | ドキュメントのMarkdownコンテンツ |
-| revision | boolean | いいえ | 改訂版かどうか（デフォルト: false） |
+| パラメータ | タイプ  | 必須   | 説明                                            |
+| ---------- | ------- | ------ | ----------------------------------------------- |
+| specName   | string  | はい   | 仕様の名前（ケバブケース）                      |
+| docType    | string  | はい   | タイプ: "requirements"、"design"、または"tasks" |
+| content    | string  | はい   | ドキュメントのMarkdownコンテンツ                |
+| revision   | boolean | いいえ | 改訂版かどうか（デフォルト: false）             |
 
 **使用例**:
+
 ```typescript
 {
   specName: "user-authentication",
@@ -80,6 +85,7 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 ```
 
 **戻り値**:
+
 ```typescript
 {
   success: true,
@@ -90,6 +96,7 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 ```
 
 **注意**:
+
 - 存在しない場合は仕様ディレクトリを作成
 - 新しいドキュメントの承認を自動的にリクエスト
 - Markdown形式を検証
@@ -104,28 +111,30 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 **戻り値**: 仕様サマリーの配列
 
 **レスポンス構造**:
+
 ```typescript
 [
   {
-    name: "user-authentication",
-    status: "in-progress",
+    name: 'user-authentication',
+    status: 'in-progress',
     progress: 45,
     documents: {
-      requirements: "approved",
-      design: "pending-approval",
-      tasks: "not-created"
+      requirements: 'approved',
+      design: 'pending-approval',
+      tasks: 'not-created',
     },
     taskStats: {
       total: 15,
       completed: 7,
       inProgress: 1,
-      pending: 7
-    }
-  }
-]
+      pending: 7,
+    },
+  },
+];
 ```
 
 **使用例**:
+
 ```
 "すべての仕様をリストして"
 ```
@@ -136,13 +145,14 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 
 **パラメータ**:
 
-| パラメータ | タイプ | 必須 | 説明 |
-|-----------|------|----------|-------------|
-| specName | string | はい | 確認する仕様の名前 |
+| パラメータ | タイプ | 必須 | 説明               |
+| ---------- | ------ | ---- | ------------------ |
+| specName   | string | はい | 確認する仕様の名前 |
 
 **戻り値**: 詳細な仕様ステータス
 
 **レスポンス構造**:
+
 ```typescript
 {
   exists: true,
@@ -175,6 +185,7 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 ```
 
 **使用例**:
+
 ```
 "user-authentication仕様のステータスを表示して"
 ```
@@ -185,17 +196,18 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 
 **パラメータ**:
 
-| パラメータ | タイプ | 必須 | 説明 |
-|-----------|------|----------|-------------|
-| specName | string | はい | 仕様の名前 |
-| action | string | はい | アクション: "update"、"complete"、"list"、"progress" |
-| taskId | string | 場合による | タスクID（update/completeに必須） |
-| status | string | いいえ | 新しいステータス: "pending"、"in-progress"、"completed" |
-| notes | string | いいえ | タスクの追加メモ |
+| パラメータ | タイプ | 必須       | 説明                                                    |
+| ---------- | ------ | ---------- | ------------------------------------------------------- |
+| specName   | string | はい       | 仕様の名前                                              |
+| action     | string | はい       | アクション: "update"、"complete"、"list"、"progress"    |
+| taskId     | string | 場合による | タスクID（update/completeに必須）                       |
+| status     | string | いいえ     | 新しいステータス: "pending"、"in-progress"、"completed" |
+| notes      | string | いいえ     | タスクの追加メモ                                        |
 
 **アクション**:
 
 1. **タスクステータスの更新**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -207,6 +219,7 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 ```
 
 2. **タスクの完了**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -216,6 +229,7 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 ```
 
 3. **タスクのリスト**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -224,6 +238,7 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 ```
 
 4. **進捗の取得**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -244,6 +259,7 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 **戻り値**: すべてのテンプレートを含むオブジェクト
 
 **レスポンス構造**:
+
 ```typescript
 {
   requirements: "# Requirements Template\n\n## Overview\n...",
@@ -256,6 +272,7 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 ```
 
 **使用例**:
+
 ```
 "すべてのドキュメントテンプレートを取得して"
 ```
@@ -266,20 +283,22 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 
 **パラメータ**:
 
-| パラメータ | タイプ | 必須 | 説明 |
-|-----------|------|----------|-------------|
-| docType | string | いいえ | 特定のドキュメント: "product"、"tech"、"structure"、または"all" |
+| パラメータ | タイプ | 必須   | 説明                                                            |
+| ---------- | ------ | ------ | --------------------------------------------------------------- |
+| docType    | string | いいえ | 特定のドキュメント: "product"、"tech"、"structure"、または"all" |
 
 **戻り値**: ステアリングドキュメントのコンテンツ
 
 **使用例**:
+
 ```typescript
 {
-  docType: "tech"  // テクニカルステアリングのみを返す
+  docType: 'tech'; // テクニカルステアリングのみを返す
 }
 ```
 
 **レスポンス構造**:
+
 ```typescript
 {
   product: "# Product Steering\n\n## Vision\n...",
@@ -294,14 +313,15 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 
 **パラメータ**:
 
-| パラメータ | タイプ | 必須 | 説明 |
-|-----------|------|----------|-------------|
-| specName | string | はい | 仕様の名前 |
+| パラメータ     | タイプ  | 必須   | 説明                                               |
+| -------------- | ------- | ------ | -------------------------------------------------- |
+| specName       | string  | はい   | 仕様の名前                                         |
 | includeContent | boolean | いいえ | ドキュメントコンテンツを含める（デフォルト: true） |
 
 **戻り値**: 完全な仕様コンテキスト
 
 **レスポンス構造**:
+
 ```typescript
 {
   name: "user-authentication",
@@ -333,6 +353,7 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 ```
 
 **使用例**:
+
 ```
 "user-authentication仕様の完全なコンテキストを取得して"
 ```
@@ -345,12 +366,13 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 
 **パラメータ**:
 
-| パラメータ | タイプ | 必須 | 説明 |
-|-----------|------|----------|-------------|
-| docType | string | はい | タイプ: "product"、"tech"、または"structure" |
-| content | string | はい | ドキュメントのMarkdownコンテンツ |
+| パラメータ | タイプ | 必須 | 説明                                         |
+| ---------- | ------ | ---- | -------------------------------------------- |
+| docType    | string | はい | タイプ: "product"、"tech"、または"structure" |
+| content    | string | はい | ドキュメントのMarkdownコンテンツ             |
 
 **使用例**:
+
 ```typescript
 {
   docType: "product",
@@ -359,6 +381,7 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 ```
 
 **戻り値**:
+
 ```typescript
 {
   success: true,
@@ -368,6 +391,7 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 ```
 
 **注意**:
+
 - 必要に応じてステアリングディレクトリを作成
 - 既存のステアリングドキュメントを上書き
 - ステアリングドキュメントには承認不要
@@ -381,14 +405,15 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 
 **パラメータ**:
 
-| パラメータ | タイプ | 必須 | 説明 |
-|-----------|------|----------|-------------|
-| specName | string | はい | 仕様の名前 |
-| docType | string | はい | 承認するドキュメントタイプ |
-| documentId | string | はい | 追跡用の一意のID |
-| content | string | はい | レビュー用のドキュメントコンテンツ |
+| パラメータ | タイプ | 必須 | 説明                               |
+| ---------- | ------ | ---- | ---------------------------------- |
+| specName   | string | はい | 仕様の名前                         |
+| docType    | string | はい | 承認するドキュメントタイプ         |
+| documentId | string | はい | 追跡用の一意のID                   |
+| content    | string | はい | レビュー用のドキュメントコンテンツ |
 
 **使用例**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -399,6 +424,7 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 ```
 
 **戻り値**:
+
 ```typescript
 {
   success: true,
@@ -413,12 +439,13 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 
 **パラメータ**:
 
-| パラメータ | タイプ | 必須 | 説明 |
-|-----------|------|----------|-------------|
-| specName | string | はい | 仕様の名前 |
+| パラメータ | タイプ | 必須 | 説明                   |
+| ---------- | ------ | ---- | ---------------------- |
+| specName   | string | はい | 仕様の名前             |
 | documentId | string | はい | 確認するドキュメントID |
 
 **戻り値**:
+
 ```typescript
 {
   exists: true,
@@ -430,6 +457,7 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 ```
 
 **使用例**:
+
 ```
 "user-auth要件の承認ステータスを確認して"
 ```
@@ -440,12 +468,13 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 
 **パラメータ**:
 
-| パラメータ | タイプ | 必須 | 説明 |
-|-----------|------|----------|-------------|
-| specName | string | はい | 仕様の名前 |
+| パラメータ | タイプ | 必須 | 説明                   |
+| ---------- | ------ | ---- | ---------------------- |
+| specName   | string | はい | 仕様の名前             |
 | documentId | string | はい | 削除するドキュメントID |
 
 **戻り値**:
+
 ```typescript
 {
   success: true,
@@ -454,6 +483,7 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 ```
 
 **使用例**:
+
 ```
 "user-authの完了した承認をクリーンアップして"
 ```
@@ -539,6 +569,7 @@ Spec Workflow MCPは、構造化されたソフトウェア開発のための専
 5. エクスポートに追加
 
 構造の例:
+
 ```typescript
 export const customTool = {
   name: 'custom-tool',
@@ -548,7 +579,7 @@ export const customTool = {
   },
   handler: async (params) => {
     // Implementation
-  }
+  },
 };
 ```
 

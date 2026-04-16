@@ -33,6 +33,7 @@ npm install
 ```
 
 Dies installiert:
+
 - MCP SDK
 - TypeScript und Build-Tools
 - Express für Dashboard-Server
@@ -51,15 +52,15 @@ Dies kompiliert TypeScript-Dateien zu JavaScript im `dist/` Verzeichnis.
 
 ### Kernbefehle
 
-| Befehl | Beschreibung |
-|--------|--------------|
-| `npm run dev` | Im Entwicklungsmodus mit Auto-Reload starten |
-| `npm run build` | Produktions-Bundle erstellen |
-| `npm start` | Produktionsserver ausführen |
-| `npm test` | Test-Suite ausführen |
-| `npm run clean` | Build-Artefakte entfernen |
-| `npm run lint` | Code-Linter ausführen |
-| `npm run format` | Code mit Prettier formatieren |
+| Befehl           | Beschreibung                                 |
+| ---------------- | -------------------------------------------- |
+| `npm run dev`    | Im Entwicklungsmodus mit Auto-Reload starten |
+| `npm run build`  | Produktions-Bundle erstellen                 |
+| `npm start`      | Produktionsserver ausführen                  |
+| `npm test`       | Test-Suite ausführen                         |
+| `npm run clean`  | Build-Artefakte entfernen                    |
+| `npm run lint`   | Code-Linter ausführen                        |
+| `npm run format` | Code mit Prettier formatieren                |
 
 ### Entwicklungsmodus
 
@@ -68,6 +69,7 @@ npm run dev
 ```
 
 Funktionen:
+
 - Auto-Rekompilierung bei Dateiänderungen
 - Hot Reload für Dashboard
 - Detaillierte Fehlermeldungen
@@ -80,6 +82,7 @@ npm run clean && npm run build
 ```
 
 Optimierungen:
+
 - Minifiziertes JavaScript
 - Optimierte Bundle-Größe
 - Produktions-Fehlerbehandlung
@@ -122,26 +125,32 @@ Client (AI) ↔ MCP-Protokoll ↔ Server ↔ Dateisystem
 ### Hauptkomponenten
 
 #### 1. MCP-Server (`src/index.ts`)
+
 - Behandelt MCP-Protokollkommunikation
 - Verarbeitet Tool-Anfragen
 - Verwaltet Projektzustand
 - Dateisystemoperationen
 
 #### 2. Dashboard-Server (`src/server.ts`)
+
 - Stellt Web-Dashboard bereit
 - WebSocket-Verbindungen
 - Echtzeit-Updates
 - HTTP-API-Endpunkte
 
 #### 3. Tools (`src/tools/`)
+
 Jedes Tool ist ein separates Modul:
+
 - Eingabevalidierung
 - Geschäftslogik
 - Dateioperationen
 - Response-Formatierung
 
 #### 4. Prompts (`src/prompts/`)
+
 Template-Strings für:
+
 - Dokumentgenerierung
 - Workflow-Anleitung
 - Fehlermeldungen
@@ -164,9 +173,9 @@ export const myNewTool: Tool = {
     type: 'object',
     properties: {
       param1: { type: 'string', description: 'Parameterbeschreibung' },
-      param2: { type: 'number', optional: true }
+      param2: { type: 'number', optional: true },
     },
-    required: ['param1']
+    required: ['param1'],
   },
   handler: async (params) => {
     // Tool-Implementierung
@@ -176,9 +185,9 @@ export const myNewTool: Tool = {
 
     return {
       success: true,
-      data: 'Tool-Antwort'
+      data: 'Tool-Antwort',
     };
-  }
+  },
 };
 ```
 
@@ -212,10 +221,14 @@ server.registerTool(myNewTool);
 ```javascript
 document.getElementById('new-action').addEventListener('click', () => {
   // Funktionslogik
-  ws.send(JSON.stringify({
-    type: 'new-action',
-    data: { /* ... */ }
-  }));
+  ws.send(
+    JSON.stringify({
+      type: 'new-action',
+      data: {
+        /* ... */
+      },
+    }),
+  );
 });
 ```
 
@@ -260,7 +273,7 @@ import { myTool } from './my-tool';
 describe('myTool', () => {
   it('sollte Eingabe korrekt verarbeiten', async () => {
     const result = await myTool.handler({
-      param1: 'test'
+      param1: 'test',
     });
 
     expect(result.success).toBe(true);
@@ -269,7 +282,7 @@ describe('myTool', () => {
 
   it('sollte Fehler behandeln', async () => {
     const result = await myTool.handler({
-      param1: null
+      param1: null,
     });
 
     expect(result.success).toBe(false);
@@ -397,6 +410,7 @@ Conventional Commits befolgen:
 - `chore:` Wartung
 
 Beispiele:
+
 ```
 feat: Freigabe-Revisionsworkflow hinzufügen
 fix: Dashboard-WebSocket-Wiederverbindungsproblem beheben
@@ -416,11 +430,13 @@ docs: Konfigurationsanleitung aktualisieren
 ### NPM-Paket
 
 1. **Version aktualisieren**:
+
    ```bash
    npm version patch|minor|major
    ```
 
 2. **Paket erstellen**:
+
    ```bash
    npm run build
    ```
@@ -435,6 +451,7 @@ docs: Konfigurationsanleitung aktualisieren
 1. **Extension-Version aktualisieren** in `vscode-extension/package.json`
 
 2. **Extension erstellen**:
+
    ```bash
    cd vscode-extension
    npm run package
@@ -490,12 +507,12 @@ if (safePath.includes('..')) {
 
 ### Häufige Build-Fehler
 
-| Fehler | Lösung |
-|--------|--------|
-| TypeScript-Fehler | `npm run build` ausführen, um detaillierte Fehler zu sehen |
-| Modul nicht gefunden | Imports überprüfen und `npm install` ausführen |
-| Port bereits verwendet | Port ändern oder bestehenden Prozess beenden |
-| WebSocket-Verbindung fehlgeschlagen | Prüfen, ob Server läuft und Port korrekt ist |
+| Fehler                              | Lösung                                                     |
+| ----------------------------------- | ---------------------------------------------------------- |
+| TypeScript-Fehler                   | `npm run build` ausführen, um detaillierte Fehler zu sehen |
+| Modul nicht gefunden                | Imports überprüfen und `npm install` ausführen             |
+| Port bereits verwendet              | Port ändern oder bestehenden Prozess beenden               |
+| WebSocket-Verbindung fehlgeschlagen | Prüfen, ob Server läuft und Port korrekt ist               |
 
 ### Entwicklungstipps
 

@@ -54,11 +54,13 @@ const MOCK_TASKS_TEMPLATE = `# Tasks
 `;
 
 /** Build a conventions object with sensible defaults and overrides. */
-function makeConventions(overrides: {
-  testing?: Partial<ProjectConventions['testing']>;
-  versioning?: Partial<ProjectConventions['versioning']>;
-  changelog?: Partial<ProjectConventions['changelog']>;
-} = {}): ProjectConventions {
+function makeConventions(
+  overrides: {
+    testing?: Partial<ProjectConventions['testing']>;
+    versioning?: Partial<ProjectConventions['versioning']>;
+    changelog?: Partial<ProjectConventions['changelog']>;
+  } = {},
+): ProjectConventions {
   return {
     schemaVersion: 1,
     detectedAt: '2026-04-03T00:00:00.000Z',
@@ -185,7 +187,14 @@ describe('generateUserTemplates', () => {
 describe('bundled tasks-template.md', () => {
   it('should contain MANDATORY GATES comment and no upstream sample references', () => {
     // Read the source template directly from disk
-    const templatePath = join(__dirname_test, '..', '..', 'markdown', 'templates', 'tasks-template.md');
+    const templatePath = join(
+      __dirname_test,
+      '..',
+      '..',
+      'markdown',
+      'templates',
+      'tasks-template.md',
+    );
     const content = readFileSync(templatePath, 'utf-8');
 
     // Must contain the MANDATORY GATES HTML comment
@@ -233,10 +242,9 @@ describe('writeUserTemplates', () => {
 
     await writeUserTemplates('/fake/project', templates);
 
-    expect(mockMkdir).toHaveBeenCalledWith(
-      '/fake/project/.specflow/user-templates',
-      { recursive: true },
-    );
+    expect(mockMkdir).toHaveBeenCalledWith('/fake/project/.specflow/user-templates', {
+      recursive: true,
+    });
     expect(mockWriteFile).toHaveBeenCalledTimes(2);
     expect(mockWriteFile).toHaveBeenCalledWith(
       '/fake/project/.specflow/user-templates/design-template.md',

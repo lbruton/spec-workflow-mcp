@@ -6,13 +6,14 @@ import { specWorkflowGuideHandler } from '../tools/spec-workflow-guide.js';
 const prompt: Prompt = {
   name: 'inject-spec-workflow-guide',
   title: 'Inject Spec Workflow Guide into Context',
-  description: 'Injects the complete spec-driven development workflow guide into the conversation context. This provides immediate access to all workflow phases, tools, and best practices without requiring separate tool calls.'
+  description:
+    'Injects the complete spec-driven development workflow guide into the conversation context. This provides immediate access to all workflow phases, tools, and best practices without requiring separate tool calls.',
 };
 
 async function handler(args: Record<string, any>, context: ToolContext): Promise<PromptMessage[]> {
   // Call the spec-workflow-guide tool to get the full guide
   const toolResponse = await specWorkflowGuideHandler({}, context);
-  
+
   // Extract the guide content from the tool response
   const guide = toolResponse.data?.guide || '';
   const dashboardUrl = toolResponse.data?.dashboardUrl;
@@ -32,7 +33,7 @@ ${guide}
 ${dashboardUrl ? `- Dashboard: ${dashboardUrl}` : '- Dashboard: Please start the dashboard or use VS Code extension "Spec Workflow MCP"'}
 
 **Next Steps:**
-${nextSteps.map(step => `- ${step}`).join('\n')}
+${nextSteps.map((step) => `- ${step}`).join('\n')}
 
 **Important Instructions:**
 1. This guide has been injected into your context for immediate reference
@@ -41,9 +42,9 @@ ${nextSteps.map(step => `- ${step}`).join('\n')}
 4. Always request approval between phases using the approvals tool
 5. Never proceed to the next phase without successful approval cleanup
 
-Please acknowledge that you've reviewed this workflow guide and are ready to help with spec-driven development.`
-      }
-    }
+Please acknowledge that you've reviewed this workflow guide and are ready to help with spec-driven development.`,
+      },
+    },
   ];
 
   return messages;
@@ -51,5 +52,5 @@ Please acknowledge that you've reviewed this workflow guide and are ready to hel
 
 export const injectSpecWorkflowGuidePrompt: PromptDefinition = {
   prompt,
-  handler
+  handler,
 };

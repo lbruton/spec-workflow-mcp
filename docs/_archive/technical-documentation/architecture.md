@@ -10,52 +10,52 @@
 graph TB
     subgraph "Client Layer"
         AI[AI Assistant]
-        VS[VSCode Extension] 
+        VS[VSCode Extension]
         WEB[Web Dashboard]
     end
-    
+
     subgraph "MCP Server"
         SERVER[SpecWorkflowMCPServer]
         TOOLS[MCP Tools]
         CONTEXT[Context Engine]
     end
-    
+
     subgraph "Core Services"
         SESSION[Session Manager]
         PARSER[Spec Parser]
         TASKS[Task Parser]
         ARCHIVE[Archive Service]
     end
-    
+
     subgraph "Dashboard Backend"
         DASH[Dashboard Server]
         WS[WebSocket Manager]
         APPROVAL[Approval Storage]
         WATCHER[File Watcher]
     end
-    
+
     subgraph "File System"
         FS[Project Files]
         WORKFLOW[.specflow/]
     end
-    
+
     AI -->|MCP Protocol| SERVER
     VS -->|HTTP/WS| DASH
     WEB -->|HTTP/WS| DASH
-    
+
     SERVER --> TOOLS
     TOOLS --> CONTEXT
     CONTEXT --> SESSION
-    
+
     SERVER --> DASH
     DASH --> WS
     DASH --> APPROVAL
     DASH --> WATCHER
-    
+
     TOOLS --> PARSER
     TOOLS --> TASKS
     TOOLS --> ARCHIVE
-    
+
     PARSER --> WORKFLOW
     TASKS --> WORKFLOW
     APPROVAL --> WORKFLOW
@@ -77,24 +77,24 @@ graph TB
         REASONING[AI Reasoning & Understanding]
         SEARCH[Built-in Web Search]
     end
-    
+
     subgraph "MCP Server (This Project)"
         TOOLS[MCP Tools]
         TEMPLATES[Static Templates]
         WORKFLOW[Workflow Logic]
         FILES[File System]
     end
-    
+
     LLM -->|MCP Tool Calls| TOOLS
     TOOLS -->|Structured Data & Templates| LLM
     LLM --> KNOWLEDGE
     LLM --> REASONING
     LLM --> SEARCH
-    
+
     TOOLS --> TEMPLATES
     TOOLS --> WORKFLOW
     TOOLS --> FILES
-    
+
     Note1[The LLM uses its built-in capabilities\nto generate content using MCP-provided\ntemplates and project context]
 ```
 
@@ -108,96 +108,98 @@ graph TB
 
 ### Detailed Capability Analysis & Expansion Opportunities
 
-| Capability | Current Implementation | LLM Built-in Features | Potential MCP Enhancements | Competitive Analysis |
-|------------|----------------------|---------------------|---------------------------|---------------------|
-| **Web Scraping & Research** | ❌ No independent capability | ✅ LLM has built-in web search | 🔮 Could add: Structured web scraping tools, API integrations, research caching | Other agents: Custom scrapers, API wrappers |
-| **AI-Powered Analysis** | ❌ No independent AI calls | ✅ LLM provides all analysis | 🔮 Could add: Specialized analysis tools, code quality metrics | Other agents: Multiple AI model integration |
-| **Context Window Management** | ❌ No LLM context management | ✅ LLM manages conversation context | 🔮 Could add: Context optimization, memory management | Other agents: Advanced context strategies |
-| **External Integrations** | ❌ Only NPM version check | ✅ LLM can call external APIs | 🔮 Could add: GitHub integration, CI/CD hooks, database connections | Other agents: Extensive API ecosystems |
-| **Auto Review Process** | ❌ Human approval only | ✅ LLM can analyze and review | 🔮 Could add: Automated quality gates, AI-powered approvals | Other agents: Multi-stage AI review |
-| **Best Practice Standards** | ❌ Static templates only | ✅ LLM has current best practices | 🔮 Could add: Dynamic template updates, standards APIs | Other agents: Live standards databases |
-| **Planning & Orchestration** | ❌ Fixed workflow sequence | ✅ LLM can plan and reason | 🔮 Could add: Dynamic workflows, adaptive planning | Other agents: Complex orchestration engines |
+| Capability                    | Current Implementation       | LLM Built-in Features               | Potential MCP Enhancements                                                      | Competitive Analysis                        |
+| ----------------------------- | ---------------------------- | ----------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------- |
+| **Web Scraping & Research**   | ❌ No independent capability | ✅ LLM has built-in web search      | 🔮 Could add: Structured web scraping tools, API integrations, research caching | Other agents: Custom scrapers, API wrappers |
+| **AI-Powered Analysis**       | ❌ No independent AI calls   | ✅ LLM provides all analysis        | 🔮 Could add: Specialized analysis tools, code quality metrics                  | Other agents: Multiple AI model integration |
+| **Context Window Management** | ❌ No LLM context management | ✅ LLM manages conversation context | 🔮 Could add: Context optimization, memory management                           | Other agents: Advanced context strategies   |
+| **External Integrations**     | ❌ Only NPM version check    | ✅ LLM can call external APIs       | 🔮 Could add: GitHub integration, CI/CD hooks, database connections             | Other agents: Extensive API ecosystems      |
+| **Auto Review Process**       | ❌ Human approval only       | ✅ LLM can analyze and review       | 🔮 Could add: Automated quality gates, AI-powered approvals                     | Other agents: Multi-stage AI review         |
+| **Best Practice Standards**   | ❌ Static templates only     | ✅ LLM has current best practices   | 🔮 Could add: Dynamic template updates, standards APIs                          | Other agents: Live standards databases      |
+| **Planning & Orchestration**  | ❌ Fixed workflow sequence   | ✅ LLM can plan and reason          | 🔮 Could add: Dynamic workflows, adaptive planning                              | Other agents: Complex orchestration engines |
 
 ### Competitive Feature Analysis
 
 **vs Traditional Development Tools:**
+
 ```typescript
 interface CompetitiveAnalysis {
   specWorkflowMCP: {
     strengths: [
-      "Human oversight integration",
-      "Structured workflow enforcement", 
-      "Real-time dashboard monitoring",
-      "LLM-powered intelligent content"
+      'Human oversight integration',
+      'Structured workflow enforcement',
+      'Real-time dashboard monitoring',
+      'LLM-powered intelligent content',
     ];
     limitations: [
-      "No independent web scraping",
-      "No automated AI review",
-      "Fixed workflow templates",
-      "Single project scope"
+      'No independent web scraping',
+      'No automated AI review',
+      'Fixed workflow templates',
+      'Single project scope',
     ];
   };
-  
+
   competitorAgents: {
     strengths: [
-      "Multi-model AI integration",
-      "Advanced web scraping capabilities", 
-      "Automated quality assurance",
-      "Dynamic workflow adaptation"
+      'Multi-model AI integration',
+      'Advanced web scraping capabilities',
+      'Automated quality assurance',
+      'Dynamic workflow adaptation',
     ];
     limitations: [
-      "Less human oversight",
-      "Complex setup requirements",
-      "Higher resource usage",
-      "Potential runaway behavior"
+      'Less human oversight',
+      'Complex setup requirements',
+      'Higher resource usage',
+      'Potential runaway behavior',
     ];
   };
 }
 ```
 
 **Expansion Roadmap Insights:**
+
 ```typescript
 interface ExpansionOpportunities {
   phase1: {
-    webIntegration: "Add GitHub API, Jira integration, Confluence sync";
-    smartTemplates: "Dynamic templates based on project type detection";
-    qualityGates: "Automated code quality analysis using LLM";
+    webIntegration: 'Add GitHub API, Jira integration, Confluence sync';
+    smartTemplates: 'Dynamic templates based on project type detection';
+    qualityGates: 'Automated code quality analysis using LLM';
   };
-  
+
   phase2: {
-    aiWorkflows: "LLM-powered adaptive workflow generation";
-    codeAnalysis: "Deep codebase analysis and refactoring suggestions";
-    teamCollaboration: "Multi-developer coordination and conflict resolution";
+    aiWorkflows: 'LLM-powered adaptive workflow generation';
+    codeAnalysis: 'Deep codebase analysis and refactoring suggestions';
+    teamCollaboration: 'Multi-developer coordination and conflict resolution';
   };
-  
+
   phase3: {
-    enterpriseFeatures: "SSO, audit trails, compliance reporting";
-    aiOrchestration: "Multi-agent coordination and task delegation";
-    predictiveAnalysis: "Project risk analysis and timeline prediction";
+    enterpriseFeatures: 'SSO, audit trails, compliance reporting';
+    aiOrchestration: 'Multi-agent coordination and task delegation';
+    predictiveAnalysis: 'Project risk analysis and timeline prediction';
   };
 }
 ```
 
 ### How the LLM's Built-in Capabilities Are Currently Utilized
 
-| LLM Capability | How MCP Leverages It | Example | Expansion Potential |
-|---------------|---------------------|---------|-------------------|
-| **Built-in Knowledge** | LLM applies software engineering best practices to templates | Uses SOLID principles when filling design templates | 🔮 Dynamic best practice updates |
-| **Reasoning & Understanding** | LLM analyzes project context and generates appropriate content | Creates relevant requirements based on project analysis | 🔮 Advanced project risk assessment |
-| **Built-in Web Search** | LLM can research current technologies and practices | Looks up latest React patterns when generating components | 🔮 Structured research caching |
-| **Code Understanding** | LLM analyzes existing codebase when provided context | Suggests appropriate API designs based on existing patterns | 🔮 Automated refactoring suggestions |
-| **Technical Writing** | LLM generates well-structured technical documentation | Creates professional requirements and design documents | 🔮 Multi-format documentation generation |
+| LLM Capability                | How MCP Leverages It                                           | Example                                                     | Expansion Potential                      |
+| ----------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------- | ---------------------------------------- |
+| **Built-in Knowledge**        | LLM applies software engineering best practices to templates   | Uses SOLID principles when filling design templates         | 🔮 Dynamic best practice updates         |
+| **Reasoning & Understanding** | LLM analyzes project context and generates appropriate content | Creates relevant requirements based on project analysis     | 🔮 Advanced project risk assessment      |
+| **Built-in Web Search**       | LLM can research current technologies and practices            | Looks up latest React patterns when generating components   | 🔮 Structured research caching           |
+| **Code Understanding**        | LLM analyzes existing codebase when provided context           | Suggests appropriate API designs based on existing patterns | 🔮 Automated refactoring suggestions     |
+| **Technical Writing**         | LLM generates well-structured technical documentation          | Creates professional requirements and design documents      | 🔮 Multi-format documentation generation |
 
 ### Context Flow Architecture
 
 ```typescript
 // How context flows from project files to AI client
 interface ContextFlow {
-  1: "AI Client requests context via MCP tool call";
-  2: "MCP Server loads files from .specflow/ directory";
-  3: "MCP Server structures data using templates and parsing";
-  4: "MCP Server returns formatted context to AI Client";
-  5: "AI Client uses context in its reasoning and generation";
+  1: 'AI Client requests context via MCP tool call';
+  2: 'MCP Server loads files from .specflow/ directory';
+  3: 'MCP Server structures data using templates and parsing';
+  4: 'MCP Server returns formatted context to AI Client';
+  5: 'AI Client uses context in its reasoning and generation';
 }
 ```
 
@@ -217,6 +219,7 @@ export class SpecWorkflowMCPServer {
 ```
 
 **Key Responsibilities:**
+
 - **Tool Registration**: Manages 13 MCP tools
 - **Session Tracking**: Monitors dashboard connections
 - **Graceful Shutdown**: Handles client disconnections
@@ -230,33 +233,44 @@ Implements the Model Context Protocol with structured tools:
 // Tool categories
 const tools = [
   // Workflow guides
-  'spec-workflow-guide', 'steering-guide',
-  
-  // Document creation  
-  'create-spec-doc', 'create-steering-doc',
-  
+  'spec-workflow-guide',
+  'steering-guide',
+
+  // Document creation
+  'create-spec-doc',
+  'create-steering-doc',
+
   // Context loading
-  'get-spec-context', 'get-steering-context', 'get-template-context',
-  
+  'get-spec-context',
+  'get-steering-context',
+  'get-template-context',
+
   // Status management
-  'spec-list', 'spec-status', 'manage-tasks',
-  
+  'spec-list',
+  'spec-status',
+  'manage-tasks',
+
   // Approval workflow
-  'request-approval', 'get-approval-status', 'delete-approval'
+  'request-approval',
+  'get-approval-status',
+  'delete-approval',
 ];
 ```
 
 **Tool Architecture Pattern:**
+
 ```typescript
 export const toolNameTool: Tool = {
   name: 'tool-name',
   description: 'Clear description with usage instructions',
-  inputSchema: { /* JSON Schema validation */ }
+  inputSchema: {
+    /* JSON Schema validation */
+  },
 };
 
 export async function toolNameHandler(
-  args: ValidatedArgs, 
-  context: ToolContext
+  args: ValidatedArgs,
+  context: ToolContext,
 ): Promise<ToolResponse> {
   // Implementation
 }
@@ -275,8 +289,9 @@ interface ToolContext {
 ```
 
 **Context Strategies:**
+
 - **Pre-loading**: Templates cached at startup
-- **Lazy Loading**: Specs loaded on-demand  
+- **Lazy Loading**: Specs loaded on-demand
 - **Cache Invalidation**: Content refreshed when files change
 - **Smart Chunking**: Large documents split appropriately
 
@@ -290,25 +305,25 @@ sequenceDiagram
     participant MCP as MCP Server
     participant FS as File System
     participant DASH as Dashboard
-    
+
     AI->>MCP: spec-workflow-guide
     MCP-->>AI: Workflow instructions
-    
+
     AI->>MCP: get-template-context (requirements)
     MCP->>FS: Load template
     FS-->>MCP: Template content
     MCP-->>AI: Formatted template
-    
+
     AI->>MCP: create-spec-doc
     MCP->>FS: Write requirements.md
     MCP-->>AI: File created
-    
+
     AI->>MCP: request-approval
     MCP->>DASH: Create approval
     MCP-->>AI: Approval requested
-    
+
     Note over DASH: User reviews in dashboard
-    
+
     AI->>MCP: get-approval-status
     MCP->>DASH: Check status
     DASH-->>MCP: Approved
@@ -323,7 +338,7 @@ sequenceDiagram
     participant WATCHER as File Watcher
     participant WS as WebSocket
     participant CLIENT as Dashboard Client
-    
+
     FS->>WATCHER: File changed
     WATCHER->>WS: Broadcast update
     WS->>CLIENT: Real-time notification
@@ -333,6 +348,7 @@ sequenceDiagram
 ## 📁 File System Organization
 
 ### Project Structure
+
 ```
 project-root/
 ├── .specflow/              # All workflow data
@@ -353,12 +369,12 @@ project-root/
 
 ### Directory Responsibilities
 
-| Directory | Purpose | Auto-created |
-|-----------|---------|--------------|
-| `specs/` | Specification documents | ✅ |  
-| `steering/` | Project guidance | ✅ |
-| `approvals/` | Approval workflow | On-demand |
-| `archive/` | Completed specs | On-demand |
+| Directory    | Purpose                 | Auto-created |
+| ------------ | ----------------------- | ------------ |
+| `specs/`     | Specification documents | ✅           |
+| `steering/`  | Project guidance        | ✅           |
+| `approvals/` | Approval workflow       | On-demand    |
+| `archive/`   | Completed specs         | On-demand    |
 
 ## 🌐 Dashboard Architecture
 
@@ -376,6 +392,7 @@ export class MultiProjectDashboardServer {
 ```
 
 **Features:**
+
 - **Multi-Project Support**: Manage multiple projects simultaneously
 - **Project Selection**: Switch between projects in the UI
 - **Static File Serving**: Frontend assets
@@ -393,7 +410,7 @@ React application with modern tooling:
 src/
 ├── modules/
 │   ├── pages/           # Main application pages
-│   ├── components/      # Reusable UI components  
+│   ├── components/      # Reusable UI components
 │   ├── api/            # API communication
 │   └── ws/             # WebSocket integration
 ├── main.tsx            # Application entry point
@@ -401,8 +418,9 @@ src/
 ```
 
 **Technology Stack:**
+
 - **React 18**: Component framework
-- **TypeScript**: Type safety  
+- **TypeScript**: Type safety
 - **Vite**: Build tool and dev server
 - **Tailwind CSS**: Utility-first styling
 - **WebSocket**: Real-time communication
@@ -410,23 +428,27 @@ src/
 ## 🔄 State Management
 
 ### Session State
+
 - **Server**: Dashboard registers in global project registry
 - **Client**: Maintains connection to dashboard WebSocket
 - **Persistence**: `~/.specflow-mcp/activeProjects.json` (global registry)
 
-### Approval State  
+### Approval State
+
 - **Storage**: JSON files in `approvals/` directory
 - **Lifecycle**: pending → approved/rejected → archived
 - **Sync**: Real-time updates via WebSocket
 
 ### Spec State
+
 - **Parsing**: On-demand from markdown files
-- **Caching**: In-memory with file change invalidation  
+- **Caching**: In-memory with file change invalidation
 - **Distribution**: Broadcast to connected clients
 
 ## 🚦 Error Handling
 
 ### Tool Error Response Pattern
+
 ```typescript
 interface ToolResponse {
   success: boolean;
@@ -442,6 +464,7 @@ interface ToolResponse {
 ```
 
 ### Error Categories
+
 1. **Validation Errors**: Invalid parameters
 2. **File System Errors**: Permission, not found
 3. **Network Errors**: Dashboard connection issues
@@ -452,27 +475,29 @@ interface ToolResponse {
 ### Resource Usage & Limits
 
 **Memory Consumption**:
+
 ```typescript
 interface ResourceLimits {
   // Per-project memory usage
-  templates: "~50KB (cached at startup)";
-  specContext: "10-100KB per spec";
-  approvalData: "1-5KB per approval";
-  sessionData: "<1KB per project";
-  
+  templates: '~50KB (cached at startup)';
+  specContext: '10-100KB per spec';
+  approvalData: '1-5KB per approval';
+  sessionData: '<1KB per project';
+
   // Recommended project limits
-  maxSpecs: "50-100 specs per project";
-  maxDocumentSize: "200KB per document";
-  maxProjectSize: "5-10MB total .specflow/";
-  
+  maxSpecs: '50-100 specs per project';
+  maxDocumentSize: '200KB per document';
+  maxProjectSize: '5-10MB total .specflow/';
+
   // Performance thresholds
-  contextLoadTime: "<200ms for typical spec";
-  dashboardResponse: "<50ms for API calls";
-  fileWatcherDelay: "500ms debounce";
+  contextLoadTime: '<200ms for typical spec';
+  dashboardResponse: '<50ms for API calls';
+  fileWatcherDelay: '500ms debounce';
 }
 ```
 
 **File System Performance**:
+
 - **Template Loading**: <10ms (cached permanently)
 - **Spec Context Loading**: 50-200ms cold, <5ms cached
 - **Dashboard API Response**: <50ms typical
@@ -481,10 +506,11 @@ interface ResourceLimits {
 ### Scalability Constraints
 
 **Single Project Limits**:
+
 ```bash
 # Recommended maximums per project
 Specifications: 50-100
-Documents per spec: 3 (requirements, design, tasks)  
+Documents per spec: 3 (requirements, design, tasks)
 Document size: 200KB each
 Total project size: 5-10MB
 Concurrent dashboard users: 1 per project
@@ -492,6 +518,7 @@ File watch depth: .specflow/ only
 ```
 
 **Multi-Project Scaling**:
+
 - Each project runs independent MCP server instance
 - No shared state between projects
 - Linear scaling: N projects = N server instances
@@ -500,6 +527,7 @@ File watch depth: .specflow/ only
 ### Performance Optimization Strategies
 
 **File System Optimization**:
+
 ```typescript
 // Implemented optimizations
 1. "Template pre-loading and permanent caching";
@@ -510,18 +538,19 @@ File watch depth: .specflow/ only
 ```
 
 **Memory Management**:
+
 ```typescript
 // Memory optimization patterns
 interface MemoryOptimization {
-  templateCache: "Permanent - small static data";
-  specCache: "LRU with 50MB limit";
-  approvalStorage: "On-demand loading";
-  sessionTracking: "Minimal metadata only";
-  
+  templateCache: 'Permanent - small static data';
+  specCache: 'LRU with 50MB limit';
+  approvalStorage: 'On-demand loading';
+  sessionTracking: 'Minimal metadata only';
+
   cleanup: {
-    specCacheEviction: "LRU when limit reached";
-    approvalCleanup: "Manual deletion after approval";
-    sessionExpiry: "On server restart";
+    specCacheEviction: 'LRU when limit reached';
+    approvalCleanup: 'Manual deletion after approval';
+    sessionExpiry: 'On server restart';
   };
 }
 ```
@@ -529,16 +558,19 @@ interface MemoryOptimization {
 ## 🔒 Security Considerations
 
 ### File System Access
-- **Restricted Scope**: Only `.specflow/` directory  
+
+- **Restricted Scope**: Only `.specflow/` directory
 - **Path Validation**: Prevents directory traversal
 - **Safe Operations**: No arbitrary command execution
 
 ### Network Security
+
 - **Local Only**: Dashboard binds to localhost
 - **No External Calls**: Except version check (optional)
 - **Input Validation**: All parameters sanitized
 
 ### Data Privacy
+
 - **Local Storage**: All data stays on user's machine
 - **No Telemetry**: No usage data transmitted
 - **Session Isolation**: Each project has separate session
@@ -546,34 +578,38 @@ interface MemoryOptimization {
 ### Enterprise Security Considerations
 
 **Network Security**:
+
 ```typescript
 interface NetworkSecurity {
-  inboundConnections: "Only localhost dashboard (port 3456)";
-  outboundConnections: "Only NPM registry version check";
-  dataTransmission: "No external data transmission";
-  tlsCertificates: "Not required - localhost only";
-  firewall: "Allow localhost:3456 for dashboard access";
+  inboundConnections: 'Only localhost dashboard (port 3456)';
+  outboundConnections: 'Only NPM registry version check';
+  dataTransmission: 'No external data transmission';
+  tlsCertificates: 'Not required - localhost only';
+  firewall: 'Allow localhost:3456 for dashboard access';
 }
 ```
 
 **Data Governance**:
+
 ```typescript
 interface DataGovernance {
-  dataLocation: "All data in project .specflow/ directory";
-  dataRetention: "Manual - user controls all data lifecycle";
-  dataDeletion: "rm -rf .specflow/ removes all MCP data";
-  auditTrail: "File system timestamps, no application logging";
-  compliance: "No data leaves local machine (except version check)";
+  dataLocation: 'All data in project .specflow/ directory';
+  dataRetention: 'Manual - user controls all data lifecycle';
+  dataDeletion: 'rm -rf .specflow/ removes all MCP data';
+  auditTrail: 'File system timestamps, no application logging';
+  compliance: 'No data leaves local machine (except version check)';
 }
 ```
 
 **Access Control**:
+
 - **File System**: Uses OS file permissions
-- **Dashboard**: No authentication - localhost access only  
+- **Dashboard**: No authentication - localhost access only
 - **VS Code**: Integrated with VS Code user session
 - **Multi-User**: Not designed for multi-user environments
 
 **Enterprise Deployment Considerations**:
+
 ```bash
 # Corporate firewall rules
 Allow outbound: registry.npmjs.org (443) # Version checking only

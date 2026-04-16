@@ -19,16 +19,19 @@ Una guía completa con ejemplos y mejores prácticas para interactuar con Spec W
 ### Creación Básica de Especificación
 
 #### Solicitud Simple
+
 ```
 "Crea una especificación para autenticación de usuarios"
 ```
 
 La IA creará:
+
 - Documento de requisitos
 - Documento de diseño (después de aprobación)
 - Desglose de tareas (después de aprobación de diseño)
 
 #### Solicitud Detallada
+
 ```
 "Crea una especificación llamada procesamiento-de-pagos con:
 - Pagos con tarjeta de crédito vía Stripe
@@ -39,6 +42,7 @@ La IA creará:
 ```
 
 #### Desde Documentación Existente
+
 ```
 "Crea una especificación desde el PRD en @requisitos-producto.md"
 ```
@@ -50,6 +54,7 @@ La IA creará:
 ### Creación Avanzada de Especificación
 
 #### Con Restricciones Técnicas
+
 ```
 "Crea una especificación para notificaciones en tiempo real que:
 - Use WebSockets para actualizaciones en vivo
@@ -60,6 +65,7 @@ La IA creará:
 ```
 
 #### Con Criterios de Aceptación
+
 ```
 "Crea una especificación para funcionalidad de búsqueda con estos criterios de aceptación:
 - Resultados aparecen dentro de 200ms
@@ -70,6 +76,7 @@ La IA creará:
 ```
 
 #### Especificación de Microservicio
+
 ```
 "Crea una especificación para un microservicio de inventario que:
 - Exponga API REST
@@ -84,6 +91,7 @@ La IA creará:
 ### Listar y Estado
 
 #### Obtener Vista General
+
 ```
 "Lista todas mis especificaciones"
 "Muéstrame todas las especificaciones y su progreso"
@@ -92,6 +100,7 @@ La IA creará:
 ```
 
 #### Estado Específico
+
 ```
 "Muestra el estado de la especificación user-auth"
 "¿Cuál es el progreso de procesamiento-de-pagos?"
@@ -100,6 +109,7 @@ La IA creará:
 ```
 
 #### Filtrado
+
 ```
 "Muéstrame especificaciones que están más del 50% completas"
 "Lista especificaciones esperando mi aprobación"
@@ -110,6 +120,7 @@ La IA creará:
 ### Gestión de Documentos
 
 #### Ver Documentos
+
 ```
 "Muéstrame los requisitos para user-auth"
 "Muestra el documento de diseño para pagos"
@@ -118,6 +129,7 @@ La IA creará:
 ```
 
 #### Actualizar Documentos
+
 ```
 "Actualiza los requisitos de user-auth para incluir 2FA"
 "Revisa el diseño de pagos para usar Stripe Connect"
@@ -130,6 +142,7 @@ La IA creará:
 ### Tareas Individuales
 
 #### Implementación Básica
+
 ```
 "Implementa la tarea 1.2 de user-auth"
 "Completa la tarea 2.1.3 en la especificación de pagos"
@@ -137,6 +150,7 @@ La IA creará:
 ```
 
 #### Con Contexto
+
 ```
 "Implementa la tarea 1.2 de user-auth usando TypeScript y Express"
 "Completa la tarea de migración de base de datos usando Prisma"
@@ -146,6 +160,7 @@ La IA creará:
 ### Implementación en Lote
 
 #### Por Sección
+
 ```
 "Implementa todas las tareas de base de datos de user-auth"
 "Completa todas las tareas de frontend en la especificación del panel"
@@ -153,6 +168,7 @@ La IA creará:
 ```
 
 #### Por Prioridad
+
 ```
 "Implementa todas las tareas críticas primero"
 "Completa las tareas MVP de user-profile"
@@ -160,6 +176,7 @@ La IA creará:
 ```
 
 #### Secuencial
+
 ```
 "Implementa las tareas 1.1 hasta 1.5 de user-auth"
 "Completa todas las subtareas bajo la sección 2"
@@ -169,6 +186,7 @@ La IA creará:
 ### Estrategias de Implementación
 
 #### Dirigido por Pruebas
+
 ```
 "Para la tarea 1.2, escribe pruebas primero luego implementa"
 "Implementa la tarea 2.1 con cobertura completa de pruebas"
@@ -176,6 +194,7 @@ La IA creará:
 ```
 
 #### Con Documentación
+
 ```
 "Implementa la tarea 1.3 y documenta el API"
 "Completa la tarea de autenticación con comentarios en línea"
@@ -187,6 +206,7 @@ La IA creará:
 ### Crear Orientación
 
 #### Conjunto Completo
+
 ```
 "Crea documentos de orientación para mi proyecto de e-commerce"
 "Configura orientación para una aplicación SaaS"
@@ -194,6 +214,7 @@ La IA creará:
 ```
 
 #### Documentos Individuales
+
 ```
 "Crea un documento de orientación de producto enfocado en experiencia de usuario"
 "Crea orientación técnica para una arquitectura de microservicios"
@@ -201,6 +222,7 @@ La IA creará:
 ```
 
 #### Desde Contexto
+
 ```
 "Crea documentos de orientación basados en @brief-proyecto.md"
 "Genera orientación desde nuestras decisiones técnicas en @arquitectura.md"
@@ -219,6 +241,7 @@ La IA creará:
 ### Solicitar Retroalimentación
 
 #### Con Preocupaciones Específicas
+
 ```
 "Solicita aprobación para requisitos de user-auth - verifica particularmente la sección de seguridad"
 "Pide revisión del diseño de pagos - enfócate en el manejo de errores"
@@ -226,6 +249,7 @@ La IA creará:
 ```
 
 #### Solicitudes de Revisión
+
 ```
 "Los requisitos necesitan más detalle sobre:
 - Escenarios de manejo de errores
@@ -237,6 +261,7 @@ Por favor revisa y reenvía"
 ### Decisiones de Aprobación
 
 #### Aprobar
+
 ```
 "Aprueba los requisitos de user-auth"
 "El diseño se ve bien, apruébalo"
@@ -244,6 +269,7 @@ Por favor revisa y reenvía"
 ```
 
 #### Solicitar Cambios
+
 ```
 "Solicita cambios a los requisitos:
 - Agregar soporte multi-tenant
@@ -252,6 +278,7 @@ Por favor revisa y reenvía"
 ```
 
 #### Rechazar
+
 ```
 "Rechaza el diseño actual - necesitamos usar arquitectura dirigida por eventos en su lugar"
 "Comienza de nuevo con los requisitos - el alcance es demasiado amplio"
@@ -262,6 +289,7 @@ Por favor revisa y reenvía"
 ### Reportar Bugs
 
 #### Reporte Detallado
+
 ```
 "Crea un reporte de bug:
 Título: Login falla con caracteres especiales
@@ -273,6 +301,7 @@ Ambiente: Producción"
 ```
 
 #### Desde Logs de Errores
+
 ```
 "Crea un reporte de bug desde este error: [pegar stack trace]"
 "Documenta este bug desde la alerta de Sentry: [enlace]"
@@ -281,6 +310,7 @@ Ambiente: Producción"
 ### Resolución de Bugs
 
 #### Investigación
+
 ```
 "Investiga la causa raíz del bug #45"
 "Analiza por qué el webhook de pagos está fallando"
@@ -288,6 +318,7 @@ Ambiente: Producción"
 ```
 
 #### Implementación de Corrección
+
 ```
 "Crea una corrección para el bug #45 en autenticación de usuarios"
 "Implementa una solución para el problema de timeout de pagos"
@@ -305,11 +336,13 @@ Los requisitos y diseños a menudo evolucionan durante la implementación. Cuand
 La IA tiene acceso a instrucciones completas de actualización de tareas a través del prompt refresh-tasks. Simplemente informa a la IA sobre tus cambios:
 
 #### Actualización Básica de Tareas
+
 ```
 "Los requisitos han sido actualizados. Por favor actualiza tasks.md para alinearlo con los requirements.md y design.md actuales."
 ```
 
 #### Actualización Detallada de Tareas con Contexto
+
 ```
 "He actualizado la especificación con los siguientes cambios:
 - Eliminado el módulo de reportes
@@ -324,6 +357,7 @@ Por favor actualiza tasks.md siguiendo el proceso de actualización de tareas:
 ```
 
 #### Cambio de Arquitectura Requiriendo Migración
+
 ```
 "Estamos cambiando de API REST a GraphQL. Varios endpoints REST ya están implementados. Por favor actualiza tasks.md con:
 1. Todo el trabajo REST completado preservado
@@ -365,22 +399,26 @@ Cuando solicitas una actualización de tareas, la IA:
 ### Escenarios de Ejemplo
 
 #### Eliminación de Característica
+
 ```
 "Hemos decidido eliminar el módulo de reportes de la especificación. Actualiza tasks.md en consecuencia."
 ```
 
 Comportamiento esperado de la IA:
+
 - Mantiene todas las tareas de reportes completadas con su estado [x]
 - Mantiene todas las tareas de reportes en progreso con su estado [-]
 - Elimina solo tareas de reportes pendientes [ ]
 - Agrega nota: "_Nota: Característica de reportes eliminada de la especificación pero trabajo completado preservado_"
 
 #### Cambio de Arquitectura con Trabajo Completado
+
 ```
 "Estamos cambiando de MongoDB a PostgreSQL. Actualiza las tareas de base de datos pendientes. Nota que ya hemos implementado esquemas MongoDB y lógica de conexión."
 ```
 
 Comportamiento esperado de la IA:
+
 - Preserva todas las tareas MongoDB completadas exactamente como están escritas
 - Preserva todas las tareas MongoDB en progreso exactamente como están escritas
 - Agrega nuevas tareas de migración inmediatamente después del trabajo MongoDB completado:
@@ -394,11 +432,13 @@ Comportamiento esperado de la IA:
 - Mantiene secuencia de numeración de tareas
 
 #### Adición de Característica
+
 ```
 "Agrega login social a la especificación de autenticación. Los requisitos y diseño han sido actualizados."
 ```
 
 Comportamiento esperado de la IA:
+
 - Analiza estructura de tarea actual para punto de inserción lógico
 - Agrega nuevas tareas de login social con numeración apropiada
 - Referencia los requisitos específicos para login social
@@ -410,11 +450,13 @@ Comportamiento esperado de la IA:
 Cuando cambios de arquitectura afectan código ya implementado:
 
 #### Migración de REST a GraphQL
+
 ```
 "Estamos cambiando de REST a GraphQL. Varios endpoints REST ya están implementados."
 ```
 
 Adiciones de tareas esperadas:
+
 - Preserva tareas de endpoint REST completadas
 - Agrega tareas de definición de esquema GraphQL
 - Agrega tareas de implementación de resolvers
@@ -423,11 +465,13 @@ Adiciones de tareas esperadas:
 - Agrega tareas de limpieza para eliminar endpoints REST después de que GraphQL sea verificado
 
 #### División de Monolito a Microservicios
+
 ```
 "Estamos dividiendo el servicio de usuario monolítico en servicios separados de autenticación y perfil."
 ```
 
 Adiciones de tareas esperadas:
+
 - Preserva tareas de servicio monolítico completadas
 - Agrega tareas de separación de servicios
 - Agrega tareas de comunicación inter-servicios
@@ -456,16 +500,19 @@ Las tareas de migración deben indicar claramente su propósito:
 Al informar a la IA sobre cambios de especificación:
 
 #### Ser Específico sobre Cambios e Impacto
+
 ```
 "Los requisitos de procesamiento de pagos han cambiado. Ahora se requiere Stripe en lugar de PayPal. Ya hemos implementado manejadores de webhook de PayPal. Por favor actualiza tasks.md para reflejar este cambio, incluyendo tareas de migración."
 ```
 
 #### Proporcionar Contexto para Preservación y Migración
+
 ```
 "Aunque estamos moviéndonos de MongoDB a PostgreSQL, mantén todas las tareas MongoDB completadas ya que ese trabajo ya está hecho. Agrega tareas de migración para transicionar el código MongoDB implementado a PostgreSQL."
 ```
 
 #### Solicitar Validación
+
 ```
 "Después de actualizar tasks.md, confirma que todos los requisitos en requirements.md tienen tareas correspondientes, existen rutas de migración para cambios de arquitectura, y que no existen tareas pendientes para características eliminadas."
 ```
@@ -497,6 +544,7 @@ La IA entonces seguirá las instrucciones completas de actualización para actua
 ### Flujos de Trabajo Multi-Especificación
 
 #### Especificaciones Relacionadas
+
 ```
 "Crea una especificación para panel-de-administración que se integre con:
 - especificación de gestión-de-usuarios
@@ -505,6 +553,7 @@ La IA entonces seguirá las instrucciones completas de actualización para actua
 ```
 
 #### Dependencias de Especificación
+
 ```
 "Crea una especificación para notificaciones que dependa de:
 - user-auth esté completo
@@ -515,6 +564,7 @@ La IA entonces seguirá las instrucciones completas de actualización para actua
 ### Desarrollo Incremental
 
 #### MVP Primero
+
 ```
 "Crea una especificación MVP para perfiles-de-usuario con solo:
 - Creación de perfil básico
@@ -524,6 +574,7 @@ La IA entonces seguirá las instrucciones completas de actualización para actua
 ```
 
 #### Especificaciones de Mejora
+
 ```
 "Crea una especificación de mejora para user-auth agregando:
 - Login social (Google, GitHub)
@@ -535,6 +586,7 @@ La IA entonces seguirá las instrucciones completas de actualización para actua
 ### Escenarios Complejos
 
 #### Especificaciones de Migración
+
 ```
 "Crea una especificación para migrar de MongoDB a PostgreSQL:
 - Documenta esquema actual
@@ -544,6 +596,7 @@ La IA entonces seguirá las instrucciones completas de actualización para actua
 ```
 
 #### Especificaciones de Refactorización
+
 ```
 "Crea una especificación de refactorización para:
 - Dividir el monolito en servicios
@@ -553,6 +606,7 @@ La IA entonces seguirá las instrucciones completas de actualización para actua
 ```
 
 #### Especificaciones de Rendimiento
+
 ```
 "Crea una especificación de optimización de rendimiento:
 - Perfilar cuellos de botella actuales
@@ -564,6 +618,7 @@ La IA entonces seguirá las instrucciones completas de actualización para actua
 ## Combinaciones de Flujo de Trabajo
 
 ### Flujo de Característica Completo
+
 ```
 1. "Crea documentos de orientación para el proyecto"
 2. "Crea una especificación para autenticación de usuarios"
@@ -576,6 +631,7 @@ La IA entonces seguirá las instrucciones completas de actualización para actua
 ```
 
 ### Desarrollo Paralelo
+
 ```
 "Mientras reviso los requisitos, comienza a bosquejar el diseño del API"
 "Crea especificaciones para frontend y backend en paralelo"
@@ -583,6 +639,7 @@ La IA entonces seguirá las instrucciones completas de actualización para actua
 ```
 
 ### Refinamiento Iterativo
+
 ```
 1. "Crea especificación inicial para búsqueda"
 2. "Implementa búsqueda básica (tareas 1-3)"
@@ -594,6 +651,7 @@ La IA entonces seguirá las instrucciones completas de actualización para actua
 ## Prompts Conscientes del Contexto
 
 ### Usar Contexto del Proyecto
+
 ```
 "Crea una especificación que siga nuestros patrones existentes"
 "Implementa esta tarea consistente con nuestra base de código"
@@ -601,6 +659,7 @@ La IA entonces seguirá las instrucciones completas de actualización para actua
 ```
 
 ### Referenciar Otras Especificaciones
+
 ```
 "Crea una especificación similar a user-auth pero para autenticación de admin"
 "Usa los mismos patrones de diseño que en la especificación de pagos"
@@ -608,6 +667,7 @@ La IA entonces seguirá las instrucciones completas de actualización para actua
 ```
 
 ### Construir sobre Trabajo Previo
+
 ```
 "Extiende la especificación user-auth para incluir gestión de equipos"
 "Agrega soporte GraphQL a la especificación de API REST existente"
@@ -617,28 +677,34 @@ La IA entonces seguirá las instrucciones completas de actualización para actua
 ## Consejos para Prompts Efectivos
 
 ### Ser Específico
+
 ❌ **Vago**: "Crea una especificación de login"
 ✅ **Específico**: "Crea una especificación para login email/contraseña con 2FA, recordarme y restablecimiento de contraseña"
 
 ### Proporcionar Contexto
+
 ❌ **Sin contexto**: "Implementa la tarea"
 ✅ **Con contexto**: "Implementa la tarea 1.2 usando nuestro middleware Express existente y base de datos PostgreSQL"
 
 ### Establecer Expectativas Claras
+
 ❌ **Poco claro**: "Hazlo mejor"
 ✅ **Claro**: "Mejora el diseño para manejar 10x el tráfico actual con tiempos de respuesta bajo 200ms"
 
 ### Usar Solicitudes Incrementales
+
 ❌ **Demasiado**: "Crea 5 especificaciones e implementa todo"
 ✅ **Incremental**: "Crea primero la especificación user-auth, luego revisaremos antes de pasar a la siguiente"
 
 ### Referenciar Trabajo Existente
+
 ❌ **Comenzar de cero**: "Crea un nuevo sistema de pagos"
 ✅ **Construir sobre**: "Mejora nuestra especificación de pagos para agregar facturación de suscripciones"
 
 ## Biblioteca de Patrones Comunes
 
 ### Operaciones CRUD
+
 ```
 "Crea una especificación para operaciones CRUD en productos incluyendo:
 - Crear con validación
@@ -648,6 +714,7 @@ La IA entonces seguirá las instrucciones completas de actualización para actua
 ```
 
 ### Autenticación y Autorización
+
 ```
 "Crea una especificación de autenticación con:
 - Autenticación basada en JWT
@@ -658,6 +725,7 @@ La IA entonces seguirá las instrucciones completas de actualización para actua
 ```
 
 ### Características en Tiempo Real
+
 ```
 "Crea una especificación para chat en tiempo real:
 - Conexiones WebSocket
@@ -668,6 +736,7 @@ La IA entonces seguirá las instrucciones completas de actualización para actua
 ```
 
 ### Gestión de Archivos
+
 ```
 "Crea una especificación de carga de archivos:
 - Cargas fragmentadas para archivos grandes
@@ -678,6 +747,7 @@ La IA entonces seguirá las instrucciones completas de actualización para actua
 ```
 
 ### Analíticas y Reportes
+
 ```
 "Crea una especificación de analíticas:
 - Seguimiento de eventos
@@ -690,6 +760,7 @@ La IA entonces seguirá las instrucciones completas de actualización para actua
 ## Prompts de Solución de Problemas
 
 ### Cuando las Cosas Van Mal
+
 ```
 "¿Por qué esta especificación no aparece?"
 "Depura por qué la tarea no se está completando"
@@ -698,6 +769,7 @@ La IA entonces seguirá las instrucciones completas de actualización para actua
 ```
 
 ### Desatascarse
+
 ```
 "¿Qué debería hacer después?"
 "Muéstrame qué está bloqueando el progreso"

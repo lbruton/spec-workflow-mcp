@@ -42,11 +42,19 @@ export function MermaidRenderer({ code }: MermaidRendererProps) {
   if (error) {
     return (
       <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 my-4">
-        <p className="text-red-700 dark:text-red-300 text-sm font-medium mb-2">Mermaid Diagram Error</p>
-        <pre className="text-red-600 dark:text-red-400 text-xs overflow-auto whitespace-pre-wrap">{error}</pre>
+        <p className="text-red-700 dark:text-red-300 text-sm font-medium mb-2">
+          Mermaid Diagram Error
+        </p>
+        <pre className="text-red-600 dark:text-red-400 text-xs overflow-auto whitespace-pre-wrap">
+          {error}
+        </pre>
         <details className="mt-2">
-          <summary className="text-red-600 dark:text-red-400 text-xs cursor-pointer">Show source</summary>
-          <pre className="text-gray-600 dark:text-gray-400 text-xs mt-2 overflow-auto whitespace-pre-wrap">{code}</pre>
+          <summary className="text-red-600 dark:text-red-400 text-xs cursor-pointer">
+            Show source
+          </summary>
+          <pre className="text-gray-600 dark:text-gray-400 text-xs mt-2 overflow-auto whitespace-pre-wrap">
+            {code}
+          </pre>
         </details>
       </div>
     );
@@ -102,19 +110,24 @@ function MermaidCodeBlockEditor({ code, onChange }: MermaidCodeBlockEditorProps)
     setIsEditing(false);
   }, [code]);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      handleCancel();
-    } else if (e.key === 'Enter' && e.ctrlKey) {
-      handleSave();
-    }
-  }, [handleCancel, handleSave]);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleCancel();
+      } else if (e.key === 'Enter' && e.ctrlKey) {
+        handleSave();
+      }
+    },
+    [handleCancel, handleSave],
+  );
 
   if (isEditing) {
     return (
       <div className="border border-blue-300 dark:border-blue-600 rounded-lg overflow-hidden my-4">
         <div className="bg-blue-50 dark:bg-blue-900/20 px-3 py-2 flex items-center justify-between border-b border-blue-200 dark:border-blue-700">
-          <span className="text-sm font-medium text-blue-700 dark:text-blue-300">Editing Mermaid Diagram</span>
+          <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+            Editing Mermaid Diagram
+          </span>
           <div className="flex gap-2">
             <button
               onClick={handleCancel}

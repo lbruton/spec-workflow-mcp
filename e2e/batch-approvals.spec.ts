@@ -21,7 +21,7 @@ test.describe('Batch Approvals Feature', () => {
     // Take screenshot
     await page.screenshot({
       path: 'docs/screenshots/dashboard-01-approvals-page.png',
-      fullPage: false
+      fullPage: false,
     });
   });
 
@@ -38,7 +38,7 @@ test.describe('Batch Approvals Feature', () => {
     // Take screenshot of selection mode
     await page.screenshot({
       path: 'docs/screenshots/dashboard-02-selection-mode.png',
-      fullPage: false
+      fullPage: false,
     });
   });
 
@@ -65,7 +65,7 @@ test.describe('Batch Approvals Feature', () => {
     // Take screenshot
     await page.screenshot({
       path: 'docs/screenshots/dashboard-03-items-selected.png',
-      fullPage: false
+      fullPage: false,
     });
   });
 
@@ -75,7 +75,7 @@ test.describe('Batch Approvals Feature', () => {
     await page.waitForTimeout(500);
 
     const checkboxes = page.locator('input[type="checkbox"]');
-    if (await checkboxes.count() >= 2) {
+    if ((await checkboxes.count()) >= 2) {
       await checkboxes.nth(0).click();
       await checkboxes.nth(1).click();
     }
@@ -91,7 +91,7 @@ test.describe('Batch Approvals Feature', () => {
     // Take screenshot
     await page.screenshot({
       path: 'docs/screenshots/dashboard-04-batch-actions.png',
-      fullPage: false
+      fullPage: false,
     });
   });
 
@@ -101,7 +101,7 @@ test.describe('Batch Approvals Feature', () => {
     await page.waitForTimeout(500);
 
     const checkboxes = page.locator('input[type="checkbox"]');
-    if (await checkboxes.count() >= 2) {
+    if ((await checkboxes.count()) >= 2) {
       await checkboxes.nth(0).click();
       await checkboxes.nth(1).click();
     }
@@ -118,7 +118,7 @@ test.describe('Batch Approvals Feature', () => {
     // Take screenshot of modal
     await page.screenshot({
       path: 'docs/screenshots/dashboard-05-reject-modal.png',
-      fullPage: false
+      fullPage: false,
     });
   });
 
@@ -128,8 +128,10 @@ test.describe('Batch Approvals Feature', () => {
     await page.waitForTimeout(500);
 
     // Click Select All (usually in the header/toolbar)
-    const selectAllButton = page.locator('button:has-text("Select All"), label:has-text("Select All")');
-    if (await selectAllButton.count() > 0) {
+    const selectAllButton = page.locator(
+      'button:has-text("Select All"), label:has-text("Select All")',
+    );
+    if ((await selectAllButton.count()) > 0) {
       await selectAllButton.first().click();
       await page.waitForTimeout(300);
     }
@@ -137,7 +139,7 @@ test.describe('Batch Approvals Feature', () => {
     // Take screenshot
     await page.screenshot({
       path: 'docs/screenshots/dashboard-06-select-all.png',
-      fullPage: false
+      fullPage: false,
     });
   });
 
@@ -147,7 +149,7 @@ test.describe('Batch Approvals Feature', () => {
     await page.waitForTimeout(500);
 
     const checkboxes = page.locator('input[type="checkbox"]');
-    if (await checkboxes.count() >= 2) {
+    if ((await checkboxes.count()) >= 2) {
       await checkboxes.nth(0).click();
       await checkboxes.nth(1).click();
     }
@@ -164,7 +166,7 @@ test.describe('Batch Approvals Feature', () => {
     // Take screenshot
     await page.screenshot({
       path: 'docs/screenshots/dashboard-07-undo-toast.png',
-      fullPage: false
+      fullPage: false,
     });
   });
 
@@ -175,14 +177,14 @@ test.describe('Batch Approvals Feature', () => {
 
     // Select an item
     const checkboxes = page.locator('input[type="checkbox"]');
-    if (await checkboxes.count() > 0) {
+    if ((await checkboxes.count()) > 0) {
       await checkboxes.nth(0).click();
     }
     await page.waitForTimeout(300);
 
     // Click Cancel/Exit button
     const cancelButton = page.locator('button:has-text("Cancel"), button:has-text("Exit")');
-    if (await cancelButton.count() > 0) {
+    if ((await cancelButton.count()) > 0) {
       await cancelButton.first().click();
       await page.waitForTimeout(300);
     }
@@ -190,7 +192,7 @@ test.describe('Batch Approvals Feature', () => {
     // Take screenshot
     await page.screenshot({
       path: 'docs/screenshots/dashboard-08-exit-selection.png',
-      fullPage: false
+      fullPage: false,
     });
   });
 });

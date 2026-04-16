@@ -12,10 +12,10 @@ npx -y @pimzino/spec-workflow-mcp@latest [project-path] [options]
 
 ### Opções Disponíveis
 
-| Opção | Descrição | Exemplo |
-|--------|-------------|---------|
-| `--help` | Mostra informações de uso abrangentes | `npx -y @pimzino/spec-workflow-mcp@latest --help` |
-| `--dashboard` | Executa apenas o dashboard (porta padrão: 5000) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard` |
+| Opção             | Descrição                                                | Exemplo                                                            |
+| ----------------- | -------------------------------------------------------- | ------------------------------------------------------------------ |
+| `--help`          | Mostra informações de uso abrangentes                    | `npx -y @pimzino/spec-workflow-mcp@latest --help`                  |
+| `--dashboard`     | Executa apenas o dashboard (porta padrão: 5000)          | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard`             |
 | `--port <number>` | Especifica porta personalizada do dashboard (1024-65535) | `npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080` |
 
 ### Notas Importantes
@@ -29,12 +29,14 @@ npx -y @pimzino/spec-workflow-mcp@latest [project-path] [options]
 ### Fluxo de Trabalho Típico
 
 1. **Iniciar o Dashboard** (faça isso primeiro, apenas uma vez):
+
 ```bash
 # Usa a porta padrão 5000
 npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 ```
 
 2. **Iniciar Servidores MCP** (um por projeto, em terminais separados):
+
 ```bash
 # Projeto 1
 npx -y @pimzino/spec-workflow-mcp@latest ~/projects/app1
@@ -63,11 +65,12 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard --port 8080
 
 Substitui o diretório de estado global padrão (`~/.specflow-mcp`). Útil para ambientes isolados onde `$HOME` é somente leitura.
 
-| Variável | Padrão | Descrição |
-|----------|---------|-------------|
+| Variável             | Padrão            | Descrição                                |
+| -------------------- | ----------------- | ---------------------------------------- |
 | `SPEC_WORKFLOW_HOME` | `~/.specflow-mcp` | Diretório para arquivos de estado global |
 
 **Arquivos armazenados neste diretório:**
+
 - `activeProjects.json` - Registro de projetos
 - `activeSession.json` - Informações de sessão do dashboard
 - `settings.json` - Configurações globais
@@ -98,6 +101,7 @@ SPEC_WORKFLOW_HOME=/workspace/.specflow-mcp npx -y @pimzino/spec-workflow-mcp@la
 ## Gerenciamento de Sessão do Dashboard
 
 O dashboard armazena suas informações de sessão em `~/.specflow-mcp/activeSession.json` (ou `$SPEC_WORKFLOW_HOME/activeSession.json` se definido). Este arquivo:
+
 - Impõe instância única do dashboard
 - Permite que servidores MCP descubram o dashboard em execução
 - Limpa automaticamente quando o dashboard para
@@ -177,12 +181,12 @@ debounceMs = 300
 
 #### Configurações Básicas
 
-| Opção | Tipo | Padrão | Descrição |
-|--------|------|---------|-------------|
-| `projectDir` | string | Diretório atual | Caminho do diretório do projeto |
-| `port` | number | Efêmera | Porta do dashboard (1024-65535) |
-| `dashboardOnly` | boolean | false | Executar dashboard sem servidor MCP |
-| `lang` | string | "en" | Idioma da interface |
+| Opção           | Tipo    | Padrão          | Descrição                           |
+| --------------- | ------- | --------------- | ----------------------------------- |
+| `projectDir`    | string  | Diretório atual | Caminho do diretório do projeto     |
+| `port`          | number  | Efêmera         | Porta do dashboard (1024-65535)     |
+| `dashboardOnly` | boolean | false           | Executar dashboard sem servidor MCP |
+| `lang`          | string  | "en"            | Idioma da interface                 |
 
 > **Nota**: A opção `autoStartDashboard` foi removida na v2.0.0. O dashboard agora usa um modo multi-projeto unificado acessível via flag `--dashboard`.
 
@@ -203,11 +207,13 @@ debounceMs = 300
 ### Criando uma Configuração Personalizada
 
 1. Copie a configuração de exemplo:
+
 ```bash
 cp .specflow/config.example.toml .specflow/config.toml
 ```
 
 2. Edite a configuração:
+
 ```toml
 # Configuração do meu projeto
 projectDir = "/Users/myname/projects/myapp"
@@ -216,6 +222,7 @@ lang = "pt"
 ```
 
 3. Use a configuração:
+
 ```bash
 # Usa .specflow/config.toml automaticamente
 npx -y @pimzino/spec-workflow-mcp@latest
@@ -262,6 +269,7 @@ verboseLogging = true
 ```
 
 Uso:
+
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest --config dev-config.toml
 ```
@@ -280,6 +288,7 @@ verboseLogging = false
 ```
 
 Uso:
+
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest --config prod-config.toml
 ```
@@ -293,6 +302,7 @@ As portas devem estar entre 1024 e 65535.
 ### Portas Efêmeras
 
 Quando nenhuma porta é especificada, o sistema seleciona automaticamente uma porta efêmera disponível. Recomendado para:
+
 - Ambientes de desenvolvimento
 - Múltiplos projetos simultâneos
 - Evitar conflitos de porta
@@ -300,6 +310,7 @@ Quando nenhuma porta é especificada, o sistema seleciona automaticamente uma po
 ### Portas Fixas
 
 Use portas fixas quando precisar:
+
 - URLs consistentes para favoritos
 - Integração com outras ferramentas
 - Colaboração em equipe com configurações compartilhadas
@@ -367,11 +378,13 @@ A extensão VSCode tem suas próprias configurações:
 ### Configuração Não Carregando
 
 1. **Verifique a localização do arquivo:**
+
    ```bash
    ls -la .specflow/config.toml
    ```
 
 2. **Valide a sintaxe TOML:**
+
    ```bash
    # Instalar ferramenta CLI TOML
    npm install -g @iarna/toml
@@ -388,12 +401,12 @@ A extensão VSCode tem suas próprias configurações:
 
 ### Problemas Comuns
 
-| Problema | Solução |
-|-------|----------|
-| Porta já em uso | Use porta diferente ou omita para efêmera |
+| Problema                               | Solução                                                  |
+| -------------------------------------- | -------------------------------------------------------- |
+| Porta já em uso                        | Use porta diferente ou omita para efêmera                |
 | Arquivo de configuração não encontrado | Verifique o caminho e use caminho absoluto se necessário |
-| Sintaxe TOML inválida | Valide com linter TOML |
-| Configurações não aplicando | Verifique precedência de configuração |
+| Sintaxe TOML inválida                  | Valide com linter TOML                                   |
+| Configurações não aplicando            | Verifique precedência de configuração                    |
 
 ## Melhores Práticas
 

@@ -22,7 +22,7 @@ export function TextInputModal({
   submitText = 'Submit',
   cancelText = 'Cancel',
   required = true,
-  multiline = false
+  multiline = false,
 }: TextInputModalProps) {
   const { t } = useTranslation();
   const [value, setValue] = useState('');
@@ -61,9 +61,7 @@ export function TextInputModal({
         <form onSubmit={handleSubmit}>
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-[var(--border-default)]">
-            <h3 className="text-lg font-semibold text-[var(--text-primary)]">
-              {title}
-            </h3>
+            <h3 className="text-lg font-semibold text-[var(--text-primary)]">{title}</h3>
             <button
               type="button"
               onClick={onClose}
@@ -71,7 +69,12 @@ export function TextInputModal({
               aria-label={t('common.closeModalAria')}
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>

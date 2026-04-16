@@ -112,7 +112,14 @@ export function parseArguments(args: string[]): {
   let customPort: number | undefined;
 
   // Check for invalid flags
-  const validFlags = ['--dashboard', '--port', '--help', '-h', '--no-open', '--no-shared-worktree-specs'];
+  const validFlags = [
+    '--dashboard',
+    '--port',
+    '--help',
+    '-h',
+    '--no-open',
+    '--no-shared-worktree-specs',
+  ];
   for (const arg of args) {
     if (arg.startsWith('--') && !arg.includes('=')) {
       if (!validFlags.includes(arg)) {
@@ -194,7 +201,7 @@ export function parseArguments(args: string[]): {
     noSharedWorktreeSpecs,
     port: customPort,
     lang: undefined,
-    noOpen
+    noOpen,
   };
 }
 
@@ -240,7 +247,9 @@ async function main() {
         console.error('');
         console.error('You can:');
         console.error(`  1. Use the existing dashboard at: ${existingSession.url}`);
-        console.error(`  2. Stop it first (Ctrl+C or kill ${existingSession.pid}), then start a new one`);
+        console.error(
+          `  2. Stop it first (Ctrl+C or kill ${existingSession.pid}), then start a new one`,
+        );
         console.error('');
         console.error('Note: Only one dashboard instance is needed for all your projects.');
         process.exit(1);
@@ -264,12 +273,12 @@ async function main() {
       let bindAddress: string | undefined;
       let allowExternalAccess: boolean | undefined;
       const securityConfig: any = {};
-      
+
       // Network binding configuration
       if (process.env.SPEC_WORKFLOW_BIND_ADDRESS) {
         bindAddress = process.env.SPEC_WORKFLOW_BIND_ADDRESS;
       }
-      
+
       // External access opt-in (only override if explicitly set to true or false)
       if (process.env.SPEC_WORKFLOW_ALLOW_EXTERNAL_ACCESS !== undefined) {
         const allowExternal = process.env.SPEC_WORKFLOW_ALLOW_EXTERNAL_ACCESS.toLowerCase();
@@ -280,9 +289,9 @@ async function main() {
         }
         // If invalid value, ignore and use default
       }
-      
+
       // Security features configuration
-      
+
       // Rate limiting toggle (only override if explicitly set to true or false)
       if (process.env.SPEC_WORKFLOW_RATE_LIMIT_ENABLED !== undefined) {
         const rateLimitEnabled = process.env.SPEC_WORKFLOW_RATE_LIMIT_ENABLED.toLowerCase();
@@ -293,7 +302,7 @@ async function main() {
         }
         // If invalid value, ignore and use default
       }
-      
+
       // CORS toggle (only override if explicitly set to true or false)
       if (process.env.SPEC_WORKFLOW_CORS_ENABLED !== undefined) {
         const corsEnabled = process.env.SPEC_WORKFLOW_CORS_ENABLED.toLowerCase();
@@ -313,7 +322,7 @@ async function main() {
           port: dashboardPort,
           bindAddress,
           allowExternalAccess,
-          security: securityConfig
+          security: securityConfig,
         });
       } catch (error: any) {
         // Provide user-friendly error message with environment variable names
@@ -353,7 +362,6 @@ async function main() {
 
       process.on('SIGINT', shutdown);
       process.on('SIGTERM', shutdown);
-
     } else {
       // MCP server mode
       console.error(`Starting Spec Workflow MCP Server for project: ${workflowRootPath}`);
@@ -375,16 +383,21 @@ async function main() {
         process.exit(0);
       });
     }
-
   } catch (error: any) {
     console.error('Error:', error.message);
 
     // Provide additional context for common path-related issues
-    if (error.message.includes('ENOENT') || error.message.includes('path') || error.message.includes('directory')) {
+    if (
+      error.message.includes('ENOENT') ||
+      error.message.includes('path') ||
+      error.message.includes('directory')
+    ) {
       console.error('\nProject path troubleshooting:');
       console.error('- Verify the project path exists and is accessible');
-      console.error('- For Claude CLI users, ensure you used: claude mcp add spec-workflow npx -y @pimzino/spec-workflow-mcp@latest -- /path/to/your/project');
-      console.error('- Check that the path doesn\'t contain special characters that need escaping');
+      console.error(
+        '- For Claude CLI users, ensure you used: claude mcp add spec-workflow npx -y @pimzino/spec-workflow-mcp@latest -- /path/to/your/project',
+      );
+      console.error("- Check that the path doesn't contain special characters that need escaping");
       console.error(`- Current working directory: ${process.cwd()}`);
     }
 

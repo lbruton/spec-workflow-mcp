@@ -11,23 +11,25 @@
 **Most Common Causes**:
 
 1. **Wrong Node.js Version**
+
    ```bash
-   # Check version  
+   # Check version
    node --version
    # Should be >= 18.0.0
-   
+
    # Fix: Update Node.js
    # Use nvm or download from nodejs.org
    ```
 
 2. **Path Issues**
+
    ```json
    // ❌ Wrong - relative path
    {
      "command": "npx",
      "args": ["-y", "@pimzino/spec-workflow-mcp@latest", "./my-project"]
    }
-   
+
    // ✅ Correct - absolute path
    {
      "command": "npx",
@@ -43,6 +45,7 @@
    ```
 
 **Quick Fix**:
+
 ```bash
 # Test server manually
 cd /your/project/path
@@ -60,6 +63,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --help
 **Solutions**:
 
 1. **Check Dashboard Status**
+
    ```bash
    # Check if dashboard is running
    netstat -tulpn | grep :3456
@@ -68,6 +72,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --help
    ```
 
 2. **Manual Dashboard Start**
+
    ```bash
    # Start dashboard separately
    cd /your/project
@@ -82,24 +87,26 @@ npx -y @pimzino/spec-workflow-mcp@latest --help
 
 ---
 
-### Approval System Not Working  
+### Approval System Not Working
 
 **Symptoms**: Approvals stay "pending", buttons don't work
 
 **Debugging Steps**:
 
 1. **Check Approval Files**
+
    ```bash
    ls -la .specflow/approvals/
    # Should show approval JSON files
    ```
 
 2. **Browser Console Errors**
-   - Open browser DevTools (F12)  
+   - Open browser DevTools (F12)
    - Check Console tab for JavaScript errors
    - Check Network tab for failed requests
 
 3. **WebSocket Connection**
+
    ```javascript
    // In browser console
    console.log('WebSocket state:', WebSocket.CONNECTING);
@@ -119,19 +126,21 @@ npx -y @pimzino/spec-workflow-mcp@latest --help
 **Solutions**:
 
 1. **Check Directory Permissions**
+
    ```bash
    # Check project permissions
    ls -la /path/to/project
-   
-   # Fix permissions  
+
+   # Fix permissions
    chmod -R 755 /path/to/project
    ```
 
 2. **`.specflow/` Directory**
+
    ```bash
    # Create directory manually if needed
    mkdir -p .specflow/specs .specflow/steering .specflow/approvals
-   
+
    # Fix permissions
    chmod -R 755 .specflow/
    ```
@@ -151,12 +160,14 @@ npx -y @pimzino/spec-workflow-mcp@latest --help
 **Debugging**:
 
 1. **Check File Structure**
+
    ```bash
    tree .specflow/
    # Should show specs/, steering/, etc.
    ```
 
 2. **Verify File Contents**
+
    ```bash
    # Check if spec files exist and have content
    find .specflow/specs -name "*.md" -exec ls -la {} \;
@@ -174,6 +185,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --help
 ### MCP Protocol Debugging
 
 **Enable Debug Logging**:
+
 ```bash
 # Set debug environment variable
 DEBUG=spec-workflow-mcp* npm run dev
@@ -183,10 +195,11 @@ DEBUG=spec-workflow-mcp* node dist/index.js
 ```
 
 **Check MCP Messages**:
+
 ```json
 // Look for these in AI client logs
 {
-  "jsonrpc": "2.0", 
+  "jsonrpc": "2.0",
   "method": "tools/call",
   "params": {
     "name": "spec-workflow-guide"
@@ -197,6 +210,7 @@ DEBUG=spec-workflow-mcp* node dist/index.js
 ### Dashboard Backend Debugging
 
 **Server Logs**:
+
 ```bash
 # Start with verbose logging
 npm run dev -- --verbose
@@ -206,6 +220,7 @@ npm run dev -- --verbose
 ```
 
 **API Testing**:
+
 ```bash
 # Test API endpoints directly
 curl http://localhost:3456/api/test
@@ -215,6 +230,7 @@ curl http://localhost:3456/api/specs
 ### File System Debugging
 
 **File Watcher Issues**:
+
 ```bash
 # Check if chokidar is watching correctly
 # Look for file change events in logs
@@ -225,6 +241,7 @@ echo "test" >> .specflow/specs/test-spec/requirements.md
 ```
 
 **Cross-Platform Path Issues**:
+
 ```javascript
 // Debug path resolution
 const path = require('path');
@@ -239,6 +256,7 @@ console.log('Platform:', process.platform);
 **Meaning**: File or directory not found
 
 **Solutions**:
+
 1. Check if `.specflow/` directory exists
 2. Verify spec name spelling
 3. Use absolute paths in tool calls
@@ -248,6 +266,7 @@ console.log('Platform:', process.platform);
 **Meaning**: Trying to create documents out of sequence
 
 **Solution**: Follow workflow order:
+
 1. Create requirements.md first
 2. Get approval
 3. Then create design.md
@@ -257,8 +276,9 @@ console.log('Platform:', process.platform);
 **Meaning**: Trying to delete approval that doesn't exist or isn't approved
 
 **Solutions**:
+
 1. Check approval status first
-2. Wait for approval before deletion  
+2. Wait for approval before deletion
 3. Don't proceed without successful cleanup
 
 ### `Port X is already in use`
@@ -266,6 +286,7 @@ console.log('Platform:', process.platform);
 **Meaning**: Dashboard port is occupied
 
 **Solutions**:
+
 ```bash
 # Kill process using port
 lsof -ti:3456 | xargs kill -9
@@ -279,6 +300,7 @@ lsof -ti:3456 | xargs kill -9
 ### Q: Can I use relative paths in MCP configuration?
 
 **A**: Some MCP clients may not resolve relative paths correctly. Always use absolute paths:
+
 ```json
 {
   "args": ["-y", "@pimzino/spec-workflow-mcp@latest", "/full/path/to/project"]
@@ -288,7 +310,8 @@ lsof -ti:3456 | xargs kill -9
 ### Q: How do I reset everything and start fresh?
 
 **A**: Remove the workflow directory:
-```bash  
+
+```bash
 rm -rf .specflow/
 # MCP server will recreate it automatically
 ```
@@ -308,6 +331,7 @@ rm -rf .specflow/
 ### Q: How do I backup my specifications?
 
 **A**: The entire workflow is in `.specflow/`:
+
 ```bash
 # Create backup
 tar -czf spec-backup.tar.gz .specflow/
@@ -323,6 +347,7 @@ tar -xzf spec-backup.tar.gz
 ### Q: Can I run dashboard without MCP server?
 
 **A**: Yes, use dashboard-only mode:
+
 ```bash
 npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 ```
@@ -330,6 +355,7 @@ npx -y @pimzino/spec-workflow-mcp@latest --dashboard
 ### Q: How do I update to the latest version?
 
 **A**: NPX automatically uses latest with `@latest` tag. For explicit updates:
+
 ```bash
 npm cache clean --force
 npx -y @pimzino/spec-workflow-mcp@latest --help
@@ -340,11 +366,12 @@ npx -y @pimzino/spec-workflow-mcp@latest --help
 ### MCP Protocol Debugging
 
 **Understanding MCP Communication**:
+
 ```json
 // AI Client sends tool calls like this:
 {
   "jsonrpc": "2.0",
-  "method": "tools/call", 
+  "method": "tools/call",
   "params": {
     "name": "spec-workflow-guide",
     "arguments": {}
@@ -366,11 +393,12 @@ npx -y @pimzino/spec-workflow-mcp@latest --help
 ```
 
 **Debug Environment Variables**:
+
 ```bash
 # Enable MCP server debug logging
 DEBUG=spec-workflow-mcp* npm run dev
 
-# Enable dashboard debug logging  
+# Enable dashboard debug logging
 DEBUG=dashboard:* npm run dev:dashboard
 
 # Full debug logging
@@ -380,6 +408,7 @@ DEBUG=* npm run dev
 ### Memory and Performance Issues
 
 **Memory Usage Monitoring**:
+
 ```bash
 # Check Node.js process memory usage
 ps aux | grep "spec-workflow-mcp"
@@ -392,22 +421,23 @@ lsof -p $(pgrep -f spec-workflow) | wc -l
 ```
 
 **Performance Bottlenecks**:
+
 ```typescript
 // Common performance issues and solutions
 interface PerformanceIssues {
   slowContextLoading: {
-    cause: "Large markdown files (>200KB)";
-    solution: "Split large documents, use templates efficiently";
+    cause: 'Large markdown files (>200KB)';
+    solution: 'Split large documents, use templates efficiently';
   };
-  
+
   dashboardLag: {
-    cause: "Too many file watchers, large project";
-    solution: "Limit .specflow/ directory size, cleanup old files";
+    cause: 'Too many file watchers, large project';
+    solution: 'Limit .specflow/ directory size, cleanup old files';
   };
-  
+
   memoryLeaks: {
-    cause: "Uncached file reads, retained contexts"; 
-    solution: "Restart MCP server, check cache settings";
+    cause: 'Uncached file reads, retained contexts';
+    solution: 'Restart MCP server, check cache settings';
   };
 }
 ```
@@ -415,6 +445,7 @@ interface PerformanceIssues {
 ### Template and Context Issues
 
 **Template Loading Debug**:
+
 ```bash
 # Check template files exist and are readable
 ls -la src/markdown/templates/
@@ -428,6 +459,7 @@ done
 ```
 
 **Context Loading Failures**:
+
 ```typescript
 // Debug context loading issues
 // Check these file paths in your codebase:
@@ -441,6 +473,7 @@ done
 ## 🔍 Diagnostic Commands
 
 ### Health Check Script
+
 ```bash
 #!/bin/bash
 echo "=== Spec Workflow MCP Diagnostics ==="
@@ -469,6 +502,7 @@ echo -e "\n=== End Diagnostics ==="
 ```
 
 ### Log Collection
+
 ```bash
 # Collect all relevant logs
 mkdir -p debug-logs
@@ -481,17 +515,18 @@ echo "Logs collected in debug-logs/"
 ### Before Reporting Issues
 
 1. **Try the diagnostic script above**
-2. **Check this troubleshooting guide** 
+2. **Check this troubleshooting guide**
 3. **Search existing GitHub issues**
 4. **Test with minimal reproduction case**
 
 ### Creating Bug Reports
 
 Include this information:
+
 ```
 **Environment:**
 - OS: [Windows/macOS/Linux + version]
-- Node.js: [version from node --version] 
+- Node.js: [version from node --version]
 - NPM: [version from npm --version]
 - MCP Client: [Claude Desktop/Cursor/etc.]
 
@@ -500,7 +535,7 @@ Include this information:
 
 **Steps to Reproduce:**
 1. [First step]
-2. [Second step]  
+2. [Second step]
 3. [And so on...]
 
 **Expected Behavior:**

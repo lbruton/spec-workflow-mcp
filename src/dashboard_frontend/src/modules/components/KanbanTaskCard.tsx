@@ -29,7 +29,7 @@ export function KanbanTaskCard({
   onCopyTaskPrompt,
   copiedTaskId,
   isInProgress = false,
-  isDragging = false
+  isDragging = false,
 }: KanbanTaskCardProps) {
   const { t } = useTranslation();
 
@@ -107,11 +107,16 @@ export function KanbanTaskCard({
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <div className={`w-2 h-2 rounded-full ${config.dotColor}`} />
-          <span className={`text-xs sm:text-sm font-medium font-mono tabular-nums ${config.textColor}`}>
+          <span
+            className={`text-xs sm:text-sm font-medium font-mono tabular-nums ${config.textColor}`}
+          >
             {t('tasksPage.item.task')} {task.id}
           </span>
           {isInProgress && (
-            <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" title="Currently in progress" />
+            <div
+              className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"
+              title="Currently in progress"
+            />
           )}
         </div>
 
@@ -130,9 +135,10 @@ export function KanbanTaskCard({
             min-h-[44px] min-w-[44px]
             sm:min-h-[36px] sm:min-w-[36px]
             ${/* Interactive states */ ''}
-            ${copiedTaskId === task.id
-              ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300'
-              : 'bg-[var(--surface-base)] text-[var(--text-secondary)] hover:bg-[var(--surface-raised)] border border-[var(--border-default)]'
+            ${
+              copiedTaskId === task.id
+                ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300'
+                : 'bg-[var(--surface-base)] text-[var(--text-secondary)] hover:bg-[var(--surface-raised)] border border-[var(--border-default)]'
             }
           `}
           title={t('tasksPage.copyPrompt.tooltip')}
@@ -142,11 +148,21 @@ export function KanbanTaskCard({
         >
           {copiedTaskId === task.id ? (
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M5 13l4 4L19 7"
+              />
             </svg>
           ) : (
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+              />
             </svg>
           )}
         </button>
@@ -162,29 +178,68 @@ export function KanbanTaskCard({
         {/* File count */}
         {task.files && task.files.length > 0 && (
           <div className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
-            <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            <svg
+              className="w-3 h-3 flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
             </svg>
-            <span className="truncate font-mono tabular-nums">{task.files.length} {task.files.length === 1 ? 'file' : 'files'}</span>
+            <span className="truncate font-mono tabular-nums">
+              {task.files.length} {task.files.length === 1 ? 'file' : 'files'}
+            </span>
           </div>
         )}
 
         {/* Implementation details count */}
         {task.implementationDetails && task.implementationDetails.length > 0 && (
           <div className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
-            <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <svg
+              className="w-3 h-3 flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
             </svg>
-            <span className="truncate font-mono tabular-nums">{task.implementationDetails.length} details</span>
+            <span className="truncate font-mono tabular-nums">
+              {task.implementationDetails.length} details
+            </span>
           </div>
         )}
 
         {/* Has prompt indicator */}
         {task.prompt && (
           <div className="flex items-center gap-1 text-xs text-[var(--text-accent)]">
-            <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            <svg
+              className="w-3 h-3 flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
             </svg>
             <span className="truncate">AI Prompt</span>
           </div>

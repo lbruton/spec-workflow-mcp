@@ -10,7 +10,7 @@ export class Logger {
   private formatMessage(level: string, message: string, data?: any): string {
     const timestamp = new Date().toISOString();
     let formatted = `[${timestamp}] ${level}: ${message}`;
-    
+
     if (data !== undefined) {
       if (typeof data === 'object') {
         formatted += `\n${JSON.stringify(data, null, 2)}`;
@@ -18,7 +18,7 @@ export class Logger {
         formatted += ` ${data}`;
       }
     }
-    
+
     return formatted;
   }
 

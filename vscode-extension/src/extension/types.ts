@@ -46,19 +46,19 @@ export interface TaskInfo {
   status: TaskStatus;
   completed: boolean;
   isHeader?: boolean;
-  lineNumber?: number;                 // Line number in the file (0-based)
-  indentLevel?: number;                // Indentation level (for hierarchy)
-  
+  lineNumber?: number; // Line number in the file (0-based)
+  indentLevel?: number; // Indentation level (for hierarchy)
+
   // Optional metadata
-  files?: string[];                    // Files to modify/create
-  implementationDetails?: string[];    // Implementation bullet points
-  requirements?: string[];             // Referenced requirements
-  leverage?: string;                   // Code to leverage
-  purposes?: string[];                 // Purpose statements
-  prompt?: string;                     // AI prompt for this task
-  promptStructured?: PromptSection[];  // Structured prompt sections  
+  files?: string[]; // Files to modify/create
+  implementationDetails?: string[]; // Implementation bullet points
+  requirements?: string[]; // Referenced requirements
+  leverage?: string; // Code to leverage
+  purposes?: string[]; // Purpose statements
+  prompt?: string; // AI prompt for this task
+  promptStructured?: PromptSection[]; // Structured prompt sections
   // For backward compatibility
-  inProgress?: boolean;                // true if status === 'in-progress'
+  inProgress?: boolean; // true if status === 'in-progress'
 }
 
 export type TaskStatus = 'pending' | 'in-progress' | 'completed';

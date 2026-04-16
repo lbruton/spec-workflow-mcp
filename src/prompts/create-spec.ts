@@ -9,29 +9,31 @@ import { constants } from 'fs';
 const prompt: Prompt = {
   name: 'create-spec',
   title: 'Create Specification Document',
-  description: 'Guide for creating spec documents directly in the file system. Shows how to use templates and create requirements, design, or tasks documents at the correct paths.',
+  description:
+    'Guide for creating spec documents directly in the file system. Shows how to use templates and create requirements, design, or tasks documents at the correct paths.',
   arguments: [
     {
       name: 'specName',
-      description: 'Spec name with issue prefix: {ISSUE-ID}-{kebab-title} (e.g., STAK-123-user-authentication). Must start with an issue ID pattern like STAK-123-.',
-      required: true
+      description:
+        'Spec name with issue prefix: {ISSUE-ID}-{kebab-title} (e.g., STAK-123-user-authentication). Must start with an issue ID pattern like STAK-123-.',
+      required: true,
     },
     {
-      name: 'documentType', 
+      name: 'documentType',
       description: 'Type of document to create: requirements, design, or tasks',
-      required: true
+      required: true,
     },
     {
       name: 'description',
       description: 'Brief description of what this spec should accomplish',
-      required: false
-    }
-  ]
+      required: false,
+    },
+  ],
 };
 
 async function handler(args: Record<string, any>, context: ToolContext): Promise<PromptMessage[]> {
   const { specName, documentType, description } = args;
-  
+
   if (!specName || !documentType) {
     throw new Error('specName and documentType are required arguments');
   }
@@ -67,14 +69,20 @@ async function handler(args: Record<string, any>, context: ToolContext): Promise
     if (!prereqExists) {
       throw new Error(
         `PHASE GATE: Cannot create ${documentType} — ${prereq.label} document does not exist yet.\n` +
-        `Expected: ${prereqPath}\n` +
-        `You must create and get approval for ${prereq.requires}.md before proceeding to ${documentType}.`
+          `Expected: ${prereqPath}\n` +
+          `You must create and get approval for ${prereq.requires}.md before proceeding to ${documentType}.`,
       );
     }
 
     // Check if the prerequisite has been through the approval flow
     // Look for approval snapshots with trigger:"approved" for the prerequisite doc
-    const snapshotDir = join(workflowRoot, 'approvals', specName, '.snapshots', `${prereq.requires}.md`);
+    const snapshotDir = join(
+      workflowRoot,
+      'approvals',
+      specName,
+      '.snapshots',
+      `${prereq.requires}.md`,
+    );
     let hasApprovedSnapshot = false;
     try {
       await access(snapshotDir, constants.F_OK);
@@ -83,9 +91,8 @@ async function handler(args: Record<string, any>, context: ToolContext): Promise
       const metadataPath = join(snapshotDir, 'metadata.json');
       const metadata = JSON.parse(await readFile(metadataPath, 'utf-8'));
       // Check if any snapshot has trigger "approved"
-      hasApprovedSnapshot = metadata.snapshots?.some(
-        (s: { trigger: string }) => s.trigger === 'approved'
-      ) ?? false;
+      hasApprovedSnapshot =
+        metadata.snapshots?.some((s: { trigger: string }) => s.trigger === 'approved') ?? false;
     } catch {
       // No snapshots found — prerequisite hasn't been through approval
     }
@@ -93,9 +100,9 @@ async function handler(args: Record<string, any>, context: ToolContext): Promise
     if (!hasApprovedSnapshot) {
       throw new Error(
         `PHASE GATE: Cannot create ${documentType} — ${prereq.label} has not been approved yet.\n` +
-        `The ${prereq.requires}.md document exists but has no approval record.\n` +
-        `Submit it for approval first: use the approvals tool with action:"request" for ${prereq.requires}.md,\n` +
-        `then wait for approval before creating ${documentType}.`
+          `The ${prereq.requires}.md document exists but has no approval record.\n` +
+          `Submit it for approval first: use the approvals tool with action:"request" for ${prereq.requires}.md,\n` +
+          `then wait for approval before creating ${documentType}.`,
       );
     }
   }
@@ -135,7 +142,9 @@ ${context.dashboardUrl ? `- Dashboard: ${context.dashboardUrl}` : ''}
 - Each document builds upon the previous one in sequence
 - Templates are automatically updated on server start
 
-${documentType === 'tasks' ? `
+${
+  documentType === 'tasks'
+    ? `
 **Special Instructions for Tasks Document:**
 - For each task, generate a _Prompt field with structured AI guidance
 - Format: _Prompt: Role: [role] | Task: [description] | Restrictions: [constraints] | Success: [criteria]
@@ -149,11 +158,13 @@ ${documentType === 'tasks' ? `
 - Implementation logs appear in the dashboard's "Logs" tab for easy reference
 - These logs prevent implementation details from being lost in chat history
 - Good task descriptions help developers write better implementation summaries
-` : ''}
+`
+    : ''
+}
 
-Please read the ${documentType} template and create the comprehensive document at the specified path.`
-      }
-    }
+Please read the ${documentType} template and create the comprehensive document at the specified path.`,
+      },
+    },
   ];
 
   return messages;
@@ -161,5 +172,5 @@ Please read the ${documentType} template and create the comprehensive document a
 
 export const createSpecPrompt: PromptDefinition = {
   prompt,
-  handler
+  handler,
 };

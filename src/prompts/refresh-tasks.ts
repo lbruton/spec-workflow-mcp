@@ -8,19 +8,20 @@ import { join } from 'path';
 const prompt: Prompt = {
   name: 'refresh-tasks',
   title: 'Refresh Tasks After Spec Changes',
-  description: 'Comprehensive guide for updating tasks.md when requirements or design change during implementation. Preserves completed work while aligning pending tasks with current spec.',
+  description:
+    'Comprehensive guide for updating tasks.md when requirements or design change during implementation. Preserves completed work while aligning pending tasks with current spec.',
   arguments: [
     {
       name: 'specName',
       description: 'Name of the specification to refresh tasks for',
-      required: true
+      required: true,
     },
     {
       name: 'changes',
       description: 'Description of what changed in requirements or design',
-      required: false
-    }
-  ]
+      required: false,
+    },
+  ],
 };
 
 async function handler(args: Record<string, any>, context: ToolContext): Promise<PromptMessage[]> {
@@ -222,11 +223,12 @@ The tasks.md has been updated to reflect current requirements while preserving a
   return [
     {
       role: 'user',
-      content: { type: 'text', text: content }
-    }
-  ];}
+      content: { type: 'text', text: content },
+    },
+  ];
+}
 
 export const refreshTasksPrompt: PromptDefinition = {
   prompt,
-  handler
+  handler,
 };

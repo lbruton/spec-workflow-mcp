@@ -11,11 +11,11 @@ export interface ProjectInstance {
 
 export interface ProjectRegistryEntry {
   projectId: string;
-  projectPath: string;       // Canonical repo root (workflowRootPath)
-  workflowRootPath: string;  // Path where .specflow is stored (shared root)
+  projectPath: string; // Canonical repo root (workflowRootPath)
+  workflowRootPath: string; // Path where .specflow is stored (shared root)
   projectName: string;
   instances: ProjectInstance[];
-  worktrees: string[];       // Active worktree workspace paths
+  worktrees: string[]; // Active worktree workspace paths
 }
 
 export interface RegisterProjectOptions {
@@ -38,7 +38,10 @@ export function generateProjectId(absolutePath: string): string {
  * - Main repo: "repo"
  * - Worktree: "repo · worktree"
  */
-export function generateProjectDisplayName(workspacePath: string, workflowRootPath: string): string {
+export function generateProjectDisplayName(
+  workspacePath: string,
+  workflowRootPath: string,
+): string {
   const workspaceName = basename(workspacePath);
   const repoName = basename(workflowRootPath);
 
@@ -92,7 +95,9 @@ export class ProjectRegistry {
       // Handle empty or whitespace-only files
       const trimmedContent = content.trim();
       if (!trimmedContent) {
-        console.error(`[ProjectRegistry] Warning: ${this.registryPath} is empty, initializing with empty registry`);
+        console.error(
+          `[ProjectRegistry] Warning: ${this.registryPath} is empty, initializing with empty registry`,
+        );
         // Mark that we need to write the file
         this.needsInitialization = true;
         return new Map();
@@ -111,9 +116,11 @@ export class ProjectRegistry {
           ...entry,
           projectPath: normalizedProjectPath,
           workflowRootPath: normalizedWorkflowRootPath,
-          projectName: entry.projectName || generateProjectDisplayName(normalizedProjectPath, normalizedWorkflowRootPath),
+          projectName:
+            entry.projectName ||
+            generateProjectDisplayName(normalizedProjectPath, normalizedWorkflowRootPath),
           instances: Array.isArray(entry.instances) ? entry.instances : [],
-          worktrees: Array.isArray(entry.worktrees) ? entry.worktrees : []
+          worktrees: Array.isArray(entry.worktrees) ? entry.worktrees : [],
         });
       }
 
@@ -126,8 +133,12 @@ export class ProjectRegistry {
       }
       if (error instanceof SyntaxError) {
         // JSON parsing error - file is corrupted or invalid
-        console.error(`[ProjectRegistry] Error: Failed to parse ${this.registryPath}: ${error.message}`);
-        console.error(`[ProjectRegistry] The file may be corrupted. Initializing with empty registry.`);
+        console.error(
+          `[ProjectRegistry] Error: Failed to parse ${this.registryPath}: ${error.message}`,
+        );
+        console.error(
+          `[ProjectRegistry] The file may be corrupted. Initializing with empty registry.`,
+        );
         // Back up the corrupted file
         try {
           const backupPath = `${this.registryPath}.corrupted.${Date.now()}`;
@@ -190,8 +201,11 @@ export class ProjectRegistry {
     const rootEnv = process.env.SPEC_WORKFLOW_PROJECT_ROOT;
     if (!rootEnv) return true;
 
-    const roots = rootEnv.split(':').map(r => resolve(r.trim())).filter(Boolean);
-    return roots.some(root => absolutePath.startsWith(root));
+    const roots = rootEnv
+      .split(':')
+      .map((r) => resolve(r.trim()))
+      .filter(Boolean);
+    return roots.some((root) => absolutePath.startsWith(root));
   }
 
   /**
@@ -199,7 +213,11 @@ export class ProjectRegistry {
    * Self-healing: If a project exists with dead PIDs, cleans them up and adds new PID
    * Multi-instance: Allows unlimited MCP server instances per project
    */
-  async registerProject(projectPath: string, pid: number, options: RegisterProjectOptions = {}): Promise<string> {
+  async registerProject(
+    projectPath: string,
+    pid: number,
+    options: RegisterProjectOptions = {},
+  ): Promise<string> {
     const workspacePath = resolve(projectPath);
     const workflowRootPath = resolve(options.workflowRootPath || projectPath);
 
@@ -216,10 +234,10 @@ export class ProjectRegistry {
 
     if (existing) {
       // Self-healing: Filter out dead PIDs
-      const liveInstances = existing.instances.filter(i => this.isProcessAlive(i.pid));
+      const liveInstances = existing.instances.filter((i) => this.isProcessAlive(i.pid));
 
       // Check if this PID is already registered (avoid duplicates)
-      if (!liveInstances.some(i => i.pid === pid)) {
+      if (!liveInstances.some((i) => i.pid === pid)) {
         liveInstances.push({ pid, registeredAt: new Date().toISOString() });
       }
 
@@ -245,7 +263,7 @@ export class ProjectRegistry {
       }
 
       const staleId = generateProjectId(workspacePath);
-      const staleEntry = (staleId !== projectId) ? registry.get(staleId) : undefined;
+      const staleEntry = staleId !== projectId ? registry.get(staleId) : undefined;
       const mergedInstances: ProjectInstance[] = [{ pid, registeredAt: new Date().toISOString() }];
       if (staleEntry) {
         // Merge live instances from the stale entry
@@ -263,7 +281,9 @@ export class ProjectRegistry {
           }
         }
         registry.delete(staleId);
-        console.error(`[ProjectRegistry] Absorbed stale entry ${staleId} (${staleEntry.projectName}) into ${projectId}`);
+        console.error(
+          `[ProjectRegistry] Absorbed stale entry ${staleId} (${staleEntry.projectName}) into ${projectId}`,
+        );
       }
 
       const entry: ProjectRegistryEntry = {
@@ -272,7 +292,7 @@ export class ProjectRegistry {
         workflowRootPath,
         projectName,
         worktrees,
-        instances: mergedInstances
+        instances: mergedInstances,
       };
       registry.set(projectId, entry);
     }
@@ -309,10 +329,10 @@ export class ProjectRegistry {
 
     if (pid !== undefined) {
       // Remove only this PID's instance
-      entry.instances = entry.instances.filter(i => i.pid !== pid);
+      entry.instances = entry.instances.filter((i) => i.pid !== pid);
 
       // Also remove the worktree path if present
-      entry.worktrees = entry.worktrees.filter(w => w !== absolutePath);
+      entry.worktrees = entry.worktrees.filter((w) => w !== absolutePath);
 
       if (entry.instances.length === 0) {
         registry.delete(projectId);
@@ -379,7 +399,9 @@ export class ProjectRegistry {
    * Groups entries by workflowRootPath and merges duplicates into a single canonical entry.
    * Idempotent — returns false if no changes were made.
    */
-  private async migrateDeduplicateEntries(registry: Map<string, ProjectRegistryEntry>): Promise<boolean> {
+  private async migrateDeduplicateEntries(
+    registry: Map<string, ProjectRegistryEntry>,
+  ): Promise<boolean> {
     // Group entries by workflowRootPath
     const groups = new Map<string, string[]>(); // workflowRootPath -> projectId[]
     for (const [projectId, entry] of registry.entries()) {
@@ -410,13 +432,13 @@ export class ProjectRegistry {
           workflowRootPath,
           projectName: basename(workflowRootPath),
           instances: [],
-          worktrees: []
+          worktrees: [],
         };
         registry.set(canonicalId, canonicalEntry);
       }
 
       // Merge all duplicate entries into the canonical one
-      const seenPids = new Set(canonicalEntry.instances.map(i => i.pid));
+      const seenPids = new Set(canonicalEntry.instances.map((i) => i.pid));
       const seenWorktrees = new Set(canonicalEntry.worktrees);
 
       for (const dupId of projectIds) {
@@ -448,7 +470,9 @@ export class ProjectRegistry {
       canonicalEntry.projectPath = workflowRootPath;
       canonicalEntry.projectName = basename(workflowRootPath);
 
-      console.error(`[ProjectRegistry] Migration: merged ${projectIds.length} entries for ${workflowRootPath}`);
+      console.error(
+        `[ProjectRegistry] Migration: merged ${projectIds.length} entries for ${workflowRootPath}`,
+      );
       merged = true;
     }
 
@@ -479,7 +503,7 @@ export class ProjectRegistry {
         if (!staleEntry) continue;
 
         // Merge instances (dedup by PID)
-        const seenPids = new Set(entry.instances.map(i => i.pid));
+        const seenPids = new Set(entry.instances.map((i) => i.pid));
         for (const inst of staleEntry.instances) {
           if (!seenPids.has(inst.pid)) {
             seenPids.add(inst.pid);
@@ -498,7 +522,9 @@ export class ProjectRegistry {
 
         registry.delete(staleId);
         pathToId.delete(wt);
-        console.error(`[ProjectRegistry] Migration: absorbed ${staleEntry.projectName} (${staleId}) into ${entry.projectName} (${id})`);
+        console.error(
+          `[ProjectRegistry] Migration: absorbed ${staleEntry.projectName} (${staleId}) into ${entry.projectName} (${id})`,
+        );
         changed = true;
       }
     }
@@ -517,7 +543,7 @@ export class ProjectRegistry {
     let needsWrite = this.needsInitialization; // Write if file needs initialization
 
     for (const [projectId, entry] of registry.entries()) {
-      const liveInstances = entry.instances.filter(i => this.isProcessAlive(i.pid));
+      const liveInstances = entry.instances.filter((i) => this.isProcessAlive(i.pid));
       const deadCount = entry.instances.length - liveInstances.length;
 
       if (deadCount > 0) {

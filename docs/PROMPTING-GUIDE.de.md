@@ -19,16 +19,19 @@ Ein umfassender Leitfaden mit Beispielen und Best Practices für die Interaktion
 ### Grundlegende Spec-Erstellung
 
 #### Einfache Anfrage
+
 ```
 "Erstelle eine Spec für Benutzerauthentifizierung"
 ```
 
 Die AI erstellt:
+
 - Anforderungsdokument
 - Design-Dokument (nach Freigabe)
 - Aufgabenaufschlüsselung (nach Design-Freigabe)
 
 #### Detaillierte Anfrage
+
 ```
 "Erstelle eine Spec namens payment-processing mit:
 - Kreditkartenzahlungen über Stripe
@@ -39,6 +42,7 @@ Die AI erstellt:
 ```
 
 #### Aus bestehender Dokumentation
+
 ```
 "Erstelle eine Spec aus dem PRD in @product-requirements.md"
 ```
@@ -50,6 +54,7 @@ Die AI erstellt:
 ### Erweiterte Spec-Erstellung
 
 #### Mit technischen Einschränkungen
+
 ```
 "Erstelle eine Spec für Echtzeit-Benachrichtigungen, die:
 - WebSockets für Live-Updates verwendet
@@ -60,6 +65,7 @@ Die AI erstellt:
 ```
 
 #### Mit Akzeptanzkriterien
+
 ```
 "Erstelle eine Spec für Suchfunktion mit diesen Akzeptanzkriterien:
 - Ergebnisse erscheinen innerhalb von 200ms
@@ -74,6 +80,7 @@ Die AI erstellt:
 ### Auflisten und Status
 
 #### Übersicht erhalten
+
 ```
 "Liste alle meine Specs auf"
 "Zeige mir alle Specs und ihren Fortschritt"
@@ -82,6 +89,7 @@ Die AI erstellt:
 ```
 
 #### Spezifischer Status
+
 ```
 "Zeige den Status der user-auth Spec"
 "Wie ist der Fortschritt bei payment-processing?"
@@ -94,6 +102,7 @@ Die AI erstellt:
 ### Einzelne Aufgaben
 
 #### Grundlegende Implementierung
+
 ```
 "Implementiere Aufgabe 1.2 aus user-auth"
 "Vervollständige Aufgabe 2.1.3 in der payment Spec"
@@ -101,6 +110,7 @@ Die AI erstellt:
 ```
 
 #### Mit Kontext
+
 ```
 "Implementiere Aufgabe 1.2 aus user-auth mit TypeScript und Express"
 "Vervollständige die Datenbankmigrations-Aufgabe mit Prisma"
@@ -110,6 +120,7 @@ Die AI erstellt:
 ### Batch-Implementierung
 
 #### Nach Abschnitt
+
 ```
 "Implementiere alle Datenbankaufgaben aus user-auth"
 "Vervollständige alle Frontend-Aufgaben in der dashboard Spec"
@@ -117,6 +128,7 @@ Die AI erstellt:
 ```
 
 #### Nach Priorität
+
 ```
 "Implementiere zuerst alle kritischen Aufgaben"
 "Vervollständige die MVP-Aufgaben aus user-profile"
@@ -128,6 +140,7 @@ Die AI erstellt:
 ### Steering erstellen
 
 #### Vollständiges Set
+
 ```
 "Erstelle Steering-Dokumente für mein E-Commerce-Projekt"
 "Richte Steering für eine SaaS-Anwendung ein"
@@ -135,6 +148,7 @@ Die AI erstellt:
 ```
 
 #### Einzelne Dokumente
+
 ```
 "Erstelle ein Product Steering-Dokument mit Fokus auf Benutzererfahrung"
 "Erstelle Technical Steering für eine Microservices-Architektur"
@@ -146,6 +160,7 @@ Die AI erstellt:
 ### Feedback anfordern
 
 #### Mit spezifischen Bedenken
+
 ```
 "Fordere Freigabe für user-auth Anforderungen an - prüfe besonders den Sicherheitsabschnitt"
 "Bitte um Überprüfung des payment Design - Fokus auf Fehlerbehandlung"
@@ -153,6 +168,7 @@ Die AI erstellt:
 ```
 
 #### Revisionsanfragen
+
 ```
 "Die Anforderungen brauchen mehr Details zu:
 - Fehlerbehandlungsszenarien
@@ -172,11 +188,13 @@ Anforderungen und Designs entwickeln sich oft während der Implementierung. Wenn
 Die AI hat Zugriff auf umfassende Task-Refresh-Anweisungen durch den refresh-tasks Prompt. Informieren Sie die AI einfach über Ihre Änderungen:
 
 #### Grundlegende Task-Aktualisierung
+
 ```
 "Die Anforderungen wurden aktualisiert. Bitte aktualisiere tasks.md, um mit den aktuellen requirements.md und design.md übereinzustimmen."
 ```
 
 #### Detaillierte Task-Aktualisierung mit Kontext
+
 ```
 "Ich habe die Spec mit folgenden Änderungen aktualisiert:
 - Reporting-Modul entfernt
@@ -191,6 +209,7 @@ Bitte aktualisiere tasks.md nach dem Task Refresh-Prozess:
 ```
 
 #### Architekturänderung, die Migration erfordert
+
 ```
 "Wir wechseln von REST API zu GraphQL. Mehrere REST-Endpunkte sind bereits implementiert. Bitte aktualisiere tasks.md mit:
 1. Alle abgeschlossene REST-Arbeit erhalten
@@ -232,22 +251,26 @@ Wenn Sie eine Task-Aktualisierung anfordern, wird die AI:
 ### Beispielszenarien
 
 #### Feature-Entfernung
+
 ```
 "Wir haben beschlossen, das Reporting-Modul aus der Spec zu entfernen. Aktualisiere tasks.md entsprechend."
 ```
 
 Erwartetes AI-Verhalten:
+
 - Alle erledigten Reporting-Aufgaben mit ihrem [x] Status behalten
 - Alle laufenden Reporting-Aufgaben mit ihrem [-] Status behalten
 - Nur ausstehende [ ] Reporting-Aufgaben entfernen
 - Notiz hinzufügen: "_Hinweis: Reporting-Feature aus Spec entfernt, aber erledigte Arbeit bewahrt_"
 
 #### Architekturänderung mit abgeschlossener Arbeit
+
 ```
 "Wir wechseln von MongoDB zu PostgreSQL. Aktualisiere die ausstehenden Datenbankaufgaben. Beachte, dass wir bereits MongoDB-Schemas und Verbindungslogik implementiert haben."
 ```
 
 Erwartetes AI-Verhalten:
+
 - Alle abgeschlossenen MongoDB-Aufgaben genau so bewahren
 - Alle laufenden MongoDB-Aufgaben genau so bewahren
 - Neue Migrations-Aufgaben unmittelbar nach abgeschlossener MongoDB-Arbeit hinzufügen:
@@ -265,6 +288,7 @@ Erwartetes AI-Verhalten:
 ### Multi-Spec-Workflows
 
 #### Verwandte Specs
+
 ```
 "Erstelle eine Spec für admin-dashboard, die integriert mit:
 - user-management Spec
@@ -273,6 +297,7 @@ Erwartetes AI-Verhalten:
 ```
 
 #### Spec-Abhängigkeiten
+
 ```
 "Erstelle eine Spec für notifications, die abhängt von:
 - user-auth ist vollständig
@@ -283,6 +308,7 @@ Erwartetes AI-Verhalten:
 ### Inkrementelle Entwicklung
 
 #### MVP zuerst
+
 ```
 "Erstelle eine MVP-Spec für user-profiles mit nur:
 - Grundlegende Profilerstellung
@@ -294,28 +320,34 @@ Erwartetes AI-Verhalten:
 ## Tipps für effektives Prompting
 
 ### Spezifisch sein
+
 ❌ **Vage**: "Erstelle eine Login-Spec"
 ✅ **Spezifisch**: "Erstelle eine Spec für E-Mail/Passwort-Login mit 2FA, 'Angemeldet bleiben' und Passwort-Reset"
 
 ### Kontext bereitstellen
+
 ❌ **Ohne Kontext**: "Implementiere die Aufgabe"
 ✅ **Mit Kontext**: "Implementiere Aufgabe 1.2 mit unserer bestehenden Express-Middleware und PostgreSQL-Datenbank"
 
 ### Klare Erwartungen setzen
+
 ❌ **Unklar**: "Mach es besser"
 ✅ **Klar**: "Verbessere das Design, um 10x aktuellen Traffic mit Antwortzeiten unter 200ms zu verarbeiten"
 
 ### Inkrementelle Anfragen verwenden
+
 ❌ **Zu viel**: "Erstelle 5 Specs und implementiere alles"
 ✅ **Inkrementell**: "Erstelle zuerst die user-auth Spec, dann überprüfen wir, bevor wir zur nächsten übergehen"
 
 ### Auf bestehende Arbeit verweisen
+
 ❌ **Von Grund auf neu**: "Erstelle ein neues Zahlungssystem"
 ✅ **Darauf aufbauen**: "Erweitere unsere payment Spec um Abonnement-Abrechnung"
 
 ## Häufige Muster-Bibliothek
 
 ### CRUD-Operationen
+
 ```
 "Erstelle eine Spec für CRUD-Operationen auf Produkte einschließlich:
 - Erstellen mit Validierung
@@ -325,6 +357,7 @@ Erwartetes AI-Verhalten:
 ```
 
 ### Authentifizierung & Autorisierung
+
 ```
 "Erstelle eine Auth-Spec mit:
 - JWT-basierte Authentifizierung
@@ -335,6 +368,7 @@ Erwartetes AI-Verhalten:
 ```
 
 ### Echtzeit-Features
+
 ```
 "Erstelle eine Spec für Echtzeit-Chat:
 - WebSocket-Verbindungen
@@ -347,6 +381,7 @@ Erwartetes AI-Verhalten:
 ## Fehlerbehebungs-Prompts
 
 ### Wenn Dinge schief gehen
+
 ```
 "Warum wird diese Spec nicht angezeigt?"
 "Debugge, warum die Aufgabe nicht abgeschlossen wird"
@@ -355,6 +390,7 @@ Erwartetes AI-Verhalten:
 ```
 
 ### Aus der Klemme kommen
+
 ```
 "Was sollte ich als nächstes tun?"
 "Zeige mir, was den Fortschritt blockiert"

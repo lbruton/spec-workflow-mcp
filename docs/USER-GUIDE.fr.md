@@ -31,6 +31,7 @@ Demandez à votre assistant IA de créer une spécification :
 ```
 
 L'IA va automatiquement :
+
 1. Créer un document d'exigences
 2. Concevoir l'approche technique
 3. Décomposer l'implémentation en tâches
@@ -64,6 +65,7 @@ Utilisez vos documents PRD ou de conception existants :
 ```
 
 Retourne :
+
 - Noms des spécifications
 - Statut actuel
 - Pourcentage de progression
@@ -76,6 +78,7 @@ Retourne :
 ```
 
 Fournit :
+
 - Statut d'approbation des exigences
 - Statut d'approbation de la conception
 - Progression de l'achèvement des tâches
@@ -84,6 +87,7 @@ Fournit :
 ### Visualiser les documents de spécification
 
 Utilisez le tableau de bord ou l'extension VSCode pour :
+
 - Lire les documents d'exigences
 - Réviser les documents de conception
 - Parcourir les listes de tâches
@@ -94,6 +98,7 @@ Utilisez le tableau de bord ou l'extension VSCode pour :
 ### Structure des tâches
 
 Les tâches sont organisées hiérarchiquement :
+
 - **1.0** - Sections principales
   - **1.1** - Sous-tâches
   - **1.2** - Sous-tâches
@@ -102,11 +107,13 @@ Les tâches sont organisées hiérarchiquement :
 ### Implémenter des tâches
 
 #### Méthode 1 : Implémentation directe
+
 ```
 "Implémenter la tâche 1.2 de la spécification user-auth"
 ```
 
 #### Méthode 2 : Copier depuis le tableau de bord
+
 1. Ouvrir le tableau de bord
 2. Naviguer vers votre spécification
 3. Cliquer sur l'onglet "Tâches"
@@ -114,6 +121,7 @@ Les tâches sont organisées hiérarchiquement :
 5. Coller dans votre conversation IA
 
 #### Méthode 3 : Implémentation par lot
+
 ```
 "Implémenter toutes les tâches de configuration de base de données de la spécification user-auth"
 ```
@@ -121,6 +129,7 @@ Les tâches sont organisées hiérarchiquement :
 ### Statut des tâches
 
 Les tâches ont trois états :
+
 - ⏳ **En attente** - Non commencée
 - 🔄 **En cours** - En cours de traitement
 - ✅ **Terminée** - Finie
@@ -158,6 +167,7 @@ Lorsque les documents sont prêts pour révision :
 ```
 
 Crée :
+
 - Description du bug
 - Étapes pour reproduire
 - Comportement attendu vs réel
@@ -170,6 +180,7 @@ Crée :
 ```
 
 Génère :
+
 - Analyse de cause racine
 - Plan d'implémentation de la correction
 - Exigences de test
@@ -180,6 +191,7 @@ Génère :
 ### Utilisation des modèles
 
 Spec Workflow inclut des modèles pour :
+
 - Documents d'exigences
 - Documents de conception
 - Listes de tâches
@@ -194,12 +206,15 @@ Créez vos propres modèles dans `.specflow/templates/` :
 # Modèle de fonctionnalité personnalisée
 
 ## Aperçu
+
 [Description de la fonctionnalité]
 
 ## Histoires utilisateur
+
 [Histoires utilisateur]
 
 ## Exigences techniques
+
 [Détails techniques]
 ```
 
@@ -214,6 +229,7 @@ Créez des guides de projet de haut niveau :
 ```
 
 Génère :
+
 - **Pilotage produit** - Vision et objectifs
 - **Pilotage technique** - Décisions d'architecture
 - **Pilotage de structure** - Organisation du projet
@@ -221,6 +237,7 @@ Génère :
 ### Système d'archives
 
 Gérez les spécifications terminées :
+
 - Déplacer les spécifications finies vers les archives
 - Garder l'espace de travail actif propre
 - Accéder aux spécifications archivées à tout moment
@@ -239,6 +256,7 @@ Changer la langue de l'interface :
 ### 1. Commencer par les documents de pilotage
 
 Avant de créer des spécifications :
+
 ```
 "Créer des documents de pilotage pour guider le projet"
 ```
@@ -246,6 +264,7 @@ Avant de créer des spécifications :
 ### 2. Être spécifique dans les exigences
 
 Bon :
+
 ```
 "Créer une spécification pour l'authentification utilisateur avec :
 - Connexion email/mot de passe
@@ -255,6 +274,7 @@ Bon :
 ```
 
 Pas idéal :
+
 ```
 "Créer une spécification de connexion"
 ```
@@ -262,6 +282,7 @@ Pas idéal :
 ### 3. Réviser avant l'implémentation
 
 Toujours réviser et approuver :
+
 1. Document d'exigences
 2. Document de conception
 3. Décomposition des tâches
@@ -275,6 +296,7 @@ Toujours réviser et approuver :
 ### 5. Utiliser le tableau de bord
 
 Le tableau de bord fournit :
+
 - Suivi visuel de la progression
 - Navigation facile des documents
 - Actions d'approbation rapides
@@ -336,6 +358,7 @@ Le tableau de bord fournit :
 ### Conscience contextuelle
 
 L'assistant IA automatiquement :
+
 - Connaît la structure de votre projet
 - Comprend les relations entre spécifications
 - Suit la progression de l'implémentation
@@ -344,6 +367,7 @@ L'assistant IA automatiquement :
 ### Commandes en langage naturel
 
 Parlez naturellement :
+
 - "Quelles spécifications ai-je ?"
 - "Montre-moi ce qu'il reste à faire"
 - "Commencer à travailler sur la prochaine tâche"
@@ -352,6 +376,7 @@ Parlez naturellement :
 ### Flux de travail continu
 
 L'IA maintient le contexte entre les sessions :
+
 - Reprendre là où vous vous êtes arrêté
 - Référencer les décisions précédentes
 - Construire sur le travail existant

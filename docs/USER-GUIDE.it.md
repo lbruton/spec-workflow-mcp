@@ -31,6 +31,7 @@ Chiedi al tuo assistente AI di creare una specifica:
 ```
 
 L'AI creerà automaticamente:
+
 1. Un documento requisiti
 2. La progettazione dell'approccio tecnico
 3. La suddivisione dell'implementazione in task
@@ -64,6 +65,7 @@ Usa i tuoi PRD o documenti di design esistenti:
 ```
 
 Ritorna:
+
 - Nomi specifiche
 - Stato corrente
 - Percentuale progresso
@@ -76,6 +78,7 @@ Ritorna:
 ```
 
 Fornisce:
+
 - Stato approvazione requisiti
 - Stato approvazione design
 - Progresso completamento task
@@ -84,6 +87,7 @@ Fornisce:
 ### Visualizzare Documenti Specifica
 
 Usa la dashboard o l'estensione VSCode per:
+
 - Leggere documenti requisiti
 - Revisionare documenti design
 - Navigare liste task
@@ -94,6 +98,7 @@ Usa la dashboard o l'estensione VSCode per:
 ### Struttura Task
 
 I task sono organizzati gerarchicamente:
+
 - **1.0** - Sezioni principali
   - **1.1** - Subtask
   - **1.2** - Subtask
@@ -102,11 +107,13 @@ I task sono organizzati gerarchicamente:
 ### Implementare Task
 
 #### Metodo 1: Implementazione Diretta
+
 ```
 "Implementa il task 1.2 dalla specifica user-auth"
 ```
 
 #### Metodo 2: Copia da Dashboard
+
 1. Apri la dashboard
 2. Naviga alla tua specifica
 3. Clicca tab "Tasks"
@@ -114,6 +121,7 @@ I task sono organizzati gerarchicamente:
 5. Incolla nella conversazione AI
 
 #### Metodo 3: Implementazione Batch
+
 ```
 "Implementa tutti i task di setup database dalla specifica user-auth"
 ```
@@ -121,6 +129,7 @@ I task sono organizzati gerarchicamente:
 ### Stato Task
 
 I task hanno tre stati:
+
 - ⏳ **Pending** - Non iniziato
 - 🔄 **In Progress** - Attualmente in lavorazione
 - ✅ **Completed** - Completato
@@ -158,6 +167,7 @@ Quando i documenti sono pronti per la revisione:
 ```
 
 Crea:
+
 - Descrizione bug
 - Passi per riprodurre
 - Comportamento atteso vs effettivo
@@ -170,6 +180,7 @@ Crea:
 ```
 
 Genera:
+
 - Analisi causa radice
 - Piano implementazione correzione
 - Requisiti testing
@@ -180,6 +191,7 @@ Genera:
 ### Usare Template
 
 Spec Workflow include template per:
+
 - Documenti requisiti
 - Documenti design
 - Liste task
@@ -194,12 +206,15 @@ Crea i tuoi template in `.specflow/templates/`:
 # Template Funzionalità Personalizzato
 
 ## Panoramica
+
 [Descrizione funzionalità]
 
 ## User Stories
+
 [User stories]
 
 ## Requisiti Tecnici
+
 [Dettagli tecnici]
 ```
 
@@ -214,6 +229,7 @@ Crea guida di alto livello per il progetto:
 ```
 
 Genera:
+
 - **Steering prodotto** - Visione e obiettivi
 - **Steering tecnico** - Decisioni architetturali
 - **Steering struttura** - Organizzazione progetto
@@ -221,6 +237,7 @@ Genera:
 ### Sistema Archivio
 
 Gestisci specifiche completate:
+
 - Sposta specifiche finite in archivio
 - Mantieni pulito workspace attivo
 - Accedi a specifiche archiviate in qualsiasi momento
@@ -239,6 +256,7 @@ Cambia lingua interfaccia:
 ### 1. Inizia con Documenti Steering
 
 Prima di creare specifiche:
+
 ```
 "Crea documenti steering per guidare il progetto"
 ```
@@ -246,6 +264,7 @@ Prima di creare specifiche:
 ### 2. Sii Specifico nei Requisiti
 
 Buono:
+
 ```
 "Crea una specifica per autenticazione utente con:
 - Login email/password
@@ -255,6 +274,7 @@ Buono:
 ```
 
 Non ideale:
+
 ```
 "Crea una specifica login"
 ```
@@ -262,6 +282,7 @@ Non ideale:
 ### 3. Rivedi Prima dell'Implementazione
 
 Rivedi e approva sempre:
+
 1. Documento requisiti
 2. Documento design
 3. Suddivisione task
@@ -275,6 +296,7 @@ Rivedi e approva sempre:
 ### 5. Usa la Dashboard
 
 La dashboard fornisce:
+
 - Tracciamento progressi visuale
 - Navigazione facile documenti
 - Azioni approvazione rapide
@@ -336,6 +358,7 @@ La dashboard fornisce:
 ### Consapevolezza Contestuale
 
 L'assistente AI automaticamente:
+
 - Conosce la struttura del tuo progetto
 - Comprende relazioni specifiche
 - Traccia progressi implementazione
@@ -344,6 +367,7 @@ L'assistente AI automaticamente:
 ### Comandi Linguaggio Naturale
 
 Parla naturalmente:
+
 - "Quali specifiche ho?"
 - "Mostrami cosa resta da fare"
 - "Inizia a lavorare sul prossimo task"
@@ -352,6 +376,7 @@ Parla naturalmente:
 ### Flusso Continuo
 
 L'AI mantiene contesto tra sessioni:
+
 - Riprendi da dove hai lasciato
 - Fai riferimento a decisioni precedenti
 - Costruisci su lavoro esistente

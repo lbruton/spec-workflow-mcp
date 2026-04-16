@@ -25,11 +25,13 @@
 **القيم المرجعة**: دليل Markdown يشرح سير العمل الكامل
 
 **مثال على الاستخدام**:
+
 ```
 "Show me the spec workflow guide"
 ```
 
 **يحتوي الرد على**:
+
 - نظرة عامة على سير العمل
 - العملية خطوة بخطوة
 - أفضل الممارسات
@@ -44,11 +46,13 @@
 **القيم المرجعة**: دليل Markdown لإنشاء مستندات التوجيه
 
 **مثال على الاستخدام**:
+
 ```
 "Show me how to create steering documents"
 ```
 
 **يحتوي الرد على**:
+
 - أنواع مستندات التوجيه
 - عملية الإنشاء
 - إرشادات المحتوى
@@ -62,14 +66,15 @@
 
 **المعاملات**:
 
-| المعامل | النوع | مطلوب | الوصف |
-|---------|------|-------|-------|
-| specName | string | نعم | اسم المواصفة (kebab-case) |
-| docType | string | نعم | النوع: "requirements" أو "design" أو "tasks" |
-| content | string | نعم | محتوى Markdown للمستند |
-| revision | boolean | لا | ما إذا كانت هذه مراجعة (افتراضي: false) |
+| المعامل  | النوع   | مطلوب | الوصف                                        |
+| -------- | ------- | ----- | -------------------------------------------- |
+| specName | string  | نعم   | اسم المواصفة (kebab-case)                    |
+| docType  | string  | نعم   | النوع: "requirements" أو "design" أو "tasks" |
+| content  | string  | نعم   | محتوى Markdown للمستند                       |
+| revision | boolean | لا    | ما إذا كانت هذه مراجعة (افتراضي: false)      |
 
 **مثال على الاستخدام**:
+
 ```typescript
 {
   specName: "user-authentication",
@@ -80,6 +85,7 @@
 ```
 
 **القيم المرجعة**:
+
 ```typescript
 {
   success: true,
@@ -90,6 +96,7 @@
 ```
 
 **ملاحظات**:
+
 - ينشئ دليل المواصفة إذا لم يكن موجودًا
 - يطلب الموافقة تلقائيًا للمستندات الجديدة
 - يتحقق من صيغة Markdown
@@ -104,28 +111,30 @@
 **القيم المرجعة**: مصفوفة من ملخصات المواصفات
 
 **بنية الاستجابة**:
+
 ```typescript
 [
   {
-    name: "user-authentication",
-    status: "in-progress",
+    name: 'user-authentication',
+    status: 'in-progress',
     progress: 45,
     documents: {
-      requirements: "approved",
-      design: "pending-approval",
-      tasks: "not-created"
+      requirements: 'approved',
+      design: 'pending-approval',
+      tasks: 'not-created',
     },
     taskStats: {
       total: 15,
       completed: 7,
       inProgress: 1,
-      pending: 7
-    }
-  }
-]
+      pending: 7,
+    },
+  },
+];
 ```
 
 **مثال على الاستخدام**:
+
 ```
 "List all my specs"
 ```
@@ -136,13 +145,14 @@
 
 **المعاملات**:
 
-| المعامل | النوع | مطلوب | الوصف |
-|---------|------|-------|-------|
-| specName | string | نعم | اسم المواصفة للتحقق منها |
+| المعامل  | النوع  | مطلوب | الوصف                    |
+| -------- | ------ | ----- | ------------------------ |
+| specName | string | نعم   | اسم المواصفة للتحقق منها |
 
 **القيم المرجعة**: حالة المواصفة المفصلة
 
 **بنية الاستجابة**:
+
 ```typescript
 {
   exists: true,
@@ -175,6 +185,7 @@
 ```
 
 **مثال على الاستخدام**:
+
 ```
 "Show me the status of user-authentication spec"
 ```
@@ -185,17 +196,18 @@
 
 **المعاملات**:
 
-| المعامل | النوع | مطلوب | الوصف |
-|---------|------|-------|-------|
-| specName | string | نعم | اسم المواصفة |
-| action | string | نعم | الإجراء: "update" أو "complete" أو "list" أو "progress" |
-| taskId | string | أحيانًا | معرف المهمة (مطلوب لـ update/complete) |
-| status | string | لا | الحالة الجديدة: "pending" أو "in-progress" أو "completed" |
-| notes | string | لا | ملاحظات إضافية للمهمة |
+| المعامل  | النوع  | مطلوب   | الوصف                                                     |
+| -------- | ------ | ------- | --------------------------------------------------------- |
+| specName | string | نعم     | اسم المواصفة                                              |
+| action   | string | نعم     | الإجراء: "update" أو "complete" أو "list" أو "progress"   |
+| taskId   | string | أحيانًا | معرف المهمة (مطلوب لـ update/complete)                    |
+| status   | string | لا      | الحالة الجديدة: "pending" أو "in-progress" أو "completed" |
+| notes    | string | لا      | ملاحظات إضافية للمهمة                                     |
 
 **الإجراءات**:
 
 1. **تحديث حالة المهمة**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -207,6 +219,7 @@
 ```
 
 2. **إكمال المهمة**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -216,6 +229,7 @@
 ```
 
 3. **سرد المهام**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -224,6 +238,7 @@
 ```
 
 4. **الحصول على التقدم**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -244,6 +259,7 @@
 **القيم المرجعة**: كائن يحتوي على جميع القوالب
 
 **بنية الاستجابة**:
+
 ```typescript
 {
   requirements: "# Requirements Template\n\n## Overview\n...",
@@ -256,6 +272,7 @@
 ```
 
 **مثال على الاستخدام**:
+
 ```
 "Get all document templates"
 ```
@@ -266,20 +283,22 @@
 
 **المعاملات**:
 
-| المعامل | النوع | مطلوب | الوصف |
-|---------|------|-------|-------|
-| docType | string | لا | مستند محدد: "product" أو "tech" أو "structure" أو "all" |
+| المعامل | النوع  | مطلوب | الوصف                                                   |
+| ------- | ------ | ----- | ------------------------------------------------------- |
+| docType | string | لا    | مستند محدد: "product" أو "tech" أو "structure" أو "all" |
 
 **القيم المرجعة**: محتوى مستند التوجيه
 
 **مثال على الاستخدام**:
+
 ```typescript
 {
-  docType: "tech"  // Returns only technical steering
+  docType: 'tech'; // Returns only technical steering
 }
 ```
 
 **بنية الاستجابة**:
+
 ```typescript
 {
   product: "# Product Steering\n\n## Vision\n...",
@@ -294,14 +313,15 @@
 
 **المعاملات**:
 
-| المعامل | النوع | مطلوب | الوصف |
-|---------|------|-------|-------|
-| specName | string | نعم | اسم المواصفة |
-| includeContent | boolean | لا | تضمين محتوى المستند (افتراضي: true) |
+| المعامل        | النوع   | مطلوب | الوصف                               |
+| -------------- | ------- | ----- | ----------------------------------- |
+| specName       | string  | نعم   | اسم المواصفة                        |
+| includeContent | boolean | لا    | تضمين محتوى المستند (افتراضي: true) |
 
 **القيم المرجعة**: سياق المواصفة الكامل
 
 **بنية الاستجابة**:
+
 ```typescript
 {
   name: "user-authentication",
@@ -333,6 +353,7 @@
 ```
 
 **مثال على الاستخدام**:
+
 ```
 "Get full context for user-authentication spec"
 ```
@@ -345,12 +366,13 @@
 
 **المعاملات**:
 
-| المعامل | النوع | مطلوب | الوصف |
-|---------|------|-------|-------|
-| docType | string | نعم | النوع: "product" أو "tech" أو "structure" |
-| content | string | نعم | محتوى Markdown للمستند |
+| المعامل | النوع  | مطلوب | الوصف                                     |
+| ------- | ------ | ----- | ----------------------------------------- |
+| docType | string | نعم   | النوع: "product" أو "tech" أو "structure" |
+| content | string | نعم   | محتوى Markdown للمستند                    |
 
 **مثال على الاستخدام**:
+
 ```typescript
 {
   docType: "product",
@@ -359,6 +381,7 @@
 ```
 
 **القيم المرجعة**:
+
 ```typescript
 {
   success: true,
@@ -368,6 +391,7 @@
 ```
 
 **ملاحظات**:
+
 - ينشئ دليل التوجيه إذا لزم الأمر
 - يستبدل مستندات التوجيه الموجودة
 - لا حاجة للموافقة على مستندات التوجيه
@@ -381,14 +405,15 @@
 
 **المعاملات**:
 
-| المعامل | النوع | مطلوب | الوصف |
-|---------|------|-------|-------|
-| specName | string | نعم | اسم المواصفة |
-| docType | string | نعم | نوع المستند للموافقة عليه |
-| documentId | string | نعم | معرف فريد للتتبع |
-| content | string | نعم | محتوى المستند للمراجعة |
+| المعامل    | النوع  | مطلوب | الوصف                     |
+| ---------- | ------ | ----- | ------------------------- |
+| specName   | string | نعم   | اسم المواصفة              |
+| docType    | string | نعم   | نوع المستند للموافقة عليه |
+| documentId | string | نعم   | معرف فريد للتتبع          |
+| content    | string | نعم   | محتوى المستند للمراجعة    |
 
 **مثال على الاستخدام**:
+
 ```typescript
 {
   specName: "user-auth",
@@ -399,6 +424,7 @@
 ```
 
 **القيم المرجعة**:
+
 ```typescript
 {
   success: true,
@@ -413,12 +439,13 @@
 
 **المعاملات**:
 
-| المعامل | النوع | مطلوب | الوصف |
-|---------|------|-------|-------|
-| specName | string | نعم | اسم المواصفة |
-| documentId | string | نعم | معرف المستند للتحقق منه |
+| المعامل    | النوع  | مطلوب | الوصف                   |
+| ---------- | ------ | ----- | ----------------------- |
+| specName   | string | نعم   | اسم المواصفة            |
+| documentId | string | نعم   | معرف المستند للتحقق منه |
 
 **القيم المرجعة**:
+
 ```typescript
 {
   exists: true,
@@ -430,6 +457,7 @@
 ```
 
 **مثال على الاستخدام**:
+
 ```
 "Check approval status for user-auth requirements"
 ```
@@ -440,12 +468,13 @@
 
 **المعاملات**:
 
-| المعامل | النوع | مطلوب | الوصف |
-|---------|------|-------|-------|
-| specName | string | نعم | اسم المواصفة |
-| documentId | string | نعم | معرف المستند للإزالة |
+| المعامل    | النوع  | مطلوب | الوصف                |
+| ---------- | ------ | ----- | -------------------- |
+| specName   | string | نعم   | اسم المواصفة         |
+| documentId | string | نعم   | معرف المستند للإزالة |
 
 **القيم المرجعة**:
+
 ```typescript
 {
   success: true,
@@ -454,6 +483,7 @@
 ```
 
 **مثال على الاستخدام**:
+
 ```
 "Clean up completed approvals for user-auth"
 ```
@@ -539,6 +569,7 @@
 5. الإضافة إلى الصادرات
 
 مثال على البنية:
+
 ```typescript
 export const customTool = {
   name: 'custom-tool',
@@ -548,7 +579,7 @@ export const customTool = {
   },
   handler: async (params) => {
     // Implementation
-  }
+  },
 };
 ```
 

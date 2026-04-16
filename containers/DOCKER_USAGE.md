@@ -1,25 +1,29 @@
 # Example MCP Configuration with Docker Dashboard
 
-This directory contains an example MCP server configuration (`example.mcp.json`) 
+This directory contains an example MCP server configuration (`example.mcp.json`)
 for use with the Docker-hosted dashboard.
 
 ## Architecture
 
 The recommended setup is:
+
 - **Dashboard**: Runs in Docker (using docker-compose.yml)
 - **MCP Servers**: Run on host machine via npx (using example.mcp.json)
 
 ## Quick Start
 
 1. **Start the Dashboard in Docker:**
+
    ```bash
    cd containers
    docker-compose up -d
    ```
+
    Dashboard will be at: http://localhost:5000
 
 2. **Configure MCP Servers:**
    Use the configuration from `example.mcp.json` in your MCP client config:
+
    ```json
    {
      "mcpServers": {
@@ -43,6 +47,7 @@ The recommended setup is:
 ## Alternative: Everything in Docker
 
 If you need to run MCP servers in Docker (not recommended for most users):
+
 - You'll need to create a custom setup with network bridges
 - File system access becomes more complex
 - The current setup (dashboard in Docker, MCP on host) is simpler and more flexible

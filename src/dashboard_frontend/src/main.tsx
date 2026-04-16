@@ -17,8 +17,6 @@ if (container) {
           <App />
         </HashRouter>
       </Suspense>
-    </React.StrictMode>
+    </React.StrictMode>,
   );
 }
-
-

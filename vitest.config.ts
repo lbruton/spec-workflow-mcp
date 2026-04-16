@@ -15,7 +15,7 @@ export default defineConfig({
         '**/*.config.*',
         '**/test/**',
         '**/__tests__/**',
-      ]
-    }
-  }
+      ],
+    },
+  },
 });

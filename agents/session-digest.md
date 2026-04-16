@@ -1,6 +1,6 @@
 ---
 name: session-digest
-description: "Session log digester. Reads Claude Code JSONL transcripts, writes a consolidated summary to DocVault daily digest and saves to mem0. Runs in isolation to keep large logs out of main context."
+description: 'Session log digester. Reads Claude Code JSONL transcripts, writes a consolidated summary to DocVault daily digest and saves to mem0. Runs in isolation to keep large logs out of main context.'
 model: haiku
 ---
 
@@ -35,9 +35,11 @@ The script also returns metadata to stdout — capture: `project`, `branch`,
 ## Step 2: Build header
 
 Format the metadata bracket used in the vault:
+
 ```
 [<project> | <branch> | tools: <tool1>, <tool2>, ... | <YYYY-MM-DD>]
 ```
+
 Example: `[StakTrakr | dev | tools: Agent, Bash, Edit, Read | 2026-03-22]`
 
 ---
@@ -78,6 +80,7 @@ background context and step-by-step narration.
 **Every digest must use Obsidian `[[wikilinks]]` inline in the prose.** This makes digests visible in the vault's graph view and backlinks panel.
 
 **What to link (inline, within the narrative):**
+
 - **Project names** → `[[Forge]]`, `[[StakTrakr]]`, `[[HexTrackr]]`, `[[MyMelo]]`, `[[WhoseOnFirst]]`
   - If the project has an Overview page, prefer `[[Forge Overview]]` on first mention
 - **Issue IDs** → `[[STAK-498]]`, `[[FORGE-67]]`, `[[OPS-105]]` (Obsidian resolves by filename)
@@ -87,6 +90,7 @@ background context and step-by-step narration.
 - **Other vault pages** mentioned by name → `[[Cloud Sync]]`, `[[Data Persistence]]`, `[[Remote Poller]]`, etc.
 
 **What NOT to link:**
+
 - Generic terms that aren't vault page names (don't link "frontend" or "testing")
 - The same page more than once per paragraph (link on first mention only)
 - Daily digest files (ephemeral — don't cross-link digests to each other)
@@ -121,17 +125,17 @@ Write the summary to the vault as a daily digest entry.
 
 **Path:** `../DocVault/Daily Digests/<ProjectFolder>/<YYYY-MM-DD>.md`
 
-| agent_id | Vault folder |
-|----------|--------------|
-| staktrakr / staktrakr-api | StakTrakr |
-| hextrackr | HexTrackr |
-| mymelo | MyMelo |
-| whoseonfirst | WhoseOnFirst |
-| ops | Infrastructure |
-| docvault | DocVault |
-| playground | Playground |
-| logs | Infrastructure |
-| forge | Forge |
+| agent_id                  | Vault folder   |
+| ------------------------- | -------------- |
+| staktrakr / staktrakr-api | StakTrakr      |
+| hextrackr                 | HexTrackr      |
+| mymelo                    | MyMelo         |
+| whoseonfirst              | WhoseOnFirst   |
+| ops                       | Infrastructure |
+| docvault                  | DocVault       |
+| playground                | Playground     |
+| logs                      | Infrastructure |
+| forge                     | Forge          |
 
 **If the daily file already exists:** Append a new `## HH:MM AM/PM` section.
 
@@ -173,8 +177,8 @@ Session digests for **<ProjectFolder>**.
 
 ## Daily
 
-| Date | Summary |
-|------|---------|
+| Date           | Summary      |
+| -------------- | ------------ |
 | [[YYYY-MM-DD]] | Daily digest |
 ```
 
@@ -208,6 +212,7 @@ mcp__mem0__add_memory(
 ```
 
 **Critical parameters:**
+
 - `user_id="lbruton"` — ALWAYS set
 - `agent_id="<tag>"` — ALWAYS set to the project tag
 - Use `text=` NOT `messages=` — the messages format causes mem0 to invent

@@ -11,7 +11,11 @@ vi.mock('fs/promises', () => ({
 }));
 
 import { readFile, readdir, stat, mkdir, writeFile } from 'fs/promises';
-import { detectConventions, writeConventions, type ProjectConventions } from '../convention-detector.js';
+import {
+  detectConventions,
+  writeConventions,
+  type ProjectConventions,
+} from '../convention-detector.js';
 
 const mockStat = vi.mocked(stat);
 const mockReadFile = vi.mocked(readFile);
@@ -96,7 +100,9 @@ describe('detectConventions', () => {
     mockReaddir.mockImplementation(async (p) => {
       const path = String(p);
       if (path.endsWith('tests/runbook')) {
-        return ['01-page-load.md', '02-crud.md', '03-backup.md'] as unknown as ReturnType<typeof readdir>;
+        return ['01-page-load.md', '02-crud.md', '03-backup.md'] as unknown as ReturnType<
+          typeof readdir
+        >;
       }
       throw Object.assign(new Error('ENOENT'), { code: 'ENOENT' });
     });

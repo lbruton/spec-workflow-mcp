@@ -15,7 +15,10 @@ export class SpecWatcher extends EventEmitter {
   private projectPath: string;
   private parser: SpecParser;
   private watcher?: chokidar.FSWatcher;
-  private pendingChanges: Map<string, { action: 'created' | 'updated' | 'deleted'; timer: NodeJS.Timeout }> = new Map();
+  private pendingChanges: Map<
+    string,
+    { action: 'created' | 'updated' | 'deleted'; timer: NodeJS.Timeout }
+  > = new Map();
   private readonly DEBOUNCE_MS = 500;
 
   constructor(projectPath: string, parser: SpecParser) {
@@ -32,19 +35,16 @@ export class SpecWatcher extends EventEmitter {
     const steeringPath = join(this.projectPath, 'steering');
 
     // Watch for changes in specs and steering directories
-    this.watcher = chokidar.watch([
-      `${specsPath}/**/*.md`,
-      `${steeringPath}/*.md`
-    ], {
+    this.watcher = chokidar.watch([`${specsPath}/**/*.md`, `${steeringPath}/*.md`], {
       ignoreInitial: true,
       persistent: true,
-      ignorePermissionErrors: true
+      ignorePermissionErrors: true,
     });
 
     this.watcher.on('add', (filePath) => this.scheduleFileChange('created', filePath));
     this.watcher.on('change', (filePath) => this.scheduleFileChange('updated', filePath));
     this.watcher.on('unlink', (filePath) => this.scheduleFileChange('deleted', filePath));
-    
+
     // Add error handler to prevent watcher crashes
     this.watcher.on('error', (error) => {
       console.error('File watcher error:', error);
@@ -84,7 +84,8 @@ export class SpecWatcher extends EventEmitter {
     }
 
     // Use latest action, but preserve 'created' if that was the first action
-    const finalAction = action === 'deleted' ? 'deleted' : (existing?.action === 'created' ? 'created' : action);
+    const finalAction =
+      action === 'deleted' ? 'deleted' : existing?.action === 'created' ? 'created' : action;
 
     const timer = setTimeout(() => {
       this.pendingChanges.delete(filePath);
@@ -120,14 +121,17 @@ export class SpecWatcher extends EventEmitter {
         // File might be deleted or in transition
         return false;
       }
-      await new Promise(resolve => setTimeout(resolve, checkInterval));
+      await new Promise((resolve) => setTimeout(resolve, checkInterval));
     }
 
     // Return true if we had at least one stable check (file exists and has content)
     return stableCount >= 1;
   }
 
-  private async handleFileChange(action: 'created' | 'updated' | 'deleted', filePath: string): Promise<void> {
+  private async handleFileChange(
+    action: 'created' | 'updated' | 'deleted',
+    filePath: string,
+  ): Promise<void> {
     try {
       const normalizedPath = filePath.replace(/\\/g, '/');
 
@@ -153,13 +157,16 @@ export class SpecWatcher extends EventEmitter {
     }
   }
 
-  private async handleSpecChange(action: 'created' | 'updated' | 'deleted', filePath: string): Promise<void> {
+  private async handleSpecChange(
+    action: 'created' | 'updated' | 'deleted',
+    filePath: string,
+  ): Promise<void> {
     // Extract spec name from path like: /path/to/.specflow/specs/user-auth/requirements.md
     const pathParts = filePath.split('/');
-    const specsIndex = pathParts.findIndex(part => part === 'specs');
-    
+    const specsIndex = pathParts.findIndex((part) => part === 'specs');
+
     if (specsIndex === -1 || specsIndex + 1 >= pathParts.length) return;
-    
+
     const specName = pathParts[specsIndex + 1];
     const document = pathParts[specsIndex + 2]?.replace('.md', '');
 
@@ -172,23 +179,25 @@ export class SpecWatcher extends EventEmitter {
       type: 'spec',
       action,
       name: specName,
-      data: specData
+      data: specData,
     };
 
     // Spec change detected
     this.emit('change', event);
-    
+
     // Emit specific task update event if this was a tasks.md file
     if (document === 'tasks') {
       this.emit('task-update', {
         specName,
-        action
+        action,
       });
     }
   }
 
-
-  private async handleSteeringChange(action: 'created' | 'updated' | 'deleted', filePath: string): Promise<void> {
+  private async handleSteeringChange(
+    action: 'created' | 'updated' | 'deleted',
+    filePath: string,
+  ): Promise<void> {
     // Extract document name from path like: /path/to/.specflow/steering/tech.md
     const pathParts = filePath.split('/');
     const document = pathParts[pathParts.length - 1]?.replace('.md', '');
@@ -199,7 +208,7 @@ export class SpecWatcher extends EventEmitter {
       type: 'steering' as const,
       action,
       name: document,
-      steeringStatus
+      steeringStatus,
     };
 
     // Steering change detected

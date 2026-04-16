@@ -36,5 +36,3 @@ async function createConfig() {
 }
 
 export default defineConfig(createConfig());
-
-

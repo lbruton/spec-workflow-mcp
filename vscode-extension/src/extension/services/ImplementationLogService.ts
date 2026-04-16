@@ -130,7 +130,7 @@ export class ImplementationLogService {
     // Watch for markdown files in Implementation Logs directories
     const logPattern = new vscode.RelativePattern(
       path.join(this.specWorkflowRoot, 'specs'),
-      '**/Implementation Logs/*.md'
+      '**/Implementation Logs/*.md',
     );
 
     this.logWatcher = vscode.workspace.createFileSystemWatcher(logPattern);
@@ -168,7 +168,11 @@ export class ImplementationLogService {
       const pathParts = relativePath.split('/');
 
       // Path structure: {specName}/Implementation Logs/{filename}.md
-      if (pathParts.length >= 3 && pathParts[1] === 'Implementation Logs' && pathParts[2].endsWith('.md')) {
+      if (
+        pathParts.length >= 3 &&
+        pathParts[1] === 'Implementation Logs' &&
+        pathParts[2].endsWith('.md')
+      ) {
         return pathParts[0]; // Return the spec name (first directory)
       }
     }
@@ -184,16 +188,11 @@ export class ImplementationLogService {
       return { entries: [], lastUpdated: new Date().toISOString() };
     }
 
-    const logsDir = path.join(
-      this.specWorkflowRoot,
-      'specs',
-      specName,
-      'Implementation Logs'
-    );
+    const logsDir = path.join(this.specWorkflowRoot, 'specs', specName, 'Implementation Logs');
 
     try {
       const files = await fs.readdir(logsDir);
-      const mdFiles = files.filter(f => f.endsWith('.md'));
+      const mdFiles = files.filter((f) => f.endsWith('.md'));
 
       const entries: ImplementationLogEntry[] = [];
 
@@ -216,7 +215,7 @@ export class ImplementationLogService {
 
       return {
         entries,
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       };
     } catch (error: any) {
       if (error.code === 'ENOENT') {
@@ -252,23 +251,37 @@ export class ImplementationLogService {
       // Helper function to normalize markdown keys to camelCase
       const normalizeKey = (key: string): string => {
         const words = key.toLowerCase().trim().split(/\s+/);
-        if (words.length === 0) {return '';}
-        return words[0] + words.slice(1).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('');
+        if (words.length === 0) {
+          return '';
+        }
+        return (
+          words[0] +
+          words
+            .slice(1)
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join('')
+        );
       };
 
       // Helper function to map markdown property names to TypeScript interface property names
       const mapPropertyName = (normalizedKey: string): string => {
         const mapping: Record<string, string> = {
-          'exported': 'isExported'
+          exported: 'isExported',
         };
         return mapping[normalizedKey] || normalizedKey;
       };
 
       // Helper function to convert string values to appropriate types
       const convertValue = (key: string, value: string): any => {
-        if (value === 'Yes' || value === 'yes') {return true;}
-        if (value === 'No' || value === 'no') {return false;}
-        if (value === 'N/A' || value === 'n/a') {return '';}
+        if (value === 'Yes' || value === 'yes') {
+          return true;
+        }
+        if (value === 'No' || value === 'no') {
+          return false;
+        }
+        if (value === 'N/A' || value === 'n/a') {
+          return '';
+        }
         return value;
       };
 
@@ -278,7 +291,7 @@ export class ImplementationLogService {
         if (match) {
           return {
             key: normalizeKey(match[1]),
-            value: match[2].trim()
+            value: match[2].trim(),
           };
         }
         return null;
@@ -327,7 +340,9 @@ export class ImplementationLogService {
         // Parse artifact subsections (### headers)
         else if (line.startsWith('### ')) {
           if (Object.keys(currentItem).length > 0 && currentArtifactType) {
-            if (!artifacts[currentArtifactType]) {artifacts[currentArtifactType] = [];}
+            if (!artifacts[currentArtifactType]) {
+              artifacts[currentArtifactType] = [];
+            }
             (artifacts[currentArtifactType] as any).push(currentItem);
             currentItem = {};
           }
@@ -348,7 +363,9 @@ export class ImplementationLogService {
         // Parse artifact item headers (#### for individual items)
         else if (line.startsWith('#### ') && currentArtifactType) {
           if (Object.keys(currentItem).length > 0) {
-            if (!artifacts[currentArtifactType]) {artifacts[currentArtifactType] = [];}
+            if (!artifacts[currentArtifactType]) {
+              artifacts[currentArtifactType] = [];
+            }
             (artifacts[currentArtifactType] as any).push(currentItem);
           }
           currentItem = {};
@@ -368,8 +385,11 @@ export class ImplementationLogService {
           }
         }
         // Parse file lists
-        else if ((currentSection === 'filesModified' || currentSection === 'filesCreated') &&
-                 line.startsWith('- ') && !line.includes('_No files')) {
+        else if (
+          (currentSection === 'filesModified' || currentSection === 'filesCreated') &&
+          line.startsWith('- ') &&
+          !line.includes('_No files')
+        ) {
           const fileName = line.slice(2).trim();
           if (currentSection === 'filesModified') {
             filesModified.push(fileName);
@@ -384,7 +404,10 @@ export class ImplementationLogService {
             const mappedKey = mapPropertyName(kv.key);
 
             if (mappedKey === 'exports' || mappedKey === 'methods') {
-              const items = kv.value.split(',').map(s => s.trim()).filter(s => s.length > 0);
+              const items = kv.value
+                .split(',')
+                .map((s) => s.trim())
+                .filter((s) => s.length > 0);
               currentItem[mappedKey] = items;
             } else {
               const convertedValue = convertValue(mappedKey, kv.value);
@@ -396,7 +419,9 @@ export class ImplementationLogService {
 
       // Save last artifact item
       if (Object.keys(currentItem).length > 0 && currentArtifactType) {
-        if (!artifacts[currentArtifactType]) {artifacts[currentArtifactType] = [];}
+        if (!artifacts[currentArtifactType]) {
+          artifacts[currentArtifactType] = [];
+        }
         (artifacts[currentArtifactType] as any).push(currentItem);
       }
 
@@ -414,9 +439,9 @@ export class ImplementationLogService {
         statistics: {
           linesAdded,
           linesRemoved,
-          filesChanged
+          filesChanged,
         },
-        artifacts
+        artifacts,
       };
     } catch (error) {
       this.logger.log(`Error parsing markdown log: ${error}`);
@@ -439,13 +464,13 @@ export class ImplementationLogService {
     const log = await this.loadLog(specName);
     const lowerQuery = query.toLowerCase();
 
-    return log.entries.filter(e => {
+    return log.entries.filter((e) => {
       // Search in summary, taskId, and files
       if (
         e.summary.toLowerCase().includes(lowerQuery) ||
         e.taskId.toLowerCase().includes(lowerQuery) ||
-        e.filesModified.some(f => f.toLowerCase().includes(lowerQuery)) ||
-        e.filesCreated.some(f => f.toLowerCase().includes(lowerQuery))
+        e.filesModified.some((f) => f.toLowerCase().includes(lowerQuery)) ||
+        e.filesCreated.some((f) => f.toLowerCase().includes(lowerQuery))
       ) {
         return true;
       }
@@ -453,56 +478,71 @@ export class ImplementationLogService {
       // Search in artifacts
       if (e.artifacts) {
         // Search API endpoints
-        if (e.artifacts.apiEndpoints?.some(api =>
-          api.method.toLowerCase().includes(lowerQuery) ||
-          api.path.toLowerCase().includes(lowerQuery) ||
-          api.purpose.toLowerCase().includes(lowerQuery) ||
-          api.location.toLowerCase().includes(lowerQuery) ||
-          (api.requestFormat && api.requestFormat.toLowerCase().includes(lowerQuery)) ||
-          (api.responseFormat && api.responseFormat.toLowerCase().includes(lowerQuery))
-        )) {
+        if (
+          e.artifacts.apiEndpoints?.some(
+            (api) =>
+              api.method.toLowerCase().includes(lowerQuery) ||
+              api.path.toLowerCase().includes(lowerQuery) ||
+              api.purpose.toLowerCase().includes(lowerQuery) ||
+              api.location.toLowerCase().includes(lowerQuery) ||
+              (api.requestFormat && api.requestFormat.toLowerCase().includes(lowerQuery)) ||
+              (api.responseFormat && api.responseFormat.toLowerCase().includes(lowerQuery)),
+          )
+        ) {
           return true;
         }
 
         // Search components
-        if (e.artifacts.components?.some(comp =>
-          comp.name.toLowerCase().includes(lowerQuery) ||
-          comp.type.toLowerCase().includes(lowerQuery) ||
-          comp.purpose.toLowerCase().includes(lowerQuery) ||
-          comp.location.toLowerCase().includes(lowerQuery) ||
-          (comp.props && comp.props.toLowerCase().includes(lowerQuery)) ||
-          (comp.exports?.some(exp => exp.toLowerCase().includes(lowerQuery)))
-        )) {
+        if (
+          e.artifacts.components?.some(
+            (comp) =>
+              comp.name.toLowerCase().includes(lowerQuery) ||
+              comp.type.toLowerCase().includes(lowerQuery) ||
+              comp.purpose.toLowerCase().includes(lowerQuery) ||
+              comp.location.toLowerCase().includes(lowerQuery) ||
+              (comp.props && comp.props.toLowerCase().includes(lowerQuery)) ||
+              comp.exports?.some((exp) => exp.toLowerCase().includes(lowerQuery)),
+          )
+        ) {
           return true;
         }
 
         // Search functions
-        if (e.artifacts.functions?.some(func =>
-          func.name.toLowerCase().includes(lowerQuery) ||
-          func.purpose.toLowerCase().includes(lowerQuery) ||
-          func.location.toLowerCase().includes(lowerQuery) ||
-          (func.signature && func.signature.toLowerCase().includes(lowerQuery))
-        )) {
+        if (
+          e.artifacts.functions?.some(
+            (func) =>
+              func.name.toLowerCase().includes(lowerQuery) ||
+              func.purpose.toLowerCase().includes(lowerQuery) ||
+              func.location.toLowerCase().includes(lowerQuery) ||
+              (func.signature && func.signature.toLowerCase().includes(lowerQuery)),
+          )
+        ) {
           return true;
         }
 
         // Search classes
-        if (e.artifacts.classes?.some(cls =>
-          cls.name.toLowerCase().includes(lowerQuery) ||
-          cls.purpose.toLowerCase().includes(lowerQuery) ||
-          cls.location.toLowerCase().includes(lowerQuery) ||
-          (cls.methods?.some(method => method.toLowerCase().includes(lowerQuery)))
-        )) {
+        if (
+          e.artifacts.classes?.some(
+            (cls) =>
+              cls.name.toLowerCase().includes(lowerQuery) ||
+              cls.purpose.toLowerCase().includes(lowerQuery) ||
+              cls.location.toLowerCase().includes(lowerQuery) ||
+              cls.methods?.some((method) => method.toLowerCase().includes(lowerQuery)),
+          )
+        ) {
           return true;
         }
 
         // Search integrations
-        if (e.artifacts.integrations?.some(intg =>
-          intg.description.toLowerCase().includes(lowerQuery) ||
-          intg.frontendComponent.toLowerCase().includes(lowerQuery) ||
-          intg.backendEndpoint.toLowerCase().includes(lowerQuery) ||
-          intg.dataFlow.toLowerCase().includes(lowerQuery)
-        )) {
+        if (
+          e.artifacts.integrations?.some(
+            (intg) =>
+              intg.description.toLowerCase().includes(lowerQuery) ||
+              intg.frontendComponent.toLowerCase().includes(lowerQuery) ||
+              intg.backendEndpoint.toLowerCase().includes(lowerQuery) ||
+              intg.dataFlow.toLowerCase().includes(lowerQuery),
+          )
+        ) {
           return true;
         }
       }
@@ -516,7 +556,7 @@ export class ImplementationLogService {
    */
   async getTaskLogs(specName: string, taskId: string): Promise<ImplementationLogEntry[]> {
     const logs = await this.getLogs(specName);
-    return logs.filter(e => e.taskId === taskId);
+    return logs.filter((e) => e.taskId === taskId);
   }
 
   /**
@@ -530,7 +570,7 @@ export class ImplementationLogService {
         totalEntries: 0,
         totalLinesAdded: 0,
         totalLinesRemoved: 0,
-        totalFilesChanged: 0
+        totalFilesChanged: 0,
       };
     }
 
@@ -538,7 +578,7 @@ export class ImplementationLogService {
       totalEntries: logs.length,
       totalLinesAdded: logs.reduce((sum, e) => sum + e.statistics.linesAdded, 0),
       totalLinesRemoved: logs.reduce((sum, e) => sum + e.statistics.linesRemoved, 0),
-      totalFilesChanged: logs.reduce((sum, e) => sum + e.statistics.filesChanged, 0)
+      totalFilesChanged: logs.reduce((sum, e) => sum + e.statistics.filesChanged, 0),
     };
   }
 
@@ -547,7 +587,7 @@ export class ImplementationLogService {
    */
   async getUniqueTasks(specName: string): Promise<string[]> {
     const logs = await this.getLogs(specName);
-    const taskIds = new Set(logs.map(e => e.taskId));
+    const taskIds = new Set(logs.map((e) => e.taskId));
     return Array.from(taskIds);
   }
 

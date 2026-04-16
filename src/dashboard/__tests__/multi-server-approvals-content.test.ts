@@ -36,7 +36,10 @@ describe('MultiProjectDashboardServer approvals content resolution', () => {
   const originalEnv = { ...process.env };
 
   beforeEach(async () => {
-    tempDir = join(tmpdir(), `specwf-multi-server-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
+    tempDir = join(
+      tmpdir(),
+      `specwf-multi-server-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    );
     workspacePath = join(tempDir, 'worktrees', 'wt-a');
     workflowRootPath = join(tempDir, 'repo-main');
     await fs.mkdir(workspacePath, { recursive: true });
@@ -54,8 +57,8 @@ describe('MultiProjectDashboardServer approvals content resolution', () => {
       'fetch',
       vi.fn(async () => ({
         ok: false,
-        json: async () => ({})
-      }))
+        json: async () => ({}),
+      })),
     );
   });
 
@@ -78,16 +81,23 @@ describe('MultiProjectDashboardServer approvals content resolution', () => {
 
     const approvalStorage = new ApprovalStorage(workflowRootPath, {
       originalPath: workflowRootPath,
-      fileResolutionPath: workspacePath
+      fileResolutionPath: workspacePath,
     });
-    const approvalId = await approvalStorage.createApproval('Review service', relativePath, 'spec', 'test-spec');
+    const approvalId = await approvalStorage.createApproval(
+      'Review service',
+      relativePath,
+      'spec',
+      'test-spec',
+    );
 
     const port = await getFreePort();
     server = new MultiProjectDashboardServer({ autoOpen: false, port });
     await server.start();
 
-    const response = await realFetch(`http://127.0.0.1:${port}/api/projects/${projectId}/approvals/${approvalId}/content`);
-    const body = await response.json() as { content: string; filePath: string };
+    const response = await realFetch(
+      `http://127.0.0.1:${port}/api/projects/${projectId}/approvals/${approvalId}/content`,
+    );
+    const body = (await response.json()) as { content: string; filePath: string };
 
     expect(response.status).toBe(200);
     expect(body.content).toBe('workspace-content');
@@ -101,20 +111,29 @@ describe('MultiProjectDashboardServer approvals content resolution', () => {
 
     const approvalStorage = new ApprovalStorage(workflowRootPath, {
       originalPath: workflowRootPath,
-      fileResolutionPath: workspacePath
+      fileResolutionPath: workspacePath,
     });
-    const approvalId = await approvalStorage.createApproval('Review requirements', relativePath, 'spec', 'test-spec');
+    const approvalId = await approvalStorage.createApproval(
+      'Review requirements',
+      relativePath,
+      'spec',
+      'test-spec',
+    );
 
     const port = await getFreePort();
     server = new MultiProjectDashboardServer({ autoOpen: false, port });
     await server.start();
 
-    const response = await realFetch(`http://127.0.0.1:${port}/api/projects/${projectId}/approvals/${approvalId}/content`);
-    const body = await response.json() as { content: string; filePath: string };
+    const response = await realFetch(
+      `http://127.0.0.1:${port}/api/projects/${projectId}/approvals/${approvalId}/content`,
+    );
+    const body = (await response.json()) as { content: string; filePath: string };
 
     expect(response.status).toBe(200);
     expect(body.content).toBe('# Shared requirements');
-    expect(body.filePath).toContain(join('repo-main', '.specflow', 'specs', 'test-spec', 'requirements.md'));
+    expect(body.filePath).toContain(
+      join('repo-main', '.specflow', 'specs', 'test-spec', 'requirements.md'),
+    );
   });
 
   it('uses absolute approval filePath as-is', async () => {
@@ -123,16 +142,23 @@ describe('MultiProjectDashboardServer approvals content resolution', () => {
 
     const approvalStorage = new ApprovalStorage(workflowRootPath, {
       originalPath: workflowRootPath,
-      fileResolutionPath: workspacePath
+      fileResolutionPath: workspacePath,
     });
-    const approvalId = await approvalStorage.createApproval('Review absolute path', absolutePath, 'spec', 'test-spec');
+    const approvalId = await approvalStorage.createApproval(
+      'Review absolute path',
+      absolutePath,
+      'spec',
+      'test-spec',
+    );
 
     const port = await getFreePort();
     server = new MultiProjectDashboardServer({ autoOpen: false, port });
     await server.start();
 
-    const response = await realFetch(`http://127.0.0.1:${port}/api/projects/${projectId}/approvals/${approvalId}/content`);
-    const body = await response.json() as { content: string; filePath: string };
+    const response = await realFetch(
+      `http://127.0.0.1:${port}/api/projects/${projectId}/approvals/${approvalId}/content`,
+    );
+    const body = (await response.json()) as { content: string; filePath: string };
 
     expect(response.status).toBe(200);
     expect(body.content).toBe('absolute-file-content');

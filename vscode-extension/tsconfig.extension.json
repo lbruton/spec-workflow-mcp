@@ -16,12 +16,6 @@
     "sourceMap": true,
     "baseUrl": "."
   },
-  "include": [
-    "src/extension",
-    "src/extension.ts",
-    "esbuild.js"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src/extension", "src/extension.ts", "esbuild.js"],
+  "exclude": ["node_modules"]
 }

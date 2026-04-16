@@ -33,6 +33,7 @@ npm install
 ```
 
 Isso instala:
+
 - MCP SDK
 - TypeScript e ferramentas de build
 - Express para servidor do dashboard
@@ -51,15 +52,15 @@ Isso compila os arquivos TypeScript para JavaScript no diretório `dist/`.
 
 ### Comandos Principais
 
-| Comando | Descrição |
-|---------|-------------|
-| `npm run dev` | Inicia em modo de desenvolvimento com auto-reload |
-| `npm run build` | Constrói bundle de produção |
-| `npm start` | Executa servidor de produção |
-| `npm test` | Executa suite de testes |
-| `npm run clean` | Remove artefatos de build |
-| `npm run lint` | Executa linter de código |
-| `npm run format` | Formata código com Prettier |
+| Comando          | Descrição                                         |
+| ---------------- | ------------------------------------------------- |
+| `npm run dev`    | Inicia em modo de desenvolvimento com auto-reload |
+| `npm run build`  | Constrói bundle de produção                       |
+| `npm start`      | Executa servidor de produção                      |
+| `npm test`       | Executa suite de testes                           |
+| `npm run clean`  | Remove artefatos de build                         |
+| `npm run lint`   | Executa linter de código                          |
+| `npm run format` | Formata código com Prettier                       |
 
 ### Modo de Desenvolvimento
 
@@ -68,6 +69,7 @@ npm run dev
 ```
 
 Recursos:
+
 - Auto-recompilação em mudanças de arquivo
 - Hot reload para dashboard
 - Mensagens de erro detalhadas
@@ -80,6 +82,7 @@ npm run clean && npm run build
 ```
 
 Otimizações:
+
 - JavaScript minificado
 - Tamanho de bundle otimizado
 - Tratamento de erros de produção
@@ -122,26 +125,32 @@ Cliente (IA) ↔ Protocolo MCP ↔ Servidor ↔ Sistema de Arquivos
 ### Componentes Principais
 
 #### 1. Servidor MCP (`src/index.ts`)
+
 - Gerencia comunicação do protocolo MCP
 - Processa requisições de ferramentas
 - Gerencia estado do projeto
 - Operações de sistema de arquivos
 
 #### 2. Servidor Dashboard (`src/server.ts`)
+
 - Serve dashboard web
 - Conexões WebSocket
 - Atualizações em tempo real
 - Endpoints HTTP API
 
 #### 3. Ferramentas (`src/tools/`)
+
 Cada ferramenta é um módulo separado:
+
 - Validação de entrada
 - Lógica de negócio
 - Operações de arquivo
 - Formatação de resposta
 
 #### 4. Prompts (`src/prompts/`)
+
 Strings de template para:
+
 - Geração de documentos
 - Orientação de fluxo de trabalho
 - Mensagens de erro
@@ -164,9 +173,9 @@ export const myNewTool: Tool = {
     type: 'object',
     properties: {
       param1: { type: 'string', description: 'Descrição do parâmetro' },
-      param2: { type: 'number', optional: true }
+      param2: { type: 'number', optional: true },
     },
-    required: ['param1']
+    required: ['param1'],
   },
   handler: async (params) => {
     // Implementação da ferramenta
@@ -176,9 +185,9 @@ export const myNewTool: Tool = {
 
     return {
       success: true,
-      data: 'Resposta da ferramenta'
+      data: 'Resposta da ferramenta',
     };
-  }
+  },
 };
 ```
 
@@ -212,10 +221,14 @@ server.registerTool(myNewTool);
 ```javascript
 document.getElementById('new-action').addEventListener('click', () => {
   // Lógica do recurso
-  ws.send(JSON.stringify({
-    type: 'new-action',
-    data: { /* ... */ }
-  }));
+  ws.send(
+    JSON.stringify({
+      type: 'new-action',
+      data: {
+        /* ... */
+      },
+    }),
+  );
 });
 ```
 
@@ -260,7 +273,7 @@ import { myTool } from './my-tool';
 describe('myTool', () => {
   it('deve processar entrada corretamente', async () => {
     const result = await myTool.handler({
-      param1: 'teste'
+      param1: 'teste',
     });
 
     expect(result.success).toBe(true);
@@ -269,7 +282,7 @@ describe('myTool', () => {
 
   it('deve tratar erros', async () => {
     const result = await myTool.handler({
-      param1: null
+      param1: null,
     });
 
     expect(result.success).toBe(false);
@@ -397,6 +410,7 @@ Siga conventional commits:
 - `chore:` Manutenção
 
 Exemplos:
+
 ```
 feat: adicionar fluxo de trabalho de revisão de aprovação
 fix: resolver problema de reconexão WebSocket do dashboard
@@ -416,11 +430,13 @@ docs: atualizar guia de configuração
 ### Pacote NPM
 
 1. **Atualizar versão**:
+
    ```bash
    npm version patch|minor|major
    ```
 
 2. **Construir pacote**:
+
    ```bash
    npm run build
    ```
@@ -435,6 +451,7 @@ docs: atualizar guia de configuração
 1. **Atualizar versão da extensão** em `vscode-extension/package.json`
 
 2. **Construir extensão**:
+
    ```bash
    cd vscode-extension
    npm run package
@@ -490,11 +507,11 @@ if (safePath.includes('..')) {
 
 ### Erros Comuns de Build
 
-| Erro | Solução |
-|-------|----------|
-| Erros TypeScript | Execute `npm run build` para ver erros detalhados |
-| Módulo não encontrado | Verifique imports e execute `npm install` |
-| Porta já em uso | Mude porta ou encerre processo existente |
+| Erro                       | Solução                                                 |
+| -------------------------- | ------------------------------------------------------- |
+| Erros TypeScript           | Execute `npm run build` para ver erros detalhados       |
+| Módulo não encontrado      | Verifique imports e execute `npm install`               |
+| Porta já em uso            | Mude porta ou encerre processo existente                |
 | Falha na conexão WebSocket | Verifique se servidor está rodando e porta está correta |
 
 ### Dicas de Desenvolvimento

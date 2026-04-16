@@ -20,7 +20,7 @@ const CRON_PRESETS = [
   { label: 'Monthly (1st at 2 AM)', value: '0 2 1 * *' },
   { label: 'Every 6 hours', value: '0 */6 * * *' },
   { label: 'Every 12 hours', value: '0 */12 * * *' },
-  { label: 'Custom', value: '' }
+  { label: 'Custom', value: '' },
 ];
 
 // Job type definitions
@@ -28,21 +28,27 @@ const JOB_TYPES = [
   {
     value: 'cleanup-approvals' as const,
     label: 'Cleanup Approvals',
-    description: 'Delete approval records older than specified days'
+    description: 'Delete approval records older than specified days',
   },
   {
     value: 'cleanup-specs' as const,
     label: 'Cleanup Specs',
-    description: 'Delete active specifications older than specified days'
+    description: 'Delete active specifications older than specified days',
   },
   {
     value: 'cleanup-archived-specs' as const,
     label: 'Cleanup Archived Specs',
-    description: 'Delete archived specifications older than specified days'
-  }
+    description: 'Delete archived specifications older than specified days',
+  },
 ];
 
-export function JobFormModal({ isOpen, onClose, onSubmit, initialJob, isLoading }: JobFormModalProps) {
+export function JobFormModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  initialJob,
+  isLoading,
+}: JobFormModalProps) {
   const { t } = useTranslation();
   const isEditMode = !!initialJob;
 
@@ -53,7 +59,7 @@ export function JobFormModal({ isOpen, onClose, onSubmit, initialJob, isLoading 
     enabled: true,
     daysOld: 30,
     schedule: '0 2 * * *',
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -70,7 +76,7 @@ export function JobFormModal({ isOpen, onClose, onSubmit, initialJob, isLoading 
         enabled: initialJob.enabled,
         daysOld: initialJob.config.daysOld,
         schedule: initialJob.schedule,
-        createdAt: initialJob.createdAt
+        createdAt: initialJob.createdAt,
       });
     } else {
       // Reset form for new job
@@ -81,7 +87,7 @@ export function JobFormModal({ isOpen, onClose, onSubmit, initialJob, isLoading 
         enabled: true,
         daysOld: 30,
         schedule: '0 2 * * *',
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       });
     }
     setErrors({});
@@ -115,13 +121,13 @@ export function JobFormModal({ isOpen, onClose, onSubmit, initialJob, isLoading 
   };
 
   const applyTemplate = (templateKey: string) => {
-    const template = getTemplatesByType(formData.type).find(t => t.name === templateKey);
+    const template = getTemplatesByType(formData.type).find((t) => t.name === templateKey);
     if (template) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         name: template.name,
         daysOld: template.daysOld,
-        schedule: template.schedule
+        schedule: template.schedule,
       }));
       setShowTemplateSelector(false);
     }
@@ -142,7 +148,7 @@ export function JobFormModal({ isOpen, onClose, onSubmit, initialJob, isLoading 
         enabled: formData.enabled,
         config: { daysOld: formData.daysOld },
         schedule: formData.schedule,
-        createdAt: formData.createdAt
+        createdAt: formData.createdAt,
       });
       onClose();
     } catch (error) {
@@ -165,202 +171,241 @@ export function JobFormModal({ isOpen, onClose, onSubmit, initialJob, isLoading 
 
         <div className="flex-1 overflow-y-auto px-6 py-6">
           <form id="job-form" onSubmit={handleSubmit} className="space-y-4">
-          {/* Job Name */}
-          <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-              Job Name *
-            </label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="e.g., Weekly Cleanup"
-              className={`w-full px-3 py-2 bg-[var(--surface-panel)] border rounded-md text-[var(--text-primary)] ${
-                errors.name ? 'border-[var(--status-error)]' : 'border-[var(--border-default)]'
-              }`}
-            />
-            {errors.name && <p className="text-[var(--status-error)] text-sm mt-1">{errors.name}</p>}
-          </div>
-
-          {/* Job Type */}
-          <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-              Job Type *
-            </label>
-            <div className="space-y-2">
-              {JOB_TYPES.map((jobType) => (
-                <label key={jobType.value} className="flex items-start cursor-pointer p-3 border border-[var(--border-default)] rounded-md hover:bg-[var(--surface-hover)] transition-colors">
-                  <input
-                    type="radio"
-                    name="type"
-                    value={jobType.value}
-                    checked={formData.type === jobType.value}
-                    onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
-                    className="mt-1 mr-3 accent-[var(--accent-primary)]"
-                  />
-                  <div>
-                    <div className="font-medium text-[var(--text-primary)]">{jobType.label}</div>
-                    <div className="text-sm text-[var(--text-muted)]">{jobType.description}</div>
-                  </div>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Template Selector */}
-          {availableTemplates.length > 0 && (
+            {/* Job Name */}
             <div>
-              <button
-                type="button"
-                onClick={() => setShowTemplateSelector(!showTemplateSelector)}
-                className="text-sm text-[var(--accent-primary)] hover:underline mb-2"
-              >
-                {showTemplateSelector ? 'Hide Templates' : 'Use Template'}
-              </button>
-
-              {showTemplateSelector && (
-                <div className="p-3 bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)]/30 rounded-md space-y-2">
-                  <p className="text-sm font-medium text-[var(--accent-primary)] mb-4">
-                    Quick Templates for {formData.type === 'cleanup-approvals' ? 'Approvals' : formData.type === 'cleanup-specs' ? 'Specs' : 'Archived Specs'}:
-                  </p>
-                  <div className="space-y-2">
-                    {availableTemplates.map((template) => (
-                      <button
-                        key={template.name}
-                        type="button"
-                        onClick={() => applyTemplate(template.name)}
-                        className="w-full text-left p-2 bg-[var(--surface-panel)] hover:bg-[var(--surface-hover)] rounded-md transition-colors"
-                      >
-                        <div className="font-medium text-sm text-[var(--text-primary)]">
-                          {template.name}
-                        </div>
-                        <div className="text-xs text-[var(--text-muted)]">
-                          {template.description}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                Job Name *
+              </label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="e.g., Weekly Cleanup"
+                className={`w-full px-3 py-2 bg-[var(--surface-panel)] border rounded-md text-[var(--text-primary)] ${
+                  errors.name ? 'border-[var(--status-error)]' : 'border-[var(--border-default)]'
+                }`}
+              />
+              {errors.name && (
+                <p className="text-[var(--status-error)] text-sm mt-1">{errors.name}</p>
               )}
             </div>
-          )}
 
-          {/* Days Old */}
-          <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-              Delete records older than (days) *
-            </label>
-            <input
-              type="number"
-              min="1"
-              max="3650"
-              value={formData.daysOld}
-              onChange={(e) => setFormData({ ...formData, daysOld: parseInt(e.target.value) || 0 })}
-              className={`w-full px-3 py-2 bg-[var(--surface-panel)] border rounded-md text-[var(--text-primary)] ${
-                errors.daysOld ? 'border-[var(--status-error)]' : 'border-[var(--border-default)]'
-              }`}
-            />
-            <p className="text-xs text-[var(--text-muted)] mt-1">
-              Records created {formData.daysOld} or more days ago will be deleted
-            </p>
-            {errors.daysOld && <p className="text-[var(--status-error)] text-sm mt-1">{errors.daysOld}</p>}
-          </div>
-
-          {/* Schedule (Cron Expression) */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-[var(--text-secondary)]">
-                Schedule (Cron Expression) *
+            {/* Job Type */}
+            <div>
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                Job Type *
               </label>
-              <button
-                type="button"
-                onClick={() => setShowCronHelper(!showCronHelper)}
-                className="text-xs text-[var(--accent-primary)] hover:underline"
-              >
-                {showCronHelper ? 'Hide Helper' : 'Show Helper'}
-              </button>
+              <div className="space-y-2">
+                {JOB_TYPES.map((jobType) => (
+                  <label
+                    key={jobType.value}
+                    className="flex items-start cursor-pointer p-3 border border-[var(--border-default)] rounded-md hover:bg-[var(--surface-hover)] transition-colors"
+                  >
+                    <input
+                      type="radio"
+                      name="type"
+                      value={jobType.value}
+                      checked={formData.type === jobType.value}
+                      onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
+                      className="mt-1 mr-3 accent-[var(--accent-primary)]"
+                    />
+                    <div>
+                      <div className="font-medium text-[var(--text-primary)]">{jobType.label}</div>
+                      <div className="text-sm text-[var(--text-muted)]">{jobType.description}</div>
+                    </div>
+                  </label>
+                ))}
+              </div>
             </div>
 
-            {/* Cron Presets */}
-            {showCronHelper && (
-              <div className="mb-4 p-3 bg-[var(--surface-secondary)] rounded-md space-y-2">
-                <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">
-                  Common Schedules:
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {CRON_PRESETS.map((preset) => (
-                    <button
-                      key={preset.value}
-                      type="button"
-                      onClick={() => {
-                        if (preset.value) {
-                          setFormData({ ...formData, schedule: preset.value });
-                          setShowCronHelper(false);
-                        }
-                      }}
-                      disabled={!preset.value}
-                      className={`text-left px-2 py-1 text-xs rounded-md transition-colors ${
-                        preset.value
-                          ? 'bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/20'
-                          : 'text-[var(--text-muted)] cursor-default'
-                      }`}
-                    >
-                      <div className="font-medium">{preset.label}</div>
-                      {preset.value && (
-                        <div className="text-xs opacity-75 font-mono">{preset.value}</div>
-                      )}
-                    </button>
-                  ))}
-                </div>
-                <div className="mt-4 pt-4 border-t border-[var(--border-default)]">
-                  <p className="text-xs text-[var(--text-muted)] mb-2">
-                    <strong>Cron Format:</strong> minute hour day month day-of-week
-                  </p>
-                  <ul className="text-xs text-[var(--text-muted)] space-y-1">
-                    <li>* <code className="bg-[var(--surface-secondary)] px-1 rounded">0 2 * * *</code> = Daily at 2 AM</li>
-                    <li>* <code className="bg-[var(--surface-secondary)] px-1 rounded">0 */6 * * *</code> = Every 6 hours</li>
-                    <li>* <code className="bg-[var(--surface-secondary)] px-1 rounded">0 2 1 * *</code> = Monthly on 1st at 2 AM</li>
-                  </ul>
-                </div>
+            {/* Template Selector */}
+            {availableTemplates.length > 0 && (
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setShowTemplateSelector(!showTemplateSelector)}
+                  className="text-sm text-[var(--accent-primary)] hover:underline mb-2"
+                >
+                  {showTemplateSelector ? 'Hide Templates' : 'Use Template'}
+                </button>
+
+                {showTemplateSelector && (
+                  <div className="p-3 bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)]/30 rounded-md space-y-2">
+                    <p className="text-sm font-medium text-[var(--accent-primary)] mb-4">
+                      Quick Templates for{' '}
+                      {formData.type === 'cleanup-approvals'
+                        ? 'Approvals'
+                        : formData.type === 'cleanup-specs'
+                          ? 'Specs'
+                          : 'Archived Specs'}
+                      :
+                    </p>
+                    <div className="space-y-2">
+                      {availableTemplates.map((template) => (
+                        <button
+                          key={template.name}
+                          type="button"
+                          onClick={() => applyTemplate(template.name)}
+                          className="w-full text-left p-2 bg-[var(--surface-panel)] hover:bg-[var(--surface-hover)] rounded-md transition-colors"
+                        >
+                          <div className="font-medium text-sm text-[var(--text-primary)]">
+                            {template.name}
+                          </div>
+                          <div className="text-xs text-[var(--text-muted)]">
+                            {template.description}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
-            <input
-              type="text"
-              value={formData.schedule}
-              onChange={(e) => setFormData({ ...formData, schedule: e.target.value })}
-              placeholder="e.g., 0 2 * * * (daily at 2 AM)"
-              className={`w-full px-3 py-2 bg-[var(--surface-panel)] border rounded-md text-[var(--text-primary)] font-mono text-sm ${
-                errors.schedule ? 'border-[var(--status-error)]' : 'border-[var(--border-default)]'
-              }`}
-            />
-            {errors.schedule && <p className="text-[var(--status-error)] text-sm mt-1">{errors.schedule}</p>}
-          </div>
-
-          {/* Enabled Toggle */}
-          <div className="flex items-center gap-4">
-            <label className="flex items-center cursor-pointer">
+            {/* Days Old */}
+            <div>
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                Delete records older than (days) *
+              </label>
               <input
-                type="checkbox"
-                checked={formData.enabled}
-                onChange={(e) => setFormData({ ...formData, enabled: e.target.checked })}
-                className="w-5 h-5 rounded-md accent-[var(--accent-primary)]"
+                type="number"
+                min="1"
+                max="3650"
+                value={formData.daysOld}
+                onChange={(e) =>
+                  setFormData({ ...formData, daysOld: parseInt(e.target.value) || 0 })
+                }
+                className={`w-full px-3 py-2 bg-[var(--surface-panel)] border rounded-md text-[var(--text-primary)] ${
+                  errors.daysOld ? 'border-[var(--status-error)]' : 'border-[var(--border-default)]'
+                }`}
               />
-              <span className="ml-2 text-sm font-medium text-[var(--text-secondary)]">
-                Enabled
-              </span>
-            </label>
-            <span className="text-xs text-[var(--text-muted)]">
-              {formData.enabled ? 'This job will run according to its schedule' : 'This job is disabled and will not run'}
-            </span>
-          </div>
-
-          {/* Submit Errors */}
-          {errors.submit && (
-            <div className="p-3 bg-[var(--status-error-bg)] border border-[var(--status-error-border)] rounded-md">
-              <p className="text-sm text-[var(--status-error)]">{errors.submit}</p>
+              <p className="text-xs text-[var(--text-muted)] mt-1">
+                Records created {formData.daysOld} or more days ago will be deleted
+              </p>
+              {errors.daysOld && (
+                <p className="text-[var(--status-error)] text-sm mt-1">{errors.daysOld}</p>
+              )}
             </div>
-          )}
+
+            {/* Schedule (Cron Expression) */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)]">
+                  Schedule (Cron Expression) *
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowCronHelper(!showCronHelper)}
+                  className="text-xs text-[var(--accent-primary)] hover:underline"
+                >
+                  {showCronHelper ? 'Hide Helper' : 'Show Helper'}
+                </button>
+              </div>
+
+              {/* Cron Presets */}
+              {showCronHelper && (
+                <div className="mb-4 p-3 bg-[var(--surface-secondary)] rounded-md space-y-2">
+                  <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">
+                    Common Schedules:
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {CRON_PRESETS.map((preset) => (
+                      <button
+                        key={preset.value}
+                        type="button"
+                        onClick={() => {
+                          if (preset.value) {
+                            setFormData({ ...formData, schedule: preset.value });
+                            setShowCronHelper(false);
+                          }
+                        }}
+                        disabled={!preset.value}
+                        className={`text-left px-2 py-1 text-xs rounded-md transition-colors ${
+                          preset.value
+                            ? 'bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/20'
+                            : 'text-[var(--text-muted)] cursor-default'
+                        }`}
+                      >
+                        <div className="font-medium">{preset.label}</div>
+                        {preset.value && (
+                          <div className="text-xs opacity-75 font-mono">{preset.value}</div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-[var(--border-default)]">
+                    <p className="text-xs text-[var(--text-muted)] mb-2">
+                      <strong>Cron Format:</strong> minute hour day month day-of-week
+                    </p>
+                    <ul className="text-xs text-[var(--text-muted)] space-y-1">
+                      <li>
+                        *{' '}
+                        <code className="bg-[var(--surface-secondary)] px-1 rounded">
+                          0 2 * * *
+                        </code>{' '}
+                        = Daily at 2 AM
+                      </li>
+                      <li>
+                        *{' '}
+                        <code className="bg-[var(--surface-secondary)] px-1 rounded">
+                          0 */6 * * *
+                        </code>{' '}
+                        = Every 6 hours
+                      </li>
+                      <li>
+                        *{' '}
+                        <code className="bg-[var(--surface-secondary)] px-1 rounded">
+                          0 2 1 * *
+                        </code>{' '}
+                        = Monthly on 1st at 2 AM
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              )}
+
+              <input
+                type="text"
+                value={formData.schedule}
+                onChange={(e) => setFormData({ ...formData, schedule: e.target.value })}
+                placeholder="e.g., 0 2 * * * (daily at 2 AM)"
+                className={`w-full px-3 py-2 bg-[var(--surface-panel)] border rounded-md text-[var(--text-primary)] font-mono text-sm ${
+                  errors.schedule
+                    ? 'border-[var(--status-error)]'
+                    : 'border-[var(--border-default)]'
+                }`}
+              />
+              {errors.schedule && (
+                <p className="text-[var(--status-error)] text-sm mt-1">{errors.schedule}</p>
+              )}
+            </div>
+
+            {/* Enabled Toggle */}
+            <div className="flex items-center gap-4">
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.enabled}
+                  onChange={(e) => setFormData({ ...formData, enabled: e.target.checked })}
+                  className="w-5 h-5 rounded-md accent-[var(--accent-primary)]"
+                />
+                <span className="ml-2 text-sm font-medium text-[var(--text-secondary)]">
+                  Enabled
+                </span>
+              </label>
+              <span className="text-xs text-[var(--text-muted)]">
+                {formData.enabled
+                  ? 'This job will run according to its schedule'
+                  : 'This job is disabled and will not run'}
+              </span>
+            </div>
+
+            {/* Submit Errors */}
+            {errors.submit && (
+              <div className="p-3 bg-[var(--status-error-bg)] border border-[var(--status-error-border)] rounded-md">
+                <p className="text-sm text-[var(--status-error)]">{errors.submit}</p>
+              </div>
+            )}
           </form>
         </div>
 

@@ -20,6 +20,7 @@ Spec Workflow MCP는 두 가지 인터페이스를 제공합니다:
 ### 대시보드 시작
 
 #### 독립형 대시보드
+
 ```bash
 # 임시 포트 사용
 npx -y @pimzino/spec-workflow-mcp@latest /path/to/project --dashboard
@@ -29,6 +30,7 @@ npx -y @pimzino/spec-workflow-mcp@latest /path/to/project --dashboard --port 300
 ```
 
 #### MCP 서버와 함께
+
 ```bash
 # MCP 서버와 대시보드를 별도로 실행 (권장)
 # 터미널 1: 대시보드 시작
@@ -119,18 +121,19 @@ npx -y @pimzino/spec-workflow-mcp@latest /path/to/project
 
 #### 키보드 단축키
 
-| 단축키 | 작업 |
-|----------|--------|
+| 단축키    | 작업               |
+| --------- | ------------------ |
 | `Alt + S` | 스펙 목록에 포커스 |
-| `Alt + T` | 작업 보기 |
-| `Alt + R` | 요구사항 보기 |
-| `Alt + D` | 설계 보기 |
+| `Alt + T` | 작업 보기          |
+| `Alt + R` | 요구사항 보기      |
+| `Alt + D` | 설계 보기          |
 | `Alt + A` | 승인 대화상자 열기 |
-| `Esc` | 대화상자 닫기 |
+| `Esc`     | 대화상자 닫기      |
 
 #### URL 구조
 
 특정 뷰에 대한 직접 링크:
+
 - `/` - 홈 대시보드
 - `/spec/{name}` - 특정 스펙
 - `/spec/{name}/requirements` - 요구사항 문서
@@ -164,6 +167,7 @@ npx -y @pimzino/spec-workflow-mcp@latest /path/to/project
 #### 테마 설정
 
 밝은 모드와 어두운 모드 간 전환:
+
 - 헤더의 테마 아이콘 클릭
 - 세션 간 유지
 - 시스템 기본 설정 존중
@@ -171,11 +175,13 @@ npx -y @pimzino/spec-workflow-mcp@latest /path/to/project
 #### 언어 선택
 
 인터페이스 언어 변경:
+
 1. 설정 아이콘 클릭
 2. 드롭다운에서 언어 선택
 3. 인터페이스가 즉시 업데이트
 
 지원 언어:
+
 - English (en)
 - Japanese (ja)
 - Chinese (zh)
@@ -191,6 +197,7 @@ npx -y @pimzino/spec-workflow-mcp@latest /path/to/project
 #### 표시 옵션
 
 뷰 기본 설정 사용자 지정:
+
 - 컴팩트/확장 스펙 카드
 - 완료된 작업 표시/숨기기
 - 문서 글꼴 크기
@@ -208,6 +215,7 @@ VSCode 마켓플레이스에서 설치:
 4. VSCode 리로드
 
 또는 명령줄을 통해:
+
 ```bash
 code --install-extension Pimzino.specflow-mcp
 ```
@@ -303,31 +311,31 @@ VSCode 설정에서 구성:
 
 #### 설정 설명
 
-| 설정 | 설명 | 기본값 |
-|---------|-------------|---------|
-| `language` | 인터페이스 언어 | "en" |
-| `notifications.enabled` | 알림 표시 | true |
-| `notifications.sound` | 사운드 경고 재생 | true |
-| `notifications.volume` | 사운드 볼륨 (0-1) | 0.5 |
-| `archive.showInExplorer` | 아카이브된 스펙 표시 | true |
-| `tasks.autoRefresh` | 작업 자동 새로고침 | true |
-| `tasks.refreshInterval` | 새로고침 간격 (ms) | 5000 |
-| `theme.followVSCode` | VSCode 테마 일치 | true |
+| 설정                     | 설명                 | 기본값 |
+| ------------------------ | -------------------- | ------ |
+| `language`               | 인터페이스 언어      | "en"   |
+| `notifications.enabled`  | 알림 표시            | true   |
+| `notifications.sound`    | 사운드 경고 재생     | true   |
+| `notifications.volume`   | 사운드 볼륨 (0-1)    | 0.5    |
+| `archive.showInExplorer` | 아카이브된 스펙 표시 | true   |
+| `tasks.autoRefresh`      | 작업 자동 새로고침   | true   |
+| `tasks.refreshInterval`  | 새로고침 간격 (ms)   | 5000   |
+| `theme.followVSCode`     | VSCode 테마 일치     | true   |
 
 ### 확장 프로그램 명령어
 
 명령 팔레트에서 사용 가능 (Ctrl+Shift+P):
 
-| 명령어 | 설명 |
-|---------|-------------|
-| `Spec Workflow: Create Spec` | 새 스펙 시작 |
-| `Spec Workflow: List Specs` | 모든 스펙 표시 |
-| `Spec Workflow: View Dashboard` | 웹 대시보드 열기 |
-| `Spec Workflow: Archive Spec` | 아카이브로 이동 |
-| `Spec Workflow: Restore Spec` | 아카이브에서 복원 |
-| `Spec Workflow: Refresh` | 스펙 데이터 다시 로드 |
-| `Spec Workflow: Show Steering` | 스티어링 문서 보기 |
-| `Spec Workflow: Export Spec` | 마크다운으로 내보내기 |
+| 명령어                          | 설명                  |
+| ------------------------------- | --------------------- |
+| `Spec Workflow: Create Spec`    | 새 스펙 시작          |
+| `Spec Workflow: List Specs`     | 모든 스펙 표시        |
+| `Spec Workflow: View Dashboard` | 웹 대시보드 열기      |
+| `Spec Workflow: Archive Spec`   | 아카이브로 이동       |
+| `Spec Workflow: Restore Spec`   | 아카이브에서 복원     |
+| `Spec Workflow: Refresh`        | 스펙 데이터 다시 로드 |
+| `Spec Workflow: Show Steering`  | 스티어링 문서 보기    |
+| `Spec Workflow: Export Spec`    | 마크다운으로 내보내기 |
 
 ### 사운드 알림
 
@@ -339,6 +347,7 @@ VSCode 설정에서 구성:
 - **업데이트** - 부드러운 알림
 
 설정에서 구성:
+
 ```json
 {
   "specWorkflow.notifications.sound": true,
@@ -348,20 +357,20 @@ VSCode 설정에서 구성:
 
 ## 기능 비교
 
-| 기능 | 웹 대시보드 | VSCode 확장 프로그램 |
-|---------|--------------|------------------|
-| 스펙 보기 | ✅ | ✅ |
-| 작업 관리 | ✅ | ✅ |
-| 승인 | ✅ | ✅ |
-| 실시간 업데이트 | ✅ | ✅ |
-| 아카이브 시스템 | ❌ | ✅ |
-| 사운드 알림 | ❌ | ✅ |
-| 편집기 통합 | ❌ | ✅ |
-| 컨텍스트 메뉴 | ❌ | ✅ |
-| 키보드 단축키 | 제한적 | 전체 |
-| 다중 프로젝트 | 수동 | 자동 |
-| 오프라인 액세스 | ❌ | ✅ |
-| 내보내기 옵션 | 기본 | 고급 |
+| 기능            | 웹 대시보드 | VSCode 확장 프로그램 |
+| --------------- | ----------- | -------------------- |
+| 스펙 보기       | ✅          | ✅                   |
+| 작업 관리       | ✅          | ✅                   |
+| 승인            | ✅          | ✅                   |
+| 실시간 업데이트 | ✅          | ✅                   |
+| 아카이브 시스템 | ❌          | ✅                   |
+| 사운드 알림     | ❌          | ✅                   |
+| 편집기 통합     | ❌          | ✅                   |
+| 컨텍스트 메뉴   | ❌          | ✅                   |
+| 키보드 단축키   | 제한적      | 전체                 |
+| 다중 프로젝트   | 수동        | 자동                 |
+| 오프라인 액세스 | ❌          | ✅                   |
+| 내보내기 옵션   | 기본        | 고급                 |
 
 ## 올바른 인터페이스 선택
 
@@ -447,6 +456,7 @@ VSCode 설정에서 구성:
 ### VSCode 확장 프로그램
 
 VSCode 접근성 상속:
+
 - 스크린 리더 지원
 - 키보드 탐색
 - 고대비 테마
@@ -480,27 +490,28 @@ VSCode 접근성 상속:
 
 ### 대시보드 문제
 
-| 문제 | 해결책 |
-|-------|----------|
-| 로드되지 않음 | 서버가 실행 중인지 확인, URL 검증 |
-| 업데이트 없음 | WebSocket 연결 확인, 페이지 새로고침 |
-| 승인이 작동하지 않음 | 대시보드와 MCP가 연결되었는지 확인 |
-| 스타일 깨짐 | 브라우저 캐시 지우기, 콘솔 확인 |
+| 문제                 | 해결책                               |
+| -------------------- | ------------------------------------ |
+| 로드되지 않음        | 서버가 실행 중인지 확인, URL 검증    |
+| 업데이트 없음        | WebSocket 연결 확인, 페이지 새로고침 |
+| 승인이 작동하지 않음 | 대시보드와 MCP가 연결되었는지 확인   |
+| 스타일 깨짐          | 브라우저 캐시 지우기, 콘솔 확인      |
 
 ### 확장 프로그램 문제
 
-| 문제 | 해결책 |
-|-------|----------|
-| 스펙이 표시되지 않음 | 프로젝트에 .specflow 디렉터리가 있는지 확인 |
-| 명령어가 작동하지 않음 | VSCode 창 리로드 |
-| 알림 없음 | 확장 프로그램 설정 확인 |
-| 아카이브가 보이지 않음 | 설정에서 활성화 |
+| 문제                   | 해결책                                      |
+| ---------------------- | ------------------------------------------- |
+| 스펙이 표시되지 않음   | 프로젝트에 .specflow 디렉터리가 있는지 확인 |
+| 명령어가 작동하지 않음 | VSCode 창 리로드                            |
+| 알림 없음              | 확장 프로그램 설정 확인                     |
+| 아카이브가 보이지 않음 | 설정에서 활성화                             |
 
 ## 고급 사용법
 
 ### 사용자 지정 대시보드 URL
 
 여러 터미널에서 구성:
+
 ```bash
 # 터미널 1: MCP 서버
 npx -y @pimzino/spec-workflow-mcp@latest /project

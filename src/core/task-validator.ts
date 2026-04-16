@@ -60,10 +60,26 @@ export function validateTasksMarkdown(content: string): ValidationResult {
     if (!checkboxMatch) {
       // Check for common malformed patterns
       const malformedPatterns = [
-        { pattern: /^\s*-\s*\[\]\s/, message: 'Empty checkbox brackets', suggestion: 'Use "- [ ]" with a space inside brackets' },
-        { pattern: /^\s*-\s*\[([^x \-])\]/, message: 'Invalid checkbox character', suggestion: 'Use space for pending, x for completed, - for in-progress' },
-        { pattern: /^\s*-\[\s*[x \-]?\s*\]/, message: 'Missing space after hyphen', suggestion: 'Use "- [ ]" with space between - and [' },
-        { pattern: /^\s*\*\s+\[/, message: 'Wrong bullet character', suggestion: 'Use hyphen (-) instead of asterisk (*)' },
+        {
+          pattern: /^\s*-\s*\[\]\s/,
+          message: 'Empty checkbox brackets',
+          suggestion: 'Use "- [ ]" with a space inside brackets',
+        },
+        {
+          pattern: /^\s*-\s*\[([^x \-])\]/,
+          message: 'Invalid checkbox character',
+          suggestion: 'Use space for pending, x for completed, - for in-progress',
+        },
+        {
+          pattern: /^\s*-\[\s*[x \-]?\s*\]/,
+          message: 'Missing space after hyphen',
+          suggestion: 'Use "- [ ]" with space between - and [',
+        },
+        {
+          pattern: /^\s*\*\s+\[/,
+          message: 'Wrong bullet character',
+          suggestion: 'Use hyphen (-) instead of asterisk (*)',
+        },
       ];
 
       let foundMalformed = false;
@@ -74,7 +90,7 @@ export function validateTasksMarkdown(content: string): ValidationResult {
             field: 'checkbox',
             message,
             suggestion,
-            severity: 'error'
+            severity: 'error',
           });
           foundMalformed = true;
           taskValid = false;
@@ -88,7 +104,7 @@ export function validateTasksMarkdown(content: string): ValidationResult {
           field: 'checkbox',
           message: 'Invalid checkbox format',
           suggestion: 'Expected format: "- [ ] 1. Task description"',
-          severity: 'error'
+          severity: 'error',
         });
         taskValid = false;
       }
@@ -107,7 +123,7 @@ export function validateTasksMarkdown(content: string): ValidationResult {
         field: 'taskId',
         message: 'Missing task ID number',
         suggestion: 'Add numeric ID like "1." or "1.1" after checkbox',
-        severity: 'error'
+        severity: 'error',
       });
       taskValid = false;
     } else {
@@ -140,7 +156,7 @@ export function validateTasksMarkdown(content: string): ValidationResult {
               field: 'requirements',
               message: 'Requirements field missing underscore delimiters',
               suggestion: 'Use "_Requirements: ..._" format for proper parsing',
-              severity: 'warning'
+              severity: 'warning',
             });
           }
         }
@@ -158,7 +174,7 @@ export function validateTasksMarkdown(content: string): ValidationResult {
               field: 'leverage',
               message: 'Leverage field missing underscore delimiters',
               suggestion: 'Use "_Leverage: ..._" format for proper parsing',
-              severity: 'warning'
+              severity: 'warning',
             });
           }
         }
@@ -210,13 +226,13 @@ export function validateTasksMarkdown(content: string): ValidationResult {
           field: 'prompt',
           message: 'Prompt field may be missing closing underscore',
           suggestion: 'Ensure _Prompt: ..._ ends with underscore',
-          severity: 'warning'
+          severity: 'warning',
         });
       }
 
       // Check for missing prompt sections
       const requiredSections = ['Role', 'Task', 'Restrictions', 'Success'];
-      const missingSections = requiredSections.filter(s => !promptSections.includes(s));
+      const missingSections = requiredSections.filter((s) => !promptSections.includes(s));
       if (missingSections.length > 0) {
         warnings.push({
           line: lineNum,
@@ -224,7 +240,7 @@ export function validateTasksMarkdown(content: string): ValidationResult {
           field: 'prompt_structure',
           message: `Prompt missing sections: ${missingSections.join(', ')}`,
           suggestion: 'Format: Role: ... | Task: ... | Restrictions: ... | Success: ...',
-          severity: 'warning'
+          severity: 'warning',
         });
       }
     }
@@ -242,8 +258,8 @@ export function validateTasksMarkdown(content: string): ValidationResult {
     summary: {
       totalTasks: taskCount,
       validTasks: validTaskCount,
-      invalidTasks: taskCount - validTaskCount
-    }
+      invalidTasks: taskCount - validTaskCount,
+    },
   };
 }
 
