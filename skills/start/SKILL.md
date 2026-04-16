@@ -115,7 +115,7 @@ Surface:
 Find the 5 most recently updated open issues from the vault:
 
 ```bash
-ISSUES_DIR="/Volumes/DATA/GitHub/DocVault/Issues"
+ISSUES_DIR="${DOCVAULT_PATH}/Issues"
 # Filter open issues first, then sort by modification time, take 5
 # (truncating before filtering can return zero results if the top 5 are all closed)
 grep -rl 'status:.*\(open\|backlog\|todo\|in-progress\|in-review\)' "$ISSUES_DIR" 2>/dev/null \
@@ -127,7 +127,7 @@ Display as a compact list.
 
 If there is no vault Issues directory or no open issues, note it briefly and move on.
 Also check the project-specific Issues path if the global one is empty:
-`/Volumes/DATA/GitHub/DocVault/Projects/{ProjectName}/Issues/`
+`${DOCVAULT_PATH}/Projects/{ProjectName}/Issues/`
 
 ---
 

@@ -132,7 +132,7 @@ Then search mem0, scoped to this project:
 ```
 mcp__mem0__search_memories(
   query: "retro-learning",
-  user_id: "lbruton",
+  user_id: "$USER",
   filters: { "metadata.type": "retro-learning", "metadata.project": "<project-tag>" },
   limit: 5
 )
@@ -159,7 +159,7 @@ For each lesson, save to mem0:
 ```
 mcp__mem0__add_memory(
   text: "<single prescriptive sentence — action verb or 'When X, do Y' format>",
-  user_id: "lbruton",
+  user_id: "$USER",
   agent_id: "<project-tag from .claude/project.json>",
   metadata: {
     "type": "retro-learning",
@@ -176,7 +176,7 @@ parameter is silently dropped. Setting both is fine but `metadata.project` is wh
 the record findable.
 
 **Actor attribution (strict):**
-- Things lbruton did: "lbruton prefers/uses/instructs..."
+- Things the user did: "user prefers/uses/instructs..."
 - Things Claude did: "Claude should..."
 - Codebase facts: passive voice or component name
 
@@ -243,7 +243,7 @@ mcp__mem0__add_memory(
   text: "[<ProjectName> | <branch> | <date>] <2-3 sentence summary of what was
          accomplished, key decisions, and current state. Include commit hashes,
          issue IDs, and version numbers as anchors.>",
-  user_id: "lbruton",
+  user_id: "$USER",
   agent_id: "<project-tag>",
   metadata: {
     "category": "session-summary",

@@ -60,9 +60,44 @@ For each entry in `git worktree list` (excluding the main worktree):
 3. If NOT `[gone]` (branch still exists on remote) → leave it alone, no warning needed
    unless it's been open for >7 days (then add a soft note).
 
-### Step 3 — Delete merged local branches
+### Step 3 — Update main WITHOUT switching branches
 
-After worktree removal, run:
+**NEVER run `git checkout main`.** Switching branches can delete gitignored files on the
+working branch if the target branch tracks those same files — this has caused real data
+loss (CLAUDE.md deleted when main tracked it but dev had gitignored it).
+
+Instead, fast-forward main in-place:
+
+```bash
+# Only fast-forward main if not currently on it
+if [ "$(git branch --show-current)" != "main" ]; then
+  git fetch origin main:main
+fi
+```
+
+If this fails with "not a fast-forward", add a red warning:
+"Pull failed — local main has diverged from origin/main. Resolve manually."
+
+If successful (or already up to date), note the new SHA silently.
+
+**This step must happen before branch deletion** so that `git branch -d` has an up-to-date
+main to check ancestry against (regular merges only — squash merges still require separate
+handling, see Step 4).
+
+### Step 3b — Pull current branch if behind
+
+If the current branch (typically `dev`) is behind its upstream, fast-forward it:
+
+```bash
+git pull --ff-only
+```
+
+If `--ff-only` fails (diverged), add a warning: "Current branch has diverged from remote —
+pull manually." Do NOT switch branches or force anything.
+
+### Step 4 — Delete merged local branches
+
+After main is current, run:
 
 ```bash
 git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads \
@@ -74,28 +109,19 @@ for the current branch, which causes `git branch -d *` to shell-expand to filena
 working directory. `git for-each-ref` always prints the real branch name.
 
 For each `[gone]` branch:
-- `git branch -d <branch>` (safe delete — refuses if unmerged)
-- If `-d` fails, do NOT use `-D`. Add a warning: "Branch `<name>` not fully merged locally
-  — skipped. Review manually."
 
-### Step 4 — Pull main fast-forward
-
-Switch to main if not already there:
-
-```bash
-git checkout main 2>/dev/null || true
-```
-
-Then:
-
-```bash
-git pull --ff-only
-```
-
-If `--ff-only` fails (diverged history), do NOT force-pull, do NOT rebase. Add a red
-warning: "Pull failed — local main has diverged from origin/main. Resolve manually."
-
-If already up to date, note it silently.
+1. Try `git branch -d <branch>` (safe delete).
+2. If `-d` succeeds → done.
+3. If `-d` fails → **squash-merge check**: GitHub squash merges create a new commit whose
+   ancestry never includes the feature branch tip, so `-d` always refuses for squash-merged
+   branches even after main is current. Cross-reference the branch name against the merged
+   PR list fetched in Step 1 (`gh pr list --state merged ... --json headRefName`):
+   - **Branch name matches a merged PR's `headRefName`** → confirmed squash-merged by
+     GitHub. Use `git branch -D <branch>` (force delete is safe — remote is already gone
+     and the PR merge is confirmed).
+   - **Branch name NOT in merged PR list** → genuinely unmerged or deleted without merging.
+     Add a warning: "Branch `<name>` not fully merged and not found in recent merged PRs —
+     skipped. Review manually." Do NOT use `-D`.
 
 ### Step 5 — Report
 
@@ -124,8 +150,13 @@ No mid-flow interruptions.
 - **Never force-push, force-delete, or rebase.** Fast-forward pull only.
 - **Never touch the main worktree.** Only clean up worktrees created for branches.
 - **Never auto-stash user work.** Dirty state becomes a warning, not an action.
-- **`git branch -d` only.** If safe delete refuses, warn and skip.
+- **`git branch -d` first; `git branch -D` only as squash-merge fallback.** Force-delete is
+  permitted exclusively when: (a) `git branch -d` refused, AND (b) the branch name matches
+  a confirmed merged PR in `gh pr list --state merged`. All other refusals → warn and skip.
 - **`git pull --ff-only` only.** If it fails, warn and stop — do not attempt merge.
+- **NEVER `git checkout main`.** Use `git fetch origin main:main` (guarded — skip if already on main) to update main in-place.
+  Branch switching can silently delete gitignored files when the two branches have different
+  tracking state for the same file — this has caused real data loss.
 
 ## What this skill does NOT do
 

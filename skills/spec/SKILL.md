@@ -19,6 +19,8 @@ $ARGUMENTS
 
 End-to-end spec-driven development: fetch an issue, create or resume a spec-workflow specification, orchestrate all 4 phases (Requirements → Design → Tasks → Implementation), and dispatch subagents for implementation with two-stage review.
 
+**Cross-model handoff note:** When generating tasks.md for handoff to another CLI (Kimi, GLM, OpenCode, Codex), always use exact MCP tool names in `_Prompt` fields: `mcp__specflow__log-implementation`, `mcp__specflow__spec-status`, `mcp__specflow__approvals`, etc. Never use short names like "log-implementation" or skill syntax like "specflow:log-implementation" — these don't resolve in all CLIs.
+
 **Does NOT:** brainstorm or explore open-ended design (that's `/chat` → `/discover` → `/spec`).
 **Does NOT:** claim a version lock or create a worktree (that's `/release patch`).
 **Does NOT:** push code or create PRs (that's `/release`).
@@ -34,9 +36,9 @@ Resuming a spec does NOT mean "wing it." It means:
 
 1. **Call `spec-workflow-guide`** — load the workflow. Every time. Even if you think you know the workflow.
 2. **Call `spec-status`** — check which phase the spec is in and what's been completed.
-3. **Read the template** for the current phase (from `$SPECFLOW_ROOT/templates/` first, then `$SPECFLOW_GLOBAL/templates/`). Do not write spec documents from memory or by guessing the format.
+3. **Read the template** for the current phase. Resolution order: project override (`$SPECFLOW_ROOT/templates/`) → global user override (`$SPECFLOW_DOCVAULT/user-templates/`) → global default (`$SPECFLOW_GLOBAL/templates/`). Do not write spec documents from memory or by guessing the format.
 4. **Use `approvals`** — request dashboard approval after writing each document. Never accept verbal approval. Never skip the approval → poll → delete cycle.
-5. **Use `log-implementation`** — log every task completion with full artifacts. Never mark `[x]` without a successful log call.
+5. **Use `log-implementation`** (`mcp__specflow__log-implementation`) — log every task completion with full artifacts. Never mark `[x]` without a successful log call.
 6. **Use `spec-list`** — find the existing spec by issue ID before assuming a spec name or directory structure.
 
 **Common violations this rule prevents:**
@@ -298,10 +300,14 @@ Skipping any of these calls is a workflow violation.
    spec-workflow-guide
    ```
 
-2. **Read tasks template (MANDATORY — project-level template may have project-specific gates):**
+2. **Read tasks template (MANDATORY — user overrides take precedence over defaults):**
    ```bash
-   cat "$SPECFLOW_ROOT/templates/tasks-template.md" 2>/dev/null || cat "$SPECFLOW_GLOBAL/templates/tasks-template.md"
+   # Resolution order: project override → global user override → global default
+   cat "$SPECFLOW_ROOT/templates/tasks-template.md" 2>/dev/null || \
+   cat "$SPECFLOW_DOCVAULT/user-templates/tasks-template.md" 2>/dev/null || \
+   cat "$SPECFLOW_GLOBAL/templates/tasks-template.md"
    ```
+   Where `$SPECFLOW_DOCVAULT` = `DocVault/specflow/` (the specflow root inside DocVault, one level above `$SPECFLOW_GLOBAL`).
 
 3. **Reference requirements.md + design.md.**
 
@@ -309,7 +315,7 @@ Skipping any of these calls is a workflow violation.
    - `_Prompt` — Role, Task, Restrictions, Success criteria
    - `_Leverage` — files and utilities to use
    - `_Requirements` — which requirements this task implements
-   - **Recommended Agent** — Claude / Codex / Gemini / Human
+   - **Recommended Agent** — model affinity tag from the template's Model Affinity Guide (if the loaded template has one). Use the guide's decision table to assign the cheapest capable model. Default to `Claude` when unsure. Escalate to `CODEX` for tricky edge cases, `OPUS` for architectural judgment, `OPUS-1M` only when full codebase context is genuinely needed. Include a one-line justification after the tag.
    - **File Touch Map** — CREATE / MODIFY / TEST with file paths
 
 5. **Write tasks.md:**
@@ -332,7 +338,7 @@ Skipping any of these calls is a workflow violation.
 > 2. Call `spec-status` to see task progress
 > 3. Read the full `tasks.md`
 > 4. Check Implementation Logs to see what's already done
-> 5. **Ask the user how they want to execute** (step 4 below) — subagent dispatch, parallel terminals, or single task. Do NOT skip this question. Do NOT assume the previous session's choice carries over. **This question is MANDATORY every time Phase 4 is entered, even on resume.**
+> 5. **Ask the user how they want to execute** (step 4 below). Do NOT skip this question. Do NOT assume the previous session's choice carries over. **This question is MANDATORY every time Phase 4 is entered, even on resume, and again after each single-task completion.**
 
 1. **Load workflow guide (MANDATORY — every session):**
    ```
@@ -358,12 +364,16 @@ Skipping any of these calls is a workflow violation.
 
    How do you want to execute?
 
-   1. Subagent dispatch   — this session orchestrates, subagents implement in background
-   2. Parallel terminals  — I'll print the prompts, you paste into fresh terminals
-   3. Single task         — pick one task to implement in this session
+   1. Subagent dispatch     — this session orchestrates, Claude subagents implement all remaining tasks
+   2. Continue here (full)  — this session implements all remaining tasks sequentially
+   3. Continue here (single)— implement one task in this session, then return to this menu
+   4. External agent (full) — hand all remaining tasks to an external CLI (Codex/Gemini/GLM/Kimi/Other)
+   5. External agent (single)— hand one task to an external CLI, then return to this menu
    ```
 
    Wait for user selection before proceeding.
+
+   **Re-entry loop:** After completing options 3 or 5 (single-task modes), re-present this menu with updated counts. This lets the user mix execution modes — do task 1 here, hand task 2 to kimi, subagent the rest.
 
 ---
 
@@ -445,71 +455,99 @@ For each pending task (or parallel batch of independent tasks):
 
 ---
 
-### Option 2: Parallel Terminals
+### Option 2: Continue Here (Full)
+
+This session implements all remaining tasks sequentially. Follow the same per-task flow as Option 1 (mark in-progress → implement → log → mark complete) but execute inline instead of dispatching subagents.
+
+---
+
+### Option 3: Continue Here (Single)
+
+Ask which task number to implement. Implement that one task inline (same flow as Option 2 but for one task only).
+
+After completion, **re-present the dispatch menu** with updated counts:
+```
+Task {N} complete. X tasks remaining, Y total complete.
+
+How do you want to continue?
+[same 5-option menu]
+```
+
+---
+
+### Option 4: External Agent (Full)
 
 **Follow-up question (MANDATORY):**
 
 ```
-Would you like:
-  a) Copy-paste prompts — I'll print prompt blocks here, you paste into terminals
-  b) Dispatch to iTerm — I'll create named tabs automatically via /dispatch-terminals
+Which external agent?
+  a) Codex    (codex CLI)
+  b) Gemini   (gemini CLI or claude-gemini)
+  c) GLM      (claude-glm)
+  d) Kimi     (claude-kimi or kimi CLI)
+  e) Other    (specify CLI command)
 ```
 
-Wait for the user's choice.
-
-#### Option 2a: Copy-Paste Prompts
-
-For each pending task, read the `_Prompt` from tasks.md and print a self-contained prompt block the user can paste into a fresh terminal.
-
-Format each block as:
+Wait for user selection. Then print a single prompt block:
 
 ````
 ---
-### Task {N}: {task title}
-Recommended Agent: {Claude / Codex / Gemini}
+### External handoff — All remaining tasks
+Target: `{selected CLI}`
+Project: {projectPath}
+
+```
+/spec {ISSUE-ID} --resume
+```
+
+Context: Spec "{specName}" has {N} tasks remaining. The agent will load the spec via --resume, read tasks.md, and implement all pending tasks following the _Prompt instructions.
+---
+````
+
+After printing:
+```
+Paste the prompt above into a fresh terminal running `{selected CLI}`.
+The session will pick up spec context via --resume and implement all pending tasks.
+Run `/spec {ISSUE-ID}` again here to verify all tasks are logged.
+```
+
+---
+
+### Option 5: External Agent (Single)
+
+Ask which task number to hand off. Then ask which external agent (same follow-up as Option 4).
+
+Print a single-task prompt block:
+
+````
+---
+### External handoff — Task {N}: {task title}
+Target: `{selected CLI}`
+Project: {projectPath}
 
 ```
 /spec {ISSUE-ID} --resume
 
-Implement Task {N} from spec "{specName}":
-
-{full _Prompt text from tasks.md}
-
-_Leverage: {file paths}
-
-After implementation:
-1. Self-review against task requirements
-2. Run log-implementation for this task
-3. Mark task [x] in tasks.md
+Implement Task {N} from spec "{specName}". Read tasks.md for full details.
 ```
 ---
 ````
 
-Print ALL task blocks at once so the user can open multiple terminals and paste them in parallel.
-
-After printing, remind:
+After printing, **re-present the dispatch menu** with updated context:
 ```
-Paste each prompt into a fresh terminal running `/spec {ISSUE-ID} --resume`.
-Each session will pick up the spec context and implement its task.
-Come back here or run `/spec {ISSUE-ID}` again to verify all tasks are logged.
+Task {N} handed off to {agent}. X tasks remaining (including the handed-off task until logged).
+
+How do you want to continue?
+[same 5-option menu]
 ```
-
-#### Option 2b: Dispatch to iTerm
-
-Invoke the `dispatch-terminals` skill with the current spec name:
-
-```
-/dispatch-terminals {specName}
-```
-
-This creates named iTerm tabs, CDs to the project, and writes prompt files.
-The user starts their preferred agent (claude, codex, gemini) in each tab manually.
 
 ---
 
-### Option 3: Single Task
+#### Future: Direct CLI dispatch (planned)
 
-Ask which task number to implement. Then follow the same subagent flow as Option 1 but for that one task only. After completion, show remaining task count and suggest re-running `/spec {ISSUE-ID}` in a new session for the next task.
+When external agent prompts are battle-tested, Options 4/5 may evolve to direct dispatch via `claude-kimi -p`, `kimi -p`, `codex -p`, or background `opencode` invocations. For now, the copy-paste `/spec --resume` approach lets us iterate on the prompt format.
+
+Once GLM prompt delivery is validated through manual handoff sessions, this option will evolve to support `claude-glm -p "prompt"` for non-interactive batch dispatch. Not yet implemented — gathering data on GLM's task completion quality first.
 
 ---
 

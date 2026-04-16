@@ -75,7 +75,7 @@ Based on the conversation, dispatch research as appropriate:
 - `mcp__brave-search__brave_web_search` — external research, comparisons, prior art
 
 ### DocVault / wiki search
-- `mcp__claude-context__search_code` with `path: ../DocVault` — search existing documentation (DocVault sits as a sibling directory next to the project)
+- `mcp__claude-context__search_code` with `path: ${DOCVAULT_PATH}` — search existing documentation
 
 ### Parallel research
 Use the Agent tool to dispatch multiple research queries in parallel when they're independent. Keep results concise — present findings, not raw dumps.

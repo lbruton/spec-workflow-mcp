@@ -31,8 +31,6 @@ Structured research and design exploration for an issue. Produces a **Discovery 
 **Does NOT:** write code or create worktrees.
 **Does NOT:** skip the issue requirement — issue ID is mandatory.
 
-> **Path convention:** This skill assumes DocVault sits as a sibling directory to the current project. All DocVault paths are written as `../DocVault/...` relative to the project root.
-
 ---
 
 ## Step 0: Parse Arguments
@@ -60,8 +58,8 @@ Extract `issuePrefix` and `name`.
 Read the issue file from DocVault:
 
 ```bash
-cat ../DocVault/Projects/{project}/Issues/{ISSUE-ID}.md 2>/dev/null || \
-cat ../DocVault/Projects/{project}/Issues/Closed/{ISSUE-ID}.md
+cat ${DOCVAULT_PATH}/Projects/{project}/Issues/{ISSUE-ID}.md 2>/dev/null || \
+cat ${DOCVAULT_PATH}/Projects/{project}/Issues/Closed/{ISSUE-ID}.md
 ```
 
 ### Check for existing spec
@@ -89,7 +87,7 @@ mcp__mem0__search_memories
 ```
 mcp__claude-context__search_code
   query: "{topic}"
-  path: "../DocVault"
+  path: "${DOCVAULT_PATH}"
 ```
 
 Present any relevant past decisions, related work, or prior discussions.
@@ -255,7 +253,7 @@ Write a concise brief to the conversation (NOT to a file):
 ```
 mcp__mem0__add_memory(
   text: "Discovery brief for {ISSUE-ID}: {one-sentence summary of recommended approach}. Key files: {top 3 files}. Scope: {size}.",
-  user_id: "<your mem0 user id — environment-specific, do not hardcode>",
+  user_id: "$USER",
   agent_id: "<project tag>",
   metadata: {
     "type": "discovery",
