@@ -8,7 +8,7 @@
     </title>
     <meta
       name="description"
-      content="A structured spec workflow, four-tier knowledge system, and semantic code intelligence that gives AI agents permanent, cross-project memory. Ships as MCP server plugins with a real-time dashboard."
+      content="A spec-driven development framework with four-layer contextual memory and semantic code intelligence that gives AI agents permanent, cross-project context. Ships as MCP servers with a real-time dashboard."
     />
     <style>
       :root {
@@ -463,6 +463,9 @@
         gap: 20px;
         margin-top: 32px;
       }
+      .feature-grid-3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
       .feature-card {
         background: var(--bg-card);
         border: 1px solid var(--border);
@@ -496,6 +499,7 @@
         border: 1px solid var(--border);
         border-radius: 10px;
         margin: 24px 0;
+        white-space: pre;
       }
       .vault-tree .dir {
         color: var(--accent);
@@ -542,7 +546,8 @@
         .problem-grid {
           grid-template-columns: 1fr;
         }
-        .feature-grid {
+        .feature-grid,
+        .feature-grid-3 {
           grid-template-columns: 1fr;
         }
         .lifecycle-flow {
@@ -640,7 +645,9 @@
           <a href="https://github.com/lbruton/claude-context" class="btn btn-secondary">
             ContextFlow
           </a>
-          <span class="btn btn-secondary" style="opacity: 0.4; cursor: default"> MemFlow </span>
+          <button class="btn btn-secondary" disabled style="opacity: 0.4; cursor: default">
+            MemFlow
+          </button>
         </div>
         <div style="margin-top: 12px">
           <a href="#how" class="btn btn-secondary"> See how it works &darr; </a>
@@ -685,14 +692,14 @@
     <!-- ─── How It Works ─── -->
     <section id="how">
       <div class="container">
-        <h2>Five systems, one workflow</h2>
+        <h2>The SpecFlow ecosystem</h2>
         <p class="dim">
           <strong class="accent">SpecFlow</strong> orchestrates <em>how</em> work gets done. Five
-          complementary systems give AI agents persistent memory, semantic code understanding, and
+          companion MCPs give AI agents persistent memory, semantic code understanding, and
           structured knowledge &mdash; replacing the bloated CLAUDE.md + ad-hoc prompting pattern.
         </p>
 
-        <div class="feature-grid" style="grid-template-columns: repeat(3, 1fr)">
+        <div class="feature-grid feature-grid-3">
           <div class="feature-card">
             <div class="tag accent">SpecFlow &mdash; Orchestrator</div>
             <h3>Spec-driven lifecycle</h3>
@@ -727,7 +734,7 @@
             </p>
           </div>
         </div>
-        <div class="feature-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 20px">
+        <div class="feature-grid feature-grid-3" style="margin-top: 20px">
           <div class="feature-card">
             <div class="tag green">ContextFlow &mdash; Code Intelligence</div>
             <h3>Semantic + structural code search</h3>
@@ -741,7 +748,7 @@
             </p>
           </div>
           <div class="feature-card">
-            <div class="tag" style="color: var(--purple)">MemFlow &mdash; Episodic Memory</div>
+            <div class="tag purple">MemFlow &mdash; Episodic Memory</div>
             <h3>Curated cross-session memory</h3>
             <p>
               Retro lessons, handoffs, and session summaries stored as semantic embeddings.
@@ -937,7 +944,7 @@
           cloud dependencies.
         </p>
 
-        <div class="feature-grid" style="grid-template-columns: repeat(3, 1fr)">
+        <div class="feature-grid feature-grid-3">
           <div class="feature-card">
             <div class="tag green">Semantic Search &mdash; Milvus</div>
             <h3>Search by meaning</h3>
@@ -969,7 +976,7 @@
             </p>
           </div>
         </div>
-        <div class="feature-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 20px">
+        <div class="feature-grid feature-grid-3" style="margin-top: 20px">
           <div class="feature-card">
             <div class="tag amber">Structural Graph &mdash; Neo4j</div>
             <h3>Callers, imports, dead code</h3>
@@ -1110,26 +1117,29 @@
 
             <span class="comment"># Create spec: Requirements &rarr; Design &rarr; Tasks</span>
             <span class="cmd">/spec</span> <span class="highlight">STAK-42</span>
-            <span class="output">
-              Requirements approved &#x2713; Design approved &#x2713; Tasks generated &#x2713;</span
-            >
+            <!-- prettier-ignore -->
+            <span class="output"> Requirements approved &#x2713; Design approved &#x2713; Tasks generated &#x2713;</span>
 
             <span class="comment"># Implementation with parallel subagents</span>
+            <!-- prettier-ignore -->
             <span class="output"> Task 1/4: WebSocket server </span
             ><span class="success"
               >&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;
               done</span
             >
+            <!-- prettier-ignore -->
             <span class="output"> Task 2/4: Alert rules engine </span
             ><span class="success"
               >&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;
               done</span
             >
+            <!-- prettier-ignore -->
             <span class="output"> Task 3/4: Push notification API </span
             ><span class="success"
               >&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;
               done</span
             >
+            <!-- prettier-ignore -->
             <span class="output"> Task 4/4: Frontend alert panel </span
             ><span class="success"
               >&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;&#x25A0;
