@@ -101,6 +101,11 @@ export interface ApprovalRequest {
   metadata?: Record<string, any>;
   category: 'spec' | 'steering';
   categoryName: string; // spec or steering document name
+  snapshotCaptureError?: {
+    message: string;
+    phase: 'initial' | 'revision';
+    timestamp: string;
+  };
 }
 
 export class ApprovalStorage extends EventEmitter {
@@ -272,12 +277,33 @@ export class ApprovalStorage extends EventEmitter {
     const approvalFilePath = join(categoryDir, `${id}.json`);
     await fs.writeFile(approvalFilePath, JSON.stringify(approval, null, 2), 'utf-8');
 
-    // Capture initial snapshot
+    // Capture initial snapshot. If this fails the dashboard has nothing to
+    // render and the tasks page goes blank — annotate the approval record with
+    // the error so it surfaces to the UI and to getAllApprovals() consumers,
+    // and log at error level so the failure shows up in launchd logs. The
+    // approval record itself is kept so the user can delete/retry from the UI
+    // rather than losing the submission silently.
     try {
       await this.captureSnapshot(id, 'initial');
     } catch (error) {
-      // Log error but don't fail the approval creation
-      console.warn(`Failed to capture initial snapshot for approval ${id}:`, error);
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(
+        `[approval-storage] captureSnapshot failed for ${id} (${categoryName}/${type}): ${message}`,
+        error,
+      );
+      approval.snapshotCaptureError = {
+        message,
+        phase: 'initial',
+        timestamp: new Date().toISOString(),
+      };
+      try {
+        await fs.writeFile(approvalFilePath, JSON.stringify(approval, null, 2), 'utf-8');
+      } catch (writeErr) {
+        console.warn(
+          `[approval-storage] Failed to persist snapshotCaptureError for ${id}:`,
+          writeErr,
+        );
+      }
     }
 
     return id;
@@ -342,14 +368,24 @@ export class ApprovalStorage extends EventEmitter {
     if (status === 'needs-revision') {
       try {
         await this.captureSnapshot(id, 'revision_requested');
-      } catch (error) {
-        console.warn('Failed to capture revision snapshot for approval %s:', id, error);
+      } catch (snapshotErr) {
+        console.warn('Failed to capture revision snapshot for approval %s:', id, snapshotErr);
+        approval.snapshotCaptureError = {
+          message: snapshotErr instanceof Error ? snapshotErr.message : String(snapshotErr),
+          phase: 'revision',
+          timestamp: new Date().toISOString(),
+        };
       }
     } else if (status === 'approved' || status === 'concerns') {
       try {
         await this.captureSnapshot(id, 'approved');
-      } catch (error) {
-        console.warn('Failed to capture approval snapshot for approval %s:', id, error);
+      } catch (snapshotErr) {
+        console.warn('Failed to capture approval snapshot for approval %s:', id, snapshotErr);
+        approval.snapshotCaptureError = {
+          message: snapshotErr instanceof Error ? snapshotErr.message : String(snapshotErr),
+          phase: 'revision',
+          timestamp: new Date().toISOString(),
+        };
       }
     }
 
@@ -788,10 +824,10 @@ export class ApprovalStorage extends EventEmitter {
   }
 
   private generateSnapshotId(): string {
-    return `snapshot_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `snapshot_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
   }
 
   private generateId(): string {
-    return `approval_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `approval_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
   }
 }
