@@ -23,28 +23,31 @@ These rules apply to every prime report — full and delta alike:
    **Note**: The YAML at the top of THIS skill file (`name: prime`, `description: ...`) describes the skill itself for the plugin registry — it is NOT the output format. The prime REPORT uses completely different field names.
 
    Every prime report — full and delta — begins with exactly these field names (no others, no substitutions):
+
    ```yaml
    ---
-   tags: [prime-report, stak]
-   project: StakTrakr
-   date: "2026-04-10"
+   doc_type: prime-report
+   tags: [<tag>]
+   project: <name>
+   date: "<YYYY-MM-DD>"
    branch: dev
    version: "2.1.0"
    ---
    ```
-   - Field `tags` (NOT `tag`, NOT `type`) — must be a YAML list containing `prime-report`
+
+   - Field `doc_type` — MUST be `prime-report`
+   - Field `tags` (NOT `tag`, NOT `type`) — topic tags only, no `prime-report` (that goes in `doc_type`)
    - Field `project` (NOT `name`, NOT `title`) — project name as string
-   - Field `date` (quoted string: `"2026-04-10"` NOT `2026-04-10`) — today's date
+   - Field `date` (quoted string: `"<YYYY-MM-DD>"` NOT `<YYYY-MM-DD>`) — today's date
    - Field `branch` (NOT `git_branch`) — current git branch
    - Field `version` (NOT `ver`) — from version.lock or `"n/a"`
 
    Delta reports add a sixth field: `delta_from: <previous-prime-filename>`.
-2. **Quote the date**: Always `date: "2026-04-10"` — NEVER `date: 2026-04-10`. Unquoted dates break Obsidian Bases sorting.
-3. **All frontmatter fields required**: `tags` (must include `prime-report`), `project`, `date`, `branch`, `version`. Use `"n/a"` if unknown — never omit any field.
+2. **Quote the date**: Always `date: "<YYYY-MM-DD>"` — NEVER `date: <YYYY-MM-DD>`. Unquoted dates break Obsidian Bases sorting.
+3. **All frontmatter fields required**: `doc_type` (must be `prime-report`), `tags`, `project`, `date`, `branch`, `version`. Use `"n/a"` if unknown — never omit any field.
 4. **All section headers required**: `## Recent Activity`, `## Where We Left Off`, `## Index Health`, `## Code Health`, `## Security Reviews`, `## Project Status`, `## Suggested Session Plan`. Show a placeholder if data is unavailable — never omit the header.
 5. **Session plan must have items**: `## Suggested Session Plan` MUST have at least one `1. ...` numbered item.
-6. **DocVault save path in output**: End every report with a line like: `Full report saved to: \`DocVault/Projects/<name>/prime/<filename>.md\``
-7. **No unfilled placeholders**: Replace ALL `<angle-bracket>` tokens with real values before outputting. Never leave `<name>`, `<tag>`, `<branch>`, etc. in the final report.
+6. **No unfilled placeholders**: Replace ALL `<angle-bracket>` tokens with real values before outputting. Never leave `<name>`, `<tag>`, `<branch>`, etc. in the final report.
 
 ## Pre-flight: Local/Remote Sync Check
 
@@ -76,8 +79,9 @@ delta of what changed since the last run. Use `/prime full` to force a complete 
 
 ### Step 0.1: Read project identity
 
+Use the `Read` tool on `.claude/project.json` (relative to cwd). Also run:
+
 ```bash
-cat .claude/project.json 2>/dev/null
 pwd
 git rev-parse --show-toplevel 2>/dev/null
 ```
@@ -191,22 +195,23 @@ Also extract the git remote to derive `owner` and `repo` for Codacy API calls:
 
 ```bash
 git remote get-url origin 2>/dev/null
-# Parse: git@github.com:lbruton/<repo>.git → owner=lbruton, repo=<repo>
+# Parse: git@github.com:<owner>/<repo>.git → owner, repo
+# Works for https://github.com/<owner>/<repo>(.git) as well
 ```
 
 Store all values for agent dispatch.
 
-### Step 0.4: Retrieve recent session context (session-rag)
+### Step 0.4: Retrieve recent session context (sessionflow)
 
-session-rag is the **primary** "where we left off" source. It indexes every jsonl turn
+sessionflow is the **primary** "where we left off" source. It indexes every jsonl turn
 locally via Milvus Lite + EmbeddingGemma and provides project-scoped semantic search.
 
 **IMPORTANT:** Do NOT pass the filesystem path as `project_root` — it silently returns
 empty results. Use `project_root="*"` for cross-project search, or omit the parameter
 entirely (defaults to current project via HTTP header).
 
-```
-mcp__session-rag__search_all_sessions(
+```text
+mcp__sessionflow__search_all_sessions(
   query="last session summary recent work decisions next steps handoff <project-name>",
   n=10
 )
@@ -219,10 +224,10 @@ Extract from results:
 - **Key learnings** and pain points
 
 Store the session context. This feeds the "Where We Left Off" section.
-If session-rag is unreachable (port 7102 down), set `hasSessionRag=false` and fall back
+If sessionflow is unreachable (port 7102 down), set `hasSessionFlow=false` and fall back
 to mem0 (Step 0.7) as the sole context source.
 
-**Handoff detection:** If session-rag results mention a handoff issue ID (e.g., `SWF-48`),
+**Handoff detection:** If sessionflow results mention a handoff issue ID (e.g., `SWF-48`),
 set `handoffIssue=<ID>`. This issue becomes the top suggested action in the session plan.
 Read the issue file from DocVault to get its title and acceptance criteria for context.
 
@@ -273,6 +278,13 @@ mcp__mem0__search_memories(
 Store ALL post-filtered results in `mem0_preload`. These will be merged with Phase 1.5's
 keyword-targeted searches to produce the final "Where We Left Off" section.
 
+Also track both counts for the report header (SWF-92):
+
+- `mem0_raw_count` — total results returned by the API across both queries before post-filtering
+- `mem0_preload_count` — total unique results after post-filtering by `metadata.project`
+
+The header always surfaces these counts so the user has an at-a-glance signal of recall quality.
+
 **If post-filtered results are empty for both queries:**
 - Note `mem0_preload_empty=true` in the report
 - This is a RED FLAG — either mem0 is broken, the project tag is wrong/missing from
@@ -289,12 +301,13 @@ keyword-targeted searches to produce the final "Where We Left Off" section.
 
 Read the central expiration tracker page to surface anything expiring soon:
 
+Check if `${DOCVAULT_PATH}/Infrastructure/Expiration Tracker.md` exists before reading:
+
 ```bash
-TRACKER="${DOCVAULT_PATH}/Infrastructure/Expiration Tracker.md"
-if [ -f "$TRACKER" ]; then
-  cat "$TRACKER"
-fi
+[ -f "${DOCVAULT_PATH}/Infrastructure/Expiration Tracker.md" ] && echo "hasExpirationTracker=true" || echo "hasExpirationTracker=false"
 ```
+
+If `hasExpirationTracker=true`, use the `Read` tool on `${DOCVAULT_PATH}/Infrastructure/Expiration Tracker.md`. If `hasExpirationTracker=false`, skip this step and omit the `## ⚠️ Expiring Soon` section from the report.
 
 Parse all markdown tables in the file. For each row that has an `Expires` column with
 a date, compute `days_left = (expires_date - today)`. Filter to only rows where
@@ -363,22 +376,28 @@ Gather a full project status report for:
 - hasVersionLock: <true/false>
 - hasSecurityReviews: <true/false>
 
+**Issue scanning MUST be project-scoped**: scan only
+`${DOCVAULT_PATH}/Projects/<name>/Issues/`
+where <name> comes from project.json. NEVER use a cross-project glob
+(`Projects/*/Issues/`) — DocVault tracks issues for all repos and broad
+globs return foreign-project issues.
+
 Return only the synthesized report.
 ```
 
 ## Phase 1.5: Keyword-Informed Context Enrichment
 
-This phase runs AFTER Agent D returns. The session-rag context (from Step 0.4) is the
+This phase runs AFTER Agent D returns. The sessionflow context (from Step 0.4) is the
 **primary** "where we left off" source. This phase extracts keywords from ALL deterministic
-sources (git + session-rag + issues) and uses them for **targeted mem0 queries** that
-supplement session-rag with retro learnings, workarounds, and cross-session decisions.
+sources (git + sessionflow + issues) and uses them for **targeted mem0 queries** that
+supplement sessionflow with retro learnings, workarounds, and cross-session decisions.
 
-**Data flow:** GitHub → session-rag → Issues → Compile Keywords → mem0 (supplemental)
+**Data flow:** GitHub → sessionflow → Issues → Compile Keywords → mem0 (supplemental)
 
 ### Step 1.5.1: Extract keywords from Agent D results + digest
 
-Parse BOTH the prime-status report AND the session-rag context (Step 0.4) to extract:
-- **Session-rag keywords**: Goals, decisions, next steps, pain points from session-rag results
+Parse BOTH the prime-status report AND the sessionflow context (Step 0.4) to extract:
+- **Sessionflow keywords**: Goals, decisions, next steps, pain points from sessionflow results
 - **Commit keywords**: Significant nouns and verbs from the last 15 commit messages
   (strip prefixes like "fix:", "feat:", "update:", "add:" — keep the substance)
 - **PR keywords**: Titles of open PRs
@@ -422,7 +441,7 @@ Discard mem0 results that merely repeat what the digest already says.
 
 ### Step 1.5.3: (Removed — session-oracle redundant)
 
-session-oracle uses session-rag internally. If session-rag is down, oracle falls back to
+session-oracle uses sessionflow internally. If sessionflow is down, oracle falls back to
 mem0 — same thing Step 0.7 already does. No unique data source. Removed.
 
 ## Phase 2: Indexing (started in Phase 1, Step 1.0)
@@ -455,7 +474,7 @@ CGC MCP runs via `docker exec -i cgc-server cgc mcp start`. Restarting the conta
 kills the MCP connection — never restart CGC containers during a session.
 
 The CGC workspace path is `/workspace/<name>` (not the host path), because the Docker
-volume mounts `/Volumes/DATA/GitHub` as `/workspace`.
+volume mounts your repositories root (the directory containing all project repos) as `/workspace`.
 
 First, check if the project is indexed:
 
@@ -475,7 +494,7 @@ If the project **is listed**, check its health:
 mcp__code-graph-context__get_repository_stats(repo_path="/workspace/<name>")
 ```
 
-If the function count seems low (< 50 for StakTrakr-sized projects), re-index:
+If the function count seems low (< 50 for a medium-sized project), re-index:
 
 ```
 mcp__code-graph-context__delete_repository(repo_path="/workspace/<name>")
@@ -541,7 +560,7 @@ Wait for ALL agents (Phase 1 + Phase 1.5) to return. Combine their reports into 
 report below and write it to the Obsidian DocVault for historical tracking. Then display a
 concise terminal summary. The data flow is:
 
-- Step 0.4 session-rag → **primary** "where we left off" (project-scoped semantic search)
+- Step 0.4 sessionflow → **primary** "where we left off" (project-scoped semantic search)
 - Agent D (prime-status) → ground truth: git, PRs, issues, specs
 - Phase 1.5 mem0 → **supplemental** context: retro learnings, workarounds, cross-session decisions
 - Agent C (code-oracle) → code health: dead code, complexity, conventions
@@ -569,7 +588,8 @@ separate file. The report uses the Full Report Template below.
 
 ```markdown
 ---
-tags: [prime-report, <tag>]
+doc_type: prime-report
+tags: [<tag>]
 project: <name>
 date: "<YYYY-MM-DD>"
 branch: <branch>
@@ -578,9 +598,8 @@ version: <from version.lock or "n/a">
 
 # Prime Report — <name> (<date>)
 Branch: <branch> | Status: <clean/dirty> | Version: <from version.lock or "n/a">
+mem0: <If mem0_unavailable=true: "🔴 unavailable — operating without long-term memory"> <Elif mem0_preload_empty=true: "⚠ 0 records — check `~/.claude/mem0-projects.json` for project mapping"> <Else: "<mem0_preload_count> records (post-filtered from <mem0_raw_count> raw, project=<tag>)">
 <If inWorktree=true: append "⚠️ Worktree mode — branch: <worktreeBranch>, main: <mainBranch>">
-<If mem0_preload_empty=true: append "⚠️ mem0 returned no project memories — context may be incomplete">
-<If mem0_unavailable=true: append "🔴 mem0 MCP unavailable — operating without long-term memory">
 
 ## ⚠️ Expiring Soon
 <Only render this section if expiring_soon (from Step 0.8) is non-empty. If empty, OMIT entirely — no "nothing expiring" placeholder text.>
@@ -622,7 +641,7 @@ Source: [[Expiration Tracker]] (DocVault/Infrastructure/)
 <If hasDigest=false or no digest file found: write exactly "No session digest found for this project." then supplement with any mem0 context.>
 <If digest exists: 3-5 sentence recap from the latest session digest — goals, decisions, next steps, pain points>
 <Weave in relevant mem0 findings: retro learnings, workarounds, known issues from earlier sessions>
-<If no digest exists: fall back to mem0 + session-oracle results>
+<If no digest exists: fall back to mem0 results>
 <If neither: "No recent session history found.">
 
 ## Session Logs Digested
@@ -767,7 +786,7 @@ Not every project has every capability. Handle missing pieces:
 
 | Missing | Behavior |
 |---------|----------|
-| session-rag MCP down | Set `hasSessionRag=false`, fall back to mem0 + session-oracle for "where we left off" |
+| sessionflow MCP down | Set `hasSessionFlow=false`, fall back to mem0 for "where we left off" |
 | No `issuePrefix` | Skip vault issue queries, show GitHub issues only |
 | No CGC (Docker down) | Skip CGC stats + dead code + complexity, note in Index Health |
 | CGC MCP disconnected | Note "CGC MCP unavailable — container may have restarted" in Index Health. Do NOT restart containers. |
@@ -785,10 +804,10 @@ Not every project has every capability. Handle missing pieces:
 ## Rules
 
 ### Data Source Priority
-- **session-rag is the PRIMARY "where we left off" source** — project-scoped semantic search over all past turns
+- **sessionflow is the PRIMARY "where we left off" source** — project-scoped semantic search over all past turns
 - **mem0 is SUPPLEMENTAL** — retro learnings, workarounds, cross-session decisions, known issues
-- **session-oracle is NOT dispatched by prime** — redundant (it uses session-rag internally; if session-rag is down, Step 0.7 mem0 covers it)
-- The correct flow is: GitHub → session-rag → Issues → Code/Security → Compile Keywords → mem0 → Report
+- **session-oracle is NOT dispatched by prime** — redundant (it uses sessionflow internally; if sessionflow is down, Step 0.7 mem0 covers it)
+- The correct flow is: GitHub → sessionflow → Issues → Code/Security → Compile Keywords → mem0 → Report
 
 ### Execution
 - Phase 2 indexes (CGC, claude-context, Codacy) start FIRST in Phase 1 Step 1.0 — they run in background while data is gathered
@@ -808,9 +827,9 @@ Not every project has every capability. Handle missing pieces:
 ### Frontmatter
 - Frontmatter is **MANDATORY in every prime report** — full and delta alike. The very first line of the report MUST be `---` (YAML block open), not a heading.
 - If `project.json` is missing, infer the project name from git remote URL, directory name, or context. Never use `<name>` literally — always substitute the real value.
-- **ALWAYS quote the date field** — this is the most common mistake: write `date: "2026-04-10"` NOT `date: 2026-04-10`. Unquoted dates are parsed as datetime objects and break Obsidian Bases sorting.
-- All fields are required: `tags`, `project`, `date`, `branch`, `version`, and (for delta) `delta_from`. Use `"n/a"` if a value is unavailable — never omit the field.
-- The `tags` list MUST include `"prime-report"` — this is how Obsidian Bases finds all prime reports across projects.
+- **ALWAYS quote the date field** — this is the most common mistake: write `date: "<YYYY-MM-DD>"` NOT `date: <YYYY-MM-DD>`. Unquoted dates are parsed as datetime objects and break Obsidian Bases sorting.
+- All fields are required: `doc_type`, `tags`, `project`, `date`, `branch`, `version`, and (for delta) `delta_from`. Use `"n/a"` if a value is unavailable — never omit the field.
+- The `doc_type` field MUST be `"prime-report"` — this is how Obsidian Bases finds all prime reports across projects. Do NOT put `prime-report` in the `tags` array.
 
 ### Session Digest Absence
 - When `hasDigest=false` or no digest file is found, the **Where We Left Off** section MUST include the exact phrase "No recent session history" (or "No session digest found" / "No session context found"). Never invent context or silently skip it.
