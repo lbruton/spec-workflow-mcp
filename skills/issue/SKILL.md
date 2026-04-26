@@ -83,7 +83,7 @@ All operations route through `mcp__plane__*` tools. No counter file, no sub-issu
 
    ```
    Created {issue_prefix}-{sequence_id}: {title}
-     URL: https://plane.lbruton.cc/lbruton/projects/{plane_project_id}/issues/{id}
+     URL: https://plane.lbruton.cc/lbruton/projects/{plane_project_id}/issues/{issue_uuid}
      State: {state}
      Labels: {labels}
      Priority: {priority}
@@ -165,7 +165,7 @@ Critical frontmatter rules (most-broken):
 - **Read:** `cat ${DOCVAULT_PATH}/Projects/{project}/Issues/{ID}.md` (check root, then `Closed/`).
 - **Status update:** edit the file's frontmatter; update `updated` and (if done) `completed`.
 - **Close-move:** `git mv` the file from `Issues/` into `Issues/Closed/`; update both `_Index.md` files atomically in the same commit.
-- **List:** `grep -rl 'status:.*\(backlog\|todo\|in-progress\)' ${DOCVAULT_PATH}/Projects/{project}/Issues/`.
+- **List:** `grep -rl 'status:.*\(backlog\|todo\|in-progress\|in-review\)' ${DOCVAULT_PATH}/Projects/{project}/Issues/ 2>/dev/null`.
 
 Sub-issues use letter suffixes (`SWF-12-A`, `SWF-12-B`) and don't increment the counter. Add `parent: "[[SWF-12]]"` to frontmatter; update parent's `## Sub-Issues` section.
 

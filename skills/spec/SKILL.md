@@ -10,7 +10,11 @@ allowed-tools: >-
   mcp__specflow__approvals,
   mcp__specflow__log-implementation,
   mcp__specflow__spec-list,
-  mcp__mem0__search_memories
+  mcp__mem0__search_memories,
+  mcp__plane__get_issue_using_readable_identifier,
+  mcp__plane__list_states,
+  mcp__plane__list_labels,
+  mcp__plane__update_issue
 ---
 
 $ARGUMENTS
@@ -105,7 +109,7 @@ Use the Plane MCP to fetch the issue:
 
 ```
 mcp__plane__get_issue_using_readable_identifier
-  project_identifier: {issue_prefix from .claude/project.json}
+  project_identifier: {issuePrefix from .claude/project.json}
   issue_identifier: {sequence number — strip the prefix from $ARGUMENTS}
 ```
 
