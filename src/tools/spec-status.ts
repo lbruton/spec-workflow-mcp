@@ -71,7 +71,7 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
     if (!spec.phases.requirements.exists) {
       currentPhase = 'requirements';
       overallStatus = 'requirements-needed';
-    } else if (spec.phases.requirements.exists && !spec.phases.requirements.approved) {
+    } else if (!spec.phases.requirements.approved) {
       currentPhase = 'requirements';
       overallStatus = 'requirements-awaiting-approval';
     } else if (spec.phases.discovery.exists && !spec.phases.discovery.approved) {
@@ -80,9 +80,15 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
     } else if (!spec.phases.design.exists) {
       currentPhase = 'design';
       overallStatus = 'design-needed';
+    } else if (!spec.phases.design.approved) {
+      currentPhase = 'design';
+      overallStatus = 'design-awaiting-approval';
     } else if (!spec.phases.tasks.exists) {
       currentPhase = 'tasks';
       overallStatus = 'tasks-needed';
+    } else if (!spec.phases.tasks.approved) {
+      currentPhase = 'tasks';
+      overallStatus = 'tasks-awaiting-approval';
     } else if (!spec.phases.readinessReport.exists || !spec.phases.readinessReport.approved) {
       currentPhase = 'readiness-gate';
       overallStatus = 'readiness-gate-needed';
@@ -225,19 +231,34 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
         nextSteps.push('Request approval');
         break;
       case 'requirements':
-        nextSteps.push(`Read template: ${wr}/templates/requirements-template.md`);
-        nextSteps.push(`Create: ${wr}/specs/{name}/requirements.md`);
-        nextSteps.push('Request approval');
+        if (overallStatus === 'requirements-awaiting-approval') {
+          nextSteps.push(`Review: ${wr}/specs/{name}/requirements.md`);
+          nextSteps.push('Submit requirements.md for approval');
+        } else {
+          nextSteps.push(`Read template: ${wr}/templates/requirements-template.md`);
+          nextSteps.push(`Create: ${wr}/specs/{name}/requirements.md`);
+          nextSteps.push('Request approval');
+        }
         break;
       case 'design':
-        nextSteps.push(`Read template: ${wr}/templates/design-template.md`);
-        nextSteps.push(`Create: ${wr}/specs/{name}/design.md`);
-        nextSteps.push('Request approval');
+        if (overallStatus === 'design-awaiting-approval') {
+          nextSteps.push(`Review: ${wr}/specs/{name}/design.md`);
+          nextSteps.push('Submit design.md for approval');
+        } else {
+          nextSteps.push(`Read template: ${wr}/templates/design-template.md`);
+          nextSteps.push(`Create: ${wr}/specs/{name}/design.md`);
+          nextSteps.push('Request approval');
+        }
         break;
       case 'tasks':
-        nextSteps.push(`Read template: ${wr}/templates/tasks-template.md`);
-        nextSteps.push(`Create: ${wr}/specs/{name}/tasks.md`);
-        nextSteps.push('Request approval');
+        if (overallStatus === 'tasks-awaiting-approval') {
+          nextSteps.push(`Review: ${wr}/specs/{name}/tasks.md`);
+          nextSteps.push('Submit tasks.md for approval');
+        } else {
+          nextSteps.push(`Read template: ${wr}/templates/tasks-template.md`);
+          nextSteps.push(`Create: ${wr}/specs/{name}/tasks.md`);
+          nextSteps.push('Request approval');
+        }
         break;
       case 'readiness-gate':
         nextSteps.push('Phase 4.9: Implementation Readiness Gate required before implementation');

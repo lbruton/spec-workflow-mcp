@@ -184,6 +184,7 @@ spec-list query: "{ISSUE-ID}"
 | Resuming Phase | Required MCP calls before any edits |
 |---|---|
 | Phase 1 (Requirements) | `spec-workflow-guide` → `spec-status` → read `templates/requirements-template.md` from the resolved workflow root |
+| Phase 2 (Discovery) — optional | `spec-workflow-guide` → `spec-status` → read `templates/discovery-template.md` from the resolved workflow root → read existing `requirements.md` |
 | Phase 3 (Design) | `spec-workflow-guide` → `spec-status` → read `templates/design-template.md` from the resolved workflow root → read existing `requirements.md` |
 | Phase 4 (Tasks) | `spec-workflow-guide` → `spec-status` → read `templates/tasks-template.md` from the resolved workflow root → read existing `requirements.md` + `design.md` |
 | Phase 5 (Implementation) | `spec-workflow-guide` → `spec-status` → read existing `tasks.md` → check Implementation Logs directory |
@@ -247,9 +248,40 @@ Skipping any of these calls is a workflow violation.
    ```
    Check periodically until status is approved, rejected, or needs-revision.
 
-9. **On approved:** `approvals action:"delete"` → proceed to Step 3.
+9. **On approved:** `approvals action:"delete"` → proceed to Step 2.5 (or skip to Step 3 if the user chooses).
 10. **On needs-revision:** update the document per feedback, create a new approval request.
 11. **On rejected:** stop and inform the user.
+
+---
+
+## Step 2.5: Phase 2 — Discovery (optional)
+
+> **This phase is optional.** After requirements are approved, ask the user: "Would you like to run a Discovery phase to research the codebase and competing approaches before designing? You can skip directly to Phase 3." If the user skips, proceed to Step 3.
+
+> **SESSION BOUNDARY RULE:** If resuming this phase, you MUST call `spec-workflow-guide`, `spec-status`, read `templates/discovery-template.md`, and read the approved `requirements.md` before writing anything.
+
+1. **Load workflow guide (MANDATORY — every session):**
+   ```
+   spec-workflow-guide
+   ```
+
+2. **Read discovery template (MANDATORY — do NOT write from memory):**
+   ```bash
+   cat <workflowRoot>/templates/discovery-template.md
+   ```
+
+3. **Read approved requirements.md** to ground the research in what was approved.
+
+4. **Run research:** codebase-search skill → Context7 for framework/library docs → web search for competing approaches and prior art. Focus on questions raised by the requirements.
+
+5. **Write discovery.md:**
+   ```
+   <workflowRoot>/specs/{specName}/discovery.md
+   ```
+
+6. **Request dashboard approval** (same pattern as Step 2 — request → poll → delete on approval).
+
+7. On approved → proceed to Step 3.
 
 ---
 

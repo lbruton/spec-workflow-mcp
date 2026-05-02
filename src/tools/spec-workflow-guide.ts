@@ -315,7 +315,7 @@ flowchart TD
 
 **Trigger**: This phase fires automatically if design.md contains \`Has UI Changes: Yes\` AND \`Prototype Required: Yes\` in the UI Impact Assessment section.
 
-**Skip condition**: If \`Has UI Changes: No\` or \`Prototype Required: No\`, skip directly to Phase 5.
+**Skip condition**: If \`Has UI Changes: No\` or \`Prototype Required: No\`, skip to Phase 4.9.
 
 **Process**:
 1. Read design.md and check the \`UI Impact Assessment\` section
@@ -328,7 +328,7 @@ flowchart TD
 4. **Save all visual artifacts** (playground HTML, mockup screenshots, Stitch exports) to the spec's \`artifacts/\` folder
 5. Update design.md \`Prototype Artifacts\` section with paths pointing to the \`artifacts/\` folder
 6. **BLOCKING**: No task tagged \`ui:true\` may begin until visual approval is recorded
-7. Proceed to Phase 5
+7. Proceed to Phase 4.9
 
 **CRITICAL — Prototype is Source of Truth**: The approved prototype in the \`artifacts/\` folder defines the visual design for implementation. Implementers MUST source their DOM structure, class names, spacing, and layout from the prototype — not from their own interpretation of the text requirements or earlier spec documents. The spec compliance reviewer will compare implementation against the prototype file. Ignoring an approved prototype is a spec compliance failure.
 

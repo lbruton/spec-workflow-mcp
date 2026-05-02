@@ -2,7 +2,7 @@ import { Prompt, PromptMessage } from '@modelcontextprotocol/sdk/types.js';
 import { PromptDefinition } from './types.js';
 import { ToolContext } from '../types.js';
 import { PathUtils } from '../core/path-utils.js';
-import { access } from 'fs/promises';
+import { access, readFile } from 'fs/promises';
 import { join } from 'path';
 import { constants } from 'fs';
 
@@ -91,11 +91,11 @@ async function handler(args: Record<string, any>, context: ToolContext): Promise
       let approved = false;
       try {
         await access(snapshotDir, constants.F_OK);
-        const { readFile } = await import('fs/promises');
         const metadataPath = join(snapshotDir, 'metadata.json');
         const metadata = JSON.parse(await readFile(metadataPath, 'utf-8'));
-        approved =
-          metadata.snapshots?.some((s: { trigger: string }) => s.trigger === 'approved') ?? false;
+        const snapshots = metadata.snapshots || [];
+        const latest = snapshots[snapshots.length - 1];
+        approved = latest?.trigger === 'approved';
       } catch {
         // No snapshots found
       }
