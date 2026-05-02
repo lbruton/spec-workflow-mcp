@@ -68,12 +68,15 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
     let currentPhase = 'not-started';
     let overallStatus = 'not-started';
 
-    if (spec.phases.discovery.exists && !spec.phases.discovery.approved) {
-      currentPhase = 'discovery';
-      overallStatus = 'discovery-in-progress';
-    } else if (!spec.phases.requirements.exists) {
+    if (!spec.phases.requirements.exists) {
       currentPhase = 'requirements';
       overallStatus = 'requirements-needed';
+    } else if (spec.phases.requirements.exists && !spec.phases.requirements.approved) {
+      currentPhase = 'requirements';
+      overallStatus = 'requirements-awaiting-approval';
+    } else if (spec.phases.discovery.exists && !spec.phases.discovery.approved) {
+      currentPhase = 'discovery';
+      overallStatus = 'discovery-in-progress';
     } else if (!spec.phases.design.exists) {
       currentPhase = 'design';
       overallStatus = 'design-needed';
@@ -237,7 +240,7 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
         nextSteps.push('Request approval');
         break;
       case 'readiness-gate':
-        nextSteps.push('Phase 3.9: Implementation Readiness Gate required before implementation');
+        nextSteps.push('Phase 4.9: Implementation Readiness Gate required before implementation');
         nextSteps.push('Cross-validate requirements.md + design.md + tasks.md for consistency');
         nextSteps.push(`Create: ${wr}/specs/${specName}/readiness-report.md`);
         nextSteps.push('Submit readiness-report.md for dashboard approval (NOT tasks.md)');
@@ -257,7 +260,7 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
         }
         break;
       case 'post-implementation':
-        nextSteps.push('All tasks completed (marked [x]) — Phase 5 required before spec is done');
+        nextSteps.push('All tasks completed (marked [x]) — Phase 6 required before spec is done');
         nextSteps.push('1. Run /vault-update to update affected DocVault documentation');
         nextSteps.push('2. Commit DocVault changes (DocVault commits go direct to main)');
         const testStep = conventions?.testing?.command

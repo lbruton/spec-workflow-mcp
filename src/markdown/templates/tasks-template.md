@@ -28,7 +28,7 @@ updated: {{YYYY-MM-DD}}
 
 ## File Touch Map
 
-> **Why this section exists:** Surface the blast radius before any task begins. The Phase 4 orchestrator uses this map to decide which tasks can run in parallel (no overlapping files) versus serial (shared files). The readiness gate (Phase 3.9) verifies that every file referenced by any task below appears in this map. Reviewers use it as a 30-second preview of "how big is this change really" before reading individual tasks.
+> **Why this section exists:** Surface the blast radius before any task begins. The Phase 5 orchestrator uses this map to decide which tasks can run in parallel (no overlapping files) versus serial (shared files). The readiness gate (Phase 4.9) verifies that every file referenced by any task below appears in this map. Reviewers use it as a 30-second preview of "how big is this change really" before reading individual tasks.
 
 | Action | Files | Scope |
 |--------|-------|-------|
@@ -110,7 +110,7 @@ with full artifacts (functions added/modified, files changed, endpoints created,
 The exact tool name is `mcp__specflow__log-implementation` (NOT `log-implementation` or
 `specflow:log-implementation`). Do NOT mark [x] until the tool call succeeds. No exceptions.
 
-SPEC COMPLETION GATE — BLOCKING (Phase 5):
+SPEC COMPLETION GATE — BLOCKING (Phase 6):
 After ALL tasks are [x] and implementation logs are recorded:
 1. Generate `verification.md` in the spec directory — a checklist mapping every requirement
    and acceptance criterion from requirements.md to file:line code evidence. Any unchecked
