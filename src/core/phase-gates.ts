@@ -1,6 +1,14 @@
 import { access, readFile } from 'fs/promises';
-import { join } from 'path';
+import { resolve } from 'path';
 import { constants } from 'fs';
+
+function resolveWithin(root: string, ...segments: string[]): string {
+  const resolved = resolve(root, ...segments);
+  if (!resolved.startsWith(root)) {
+    throw new Error(`Path traversal detected: resolved path escapes workflow root`);
+  }
+  return resolved;
+}
 
 export interface GateResult {
   passed: boolean;
@@ -26,7 +34,7 @@ export async function checkApprovalStatus(
   specName: string,
   docType: string,
 ): Promise<{ exists: boolean; approved: boolean }> {
-  const metadataPath = join(
+  const metadataPath = resolveWithin(
     workflowRoot,
     'approvals',
     specName,
@@ -46,6 +54,7 @@ export async function checkApprovalStatus(
   // File exists — parse it
   try {
     const metadata = JSON.parse(raw);
+    if (!metadata || typeof metadata !== 'object') return { exists: true, approved: false };
     const snapshots: unknown[] = metadata.snapshots || [];
     const latest = snapshots[snapshots.length - 1] as { trigger?: string } | undefined;
     return { exists: true, approved: latest?.trigger === 'approved' };
@@ -63,7 +72,7 @@ async function specFileExists(
   specName: string,
   docType: string,
 ): Promise<boolean> {
-  const docPath = join(workflowRoot, 'specs', specName, `${docType}.md`);
+  const docPath = resolveWithin(workflowRoot, 'specs', specName, `${docType}.md`);
   try {
     await access(docPath, constants.F_OK);
     return true;
@@ -184,7 +193,7 @@ export async function validatePhaseGates(options: PhaseGateOptions): Promise<Gat
   // Fallback — reject unknown document types as a defense-in-depth measure
   return {
     passed: false,
-    gate: 'G1',
+    gate: 'UNKNOWN_TYPE',
     message: `PHASE GATE: Unknown document type "${documentType}". Must be one of: requirements, discovery, design, tasks.`,
   };
 }

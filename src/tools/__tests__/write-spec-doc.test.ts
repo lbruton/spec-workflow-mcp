@@ -15,14 +15,16 @@ vi.mock('../../core/path-utils.js', () => ({
 vi.mock('fs/promises', () => ({
   writeFile: vi.fn(),
   mkdir: vi.fn(),
+  rename: vi.fn(),
 }));
 
 import { validatePhaseGates } from '../../core/phase-gates.js';
-import { writeFile, mkdir } from 'fs/promises';
+import { writeFile, mkdir, rename } from 'fs/promises';
 
 const mockedValidatePhaseGates = vi.mocked(validatePhaseGates);
 const mockedWriteFile = vi.mocked(writeFile);
 const mockedMkdir = vi.mocked(mkdir);
+const mockedRename = vi.mocked(rename);
 
 describe('writeSpecDocHandler', () => {
   const defaultArgs = {
@@ -40,6 +42,7 @@ describe('writeSpecDocHandler', () => {
     vi.clearAllMocks();
     mockedMkdir.mockResolvedValue(undefined);
     mockedWriteFile.mockResolvedValue(undefined);
+    mockedRename.mockResolvedValue(undefined);
   });
 
   it('returns error when gate validation fails', async () => {
@@ -53,6 +56,8 @@ describe('writeSpecDocHandler', () => {
 
     expect(result.success).toBe(false);
     expect(result.message).toContain('G2');
+    expect(mockedMkdir).not.toHaveBeenCalled();
+    expect(mockedWriteFile).not.toHaveBeenCalled();
   });
 
   it('writes file when gate validation passes', async () => {

@@ -2,7 +2,7 @@ import { Tool } from '@modelcontextprotocol/sdk/types.js';
 import { ToolContext, ToolResponse } from '../types.js';
 import { validatePhaseGates } from '../core/phase-gates.js';
 import { PathUtils, validateProjectPath } from '../core/path-utils.js';
-import { mkdir, writeFile } from 'fs/promises';
+import { mkdir, rename, writeFile } from 'fs/promises';
 import { join } from 'path';
 
 export const writeSpecDocTool: Tool = {
@@ -56,26 +56,42 @@ export async function writeSpecDocHandler(
 
   if (
     !specName ||
+    specName === '.' ||
     specName.includes('..') ||
     specName.includes('/') ||
-    specName.includes('\\') ||
-    specName.startsWith('/')
+    specName.includes('\\')
   ) {
     return {
       success: false,
-      message: `Invalid specName: must not contain "..", "/", or "\\"`,
+      message: `Invalid specName: must not be "." and must not contain "..", "/", or "\\"`,
     };
   }
 
-  await validateProjectPath(projectPath);
-  const workflowRoot = PathUtils.getWorkflowRoot(projectPath);
+  let workflowRoot: string;
+  try {
+    await validateProjectPath(projectPath);
+    workflowRoot = PathUtils.getWorkflowRoot(projectPath);
+  } catch (error: any) {
+    return {
+      success: false,
+      message: `Project path validation failed: ${error.message}`,
+    };
+  }
 
   // Run phase gates
-  const gateResult = await validatePhaseGates({
-    specName,
-    documentType,
-    workflowRoot,
-  });
+  let gateResult;
+  try {
+    gateResult = await validatePhaseGates({
+      specName,
+      documentType,
+      workflowRoot,
+    });
+  } catch (error: any) {
+    return {
+      success: false,
+      message: `Phase gate validation failed: ${error.message}`,
+    };
+  }
 
   if (!gateResult.passed) {
     return {
@@ -91,7 +107,9 @@ export async function writeSpecDocHandler(
 
   try {
     await mkdir(specDir, { recursive: true });
-    await writeFile(filePath, content, 'utf-8');
+    const tmpPath = `${filePath}.tmp`;
+    await writeFile(tmpPath, content, 'utf-8');
+    await rename(tmpPath, filePath);
   } catch (error: any) {
     return {
       success: false,
