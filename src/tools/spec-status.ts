@@ -59,7 +59,7 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
         nextSteps: [
           'Check spec name',
           'Use spec-list tool to search available specs',
-          'Create spec with create-spec-doc',
+          'Create spec with write-spec-doc',
         ],
       };
     }
@@ -227,7 +227,7 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
     switch (currentPhase) {
       case 'discovery':
         nextSteps.push(`Read template: ${wr}/templates/discovery-template.md`);
-        nextSteps.push(`Create: ${wr}/specs/{name}/discovery.md`);
+        nextSteps.push('Use write-spec-doc tool to create discovery.md');
         nextSteps.push('Request approval');
         break;
       case 'requirements':
@@ -236,7 +236,7 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
           nextSteps.push('Submit requirements.md for approval');
         } else {
           nextSteps.push(`Read template: ${wr}/templates/requirements-template.md`);
-          nextSteps.push(`Create: ${wr}/specs/{name}/requirements.md`);
+          nextSteps.push('Use write-spec-doc tool to create requirements.md');
           nextSteps.push('Request approval');
         }
         break;
@@ -246,7 +246,7 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
           nextSteps.push('Submit design.md for approval');
         } else {
           nextSteps.push(`Read template: ${wr}/templates/design-template.md`);
-          nextSteps.push(`Create: ${wr}/specs/{name}/design.md`);
+          nextSteps.push('Use write-spec-doc tool to create design.md');
           nextSteps.push('Request approval');
         }
         break;
@@ -256,7 +256,7 @@ export async function specStatusHandler(args: any, context: ToolContext): Promis
           nextSteps.push('Submit tasks.md for approval');
         } else {
           nextSteps.push(`Read template: ${wr}/templates/tasks-template.md`);
-          nextSteps.push(`Create: ${wr}/specs/{name}/tasks.md`);
+          nextSteps.push('Use write-spec-doc tool to create tasks.md');
           nextSteps.push('Request approval');
         }
         break;
