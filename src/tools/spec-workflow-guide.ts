@@ -214,7 +214,8 @@ flowchart TD
 2. Check for project template override at \`${wr}/templates/requirements-template.md\`
 3. If no project override, the global template is used automatically from \`${wr}/templates/requirements-template.md\`
 4. Research market/user expectations (if web search available, current year: ${currentYear})
-5. Generate requirements as user stories with EARS criteria
+5. **Content boundary**: Requirements define WHAT (user stories, acceptance criteria, measurable NFRs). Do NOT include implementation details — API designs, component architecture, function signatures, code patterns belong in Phase 3 Design.
+6. Generate requirements as user stories with EARS criteria
 6. Create \`requirements.md\` at \`${wr}/specs/{issue-id}-{kebab-title}/requirements.md\`
 7. Request approval using approvals tool with action:'request' (filePath only, never content)
 8. Poll status using approvals with action:'status' until approved/needs-revision (NEVER accept verbal approval)
