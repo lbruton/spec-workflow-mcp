@@ -422,6 +422,63 @@ export async function logImplementationHandler(
       };
     }
 
+    // TDD checklist validation gate
+    {
+      const { validateTaskComplete } = await import('../core/test-checklist.js');
+      const { parseTasksFromMarkdown } = await import('../core/task-parser.js');
+      const { promises: fs } = await import('fs');
+
+      const checklistPath = `${specTasksPath}/test-checklist.md`;
+
+      let checklistExists = false;
+      try {
+        await fs.access(checklistPath);
+        checklistExists = true;
+      } catch {
+        // File does not exist
+      }
+
+      if (checklistExists) {
+        // Checklist exists — validate all items for this task are [x]
+        const validation = await validateTaskComplete(checklistPath, taskId);
+        if (!validation.valid) {
+          return {
+            success: false,
+            message: `TDD GATE: Cannot log implementation — ${validation.totalItems - validation.completedItems} test(s) incomplete: ${validation.incompleteItems.map((i: { testName: string }) => i.testName).join(', ')}`,
+            nextSteps: [
+              'Make the failing tests pass before logging implementation',
+              `Review test-checklist.md for task ${taskId} to see which tests still fail`,
+              'Run the test suite and fix the implementation code',
+            ],
+          };
+        }
+      } else {
+        // No checklist — check if spec has TDD tasks (Phase 0 tasks 0.4/0.5)
+        try {
+          const tasksContent = await fs.readFile(tasksFile, 'utf-8');
+          const parseResult = parseTasksFromMarkdown(tasksContent);
+          const hasTddTasks = parseResult.tasks.some(
+            (t: { id: string }) => t.id === '0.4' || t.id === '0.5',
+          );
+          if (hasTddTasks) {
+            return {
+              success: false,
+              message: `TDD GATE: test-checklist.md not found — red phase may have been skipped. Complete the TDD red phase (task 0.5) before logging implementation.`,
+              nextSteps: [
+                'Complete task 0.5: write failing tests',
+                'Generate test-checklist.md from the test output',
+                'Submit test-checklist.md for dashboard approval',
+                'Then implement the green phase and log',
+              ],
+            };
+          }
+          // No TDD tasks in spec — skip validation silently
+        } catch {
+          // Can't read tasks.md — skip TDD validation
+        }
+      }
+    }
+
     // Create log entry
     const logManager = new ImplementationLogManager(specTasksPath);
 
