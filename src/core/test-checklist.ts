@@ -357,7 +357,7 @@ export async function validateTaskComplete(
   const totalItems = section.items.length;
   const completedItems = section.items.filter((i) => i.status === 'passed').length;
   const incompleteItems = section.items.filter((i) => i.status !== 'passed');
-  const valid = incompleteItems.length === 0;
+  const valid = totalItems > 0 && incompleteItems.length === 0;
 
   return {
     valid,
@@ -367,6 +367,8 @@ export async function validateTaskComplete(
     incompleteItems,
     message: valid
       ? 'All ' + totalItems + ' tests passed for task ' + taskId
-      : incompleteItems.length + ' of ' + totalItems + ' tests still pending for task ' + taskId,
+      : totalItems === 0
+        ? 'Task ' + taskId + ' checklist section has no items — cannot validate'
+        : incompleteItems.length + ' of ' + totalItems + ' tests still pending for task ' + taskId,
   };
 }
