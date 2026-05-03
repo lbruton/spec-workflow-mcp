@@ -190,11 +190,31 @@ export async function validatePhaseGates(options: PhaseGateOptions): Promise<Gat
     };
   }
 
+  // --- G5: test-checklist requires approved tasks ---
+  if (documentType === 'test-checklist') {
+    const tasks = await checkApprovalStatus(workflowRoot, specName, 'tasks');
+    const tasksFileExists = await specFileExists(workflowRoot, specName, 'tasks');
+    if (!tasksFileExists || !tasks.approved) {
+      return {
+        passed: false,
+        gate: 'G5',
+        message:
+          `PHASE GATE: Cannot create test-checklist — Tasks ${tasksFileExists ? 'have not been approved yet' : 'document does not exist yet'}. ` +
+          `You must create and get approval for tasks.md before writing test-checklist.md.`,
+      };
+    }
+    return {
+      passed: true,
+      gate: 'none',
+      message: 'G5 passed — tasks.md is approved; test-checklist can proceed.',
+    };
+  }
+
   // Fallback — reject unknown document types as a defense-in-depth measure
   return {
     passed: false,
     gate: 'UNKNOWN_TYPE',
-    message: `PHASE GATE: Unknown document type "${documentType}". Must be one of: requirements, discovery, design, tasks.`,
+    message: `PHASE GATE: Unknown document type "${documentType}". Must be one of: requirements, discovery, design, tasks, test-checklist.`,
   };
 }
 
@@ -230,9 +250,10 @@ export async function checkTestChecklistGate(
     };
   }
 
-  // Validate all checklist items for this task are [x]
+  // Validate all checklist items for this task are [x].
+  // Pass through when the task has no section in the checklist (non-TDD tasks).
   const validation = await validateTaskComplete(checklistPath, taskId);
-  if (!validation.valid) {
+  if (!validation.valid && validation.incompleteItems.length > 0) {
     return {
       passed: false,
       gate: 'TEST_CHECKLIST',

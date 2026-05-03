@@ -424,10 +424,11 @@ export async function logImplementationHandler(
 
     // TDD checklist validation gate
     {
-      const { validateTaskComplete } = await import('../core/test-checklist.js');
+      const { checkTestChecklistGate } = await import('../core/phase-gates.js');
       const { promises: fs } = await import('fs');
 
       const checklistPath = `${specTasksPath}/test-checklist.md`;
+      const workflowRoot = PathUtils.getWorkflowRoot(projectPath);
 
       let checklistExists = false;
       try {
@@ -438,15 +439,16 @@ export async function logImplementationHandler(
       }
 
       if (checklistExists) {
-        // Checklist exists — validate all items for this task are [x]
-        const validation = await validateTaskComplete(checklistPath, taskId);
-        if (!validation.valid && validation.incompleteItems.length > 0) {
+        // Checklist exists — verify approval and that all items for this task are [x]
+        const gateResult = await checkTestChecklistGate(workflowRoot, specName, taskId);
+        if (!gateResult.passed) {
           return {
             success: false,
-            message: `TDD GATE: Cannot log implementation — ${validation.totalItems - validation.completedItems} test(s) incomplete: ${validation.incompleteItems.map((i: { testName: string }) => i.testName).join(', ')}`,
+            message: gateResult.message,
             nextSteps: [
               'Make the failing tests pass before logging implementation',
               `Review test-checklist.md for task ${taskId} to see which tests still fail`,
+              'Submit test-checklist.md for dashboard approval if not yet approved',
               'Run the test suite and fix the implementation code',
             ],
           };
