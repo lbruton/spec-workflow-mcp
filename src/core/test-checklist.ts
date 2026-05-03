@@ -100,7 +100,7 @@ export async function generateTaskSection(options: GenerateOptions): Promise<str
   } else {
     // T4: check if a section for this taskId already exists; if so, return unchanged
     const existing = await readFile(checklistPath, 'utf-8');
-    const escapedId = taskId.replace(/\./g, '\\.');
+    const escapedId = taskId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const duplicateCheck = new RegExp('^## Task ' + escapedId + ':', 'm');
     if (duplicateCheck.test(existing)) {
       return checklistPath;
