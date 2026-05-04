@@ -86,6 +86,18 @@ If ANY tool is missing, report the missing tools to the user and STOP.
 
 ---
 
+## Mandatory Per-Task Gates
+
+> **MANDATORY — These behavioral gates apply to EVERY task in this spec. They are NOT standalone tasks.**
+
+> **IMPLEMENTATION LOGGING GATE — HARD GATE:**
+> Before marking ANY task `[x]`, you MUST call the `mcp__specflow__log-implementation` MCP tool
+> with full artifacts (functions added/modified, files changed, endpoints created, tests written).
+> The exact tool name is `mcp__specflow__log-implementation` (NOT `log-implementation` or
+> `specflow:log-implementation`). Do NOT mark `[x]` until the tool call succeeds. No exceptions.
+
+---
+
 ## UI Prototype Gate (conditional — include ONLY if design.md declares `Has UI Changes: Yes` AND `Prototype Required: Yes`)
 
 > **BLOCKING:** Tasks 0.1–0.3 MUST be completed and approved before ANY task tagged `ui:true` begins.
@@ -265,14 +277,57 @@ If ANY tool is missing, report the missing tools to the user and STOP.
   - _Requirements: All_
   - _Prompt: Role: Code Review Coordinator | Task: Run a cross-model peer review. Try in order: (1) codex:rescue via Skill tool, (2) pr-review-toolkit:review-pr via Skill tool, (3) mark [!] BLOCKED. Fix Critical/Important findings by looping back to implementation. Minor findings are advisory. | Restrictions: Do NOT invoke coderabbit:review (already ran in N+2). Do NOT use Agent tool for codex:rescue — use Skill tool. NEVER mark [x] if review was skipped — use [!]. | Success: Review completed with Critical/Important issues addressed, OR [!] BLOCKED with documented reason._
 
-- [ ] N+5. Loop or complete
+- [ ] N+5. Loop or proceed to shipping
   - File: (no file changes — decision gate only)
   - IF ANY task above is marked `[!]` (BLOCKED) -> STOP. Present to user for decision.
   - IF verification.md has ANY unchecked `[ ]` items -> fix the failing requirements/code first, THEN loop back through N–N+4
   - IF N+2 has unaddressed Critical/High -> fix the flagged code first, THEN loop back through N–N+4
   - IF N+4 has unaddressed Critical/Important -> fix the flagged code first, THEN loop back through N–N+4
-  - ONLY when ALL clean AND zero `[!]` tasks remain -> proceed to PR/commit
-  - Purpose: Enforce the verification loop — specs are not complete until every requirement is proven AND all reviews pass.
+  - ONLY when ALL clean AND zero `[!]` tasks remain -> **proceed to shipping tasks N+6–N+8**
+  - **DO NOT create the PR or push code from this task** — that is task N+8.
+  - Purpose: Enforce the verification loop — implementation is verified before shipping begins.
   - _Leverage: verification.md from N+3, scan results from N+2, review results from N+4_
   - _Requirements: All_
-  - _Prompt: Role: Project Coordinator | Task: Scan ALL tasks for [!] BLOCKED — if any exist, present to user and STOP. Then check: verification.md unchecked items, N+2 unaddressed Critical/High, N+4 unaddressed Critical/Important. If any count is non-zero, FIX the failing code or tests first (do not re-run verification without fixing the root cause), then loop back through N–N+4. Only when all clean: proceed to PR/commit. | Restrictions: Do NOT proceed if ANY gaps remain. Do NOT remove unchecked items to force completion. Do NOT change [!] to [x] without user decision. Do NOT loop back without fixing the underlying issue first. | Success: Zero [!] tasks. verification.md fully checked. All reviews clean. PR/commit may proceed._
+  - _Prompt: Role: Project Coordinator | Task: Scan ALL tasks for [!] BLOCKED — if any exist, present to user and STOP. Then check: verification.md unchecked items, N+2 unaddressed Critical/High, N+4 unaddressed Critical/Important. If any count is non-zero, FIX the failing code or tests first (do not re-run verification without fixing the root cause), then loop back through N–N+4. Only when all clean: proceed to shipping tasks N+6–N+8. Do NOT create a PR or push code from this task — that is task N+8. | Restrictions: Do NOT proceed to shipping if ANY gaps remain. Do NOT remove unchecked items to force completion. Do NOT change [!] to [x] without user decision. Do NOT push code or open a PR from this task. | Success: Zero [!] tasks. verification.md fully checked. All reviews clean. Ready to proceed to shipping tasks N+6–N+8._
+
+---
+
+> **SHIPPING TASKS — MANDATORY NUMBERED TASKS**
+>
+> These tasks (N+6–N+8) are NOT suggestions, NOT "Phase 5 notes", NOT advisory.
+> They are numbered, checkable tasks that MUST be executed in order after verification passes.
+> The spec is NOT complete until task N+8 (Draft PR) is marked `[x]`.
+
+- [ ] N+6. Version bump
+  - File: (project-specific version files — e.g., `package.json`, `js/constants.js`, `sw.js`)
+  - Apply the version bump to all project version-bearing files. The version number was claimed in task 0.1 via `/release patch` (for projects with `devops/version.lock`).
+  - IF the project has no version management (user opted out in task 0.1), record the skip in the implementation log and mark `[x]`.
+  - Verify the version number is consistent across all version files (grep for the new version — every match must agree).
+  - Purpose: Version bump happens AFTER verification passes, BEFORE the PR — ensures the shipped version reflects tested code.
+  - _Leverage: Project version conventions, task 0.1 version lock_
+  - _Requirements: All_
+  - _Prompt: Role: Release Engineer | Task: Apply the version bump to all project version files. The version was claimed in task 0.1 — DO NOT change the number. (1) Update version constants/manifests according to project conventions (e.g., StakTrakr: `js/constants.js`, `package.json`, `sw.js` cache name). (2) Verify by grepping for the new version across version-bearing files — all must match. (3) If the project has no version management (user opted out in task 0.1), record the skip and mark [x]. | Restrictions: Do NOT change the version number — use the one claimed in task 0.1. Do NOT skip silently — log the reason if skipping. | Success: Version number appears consistently in all required files. `git diff` shows only version-related changes._
+
+- [ ] N+7. Update DocVault + close issue
+  - File: (no source file changes — external system updates only)
+  - Run `/vault-update` to update DocVault pages affected by this spec's changed files.
+  - Close the linked issue in the project's issue tracker:
+    - For Plane-tracked projects: call `mcp__plane__update_issue` to set status to Done/Closed
+    - For DocVault-tracked projects: move the issue file to `Closed/` and update both `_Index.md` files atomically
+  - Purpose: Keep documentation and issue tracking in sync with shipped code — not a post-merge afterthought.
+  - _Leverage: `/vault-update` skill, `mcp__plane__update_issue`, DocVault issue conventions_
+  - _Requirements: All_
+  - _Prompt: Role: Project Coordinator | Task: (1) Run `/vault-update` to update any DocVault foundation or project pages affected by changes in this spec. (2) Close the linked issue: check the References section at the top of tasks.md for the issue ID. For Plane-tracked projects (check `.specflow/config.json` `issue_backend`), call `mcp__plane__update_issue` to set status to Done/Closed. For DocVault-tracked projects, move the issue file to `Closed/` and update both the source `_Index.md` (remove entry) and `Closed/_Index.md` (add entry) in the same commit. | Restrictions: Do NOT skip the vault update. Do NOT leave the issue open. If either step fails, report the error — do not silently proceed. | Success: DocVault is updated and pushed. Issue is closed in the appropriate tracker._
+
+- [ ] N+8. Push branch + create draft PR — FINAL TASK
+  - File: (no source file changes — git operations only)
+  - **This is ALWAYS the final task in every spec. The spec is NOT complete until this task is `[x]`.**
+  - Push the worktree branch to the remote.
+  - Create a draft PR targeting the project's PR target branch (see project CLAUDE.md for the target — typically `main` or `dev`).
+  - PR title format: `<type>(ISSUE-ID): short description` using conventional commit prefix (`feat`, `fix`, `chore`).
+  - PR body must include: summary of changes, linked issue, test results from task N, version number from task N+6.
+  - Update the References section at the top of tasks.md with the PR number and URL.
+  - Purpose: The draft PR is the deliverable. Code in a worktree with no PR is invisible to reviewers and CI.
+  - _Leverage: `gh pr create --draft`, project PR target from CLAUDE.md, version from task N+6_
+  - _Requirements: All_
+  - _Prompt: Role: Release Engineer | Task: Ship the work by pushing and opening a draft PR. (1) Push the worktree branch: `git push -u origin <branch>`. (2) Create a draft PR using `gh pr create --draft` targeting the project's PR target branch. Title: conventional-commit prefix + issue ID + short description. Body: summary of changes, link to the issue, test results (pass/fail/skip from task N), version number from task N+6. (3) Record the PR number and URL. (4) Update the References section at the top of tasks.md with the PR link. | Restrictions: The PR MUST be a draft — do not mark it ready for review. Do NOT merge the PR. Do NOT push directly to main or dev. Use the project's configured PR target branch. | Success: Branch is pushed. Draft PR exists with proper title, body, linked issue, test results, and version. tasks.md References section has the PR URL. The spec is now complete — all tasks from 0.1 through N+8 are `[x]`._
