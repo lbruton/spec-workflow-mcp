@@ -1,8 +1,11 @@
+import { readFile } from 'fs/promises';
 import { Prompt, PromptMessage } from '@modelcontextprotocol/sdk/types.js';
 import { PromptDefinition } from './types.js';
 import { ToolContext } from '../types.js';
 import { PathUtils } from '../core/path-utils.js';
 import { SpecParser } from '../core/parser.js';
+import { parseTasksFromMarkdown, findNextPendingTask } from '../core/task-parser.js';
+import { checkTddPreflight } from '../core/phase-gates.js';
 
 const prompt: Prompt = {
   name: 'implement-task',
@@ -49,6 +52,40 @@ async function handler(args: Record<string, any>, context: ToolContext): Promise
     throw new Error(
       `PHASE GATE: Cannot start implementation for "${specName}" until readiness-report.md exists and is approved in the dashboard.`,
     );
+  }
+
+  // TDD preflight gate — fires when the spec uses TDD (tasks.md contains
+  // Phase 0 tasks 0.4 and/or 0.5). Resolves the effective task ID either from
+  // the explicit `taskId` argument or — when the prompt was invoked for the
+  // "next pending task" — by looking it up in tasks.md; the gate must apply
+  // in both cases so green-phase work cannot start without an approved
+  // test-checklist. Skipped silently for non-TDD specs; checkTddPreflight
+  // itself bypasses all Phase 0 tasks (id `0` or `0.*`) since they run before
+  // test-checklist.md exists. For green-phase tasks, the gate verifies
+  // test-checklist.md exists, has an approved snapshot, and contains a
+  // section for this task — proving the red phase covered it before
+  // green-phase implementation begins.
+  let tasksContent = '';
+  try {
+    tasksContent = await readFile(tasksFile, 'utf-8');
+  } catch {
+    // tasks.md unreadable — skip preflight (existence already verified upstream)
+  }
+  if (tasksContent) {
+    const parsed = parseTasksFromMarkdown(tasksContent);
+    // Sentinel task IDs — invariant defined by src/markdown/templates/tasks-template.md.
+    // If Phase 0 task numbering ever changes, update both this heuristic AND
+    // checkTddPreflight's Phase 0 bypass list in src/core/phase-gates.ts.
+    const hasTddTasks = parsed.tasks.some((t) => t.id === '0.4' || t.id === '0.5');
+    if (hasTddTasks) {
+      const effectiveTaskId = taskId ?? findNextPendingTask(parsed.tasks)?.id;
+      if (effectiveTaskId) {
+        const gate = await checkTddPreflight(workflowRoot, specName, effectiveTaskId);
+        if (!gate.passed) {
+          throw new Error(gate.message);
+        }
+      }
+    }
   }
 
   const messages: PromptMessage[] = [
