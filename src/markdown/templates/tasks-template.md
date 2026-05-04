@@ -89,7 +89,7 @@ If ANY tool is missing, report the missing tools to the user and STOP.
 ## Mandatory Per-Task Gates
 
 > **MANDATORY — These behavioral gates apply to EVERY task in this spec. They are NOT standalone tasks.**
-
+>
 > **IMPLEMENTATION LOGGING GATE — HARD GATE:**
 > Before marking ANY task `[x]`, you MUST call the `mcp__specflow__log-implementation` MCP tool
 > with full artifacts (functions added/modified, files changed, endpoints created, tests written).
@@ -260,7 +260,7 @@ If ANY tool is missing, report the missing tools to the user and STOP.
   - Purpose: Prove every requirement is met with traceable evidence — no hand-waving
   - _Leverage: requirements.md, implementation logs, git diff_
   - _Requirements: All_
-  - _Prompt: Role: QA Engineer | Task: Generate verification.md in the spec directory. Read requirements.md and list every requirement and acceptance criterion as a markdown checklist. For each item, search the codebase for the implementing code and mark [x] with file:line evidence. If any criterion cannot be verified, mark [ ] with a gap description. Run /vault-update and close linked issues. Run /verification-before-completion for a final check. | Restrictions: Do not mark [x] without concrete file:line evidence. Do not fabricate evidence. | Success: verification.md exists with every requirement/AC listed and evidenced. /vault-update completed. Linked issues closed. /verification-before-completion passed._
+  - _Prompt: Role: QA Engineer | Task: Generate verification.md in the spec directory. Read requirements.md and list every requirement and acceptance criterion as a markdown checklist. For each item, search the codebase for the implementing code and mark [x] with file:line evidence. If any criterion cannot be verified, mark [ ] with a gap description. Run /verification-before-completion for a final check. | Restrictions: Do not mark [x] without concrete file:line evidence. Do not fabricate evidence. | Success: verification.md exists with every requirement/AC listed and evidenced. /verification-before-completion passed._
 
 - [ ] N+4. Cross-Model Peer Review
   - File: (no file changes — review only, fixes happen via loop-back if needed)
@@ -300,16 +300,16 @@ If ANY tool is missing, report the missing tools to the user and STOP.
 
 - [ ] N+6. Version bump
   - File: (project-specific version files — e.g., `package.json`, `js/constants.js`, `sw.js`)
-  - Apply the version bump to all project version-bearing files. The version number was claimed in task 0.1 via `/release patch` (for projects with `devops/version.lock`).
-  - IF the project has no version management (user opted out in task 0.1), record the skip in the implementation log and mark `[x]`.
+  - Apply the version bump to all project version-bearing files. The version number was claimed at the start of the session via the Version Checkout step (see Task Execution Protocol § Version Checkout) for projects with `devops/version.lock`.
+  - IF the project has no version management (user opted out during Version Checkout), record the skip in the implementation log and mark `[x]`.
   - Verify the version number is consistent across all version files (grep for the new version — every match must agree).
   - Purpose: Version bump happens AFTER verification passes, BEFORE the PR — ensures the shipped version reflects tested code.
-  - _Leverage: Project version conventions, task 0.1 version lock_
+  - _Leverage: Project version conventions, Version Checkout step (Task Execution Protocol)_
   - _Requirements: All_
-  - _Prompt: Role: Release Engineer | Task: Apply the version bump to all project version files. The version was claimed in task 0.1 — DO NOT change the number. (1) Update version constants/manifests according to project conventions (e.g., StakTrakr: `js/constants.js`, `package.json`, `sw.js` cache name). (2) Verify by grepping for the new version across version-bearing files — all must match. (3) If the project has no version management (user opted out in task 0.1), record the skip and mark [x]. | Restrictions: Do NOT change the version number — use the one claimed in task 0.1. Do NOT skip silently — log the reason if skipping. | Success: Version number appears consistently in all required files. `git diff` shows only version-related changes._
+  - _Prompt: Role: Release Engineer | Task: Apply the version bump to all project version files. The version was claimed during Version Checkout (see Task Execution Protocol § Version Checkout) — DO NOT change the number. (1) Update version constants/manifests according to project conventions (e.g., StakTrakr: `js/constants.js`, `package.json`, `sw.js` cache name). (2) Verify by grepping for the new version across version-bearing files — all must match. (3) If the project has no version management (user opted out during Version Checkout), record the skip and mark [x]. | Restrictions: Do NOT change the version number — use the one claimed during Version Checkout. Do NOT skip silently — log the reason if skipping. | Success: Version number appears consistently in all required files. `git diff` shows only version-related changes._
 
 - [ ] N+7. Update DocVault + close issue
-  - File: (no source file changes — external system updates only)
+  - File: (no source file changes in this repo — DocVault and external tracker updates only)
   - Run `/vault-update` to update DocVault pages affected by this spec's changed files.
   - Close the linked issue in the project's issue tracker:
     - For Plane-tracked projects: call `mcp__plane__update_issue` to set status to Done/Closed
@@ -325,9 +325,9 @@ If ANY tool is missing, report the missing tools to the user and STOP.
   - Push the worktree branch to the remote.
   - Create a draft PR targeting the project's PR target branch (see project CLAUDE.md for the target — typically `main` or `dev`).
   - PR title format: `<type>(ISSUE-ID): short description` using conventional commit prefix (`feat`, `fix`, `chore`).
-  - PR body must include: summary of changes, linked issue, test results from task N, version number from task N+6.
+  - PR body must include: summary of changes, linked issue, test results from `Run full test suite` (task N), version number from task N+6.
   - Update the References section at the top of tasks.md with the PR number and URL.
   - Purpose: The draft PR is the deliverable. Code in a worktree with no PR is invisible to reviewers and CI.
   - _Leverage: `gh pr create --draft`, project PR target from CLAUDE.md, version from task N+6_
   - _Requirements: All_
-  - _Prompt: Role: Release Engineer | Task: Ship the work by pushing and opening a draft PR. (1) Push the worktree branch: `git push -u origin <branch>`. (2) Create a draft PR using `gh pr create --draft` targeting the project's PR target branch. Title: conventional-commit prefix + issue ID + short description. Body: summary of changes, link to the issue, test results (pass/fail/skip from task N), version number from task N+6. (3) Record the PR number and URL. (4) Update the References section at the top of tasks.md with the PR link. | Restrictions: The PR MUST be a draft — do not mark it ready for review. Do NOT merge the PR. Do NOT push directly to main or dev. Use the project's configured PR target branch. | Success: Branch is pushed. Draft PR exists with proper title, body, linked issue, test results, and version. tasks.md References section has the PR URL. The spec is now complete — all tasks from 0.1 through N+8 are `[x]`._
+  - _Prompt: Role: Release Engineer | Task: Ship the work by pushing and opening a draft PR. (1) Push the worktree branch: `git push -u origin <branch>`. (2) Create a draft PR using `gh pr create --draft` targeting the project's PR target branch. Title: conventional-commit prefix + issue ID + short description. Body: summary of changes, link to the issue, test results (pass/fail/skip from the Run full test suite step (task N)), version number from task N+6. (3) Record the PR number and URL. (4) Update the References section at the top of tasks.md with the PR link. | Restrictions: The PR MUST be a draft — do not mark it ready for review. Do NOT merge the PR. Do NOT push directly to main or dev. Use the project's configured PR target branch. | Success: Branch is pushed. Draft PR exists with proper title, body, linked issue, test results, and version. tasks.md References section has the PR URL. The spec is now complete — all tasks from 0.1 through N+8 are `[x]`._
