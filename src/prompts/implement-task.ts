@@ -1,8 +1,11 @@
+import { readFile } from 'fs/promises';
 import { Prompt, PromptMessage } from '@modelcontextprotocol/sdk/types.js';
 import { PromptDefinition } from './types.js';
 import { ToolContext } from '../types.js';
 import { PathUtils } from '../core/path-utils.js';
 import { SpecParser } from '../core/parser.js';
+import { parseTasksFromMarkdown } from '../core/task-parser.js';
+import { checkTddPreflight } from '../core/phase-gates.js';
 
 const prompt: Prompt = {
   name: 'implement-task',
@@ -49,6 +52,32 @@ async function handler(args: Record<string, any>, context: ToolContext): Promise
     throw new Error(
       `PHASE GATE: Cannot start implementation for "${specName}" until readiness-report.md exists and is approved in the dashboard.`,
     );
+  }
+
+  // TDD preflight gate — fires only when (1) a specific taskId was requested, and
+  // (2) the spec uses TDD (tasks.md contains Phase 0 tasks 0.4 and/or 0.5).
+  // Skipped silently for non-TDD specs; checkTddPreflight itself bypasses all
+  // Phase 0 tasks (id `0` or `0.*`) since they run before test-checklist.md exists.
+  // For green-phase tasks, the gate verifies test-checklist.md exists, has an
+  // approved snapshot, and contains a section for this task — proving the red
+  // phase covered it before green-phase implementation begins.
+  if (taskId) {
+    let tasksContent = '';
+    try {
+      tasksContent = await readFile(tasksFile, 'utf-8');
+    } catch {
+      // tasks.md unreadable — skip preflight (existence already verified upstream)
+    }
+    if (tasksContent) {
+      const parsed = parseTasksFromMarkdown(tasksContent);
+      const hasTddTasks = parsed.tasks.some((t) => t.id === '0.4' || t.id === '0.5');
+      if (hasTddTasks) {
+        const gate = await checkTddPreflight(workflowRoot, specName, taskId);
+        if (!gate.passed) {
+          throw new Error(gate.message);
+        }
+      }
+    }
   }
 
   const messages: PromptMessage[] = [
