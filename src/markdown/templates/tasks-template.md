@@ -86,6 +86,8 @@ If ANY tool is missing, report the missing tools to the user and STOP.
 
 ---
 
+<!-- MANDATORY GATES — DO NOT REMOVE: drift-guard marker asserted by src/core/__tests__/template-generator.test.ts -->
+
 ## Mandatory Per-Task Gates
 
 > **MANDATORY — These behavioral gates apply to EVERY task in this spec. They are NOT standalone tasks.**
