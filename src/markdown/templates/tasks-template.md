@@ -313,13 +313,11 @@ If ANY tool is missing, report the missing tools to the user and STOP.
 - [ ] N+7. Update DocVault + close issue
   - File: (no source file changes in this repo — DocVault and external tracker updates only)
   - Run `/vault-update` to update DocVault pages affected by this spec's changed files.
-  - Close the linked issue in the project's issue tracker:
-    - For Plane-tracked projects: call `mcp__plane__update_issue` to set status to Done/Closed
-    - For DocVault-tracked projects: move the issue file to `Closed/` and update both `_Index.md` files atomically
+  - Close the linked issue in Plane: call `mcp__plane__update_issue` to set status to Done/Closed.
   - Purpose: Keep documentation and issue tracking in sync with shipped code — not a post-merge afterthought.
-  - _Leverage: `/vault-update` skill, `mcp__plane__update_issue`, DocVault issue conventions_
+  - _Leverage: `/vault-update` skill, `mcp__plane__update_issue`_
   - _Requirements: All_
-  - _Prompt: Role: Project Coordinator | Task: (1) Run `/vault-update` to update any DocVault foundation or project pages affected by changes in this spec. (2) Close the linked issue: check the References section at the top of tasks.md for the issue ID. For Plane-tracked projects (check `.specflow/config.json` `issue_backend`), call `mcp__plane__update_issue` to set status to Done/Closed. For DocVault-tracked projects, move the issue file to `Closed/` and update both the source `_Index.md` (remove entry) and `Closed/_Index.md` (add entry) in the same commit. | Restrictions: Do NOT skip the vault update. Do NOT leave the issue open. If either step fails, report the error — do not silently proceed. | Success: DocVault is updated and pushed. Issue is closed in the appropriate tracker._
+  - _Prompt: Role: Project Coordinator | Task: (1) Run `/vault-update` to update any DocVault foundation or project pages affected by changes in this spec. (2) Close the linked issue: check the References section at the top of tasks.md for the issue ID. Call `mcp__plane__update_issue` to set status to Done/Closed. | Restrictions: Do NOT skip the vault update. Do NOT leave the issue open. If either step fails, report the error — do not silently proceed. | Success: DocVault is updated and pushed. Issue is closed in Plane._
 
 - [ ] N+8. Push branch + create draft PR — FINAL TASK
   - File: (no source file changes — git operations only)
